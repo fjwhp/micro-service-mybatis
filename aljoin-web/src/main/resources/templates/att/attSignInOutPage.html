@@ -1,0 +1,388 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta charset="utf-8">
+<title>demo控件</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" />
+<link rel="stylesheet" href="../../web/css/zhengls.css" />
+<style>
+.searchRight{
+float:right;
+}
+
+.auth_t{
+width:100%;
+height:60px;
+margin-bottom:20px;
+}
+.auth_tsun{
+    line-height: 60px;
+    text-align: center;
+}
+.btne6e{
+    text-align: center;
+    margin-top: 100px;
+}
+.btne6e a{
+margin-right:60px;
+}
+
+</style>
+</head>
+
+<body>
+	
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main">
+ 	 <blockquote class="layui-elem-quote" style="padding: 5px;">
+				<form class="layui-form" action="">
+				<div class="layui-input-inline" >
+				  <@a code="100102" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="Retroactive()" iclass="layui-icon"
+					 icon="&#xe610;" text="补签"/>
+				</div>
+				 <div class="layui-input-inline">
+				  <a class="layui-btn layui-btn-middle" id="thisweekI">本月</a> 
+				</div>
+				<div class="layui-input-inline " style="margin-left:32%;height:30px;line-height:30px;">
+				 <button class="layui-btn layui-btn-small calendar_month_prev">上月</button>
+				</div>
+				<div class="layui-input-inline">
+					 <input type="text" class="layui-input inp_w120px " id="startTime" readonly style=" text-align: center; height: 30px; width: 170px;">
+				</div>
+			    <div class="layui-input-inline " style="height:30px;line-height:30px;">
+				 <button class="layui-btn layui-btn-small calendar_month_next" id="calendar_month_next" disabled="disabled"  style="background:gray;">下月</button>
+				</div>
+				<div class='calendar_month_span' style="display:none"></div>
+			<!-- 	<span style="float: right;"><@a code="000101" href="javascript:void(0)" class="layui-btn layui-btn-small lookqian" id=""  iclass="layui-icon" icon="&#xe615;"
+					text="查询"/></span> -->
+				</form>
+		</blockquote> 
+	
+		<div class="main_body ">
+	  	<div  id="calendar"></div>
+		</div>
+	</div>
+	<!-- 考勤补签 -->
+	<div id="auth-div" style="display: none; padding-left: 10px; padding-right: 10px;">
+		
+		<form class="layui-form" id="heheda" action="" >
+		  <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+		  <div id="formDiv">
+		       
+		  </div>
+		  
+		  <div style="width:100%;height:80px;text-align:center;line-height:40px;margin-bottom:40px;">
+		       <h1 style="font-size: 20px; font-weight: 600;margin-top:10px"> <img  style="position: relative;top: -3px;" src="../../web/images/RegisterIco.png" />补签申请</h1>
+		      <div style="margin">
+		       <span>申请人：</span>
+		       <span style="margin-right:40px" id="signUserName">admin</span>
+		       <span>部门：</span>
+		       <span style="margin-right:40px" id="deptName">业务部</span>
+		       <span>起草时间：</span>
+		       <span id="timeqi">2017-10-10</span>
+		      </div>
+		      
+		  </div> 
+		<div class="layui-field-box layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+		
+				 <table class="layui-table butable">
+					<colgroup>
+				     <col width="20%">
+				      <col width="20%">
+				      <col width="20%">
+				      <col width="40%">
+  					</colgroup>
+				  <thead>
+				    <tr>
+				      <th>时间</th>
+				      <th>时间段</th>
+				      <th>状态</th>
+				      <th>补签说明</th>
+				    </tr> 
+				  </thead>
+				  <tbody id="buAtt">
+		
+				  
+				  </tbody>
+			 </table>
+			 <div class="btn_fixed">
+			 <div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-update-submit">
+						<i class="fa fa-save"></i> 提交
+					</button>
+					<button class="layui-btn layui-btn-primary" type="reset">
+						<i class="fa fa-eraser"></i> 重置
+					</button>
+				</div>
+			 </div>	
+		</div>
+		
+		
+		</form>
+	</div>
+	<input type="hidden" id="userNameHi" value="sd" />
+</body>
+    <script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script type="text/javascript" src="../../web/js/dataRi.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/ueditor.all.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/lang/zh-cn/zh-cn.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+    <script type="text/javascript">
+      var pform,initLoadIndex;
+    layui.use(['laydate','form'], function(){
+    	  var laydate = layui.laydate;
+    	      pform   = layui.form
+    	  var nowtime = new Date();
+    	  var nowstr = nowtime.getFullYear()+"-"+(nowtime.getMonth()+1)+"-"+nowtime.getDate();   	  
+    	   //执行一个laydate实例
+    	  laydate.render({
+    	    elem: '#startTime'//指定元素,
+    	    ,type:'month' //选择月
+    	    ,max:nowstr
+    	    ,done:function(data){
+    	    	var  chooseM =  parseInt(data.split("-")[1]);
+    	    	var  chooseN =  parseInt(data.split("-")[0]);
+    	    	var currents = new Date();
+    	     	showYear=currents.getFullYear();
+                sshowMonth=currents.getMonth() + 1;
+                if(chooseM==sshowMonth&&showYear==chooseN){
+                	$("#calendar_month_next").attr("disabled","disabled");
+                    $("#calendar_month_next").css("background","gray");
+                }else{
+                	$("#calendar_month_next").removeAttr("disabled");
+                    $("#calendar_month_next").css("background","#339bf1");
+                }
+                setTimeout(function(){
+                	  calUtil.eventName="search";
+                 	  calUtil.id="search";
+                      calUtil.init();
+                },200) 
+              
+    	    }
+    	  }); 
+    	  
+    	   pform.on('submit(form-update-submit)',function(data){
+               layer.confirm('确定提交吗 ?', {
+                   icon: 3,
+                   title: '提示'
+               }, function (index) {
+            	   layer.close(index);
+            	   initLoadIndex = layer.load(2, {});
+                   $("#formDiv").empty();
+                   var strl="";
+                   for(var i=0;i<str.length;i++){
+                       strl+='<input type="hidden" name="attSignInOutList['+i+'].id" value="'+str[i].id+'"  />';
+                       strl+='<input type="hidden" name="attSignInOutList['+i+'].signDate" value="'+str[i].signDate+'"  />';
+                       strl+='<input type="hidden" name="attSignInOutList['+i+'].pmSignOutStatus" value="'+str[i].pmsignoutstatus+'"  />'
+                       strl+='<input type="hidden" name="attSignInOutList['+i+'].pmSignInStatus" value="'+str[i].pmsigninstatus+'"  />'
+                       strl+='<input type="hidden" name="attSignInOutList['+i+'].amSignOutStatus" value="'+str[i].amsignoutstatus+'"  />'
+                       strl+='<input type="hidden" name="attSignInOutList['+i+'].amSignInStatus" value="'+str[i].amsigninstatus+'"  />'
+                       strl+='<input type="hidden" name="attSignInOutList['+i+'].signUserId" value="'+str[i].signUserId+'"  />'
+                   }
+
+                   $("#formDiv").append(strl);
+                   tool.post("/att/attSignInOut/signInPatch",$("#heheda").serialize(),function(retMsg){
+                	   layer.close(initLoadIndex);
+                       if (retMsg.code == 0) {
+                           layer.closeAll();
+                           calUtil.eventName="search";
+                      	   calUtil.id="search";
+                           calUtil.init();
+                           openForm(retMsg);
+                           
+                       } else {
+                           tool.error(retMsg.message);
+                       }
+                   },true)
+               });
+               return false;
+    	   })
+  
+    	}); 
+    
+    
+    function openForm(data1) {
+		var data = data1.object;
+		var id = data.id;
+		var processName = data.processName;
+		var bpmnId = data.bpmnId;
+		var taskDefKey = data.taskDefKey;
+		var businessKey = data.businessKey;
+		var signInTime = data.signInTime
+		var index = layer.open({
+			title : processName,
+			maxmin : false,
+			type : 2,
+			content : '../../act/modeler/openForm.html?id='+bpmnId+'&activityId='+id+'&taskId='+taskDefKey+'&businessKey='+businessKey+'&signInTime='+signInTime+'&isWait=1'+'&isIndexLog=0',
+			cancel: function(){ 
+			    //右上角关闭回调
+			    layer.closeAll();
+			    //return false 开启该代码可禁止点击该按钮关闭
+			  },
+			success: function(layero, index){
+				//var body = layer.getChildFrame('body', index);
+				var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
+				iframeWin.$("#sub").trigger("click")
+			}
+		});
+		pform.render();
+		layer.full(index);
+	}
+/*   //加载数据
+	function loadData() {
+	    var valueArr=$("#startTime").val().split("~");
+		var param = new Object();
+		param.s=valueArr[0];
+		param.s1=valueArr[1];
+		 if(valueArr[1]==undefined){
+			param.s1="";
+		} 
+		
+		param.container = "paging";
+		param.pageSize = 1000;
+		param.url = "../attSignInOut/list";
+		param.thisMonth=$("#startTime").val();
+		tool.loadpage(param);
+	} */
+    </script>
+   <script>
+   $(function(){
+	   //ajax获取日历json数据
+	    calUtil.init();
+	 });
+   
+   //需要提交的数据数组
+   var str=[];
+   var userId;
+   tool.post("../attSignInOut/getUserInfo",{_csrf:$("#_csrf").val()},function(data){
+	   userId=data.signUserName;
+   },false)
+   
+   //补签
+   function Retroactive(){
+           if( $(".statusIn:checked").length<=0){
+        	   tool.error("请选择补签记录");
+        	   return false;
+           }	   
+	       tool.post("/att/attSignInOut/getSignPathUserInfo",{_csrf:$("#_csrf").val()},function(data){
+	    	    $("#deptName").text(data.deptName)
+	    	    $("#signUserName").text(data.signUserName)
+	    	    $("#timeqi").text(data.time1)
+	       },false) 
+	       
+	        str=[];
+	    var signUserId=$("#userNameHi").val();
+	   $(".statusIn:checked").each(function(index,value){
+		   var ids= $(this).parent().parent().parent().attr("ids");
+		   var signDate=$(this).parent().parent().parent().attr("id");
+		       signDate=signDate.substr(0,10)
+		   var ams="",amx="",pms="",pmx="";
+		   //上午签到
+		    var amsigninstatus=$(this).parent().parent().find("span").attr("amsigninstatus");
+		   //上午签退
+		   var amsignoutstatus=$(this).parent().parent().find("span").attr("amsignoutstatus");
+		   
+		   //下午签到
+		   var pmsigninstatus=$(this).parent().parent().find("span").attr("pmsigninstatus");
+		   //下午签退
+		   var pmsignoutstatus=$(this).parent().parent().find("span").attr("pmsignoutstatus");
+		   if(amsigninstatus){
+			   ams=amsigninstatus
+		   }
+           if(amsignoutstatus){
+        	   amx=amsignoutstatus;
+		   }
+           if(pmsigninstatus){
+        	   pms=pmsigninstatus;
+           }
+           if(pmsignoutstatus){
+        	   pmx=pmsignoutstatus;
+           }
+          str.push({signDate:signDate,amsigninstatus:ams,amsignoutstatus:amx,pmsigninstatus:pms,pmsignoutstatus:pmx,signUserId:userId,id:ids})
+	   })
+	
+		 if(str.length>10){
+			 tool.error('最多只能批量补签10条')
+			 return false;
+		} 
+	    $("#buAtt").empty();
+	     var newStr="",statusA,statusB;
+	     var substrName="";
+	     for(var i=0;i<str.length;i++){
+	    	 
+	    	 if(str[i].amsigninstatus=="2"){
+	    		 statusA="迟到";
+	    		 statusB="amSignInPatchDesc";
+	    		 substrName="上午签到"
+	    	 }else if(str[i].amsigninstatus=="3"||str[i].amsigninstatus=="0"){
+	    		 statusA="无打卡";
+	    		 statusB="amSignInPatchDesc";
+	    		 substrName="上午签到"
+	    	 }
+	    	 if(str[i].amsignoutstatus=="2"){
+	    		 statusA="早退";
+	    		 statusB="amSignOutPatchDesc";
+	    		 substrName="上午签退";
+	    	 }else if(str[i].amsignoutstatus=="3"||str[i].amsignoutstatus=="0"){
+	    		 statusA="无打卡";
+	    		 statusB="amSignOutPatchDesc";
+	    		 substrName="上午签退";
+	    	 }
+	    	 if(str[i].pmsigninstatus=="2"){
+	    		 statusA="迟到";
+	    		 statusB="pmSignInPatchDesc";
+	    		 substrName="下午签到";
+	    	 }else if(str[i].pmsigninstatus=="3"||str[i].pmsigninstatus=="0"){
+	    		 statusA="无打卡";
+	    		 statusB="pmSignInPatchDesc";
+	    		 substrName="下午签到";
+	    	 }
+	    	 if(str[i].pmsignoutstatus=="2"){
+	    		 statusA="早退";
+	    		 statusB="pmSignOutPatchDesc";
+	    		 substrName="下午签退";
+	    	 }else if(str[i].pmsignoutstatus=="3"||str[i].pmsignoutstatus=="0"){
+	    		 statusA="无打卡";
+	    		 statusB="pmSignOutPatchDesc";
+	    		 substrName="下午签退";
+	    	 }
+	         str[i].name=statusB;
+			 newStr+=	'<tr>'+
+					      '<td>'+str[i].signDate+'</td>'+
+					      '<td>'+substrName+'</td>'+
+					      '<td>'+statusA+'</td>'+
+					      '<td onclick="editWhy(this)"><div style="width:100%;height:20px;"><textarea id="why" maxlength="200" name="attSignInOutList['+i+'].'+statusB+'"></textarea></div></td>'+
+		   				'</tr>'
+	     } 
+	     $("#buAtt").append(newStr);
+	   var index = layer.open({
+			title : "考勤补签",
+			type : 1,
+			maxmin : false,
+			content : $('#auth-div')
+		});
+	   
+		pform.render();
+		layer.full(index);
+
+   }
+   var attSignIndex="isAtt";
+   //补签说明
+   function editWhy(myself){
+	   $(myself).find("textarea").show();
+   }
+   function loadData(){
+	   
+   }
+   </script>
+</html>

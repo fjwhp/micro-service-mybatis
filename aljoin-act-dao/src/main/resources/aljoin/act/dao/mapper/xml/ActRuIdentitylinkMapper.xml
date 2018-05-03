@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.act.dao.mapper.ActRuIdentitylinkMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.act.dao.entity.ActRuIdentitylink">
+		<id column="ID_" property="id" />
+		<result column="REV_" property="rev" />
+		<result column="GROUP_ID_" property="groupId" />
+		<result column="TYPE_" property="type" />
+		<result column="USER_ID_" property="userId" />
+		<result column="TASK_ID_" property="taskId" />
+		<result column="PROC_INST_ID_" property="procInstId" />
+		<result column="PROC_DEF_ID_" property="procDefId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ID_ AS id, REV_ AS rev, GROUP_ID_ AS groupId, TYPE_ AS type, USER_ID_ AS userId, TASK_ID_ AS taskId, PROC_INST_ID_ AS procInstId, PROC_DEF_ID_ AS procDefId
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="String">
+    	DELETE FROM act_ru_identitylink WHERE ID_ = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="ActRuIdentitylink">
+    	INSERT INTO act_ru_identitylink(<include refid="Base_Column_List"></include>)
+		VALUES(#{id},  #{rev}, #{groupId}, #{type}, #{userId}, #{taskId}, #{procInstId}, #{procDefId})
+    </insert>
+
+</mapper>

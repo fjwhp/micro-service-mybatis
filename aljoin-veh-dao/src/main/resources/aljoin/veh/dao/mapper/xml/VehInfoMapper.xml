@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.veh.dao.mapper.VehInfoMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.veh.dao.entity.VehInfo">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="is_active" property="isActive" />
+		<result column="use_department_name" property="useDepartmentName" />
+		<result column="use_department_id" property="useDepartmentId" />
+		<result column="use_user_id" property="useUserId" />
+		<result column="driver_name" property="driverName" />
+		<result column="content" property="content" />
+		<result column="car_code" property="carCode" />
+		<result column="car_type" property="carType" />
+		<result column="car_ship" property="carShip" />
+		<result column="car_modle" property="carModle" />
+		<result column="car_status" property="carStatus" />
+		<result column="car_condition" property="carCondition" />
+		<result column="purchase_time" property="purchaseTime" />
+		<result column="card_code" property="cardCode" />
+		<result column="consume" property="consume" />
+		<result column="already_use_time" property="alreadyUseTime" />
+		<result column="already_run" property="alreadyRun" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name, is_active, use_department_name, use_department_id, use_user_id, driver_name, content, car_code, car_type, car_ship, car_modle, car_status, car_condition, purchase_time, card_code, consume, already_use_time, already_run
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM veh_info WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="VehInfo">
+    	INSERT INTO veh_info(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{isActive}, #{useDepartmentName}, #{useDepartmentId}, #{useUserId}, #{driverName}, #{content}, #{carCode}, #{carType}, #{carShip}, #{carModle}, #{carStatus}, #{carCondition}, #{purchaseTime}, #{cardCode}, #{consume}, #{alreadyUseTime}, #{alreadyRun})
+    </insert>
+
+</mapper>

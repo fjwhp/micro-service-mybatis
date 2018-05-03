@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>流水号管理</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css"
+	media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet"
+	href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all" />
+
+</head>
+<style> 
+/* 页签  */
+.title_tab {
+	font-size: 14px;
+	padding: 6px 6px 6px 10px;
+	color: #444a54;
+	border-bottom: solid 1px #9ec8ea;
+	font-weight: bold;
+}
+
+.title_tab i {
+	color: #54abf2;
+	font-size: 16px;
+}
+
+.font_icon {
+	margin-right: 6px;
+}
+/* 设置树的字体14px */
+.ztree li span {
+	font-size: 14px;
+}
+/* 手型 */
+.hand{cursor:pointer;}
+.nav_child{background: #fff;border: solid 1px #ccc;padding: 3px;}
+.nav_child li:hover {background:#ccc;}
+.l{float:left;}
+.r{float:right;}
+/* 左边树样式 */
+.tree_left{width:20%;float:left;border-right: 1px solid #c9d3d6;overflow:auto;height:600px;}
+/* 树右边样式 */
+.tree_right{width:78%;float:left;margin-left:10px;}
+/* 按钮浮动 */ 
+.layui-table { table-layout: fixed;}
+.layui-table td { white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
+/* tree超过一定的宽度出现省略号 */
+#treeDemo1 a{width:160px;height:20px;overflow:hidden;text-overflow : ellipsis }
+</style>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}"
+		id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main" style="margin: 10px;">
+		<blockquote class="layui-elem-quote" style="padding: 5px;">
+			<form class="layui-form operationhead" action="">
+				<span><@a code="" href="javascript:void(0)" class="layui-btn
+					layui-btn-small" id="" onclick="createDept_One()"
+					iclass="layui-icon" icon="&#xe608;" text="新增分类"/> </span> <span><@a
+					code="" href="javascript:void(0)" class="layui-btn layui-btn-small layui-btn-disabled graybtn"
+					id="" onclick="deletes()" iclass="layui-icon" icon="&#xe640;"
+					text="删除"/> </span> <span><@a code="220203"
+					href="javascript:void(0)" class="layui-btn layui-btn-small layui-btn-disabled graybtn" id=""
+					onclick="edit()" iclass="layui-icon" icon="&#xe642;" text="编辑"/> </span> <span><@a
+					code="" href="javascript:void(0)" class="layui-btn layui-btn-small layui-btn-disabled graybtn"
+					id="" onclick="detail()" iclass="layui-icon" icon="&#xe621;"
+					text="详情"/> </span>
+				<div style="float: right">
+					<div class="layui-input-inline">
+						<input type="text" name="searchKey" id="searchKey"
+							placeholder="请输入流水号名称" autocomplete="off" class="layui-input"
+							style="height: 30px; line-height: 30px;">
+					</div>
+					<span><@a code="" href="javascript:void(0)" class="layui-btn
+						layui-btn-small" id="" onclick="loadData_2()" iclass="layui-icon"
+						icon="&#xe615;" text="搜索"/></span> <span><@a code=""
+						href="javascript:void(0)" class="layui-btn layui-btn-small" id=""
+						onclick="openAddWin()" iclass="layui-icon" icon="&#xe608;"
+						text="新增"/></span>
+				</div>
+			</form>
+		</blockquote>
+		<!-- tree -->
+		<div class="tree_left">
+			<div>
+				<input id="citySel" class="tree_search" type="text" value=""
+					onkeyup="AutoMatch(this)" placeholder="搜索" />
+			</div>
+			<ul id="treeDemoo" class="ztree"></ul>
+		</div>
+		<div class="tree_minddle">
+			<i class="fa fa-arrows-h" aria-hidden="true" data-icon="fa-arrows-h"
+				onclick="aa()"></i>
+		</div>
+		<!-- 流水号分类新增一级窗口 -->
+		<div style="padding: 10px; display: none; z-index: 19940200;"
+			id="win-addone-object">
+			<form class="layui-form layui-form-pane" id="addone-object-form">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> 
+				<input type="hidden" name="dictType" value="1" />
+				<div class="layui-form-item">
+					<label class="layui-form-label">分类名称</label>
+					<div class="layui-input-block">
+						<input type="text" name="categoryName" id="categoryName"
+							maxlength="50" lay-verify="required|spactily" autocomplete="off"
+							placeholder="分类名称" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">排序</label>
+					<div class="layui-input-block">
+						<input type="text" name="categoryRank" maxlength="5"
+							onkeyup="value=value.replace(/[^\d]/g,'')" id="categoryRank"
+							lay-verify="required|number" autocomplete="off" placeholder="排序"
+							class="layui-input">
+					</div>
+				</div>
+				<div class="btn_fixed">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary"
+						onclick="layer.closeAll();loadData();"> <i
+						class="fa fa-backward "></i>返回
+					</a>
+					<div style="float: right;">
+						<button class="layui-btn" lay-submit=""
+							lay-filter="form-addone-submit">
+							<i class="fa fa-save"></i> 提交
+						</button>
+						<button type="reset" class="layui-btn layui-btn-primary">
+							<li class="fa fa-eraser"></li> 重置
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<!-- 常用字典分类编辑对象窗口 -->
+		<div style="padding: 10px; display: none; padding-right: 40px;"
+			id="win-update-object">
+			<form class="layui-form layui-form-pane" id="update-object-form">
+				<input type="hidden" name="${_csrf.parameterName}"
+					value="${_csrf.token}" /> <input type="hidden" name="id" id="id">
+				<div class="layui-form-item">
+					<label class="layui-form-label">分类名称</label>
+					<div class="layui-input-block">
+						<input type="text" name="categoryName" id="categoryName"
+							maxlength="50" lay-verify="required|spactily" autocomplete="off"
+							placeholder="分类名称" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">排序</label>
+					<div class="layui-input-block">
+						<input type="text" name="categoryRank" id="categoryRank"
+							maxlength="5" onkeyup="value=value.replace(/[^\d]/g,'')"
+							lay-verify="required|number" autocomplete="off" placeholder="排序"
+							class="layui-input">
+					</div>
+				</div>
+				<div class="btn_fixed">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary"
+						onclick="layer.closeAll();loadData();reset_treeNodeId();"> <i
+						class="fa fa-backward "></i> 返回
+					</a>
+					<div style="float: right;">
+						<button class="layui-btn" lay-submit=""
+							lay-filter="form-update-submit">
+							<i class="fa fa-save"></i> 提交
+						</button>
+						<button type="reset" class="layui-btn layui-btn-primary">
+							<li class="fa fa-eraser"></li> 重置
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<!-- 常用字典分类详情对象窗口 -->
+		<div style="padding: 10px; display: none; padding-right: 40px;"
+			id="win-view-object">
+			<form class="layui-form layui-form-pane" id="view-object-form">
+				<input type="hidden" name="${_csrf.parameterName}"
+					value="${_csrf.token}" />
+				<div class="layui-form-item">
+					<label class="layui-form-label">分类名称</label>
+					<div class="layui-input-block">
+						<input type="text" name="categoryName" id="categoryName"
+							lay-verify="required" autocomplete="off" placeholder="分类名称"
+							class="layui-input" disabled>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">排序</label>
+					<div class="layui-input-block">
+						<input type="text" name="categoryRank" id="categoryRank"
+							lay-verify="required|number" autocomplete="off" placeholder="排序"
+							class="layui-input" disabled>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">创建时间</label>
+					<div class="layui-input-block">
+						<input type="text" name="createTime" id="createTime"
+							autocomplete="off" class="layui-input" disabled>
+					</div>
+				</div>
+				<div class="layui-input-block" style="margin-top: 15px;">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary"
+						onclick="layer.closeAll();reset_treeNodeId();"> <i
+						class="fa fa-backward"></i> 返回
+					</a>
+				</div>
+			</form>
+		</div>
+		<!-- 流水号列表 -->
+		<div id="post_list" class="tree_right">
+			<div class="layui-field-box layui-form"
+				style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+				<table class="layui-table admin-table">
+					<thead>
+						<tr>
+							<th style="width: 150px;">流水号名称</th>
+							<th style="width: 150px;">流水号</th>
+							<th style="width: 100px;">流水号分类</th>
+							<th style="width: 60px;">状态</th>
+							<th style="width: 100px;">创建人</th>
+							<th style="width: 150px;">创建时间</th>
+							<th style="width: 132px;">操作</th>
+						</tr>
+					</thead>
+					<tbody id="paging-data">
+						<script id="paging-script" type="text/html">
+							{{each records value index}}
+								<tr>
+									<td title="{{value.serialNumName}}">{{value.serialNumName}}</td>
+                            		<td title="{{value.serialNum}}">{{value.serialNum}}</td>
+									<td title="{{value.categoryName}}">{{value.categoryName}}</td>
+									<td>{{value.statusName}}</td>
+									<td>{{value.fullName}}</td>
+									<td>{{value.createTime}}</td>
+									<td onmouseleave="click_li_out(this)" >
+										<@a code="" href="javascript:void(0)" class="table_btn table_link" id="show-edit" onclick="showEdit('{{value.id}}','{{value.status}}',this)" text="编辑"/>
+										<@a code="" href="javascript:void(0)" class="table_btn table_link" id="show-delete" onclick="showDelete('{{value.id}}')" text="删除"/>
+										<ul class="r">  
+            								<li class="parent"><span onmouseover="click_li(this)"  class="hand table_btn more  table_link">更多<img src="../../web/images/downgray.png" class="moreup" onclick="changepic()"></span>
+												<ul class="nav_child" onmouseleave="click_liout(this)"  style="display: none;position:absolute; z-index:200;right:0;">	
+													<li><@a code="" href="javascript:void(0)" class="table_btn  table_link" id="show-view" onclick="showView('{{value.id}}')" text="详情"/></li> 
+													<li><@a code="" href="javascript:void(0)" class="table_btn  table_link" id="show-updateCurrentValue" onclick="showEditCurrentValue('{{value.id}}','{{value.status}}',this)" text="修改当前值"/></li> 
+                                					<li><@a code="" href="javascript:void(0)" class="table_btn  table_link" id="show-update" onclick="showUpdateStatus('{{value.id}}','{{value.status}}')" text="更改状态"/></li> 
+												</ul>
+           									</li>  
+        								</ul>
+									</td>
+								</tr>
+							{{/each}}
+						</script>
+					</tbody>
+				</table>
+			</div>
+			<div class="admin-table-numpage" >
+				<div id="paging-footer" class="page" ></div>
+			</div>
+		</div>
+		<!-- 流水号新增对象窗口 -->
+		<div
+			style="padding: 10px; display: none; padding-right: 10px; z-index: 19940200;"
+			id="win-serial-add-object">
+			<form class="layui-form layui-form-pane" id="add-serial-object-form">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> 
+				<input type="hidden" name="categoryId" id="categoryId" value="" />
+				<div class="layui-form-item">
+					<label class="layui-form-label">流水号名称</label>
+					<div class="layui-input-block">
+						<input type="text" name="serialNumName" id="serialNumName" lay-verify="required|special" maxlength="50" autocomplete="off" placeholder="流水号名称" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">前缀</label>
+					<div class="layui-input-block">
+						<input type="text" name="prefix" id="prefix" maxlength="50" autocomplete="off" placeholder="前缀" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">年号规则</label>
+					<div class="layui-input-block time">
+						<input type="radio" name="reignTitleRule" value="1" title="无"  checked  lay-filter="filter"> 
+						<input  type="radio" name="reignTitleRule" value="2" title="年" lay-filter="filter">
+						<input  type="radio" name="reignTitleRule" value="3" title="年月" lay-filter="filter">
+						<input  type="radio" name="reignTitleRule" value="4" title="年月日" lay-filter="filter">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">符号</label>
+					<div class="layui-input-block">
+						<input type="text" name="sign" id="sign" maxlength="20" autocomplete="off" placeholder="符号" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+	    				<label class="layui-form-label">起始值</label>
+    					<div class="layui-input-inline" style="width: 100px;">
+     				 		<input type="text" name="startValue" id="startValue" lay-verify="required|number"  onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="10" autocomplete="off" placeholder="起始值" class="layui-input">
+    					</div>
+	  				</div>
+	  				<div class="layui-inline">
+	    				<label class="layui-form-label">位数</label>
+    					<div class="layui-input-inline" style="width: 100px;">
+     				 		<input type="text" name="digit" id="digit" lay-verify="required|number"  onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="2" autocomplete="off" placeholder="位数" class="layui-input">
+    					</div>
+	  				</div>
+	  				<input type="checkbox" name="isFixLength" id="isFixLength" title="固定长度" value="1" lay-skin="primary" data-checked=""  lay-filter="addfilterfixlength">
+  				</div>
+  				<div class="layui-form-item">
+					<label class="layui-form-label">后缀</label>
+					<div class="layui-input-block">
+						<input type="text" name="postfix" id="postfix" maxlength="50" autocomplete="off" placeholder="后缀" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">重置规则</label>
+					<div class="layui-input-block">
+						<input type="radio" name="resettingRule" value="1" title="不重置"  checked> 
+						<input  type="radio" name="resettingRule" value="2" title="按年重置">
+						<input  type="radio" name="resettingRule" value="3" title="按月重置">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label textarea_new">流水号预览</label>
+					<div class="layui-input-block">
+						<textarea type="text" id="numberPreview" name="" autocomplete="off" class="layui-textarea" readonly="readonly" style="resize:none;"></textarea>
+					</div>
+				</div>
+				<div class="btn_fixed">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+					<div style="float: right;">
+						<button class="layui-btn" lay-submit="" lay-filter="form-serial-add-submit">
+							<i class="fa fa-save"></i> 保存
+						</button>
+						<button type="reset" class="layui-btn layui-btn-primary">
+							<li class="fa fa-eraser"></li> 重置
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<!-- 流水号修改当前值窗口 -->
+		<div style="padding: 10px; display: none; padding-right: 10px;"
+			id="win-serial-updateCurrentValue-object">
+			<form class="layui-form layui-form-pane" id="updateCurrentValue-serial-object-form">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> 
+				<input type="hidden" name="categoryId" id="categoryId" value="" />
+				<input type="hidden" name="id" id="id" value="" />
+				<div class="layui-form-item">
+					<label class="layui-form-label">流水号名称</label>
+					<div class="layui-input-block">
+						<input type="text" name="serialNumName" id="serialNumName" lay-verify="required|special" maxlength="50" autocomplete="off" placeholder="流水号名称" class="layui-input" readonly="readonly">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">前缀</label>
+					<div class="layui-input-block">
+						<input type="text" name="prefix" id="prefix" maxlength="50" autocomplete="off" placeholder="前缀" class="layui-input" readonly="readonly">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">年号规则</label>
+					<div class="layui-input-block time">
+						<input  type="radio" name="reignTitleRule"  id="reignTitleRuleId1" value="1" title="无" disabled="disabled"> 
+						<input  type="radio" name="reignTitleRule" id="reignTitleRuleId2" value="2" title="年" disabled="disabled">
+						<input  type="radio" name="reignTitleRule" id="reignTitleRuleId3" value="3" title="年月" disabled="disabled">
+						<input  type="radio" name="reignTitleRule" id="reignTitleRuleId4" value="4" title="年月日" disabled="disabled">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">符号</label>
+					<div class="layui-input-block">
+						<input type="text" name="sign" id="sign" maxlength="20" autocomplete="off" placeholder="符号" class="layui-input" readonly="readonly">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+	    				<label class="layui-form-label">起始值</label>
+    					<div class="layui-input-inline" style="width: 100px;">
+     				 		<input type="text" name="startValue" id="startValue" lay-verify="required|number"  onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="10" autocomplete="off" placeholder="起始值" class="layui-input" readonly="readonly">
+    					</div>
+	  				</div>
+	  				<div class="layui-inline">
+	    				<label class="layui-form-label">位数</label>
+    					<div class="layui-input-inline" style="width: 100px;">
+     				 		<input type="text" name="digit" id="digit" lay-verify="required|number"  onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="2" autocomplete="off" placeholder="位数" class="layui-input" readonly="readonly">
+    					</div>
+	  				</div>
+	  				<input type="checkbox" name="isFixLength" id="isFixLength" title="固定长度" value="1" lay-skin="primary" disabled="disabled">
+  				</div>
+  				<div class="layui-form-item">
+					<label class="layui-form-label">后缀</label>
+					<div class="layui-input-block">
+						<input type="text" name="postfix" id="postfix" maxlength="50" autocomplete="off" placeholder="后缀" class="layui-input" readonly="readonly">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">重置规则</label>
+					<div class="layui-input-block">
+						<input type="radio" name="resettingRule" id="resettingRuleId1" value="1" title="不重置"  disabled="disabled" checked> 
+						<input  type="radio" name="resettingRule" id="resettingRuleId2" value="2" title="按年重置" disabled="disabled">
+						<input  type="radio" name="resettingRule" id="resettingRuleId3" value="3" title="按月重置" disabled="disabled">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label textarea_new">当前流水号</label>
+					<div class="layui-input-block">
+						<textarea type="text" id="serialNum" name="serialNum" autocomplete="off" class="layui-textarea"  style="resize:none;" readonly="readonly"></textarea>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">修改当前值</label>
+					<div class="layui-input-block">
+						<input type="text" name="currentValue" id="currentValue" autocomplete="off" onkeyup="value=value.replace(/[^\d]/g,'')"  class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">关联流程</label>
+					<div class="layui-input-block">
+						<input type="text" name="processNames" id="serialProcessNames" autocomplete="off" class="layui-input" readonly="readonly">
+					</div>
+				</div>
+				<div class="btn_fixed">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+					<div style="float: right;">
+						<button class="layui-btn" lay-submit="" lay-filter="form-serial-updateCurrentValue-submit">
+							<i class="fa fa-save"></i> 保存
+						</button>
+						<button type="reset" class="layui-btn layui-btn-primary">
+							<li class="fa fa-eraser"></li> 重置
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<!-- 流水号内容修改窗口 -->
+		<div style="padding: 10px; display: none; padding-right: 10px;"
+			id="win-serial-update-object">
+			<form class="layui-form layui-form-pane" id="update-serial-object-form">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> 
+				<input type="hidden" name="categoryId" id="categoryId" value="" />
+				<input type="hidden" name="currentValue" id="currentValue" value="" />
+				<input type="hidden" name="id" id="id" value="" />
+				<div class="layui-form-item">
+					<label class="layui-form-label">流水号名称</label>
+					<div class="layui-input-block">
+						<input type="text" name="serialNumName" id="serialNumName" lay-verify="required|special" maxlength="50" autocomplete="off" placeholder="流水号名称" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">前缀</label>
+					<div class="layui-input-block">
+						<input type="text" name="prefix" id="prefix" maxlength="50" autocomplete="off" placeholder="前缀" class="layui-input" >
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">年号规则</label>
+					<div class="layui-input-block time">
+						<input  type="radio" name="reignTitleRule"  id="reignTitleRuleId1" value="1" title="无" lay-filter="filter"> 
+						<input  type="radio" name="reignTitleRule" id="reignTitleRuleId2" value="2" title="年" lay-filter="filter">
+						<input  type="radio" name="reignTitleRule" id="reignTitleRuleId3" value="3" title="年月" lay-filter="filter">
+						<input  type="radio" name="reignTitleRule" id="reignTitleRuleId4" value="4" title="年月日" lay-filter="filter">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">符号</label>
+					<div class="layui-input-block">
+						<input type="text" name="sign" id="sign" maxlength="20" autocomplete="off" placeholder="符号" class="layui-input" >
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+	    				<label class="layui-form-label">起始值</label>
+    					<div class="layui-input-inline" style="width: 100px;">
+     				 		<input type="text" name="startValue" id="startValue" lay-verify="required|number"  onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="10" autocomplete="off" placeholder="起始值" class="layui-input" >
+    					</div>
+	  				</div>
+	  				<div class="layui-inline">
+	    				<label class="layui-form-label">位数</label>
+    					<div class="layui-input-inline" style="width: 100px;">
+     				 		<input type="text" name="digit" id="digit" lay-verify="required|number"  onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="2" autocomplete="off" placeholder="位数" class="layui-input" >
+    					</div>
+	  				</div>
+	  				<input type="checkbox" name="isFixLength" id="isFixLength" title="固定长度" value="1" lay-skin="primary" lay-filter="filterficlength">
+  				</div>
+  				<div class="layui-form-item">
+					<label class="layui-form-label">后缀</label>
+					<div class="layui-input-block">
+						<input type="text" name="postfix" id="postfix" maxlength="50" autocomplete="off" placeholder="后缀" class="layui-input" >
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">重置规则</label>
+					<div class="layui-input-block">
+						<input type="radio" name="resettingRule" id="resettingRuleId1" value="1" title="不重置"  checked> 
+						<input  type="radio" name="resettingRule" id="resettingRuleId2" value="2" title="按年重置">
+						<input  type="radio" name="resettingRule" id="resettingRuleId3" value="3" title="按月重置">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label textarea_new">当前流水号</label>
+					<div class="layui-input-block">
+						<textarea type="text" id="serialNum" name="serialNum" autocomplete="off" class="layui-textarea"  style="resize:none;" readonly="readonly"></textarea>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">关联流程</label>
+					<div class="layui-input-block">
+						<input type="text" name="processNames" id="serialProcessNames" autocomplete="off" class="layui-input" readonly="readonly">
+					</div>
+				</div>
+				<div class="btn_fixed">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+					<div style="float: right;">
+						<button class="layui-btn" lay-submit="" lay-filter="form-serial-update-submit">
+							<i class="fa fa-save"></i> 保存
+						</button>
+						<button type="reset" class="layui-btn layui-btn-primary">
+							<li class="fa fa-eraser"></li> 重置
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<!-- 流水号详情窗口 -->
+		<div style="padding: 10px; display: none; padding-right: 10px;"
+			id="win-serial-view-object">
+			<form class="layui-form layui-form-pane" id="view-serial-dict-form">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> 
+				<input type="hidden" name="categoryId" id="categoryId" value="" />
+				<div class="layui-form-item">
+					<label class="layui-form-label">流水号名称</label>
+					<div class="layui-input-block">
+						<input type="text" name="serialNumName" id="serialNumName" lay-verify="required|special" maxlength="50" autocomplete="off" placeholder="流水号名称" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">前缀</label>
+					<div class="layui-input-block">
+						<input type="text" name="prefix" id="prefix" maxlength="50" lay-verify="required" autocomplete="off" placeholder="前缀" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">年号规则</label>
+					<div class="layui-input-block">
+						<input  type="radio" name="reignTitleRule"  id="reignTitleRuleId1" value="1" title="无"> 
+						<input  type="radio" name="reignTitleRule" id="reignTitleRuleId2" value="2" title="年">
+						<input  type="radio" name="reignTitleRule" id="reignTitleRuleId3" value="3" title="年月">
+						<input  type="radio" name="reignTitleRule" id="reignTitleRuleId4" value="4" title="年月日">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">符号</label>
+					<div class="layui-input-block">
+						<input type="text" name="sign" id="sign" maxlength="20" autocomplete="off" placeholder="符号" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-inline">
+	    				<label class="layui-form-label">起始值</label>
+    					<div class="layui-input-inline" style="width: 100px;">
+     				 		<input type="text" name="startValue" id="startValue" lay-verify="required|number"  onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="10" autocomplete="off" placeholder="起始值" class="layui-input">
+    					</div>
+	  				</div>
+	  				<div class="layui-inline">
+	    				<label class="layui-form-label">位数</label>
+    					<div class="layui-input-inline" style="width: 100px;">
+     				 		<input type="text" name="digit" id="digit" lay-verify="required|number"  onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="2" autocomplete="off" placeholder="位数" class="layui-input">
+    					</div>
+	  				</div>
+	  				<input type="checkbox" name="isFixLength" id="isFixLength" title="固定长度" value="1" lay-skin="primary">
+  				</div>
+  				<div class="layui-form-item">
+					<label class="layui-form-label">后缀</label>
+					<div class="layui-input-block">
+						<input type="text" name="postfix" id="postfix" maxlength="50" autocomplete="off" placeholder="后缀" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">重置规则</label>
+					<div class="layui-input-block">
+						<input type="radio" name="resettingRule" id="resettingRuleId1" value="1" title="不重置"  checked> 
+						<input  type="radio" name="resettingRule" id="resettingRuleId2" value="2" title="按年重置">
+						<input  type="radio" name="resettingRule" id="resettingRuleId3" value="3" title="按月重置">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label textarea_new">当前流水号</label>
+					<div class="layui-input-block">
+						<textarea type="text" id="serialNum" name="serialNum" autocomplete="off" class="layui-textarea" readonly="readonly" style="resize:none;"></textarea>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">关联流程</label>
+					<div class="layui-input-block">
+						<input type="text" name="processNames" id="serialProcessNames" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="btn_fixed">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary"
+						onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+				</div>
+			</form>
+		</div>
+		<script type="text/javascript" src="../../web/plugins/layui/layui.js"></script>
+		<script type="text/javascript"
+			src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+		<script type="text/javascript" src="../../web/js/template-web.js"></script>
+		<script type="text/javascript" src="../../web/js/jquery.js"></script>
+		<script type="text/javascript"
+			src="../../web/js/jquery.ztree.all.min.js"></script>
+		<script type="text/javascript"
+			src="../../web/js/jquery.ztree.exhide-3.5.min.js"></script>
+		<script type="text/javascript" src="../../web/js/tool.js"></script>
+		<script>
+			var pform;
+			//添加事件
+			layui.use('form', function() {
+				pform = layui.form();
+				pform.on('select(isActive)', function(data) {
+					//alert(data.value);
+					//form.render('checkbox');
+				});
+				//自定义表单校验
+				pform.verify({
+					//限制特殊字符
+					spactily : function(value) {
+						if (new RegExp("[':;' \"\",\\[\\]——|‘；：”“']")
+								.test(value)) {
+							return '不能输入;\'\"'
+						}
+					}
+				});
+				//监听分类修改提交
+				pform.on('submit(form-update-submit)', function(data) {
+					tool.post("../sysDictCategory/update", $(
+							"#update-object-form").serialize(), postCallBack,
+							false);
+					return false;
+				});
+				//监听分类新增提交
+				pform.on('submit(form-addone-submit)', function(data) {
+					tool.post("../sysDictCategory/add",
+							$("#addone-object-form").serialize(), postCallBack,
+							false);
+					return false;
+				});
+				//监听流水号内容新增提交
+				pform.on('submit(form-serial-add-submit)', function(data) {
+					tool.post("../sysSerialNumber/add", $(
+							"#add-serial-object-form").serialize(),
+							postCallBack1, false);
+					return false;
+				});
+				//监听流水号当前值修改提交
+				pform.on('submit(form-serial-updateCurrentValue-submit)', function(data) {
+					tool.post("../sysSerialNumber/updateCurrentValue", $(
+							"#updateCurrentValue-serial-object-form").serialize(),
+							postCallBack_update, false);
+					return false;
+				});
+				//监听流水号内容修改提交
+				pform.on('submit(form-serial-update-submit)', function(data) {
+					tool.post("../sysSerialNumber/update", $(
+							"#update-serial-object-form").serialize(),
+							postCallBack_update, false);  
+					console.log( $("#update-serial-object-form").serialize())
+
+					return false;
+				});
+
+				//初始化出发数据加载
+				loadData();
+				loadData_2();
+			});
+			
+			//树回调
+			function postCallBack(retMsg) {
+				if (retMsg.code == 0) {
+					reset_treeNodeId();
+					layer.closeAll();
+					tool.success(retMsg.message);
+					loadData();
+				} else {
+					tool.error(retMsg.message);
+				}
+			}
+			//加载数据
+			function loadData() {
+				var param = new Object();
+				param._csrf = $("#_csrf").val();
+				param.dictType = "1";
+				tool.post("../sysDictCategory/getCategoryList", param,
+						postCallBack_newtree);
+			}
+			var treeObj;
+			function postCallBack_newtree(data) {
+				var setting = {
+					view : {
+						addDiyDom : addDiyDom
+					},
+					data : {
+						simpleData : {
+							enable : true
+						}
+					},
+					callback : {
+						beforeClick : beforeClick
+					}
+				};
+				var obj = [];
+				for (var i = 0; i < data.length; i++) {
+					obj.push({
+						id : data[i].id,
+						pId : data[i].parentId,
+						name : data[i].categoryName,
+						obj : {
+							categoryRank : data[i].categoryRank,
+							categoryLevel : data[i].categoryLevel,
+							isActive : data[i].isActive,
+							parentId : data[i].parentId
+						}
+					})
+				}
+
+				treeObj = $.fn.zTree.init($("#treeDemoo"), setting, obj);
+				var nodes = treeObj.getNodes();//获取zTree的全部节点数据，返回值Array(JSON)
+				treeObj.expandNode(nodes[0], true);//展开/折叠指定的节点 
+			}
+
+			var hiddenNodes = []; //用于存储被隐藏的结点
+			var targetParent = [];
+			function getParentByChild(node) {
+				if (node.parentTId != null) {
+					targetParent.push(node.getParentNode());
+					getParentByChild(node.getParentNode());
+				}
+			};
+
+			//过滤ztree显示数据
+			function AutoMatch() {
+				//显示上次搜索后背隐藏的结点
+				treeObj.showNodes(hiddenNodes);
+				//查找不符合条件的叶子节点
+				targetParent = [];
+				function filterFunc(node) {
+					var _keywords = $("#citySel").val();
+					if (node.name.indexOf(_keywords) != -1) {
+						getParentByChild(node)
+						return false;
+					}
+					return true;
+				}
+				;
+				//获取不符合条件的叶子结点
+				hiddenNodes = treeObj.getNodesByFilter(filterFunc);
+				//隐藏不符合条件的叶子结点
+				treeObj.hideNodes(hiddenNodes);
+				//显示满足条件的根节点
+				treeObj.showNodes(targetParent);
+				treeObj.expandAll(true);
+			};
+			//获取数节点加载岗位列表
+			var treeNodeId;
+			var treeNodeLevel;
+			function beforeClick(hh, treeNode) {
+				treeNodeId = treeNode.id;
+				treeNodeLevel = treeNode.obj.categoryLevel + 1;
+				$("#categoryId").val(treeNodeId);
+				loadData_1(treeNode.id);
+				//判断是否获取的是子节点，是的话编辑和删除按钮显示蓝色
+				if(treeNodeId!="" && treeNodeId!=undefined && treeNodeId!=null){ 
+					$(".operationhead").find(".graybtn").removeClass("layui-btn-disabled") 
+				}
+				else{ 
+					$(".operationhead").find(".graybtn").addClass("layui-btn-disabled") 
+				}
+
+			}
+			 
+			//树的功能键
+			function addDiyDom(treeId, treeNode) {
+				var spaceWidth = 5;
+				var switchObj = $("#" + treeNode.tId + "_switch"),
+				    icoObj = $("#"+ treeNode.tId + "_ico");
+				switchObj.remove();
+				icoObj.before(switchObj);
+
+				if (treeNode.level > 1) {
+					var spaceStr = "<span style='display: inline-block;width:"
+							+ (spaceWidth * treeNode.level) + "px'></span>";
+					switchObj.before(spaceStr);
+				}
+				var spantxt = $("#" + treeNode.tId + "_span").html();
+				if (spantxt.length > 17) {
+					spantxt = spantxt.substring(0, 14) + "...";
+					$("#" + treeNode.tId + "_span").html(spantxt);
+				}
+			}
+			//编辑
+			function edit() {
+				if (treeNodeId == undefined) {
+					tool.error("请点击要编辑的分类");
+					return false;
+				}
+				if (treeNodeId == 0) {
+					return false;
+				}
+				$("#update-object-form").find("#id").val(treeNodeId);
+				var pram = tool.getById("../sysDictCategory/getById",
+						treeNodeId);
+				if (pram != null) {
+					$("#update-object-form").find("#categoryName").val(
+							pram.categoryName);
+					$("#update-object-form").find("#categoryRank").val(
+							pram.categoryRank);
+				}
+				var index = layer.open({
+					title : '编辑',
+					maxmin : false,
+					type : 1,
+					content : $('#win-update-object')
+				});
+				pform.render();
+				layer.full(index);
+			}
+			//详情
+			function detail() {
+				if (treeNodeId == undefined) {
+					tool.error("请点击要查看的分类");
+					return false;
+				}
+				if (treeNodeId == 0) {
+					return false;
+				}
+				var pram = tool.getById("../sysDictCategory/getById",
+						treeNodeId);
+				$("#view-object-form").find("#categoryName").val(
+						pram.categoryName)
+				$("#view-object-form").find("#categoryRank").val(
+						pram.categoryRank)
+				$("#view-object-form").find("#createTime").val(pram.createTime);
+				var index = layer.open({
+					title : '详情',
+					maxmin : false,
+					type : 1,
+					content : $('#win-view-object')
+				});
+				layer.full(index);
+			}
+			//删除
+			function deletes() {
+
+				if (treeNodeId == undefined) {
+					tool.error("请点击要删除的分类");
+					return false;
+				}
+				if (treeNodeId == 0) {
+					return false;
+				}
+				layer.confirm('确定删除 ?', {
+					icon : 3,
+					title : '提示'
+				}, function() {
+					var obj;
+					var param = new Object();
+					param._csrf = $("#_csrf").val();
+					param.id = treeNodeId;
+					param.dictType = 1;
+					tool.post("../sysDictCategory/delete", param, postCallBack,
+							false);
+				})
+			}
+			function reset_treeNodeId() {
+				treeNodeId = undefined;
+				treeObj.cancelSelectedNode();
+				$(".operationhead").find(".graybtn").addClass("layui-btn-disabled") 
+			}
+			//新增一级部门
+			function createDept_One() {
+				$("#categoryName").val("");
+				$("#categoryRank").val("255");
+				var index = layer.open({
+					title : '新增一级分类',
+					maxmin : false,
+					type : 1,
+					content : $('#win-addone-object')
+				});
+				pform.render();
+				layer.full(index);
+			}
+			//更新对象回调
+			function postCallBack_update(retMsg) {
+				if (retMsg.code == 0) {
+					layer.alert(retMsg.message, {
+						title : "操作提示",
+						icon : 1,
+						closeBtn : 0
+					}, function(index) {
+						var laypageBtn = $(pageBtn).parents(".admin-table")
+								.parent().next().find(".layui-laypage-btn");
+						if (laypageBtn.length > 0) {
+							laypageBtn.trigger("click");
+						} else {
+							if (treeNodeId == undefined) {
+								loadData_2();
+							} else {
+								loadData_1(treeNodeId);
+							}
+						}
+						$("#paging3-data").empty();
+						$("button[type='reset']").trigger("click");
+						layer.closeAll();
+					});
+				} else {
+					tool.error(retMsg.message);
+				}
+			}
+			//对象回调
+			function postCallBack1(retMsg) {
+				if (retMsg.code == 0) {
+					layer.alert(retMsg.message, {
+						title : "操作提示",
+						icon : 1,
+						closeBtn : 0
+					}, function(index) {
+						layer.closeAll();
+						if (treeNodeId == undefined) {
+							loadData_2();
+						} else {
+							loadData_1(treeNodeId);
+						}
+					});
+				} else {
+					tool.error(retMsg.message);
+				}
+			}
+			//打开新增对象窗口
+			function openAddWin() {  
+				 // prefixval="", timedata="",startval="",signval="",isFixLengthval="",postfixval="";
+				bulidnumber() 
+				/* $("#win-serial-add-object").find("#dictName").val("");
+				$("#win-serial-add-object").find("#dictRank").val("255");
+				$("#win-serial-add-object").find("#dictContent").val("");
+				$("#win-serial-add-object").find("#dictContentRank").val("255"); */
+				if (treeNodeId == undefined) {
+					tool.error("请先选择分类");
+					return false;
+				}
+				var index = layer.open({
+					title : '新增流水号',
+					maxmin : false,
+					type : 1,
+					content : $('#win-serial-add-object'),
+					end: function(){  //end 是页面销毁后触发
+                        document.getElementById("add-serial-object-form").reset() //重置为它们的默认值
+      //                   $("#add-serial-object-form").find(".layui-form-item input[ type='text' ] ").val("")
+						// $("#add-serial-object-form").find(".layui-form-item textarea").val("") 
+                    }
+				}); 
+				layer.full(index);
+			}
+			//编辑当前值
+			var pageBtn;
+			function showEditCurrentValue(serialNumId,status,myself) {
+				if(status == 1) {
+					tool.error("流水号未停用");
+					return;
+				}
+				pageBtn = myself;
+				var object = getById(serialNumId);
+				$("#updateCurrentValue-serial-object-form").find("#id").val(
+						serialNumId);
+				$("#updateCurrentValue-serial-object-form").find("#serialNumName").val(
+						object.serialNumName);
+				$("#updateCurrentValue-serial-object-form").find("#prefix").val(
+						object.prefix);
+				//$("#updateCurrentValue-serial-object-form").find('input[type="radio"]').removeAttr('checked');
+				if(object.reignTitleRule == 1) {
+					$("#updateCurrentValue-serial-object-form").find("#reignTitleRuleId1").prop('checked', 'checked');
+				}
+				if(object.reignTitleRule == 2) {
+					$("#updateCurrentValue-serial-object-form").find("#reignTitleRuleId2").prop('checked', 'checked');
+				}
+				if(object.reignTitleRule == 3) {
+					$("#updateCurrentValue-serial-object-form").find("#reignTitleRuleId3").prop('checked', 'checked');
+				}
+				if(object.reignTitleRule == 4) {
+					$("#updateCurrentValue-serial-object-form").find("#reignTitleRuleId4").prop('checked', 'checked');
+				}
+				$("#updateCurrentValue-serial-object-form").find("#sign").val(object.sign);
+				$("#updateCurrentValue-serial-object-form").find("#startValue").val(object.startValue);
+				$("#updateCurrentValue-serial-object-form").find("#digit").val(object.digit);
+				$("#updateCurrentValue-serial-object-form").find("#postfix").val(object.postfix);
+				$("#updateCurrentValue-serial-object-form").find("#isFixLength").prop("checked",false);
+				$("#updateCurrentValue-serial-object-form").find("#isFixLength").attr("schecked",object.isFixLength);
+				if(object.isFixLength == 1) {
+					$("#updateCurrentValue-serial-object-form").find("#isFixLength").prop("checked",true);
+				}
+				if(object.resettingRule == 1) {
+					$("#updateCurrentValue-serial-object-form").find("#resettingRuleId1").prop('checked', 'checked');
+				}
+				if(object.resettingRule == 2) {
+					$("#updateCurrentValue-serial-object-form").find("#resettingRuleId2").prop('checked', 'checked');
+				}
+				
+				if(object.resettingRule == 3) {
+					$("#updateCurrentValue-serial-object-form").find("#resettingRuleId3").prop('checked', 'checked');
+				}
+				$("#updateCurrentValue-serial-object-form").find("#serialNum").val(object.serialNum);
+				$("#updateCurrentValue-serial-object-form").find("#serialProcessNames").val(object.processNames);
+				$("#updateCurrentValue-serial-object-form").find("#currentValue").val(object.currentValue);
+				
+
+				var index = layer.open({
+					title : '编辑当前值',
+					maxmin : false,
+					type : 1,
+					content : $('#win-serial-updateCurrentValue-object')
+				});
+				pform.render();
+				layer.full(index);
+				//实时修改当前值
+				ueallval()//年号规则的对应属性
+				var prefixval=$("#updateCurrentValue-serial-object-form").find("#prefix").val();//前缀	
+				var timedata=$("#updateCurrentValue-serial-object-form .time").find("input:checked").attr("data-val")//年号规则
+				var signval=$("#updateCurrentValue-serial-object-form").find("#sign").val();//符号
+				// var currentValueval=$("#updateCurrentValue-serial-object-form").find("#currentValue").val();//当前值	
+				var digitval="";//位数 
+			    var isFixLengthval="";//固定长度
+				var postfixval=$("#updateCurrentValue-serial-object-form").find("#postfix").val();//后缀
+				var sde="";
+				function padding1(num, length) {
+		        	for(var len = (num + "").length; len < length; len = num.length) {
+				            num = "0" + num;            
+				        }
+				    sde=num
+				} 
+				$("#updateCurrentValue-serial-object-form #currentValue").keyup(function(){  
+					digitval=$("#updateCurrentValue-serial-object-form").find("#digit").val()
+					console.log(digitval)
+					var thisval=$(this).val();
+					if(thisval.length>digitval){
+						layer.msg('起始值不能超出位数');
+						$(this).val(thisval.substring(0,digitval))
+					} 
+
+					if($("#updateCurrentValue-serial-object-form").find("#isFixLength").attr("schecked")=="1"){
+						padding1(thisval, digitval)
+						$("#updateCurrentValue-serial-object-form").find("#isFixLength").attr("data-val",sde)
+
+					}
+					else{						
+						$("#updateCurrentValue-serial-object-form").find("#isFixLength").attr("data-val",thisval)
+					}
+			         isFixLengthval=$("#updateCurrentValue-serial-object-form").find("#isFixLength").attr("data-val")//固定长度
+
+					$("#updateCurrentValue-serial-object-form #serialNum").val(prefixval+timedata+signval+isFixLengthval+postfixval)
+
+
+				})
+			}
+			 
+			var pageBtn;
+			function showEdit(serialNumId,status,myself) {
+				if(status == 1) {
+					tool.error("流水号未停用");
+					return;
+				}
+				pageBtn = myself;
+				var object = getById(serialNumId);
+				$("#update-serial-object-form").find("#id").val(
+						serialNumId);
+				$("#update-serial-object-form").find("#serialNumName").val(
+						object.serialNumName);
+				$("#update-serial-object-form").find("#prefix").val(
+						object.prefix);
+				//$("#update-serial-object-form").find('input[type="radio"]').removeAttr('checked');
+				//debugger;	 
+				if(object.reignTitleRule == 1) {
+					$("#update-serial-object-form").find("#reignTitleRuleId1").prop('checked', 'checked');
+				}
+				if(object.reignTitleRule == 2) {
+					$("#update-serial-object-form").find("#reignTitleRuleId2").prop('checked', 'checked'); 
+				}
+				if(object.reignTitleRule == 3) {
+					$("#update-serial-object-form").find("#reignTitleRuleId3").prop('checked', 'checked'); 
+				}
+				if(object.reignTitleRule == 4) {
+					$("#update-serial-object-form").find("#reignTitleRuleId4").prop('checked', 'checked'); 
+				}
+				$("#update-serial-object-form").find("#sign").val(object.sign);
+				$("#update-serial-object-form").find("#startValue").val(object.startValue);
+				$("#update-serial-object-form").find("#digit").val(object.digit);
+				$("#update-serial-object-form").find("#postfix").val(object.postfix);
+				$("#update-serial-object-form").find("#isFixLength").prop("checked",false);
+				$("#update-serial-object-form").find("#isFixLength").prop('checked', '');					
+			    $("#update-serial-object-form").find("#isFixLength").attr("data-val","")
+			    $("#update-serial-object-form").find("#serialNum").val(object.serialNum);
+				$("#update-serial-object-form").find("#serialProcessNames").val(object.processNames);
+				$("#update-serial-object-form").find("#currentValue").val(object.currentValue);
+				var currentValueval=$("#update-serial-object-form").find("#currentValue").val();//当前值	
+				var digitval=$("#update-serial-object-form").find("#digit").val();//位数
+				$("#update-serial-object-form").find("#isFixLength").attr("data-val",currentValueval);//如果没有勾选固定长度，不添加前面的0（如：99）
+				if(object.isFixLength == 1) {
+					$("#update-serial-object-form").find("#isFixLength").prop("checked",true);
+					$("#update-serial-object-form").find("#isFixLength").prop('checked', 'checked');					
+					var sde="";//固定长度勾选时，把位数添加上去（如：000099）
+					padding1(currentValueval,digitval);
+					$("#update-serial-object-form").find("#isFixLength").attr("data-val",sde)
+				}
+				if(object.resettingRule == 1) {
+					$("#update-serial-object-form").find("#resettingRuleId1").prop('checked', 'checked');
+				}
+				if(object.resettingRule == 2) {
+					$("#update-serial-object-form").find("#resettingRuleId2").prop('checked', 'checked');
+				}
+				
+				if(object.resettingRule == 3) {
+					$("#update-serial-object-form").find("#resettingRuleId3").prop('checked', 'checked');
+				}
+				
+					////////////////////						
+			    ueallval()//年号规则默认值
+				
+				var prefixval=$("#update-serial-object-form").find("#prefix").val();//前缀 
+				$("#update-serial-object-form").find("#prefix").attr("data-val",prefixval)//前缀属性赋值
+				var timedata=$("#update-serial-object-form .time").find("input:checked").attr("data-val")//年号规则
+				var signval=$("#update-serial-object-form").find("#sign").val();//符号
+				$("#update-serial-object-form").find("#sign").attr("data-val",signval)//符号属性赋值
+			    var isFixLengthval=$("#update-serial-object-form").find("#isFixLength").attr("data-val")
+				var postfixval=$("#update-serial-object-form").find("#postfix").val();//后缀
+				$("#update-serial-object-form").find("#postfix").attr("data-val",postfixval)//后缀
+				 //添加固定长度
+				function padding1(num, length) {
+		        	for(var len = (num + "").length; len < length; len = num.length) {
+				            num = "0" + num;            
+				        }
+				    sde=num
+				}  
+		      	
+				//遍历获取整个表单的信息
+				$("#update-serial-object-form").each(function(){
+					$(this).find("#serialNum").val(prefixval+timedata+signval+isFixLengthval+postfixval)
+				})
+				//改变前缀
+				$("#update-serial-object-form #prefix").bind('input propertychange', function() {  
+					prefixval=$(this).val();
+				$("#update-serial-object-form #serialNum").val(prefixval+timedata+signval+isFixLengthval+postfixval)
+					 
+
+				})
+				//改变年号规则
+				layui.use('form', function() {
+					var form = layui.form(); 
+					form.on('radio(filter)', function(data){
+						timedata=$(this).attr("data-val");
+						$("#update-serial-object-form #serialNum").val(prefixval+timedata+signval+isFixLengthval+postfixval)					  	 
+					});  
+			    })
+			    //改变符号
+				$("#update-serial-object-form #sign").bind('input propertychange', function() {  
+					signval=$(this).val();
+					$("#update-serial-object-form #serialNum").val(prefixval+timedata+signval+isFixLengthval+postfixval)
+				})
+				 //改变位数
+				$("#update-serial-object-form #digit").bind('input propertychange', function() { 
+					var num=$(this).val(); 
+					// var sde="";//固定长度勾选时，把位数添加上去（如：000099）
+					padding1(currentValueval,num);
+					if ($("#update-serial-object-form #isFixLength").is(":checked")) {
+						$("#update-serial-object-form").find("#isFixLength").attr("data-val",sde)
+						isFixLengthval=$("#update-serial-object-form").find("#isFixLength").attr("data-val")						
+					}
+					else{
+						isFixLengthval=currentValueval
+					}
+					$("#update-serial-object-form #serialNum").val(prefixval+timedata+signval+isFixLengthval+postfixval)					  	 
+					
+				})
+				//改变固定长度
+				layui.use('form', function() {
+					var form = layui.form(); 
+					form.on('checkbox(filterficlength)', function(data){
+						digitval=$("#update-serial-object-form").find("#digit").val(); 
+					    startval=$("#update-serial-object-form").find("#currentValue").val();
+						 if(data.elem.checked == true) {
+							padding1(startval,digitval); 
+						 	$("#update-serial-object-form").find("#isFixLength").attr("data-val",sde)
+						 	isFixLengthval=sde 
+
+						 }
+						 else{ 
+						 	$("#update-serial-object-form").find("#isFixLength").attr("data-val",startval)
+						 	isFixLengthval= startval
+						 }
+						$("#update-serial-object-form #serialNum").val(prefixval+timedata+signval+isFixLengthval+postfixval) 
+					});  
+			    })
+
+ 
+			    //改变后缀
+				$("#update-serial-object-form #postfix").bind('input propertychange', function() {  
+					postfixval=$(this).val();
+					$("#update-serial-object-form #serialNum").val(prefixval+timedata+signval+isFixLengthval+postfixval)					  	 
+					 
+				})
+							
+				var index = layer.open({
+					title : '编辑流水号',
+					maxmin : false,
+					type : 1,
+					content : $('#win-serial-update-object')
+				});
+				pform.render();
+				layer.full(index);
+			}
+			
+			//时间赋值
+			function ueallval(){
+					$(".time input[type='radio']").each(function(){
+						var t=$(this).val()
+						var time;
+						var myDate = new Date;
+					    var year = myDate.getFullYear();//获取当前年
+					    var yue = myDate.getMonth()+1;//获取当前月
+					    var date = myDate.getDate();//获取当前日				   
+						if(t==1){
+							$(this).attr("data-val","")
+						}
+						if(t==2 ){
+							time=year
+							$(this).attr("data-val",time)
+						}
+						if(t==3 ){
+							time=year+"-"+yue
+							$(this).attr("data-val",time)
+						}
+						if(t==4 ){
+							time=year+"-"+yue+"-"+date
+							$(this).attr("data-val",time)
+						} 
+					})
+				}
+			//流水号新增（内容填入实时生成流水号）
+			
+			function bulidnumber(){
+				ueallval()
+				var prefixval="", timedata="",startval="",signval="",isFixLengthval="",postfixval="";
+				$("#add-serial-object-form #prefix").bind('input propertychange', function() {   
+					prefixval=$(this).val();
+					$("#add-serial-object-form #numberPreview").val(prefixval+timedata+signval+startval+postfixval)	
+				})
+				//添加年号规则
+				layui.use('form', function() {
+					var form = layui.form(); 
+					form.on('radio(filter)', function(data){
+						timedata=$(this).attr("data-val");
+						$("#add-serial-object-form #numberPreview").val(prefixval+timedata+signval+startval+postfixval)					  	 
+					});  
+			    })
+			    //添加符号
+				$("#add-serial-object-form #sign").bind('input propertychange', function() {  
+					signval=$(this).val();
+					$("#add-serial-object-form #numberPreview").val(prefixval+timedata+signval+startval+postfixval)
+				})
+				//添加位数 
+				var sde=""
+				function padding1(num, length) {
+		        	for(var len = (num + "").length; len < length; len = num.length) {
+				            num = "0" + num;            
+				        }
+				    sde=num
+				}  
+				 //添加起始值
+				$("#add-serial-object-form #startValue").bind('input propertychange', function() {  
+					startval=$(this).val().replace(/[^\d]/g,''); 
+					var length=$("#add-serial-object-form #digit").val();
+					var g=$("#add-serial-object-form #isFixLength").attr("data-checked");
+					padding1(startval, length)
+					if(g=="checked"){//勾选固定值
+						startval=sde
+					} 
+					$("#add-serial-object-form #numberPreview").val(prefixval+timedata+signval+startval+postfixval)
+				})
+					
+
+				//是否选中固定长度
+				layui.use('form', function() {
+					var form = layui.form(); 
+					form.on('checkbox(addfilterfixlength)', function(data){ 
+						var st=$("#add-serial-object-form #startValue").val();
+						var length=$("#add-serial-object-form #digit").val();
+						if(data.elem.checked == true) {
+							$(data.elem).attr("data-checked","checked") 							
+							padding1(st, length)
+							startval=sde
+						}
+						else {
+							$(data.elem).attr("data-checked","")
+							startval=st
+						}
+					$("#add-serial-object-form #numberPreview").val(prefixval+timedata+signval+startval+postfixval)
+					})
+				})
+				 
+				 //添加位数
+				 $("#add-serial-object-form #digit").bind('input propertychange', function() { 
+				 		var length=$(this).val();
+						var st=$("#add-serial-object-form #startValue").val();
+						var g=$("#add-serial-object-form #isFixLength").attr("data-checked");
+				 		padding1(st, length)
+						if(g=="checked"){//勾选固定值
+							startval=sde
+						} 
+					$("#add-serial-object-form #numberPreview").val(prefixval+timedata+signval+startval+postfixval)
+
+				 })
+				  
+			    //添加后缀
+				$("#add-serial-object-form #postfix").bind('input propertychange', function() {  
+					postfixval=$(this).val();
+					$("#add-serial-object-form #numberPreview").val(prefixval+timedata+signval+startval+postfixval)	
+					 
+				})
+			}
+
+			//对象详情
+			function showView(serialNumId) {
+				var object = getById(serialNumId);
+				$("#view-serial-dict-form").find("#serialNumName").val(
+						object.serialNumName);
+				$("#view-serial-dict-form").find("#prefix").val(
+						object.prefix);
+				//$("#view-serial-dict-form").find('input[type="radio"]').removeAttr('checked');
+				if(object.reignTitleRule == 1) {
+					$("#view-serial-dict-form").find("#reignTitleRuleId1").prop('checked', 'checked');
+				}
+				if(object.reignTitleRule == 2) {
+					$("#view-serial-dict-form").find("#reignTitleRuleId2").prop('checked', 'checked');
+				}
+				if(object.reignTitleRule == 3) {
+					$("#view-serial-dict-form").find("#reignTitleRuleId3").prop('checked', 'checked');
+				}
+				if(object.reignTitleRule == 4) {
+					$("#view-serial-dict-form").find("#reignTitleRuleId4").prop('checked', 'checked');
+				}
+				$("#view-serial-dict-form").find("#sign").val(object.sign);
+				$("#view-serial-dict-form").find("#startValue").val(object.startValue);
+				$("#view-serial-dict-form").find("#digit").val(object.digit);
+				$("#view-serial-dict-form").find("#postfix").val(object.postfix);
+				$("#view-serial-dict-form").find("#isFixLength").prop("checked",false);
+				if(object.isFixLength == 1) {
+					$("#view-serial-dict-form").find("#isFixLength").prop("checked",true);
+				}
+				if(object.resettingRule == 1) {
+					$("#view-serial-dict-form").find("#resettingRuleId1").prop('checked', 'checked');
+				}
+				if(object.resettingRule == 2) {
+					$("#view-serial-dict-form").find("#resettingRuleId2").prop('checked', 'checked');
+				}
+				
+				if(object.resettingRule == 3) {
+					$("#view-serial-dict-form").find("#resettingRuleId3").prop('checked', 'checked');
+				}
+				$('#view-serial-dict-form :input').attr("disabled", "disabled");
+				$("#view-serial-dict-form").find("#serialNum").val(object.serialNum);
+				$("#view-serial-dict-form").find("#serialProcessNames").val(object.processNames);
+				var index = layer.open({
+					title : '流水号详情',
+					maxmin : false,
+					type : 1,
+					content : $('#win-serial-view-object')
+				});
+				pform.render();
+				layer.full(index);
+			}
+			//流水号停用与启用
+			function showUpdateStatus(id,status) {
+				var obj;
+				var param = new Object();
+				param._csrf = $("#_csrf").val();
+				param.id = id;
+				param.status = status;
+				tool.post("../sysSerialNumber/updateStatus", param,
+						postCallBack1, false);
+				return obj;
+			}
+			function getById(serialNumId) {
+				var obj;
+				var param = new Object();
+				param._csrf = $("#_csrf").val();
+				param.id = serialNumId;
+				tool.post("../sysSerialNumber/getById", param,
+						function(o) {
+							obj = o;
+						}, false);
+				return obj;
+			}
+			//加载列表数据
+			function loadData_1(treeid) {
+				var param = new Object();
+				param.container = "paging";
+				param.pageSize = 10;
+				if (treeid != 0) {
+					param.categoryId = treeid;
+				}
+				param.url = "../sysSerialNumber/list";
+				//param.processNames = $("#searchKey").val();
+				tool.loadpage(param);
+			}
+			//加载列表数据
+			function loadData_2() {
+				var param = new Object();
+				param.container = "paging";
+				param.pageSize = 10;
+				param.url = "../sysSerialNumber/list";
+				param.serialNumName = $("#searchKey").val();
+				tool.loadpage(param);
+			}
+			//删除对象
+			function showDelete(id) {
+				layer.confirm('确定删除 ?', {
+					icon : 3,
+					title : '提示'
+				}, function(index) {
+					var param = new Object();
+					param._csrf = $("#_csrf").val();
+					param.id = id;
+					tool.post("../sysSerialNumber/delete",
+							param, postCallBack1, false);
+				});
+			}
+			var flag;
+			function aa() {
+				if (flag) {
+					$('.tree_left').show();
+					$('.tree_left').css("width", "20%");
+					$('.tree_right').css("width", "77.5%");
+				} else {
+					$('.tree_left').hide();
+					$('.tree_right').css("width", "98%");
+				}
+				flag = !flag;
+			}
+			    
+		</script>
+</body>
+
+</html>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.mai.dao.mapper.MaiReceiveBoxMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.mai.dao.entity.MaiReceiveBox">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="receive_user_ids" property="receiveUserIds" />
+		<result column="receive_user_names" property="receiveUserNames" />
+		<result column="receive_full_names" property="receiveFullNames" />
+		<result column="receive_user_name" property="receiveUserName" />
+		<result column="receive_full_name" property="receiveFullName" />
+		<result column="send_user_id" property="sendUserId" />
+		<result column="send_user_name" property="sendUserName" />
+		<result column="copy_user_ids" property="copyUserIds" />
+		<result column="copy_user_names" property="copyUserNames" />
+		<result column="copy_full_names" property="copyFullNames" />
+		<result column="mail_content" property="mailContent" />
+		<result column="mail_size" property="mailSize" />
+		<result column="is_revoke" property="isRevoke" />
+		<result column="revoke_time" property="revokeTime" />
+		<result column="scrap_time" property="scrapTime" />
+		<result column="attachment_count" property="attachmentCount" />
+		<result column="read_time" property="readTime" />
+		<result column="week_day" property="weekDay" />
+		<result column="send_id" property="sendId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name, receive_user_ids, receive_user_names, receive_full_names, receive_user_name,receive_full_name, send_user_id, send_user_name, copy_user_ids, copy_user_names, copy_full_names, mail_content, mail_size, is_revoke, revoke_time, scrap_time, attachment_count, read_time, week_day, send_id
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM mai_receive_box WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="MaiReceiveBox">
+    	INSERT INTO mai_receive_box(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{receiveUserIds}, #{receiveUserNames}, #{receiveFullNames}, #{receiveUserName}, #{sendUserId}, #{sendUserName}, #{sendFullName}, #{copyUserIds}, #{copyUserNames}, #{copyFullNames}, #{mailContent}, #{mailSize}, #{isRevoke}, #{revokeTime}, #{scrapTime}, #{attachmentCount}, #{readTime}, #{weekDay}, #{sendId})
+    </insert>
+
+</mapper>

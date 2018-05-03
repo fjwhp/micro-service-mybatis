@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>在办工作</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<link rel="stylesheet" href="../../web/css/zhengls.css" media="all">
+<style>
+span.layui-laypage-total{border: none;margin-left: 2px;}
+</style>
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<input type="hidden" name="typeId"  id="typeId"/>
+	<div class="admin-main"> 
+		<blockquote class="layui-elem-quote" style="padding:5px;">
+		<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+			<form class="layui-form searchClass" action="">
+				<div class="r">
+					<div class="layui-input-inline">
+						<input type="text" name="searchKey" id="searchKey" placeholder="请输入标题" autocomplete="off" class="layui-input"
+							style="height: 30px; line-height: 30px;" maxlength="20">
+					</div>
+					<span><@a code="060102" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="select()" iclass="layui-icon"
+						 icon="&#xe615;" text="查询"/></span>
+				  	<span><@a code="060103" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="search_h()" text="高级搜索"/></span>				    
+				</div>
+			    <div class="layui-input-inline">
+				  	<!-- <span><@a code="060101" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="claimTaskAll()" iclass="layui-icon"
+						 icon="&#xe642;" text="签收"/></span> -->
+				</div>
+			</form>
+		</blockquote>
+		
+			<form class="layui-form searchClass sear" style="display:none;">
+			<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+				
+				
+			<!--     <div class="layui-input-inline ">
+				 <span>标题</span>
+				</div>
+			    <div class="layui-input-inline m_r20">
+				 <input type="text" class="inp_w120px" id="theme" >
+				</div> -->
+				<div class="layui-input-inline">
+				 <span>创建人</span>
+				</div>
+			    <div class="layui-input-inline m_r20">
+				 <input type="text" class="inp_w120px" id="createUserName">
+				</div>
+				<div class="layui-input-inline">
+				 <span>来文文号</span>
+				</div>
+			    <div class="layui-input-inline m_r20">
+				 <input type="text" class="inp_w120px" id="referenceNumber">
+				</div>
+				<div class="layui-input-inline">
+				 <span>文号</span>
+				</div>
+			    <div class="layui-input-inline m_r20">
+				 <input type="text" class="inp_w120px" id="serialNumber">
+				</div>
+				<div class="layui-input-inline">
+				 <span>收件时间</span>
+				</div>
+				<div class="layui-input-inline m_r10">
+					 <input type="text" class="inp_date" id="startTime" readonly="readonly">
+				</div>
+				
+				<div class="layui-input-inline m_r10">
+				 	<span >至</span>
+				</div>
+				<div class="layui-input-inline m_r20">
+					 <input type="text" class="inp_date" id="endTime" readonly="readonly">
+				</div>
+				
+		        <div class="layui-input-inline m_r10">
+						 	<span>缓急</span>
+				</div>
+				<div class="layui-input-inline m_r20 content_sel">
+					      		<select name="city" lay-verify="required" id="isUrgent">
+							        <option value="">请选择</option>
+						         	<option value="一般">一般</option>
+							        <option value="紧急">紧急</option>
+							        <option value="加急">加急</option>
+					      		</select>
+				</div>
+				<div class="layui-input-inline" style="float:right">
+					<span><a class="layui-btn layui-btn-small" id="" onclick="loadData()" style="float:right;"><i class="layui-icon">&#xe615;</i>查询</a></span>
+			  	</div>
+			  	<div class="m_t10">
+				  	<div class="layui-input-inline m_r10">
+							 	<span>流程类型</span>
+					</div>
+					<div class="layui-input-inline m_r20 content_sel">
+			      		<@selectLink table="act_aljoin_category" layVerify="required"  id="id"  name="id" class="layui-input-inline" def="" key="id" text="category_name" level="1" levelName="category_level" rankName="category_rank" where=" AND is_active=1"/>
+					</div>
+					<div class="layui-input-inline">
+					  <span>流程名称</span>
+					</div>
+					<div class="layui-input-inline m_r20 content_sel" >
+						<select name="qBpmnId" id="qBpmnId">
+							<option value="">请选择</option>
+						</select>
+					</div>
+			  	</div>
+			</form>
+		<div class="layui-field-box layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table admin-table ">
+				<thead>
+					<tr>
+						<!-- <th style="width: 20px;"><input type="checkbox" lay-skin="primary" lay-filter="paging_check-all"></th> 
+						<td onclick="defalt_td(event)"> {{if value.signInTime==null}}<input type="checkbox"  class="check-id userid_detail" fillingDate="{{value.fillingDate}}" lay-skin="primary"   value="{{value.taskId}}" id="{{value.signInTime}}"/> {{/if}}</td> -->
+						<th style="display: none;">任务ID</th>
+						<th style="display: none;">流程id</th>
+						<th style="display: none;">taskDefKey</th>
+						<th style="display: none;">businessKey</th>
+						<th style="width: 60px;">序号</th>
+						<!-- <th style="width: 100px;">流程类型</th>
+						<td>{{value.formType}}</td> -->
+						<th>标题</th>
+						<th style="width: 100px;">文号</th>
+						<th style="width: 100px;">当前环节</th>
+						<th style="width: 90px;">上一办理人</th>
+						<th style="width: 60px;">缓急<img src="../../web/images/upgray.png"  class="up" onclick="loadData('','1')";><img src="../../web/images/downgray.png" class="down" onclick="loadData('','0')";></th>
+						<th style="width: 160px;">签收时间</th> 
+						<th style="width: 160px;">收件时间<img src="../../web/images/upgray.png"  class="up1" onclick="loadData('1','')";><img src="../../web/images/downgray.png" class="down1" onclick="loadData('0','')";></th>
+						<th style="width: 60px;">创建人</th> 
+						<!-- <th style="width: 40px;">操作</th> -->
+						<!-- <td>
+								<@a code="" href="javascript:void(0)" class="table_btn" id="show-section" onclick="showImg('{{value.processInstanceId}}')" text="查看"/>
+							</td>  --> 
+					</tr>
+				</thead>
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr onclick="openIsMyTask('{{value.taskId}}','{{value.title}}','{{value.taskDefKey}}','{{value.bpmnId}}','{{value.businessKey}}','{{value.signInTime}}')" class="hand">
+							
+                            <td style="display: none;">{{value.taskId}}</td>
+							<td style="display: none;">{{value.bpmnId}}</td>
+							<td style="display: none;">{{value.taskDefKey}}</td>
+							<td style="display: none;">{{value.businessKey}}</td>
+                            <td>{{(current-1)*size+index+1}}</td>
+							<td title="{{value.title}}">{{value.title}}</td>
+							<td title="{{value.referenceNumber}}">{{value.referenceNumber}}</td>
+							<td title="{{value.link}}">{{value.link}}</td>
+							<td title="{{value.formerManager}}">{{value.formerManager}}</td>
+							<td>{{value.urgency}}</td>
+							<td>{{value.signInTime}}</td>
+							<td>{{value.fillingDate}}</td>
+							<td title="{{value.founder}}">{{value.founder}}</td>
+						</tr>
+					{{/each}}
+					</script>
+				</tbody>
+			</table>
+		</div>
+			               
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+
+
+<!-- 公共信息审批流程  -->
+	<div style="display: none;" class="" id="win-pubmsg-object" style="margin-bottom:50px;">
+	<div class="layui-tab layui-tab-brief m_t0" lay-filter="docDemoTabBrief">
+		<ul class="layui-tab-title">
+		    <li class="layui-this">公共信息审批流程</li>
+		    <li>流程图</li>
+		</ul>
+		<div class="layui-tab-content">
+			<div class="layui-tab-item layui-show">
+		    <!--公共信息审批流程-->
+				<form class="layui-form layui-form-pane" id="new-object-form">
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+					<div class="layui-form-item">
+						<label class="layui-form-label">选择</label>
+						<div class="layui-input-block" id="sign">
+							<a class="layui-btn"  style="margin-left:20px;" onclick="change_btn()">
+								<i class="layui-icon">&#xe6b2;</i>签收
+							</a>					
+						</div>
+						<div class="layui-input-block" id="btns" style="display:none;">
+							<a class="layui-btn" style="margin-left:20px;" onclick="yes()">
+								<i class="layui-icon">&#xe6c6;</i>审批
+							</a>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">标题</label>
+						<div class="layui-input-block">
+							<input type="text" name="" id="" lay-verify="required|spactily" autocomplete="off" placeholder="标题" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">发布人</label>
+						<div class="layui-input-block">
+							<input type="text" name="" id="" lay-verify="required|spactily" autocomplete="off" placeholder="发布人" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item" >
+					    <label class="layui-form-label">所属分类</label>
+					    <div class="layui-input-block" style="z-index:1000;">
+					        <select name="city" lay-verify="required">
+					         	<option value=""></option>
+				       			<option value="0">内部新闻</option>
+						        <option value="1">三严三实</option>
+						        <option value="2">每日新闻摘要</option>
+						        <option value="3">管理指端</option>
+						        <option value="4">简报维护</option>
+					        </select>
+					    </div>
+				 	</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">有效期</label>
+						<div class="layui-input-block">
+							<input type="text" name="" id="" lay-verify="required|spactily" autocomplete="off" placeholder="有效期/天" class="layui-input">
+						</div>
+					</div>
+				 	<div class="layui-form-item">
+						<label class="layui-form-label">公告对象</label>
+						<div class="layui-input-block">
+							<input type="text" style="width:81%;float:left;" name="" id="" lay-verify="required|spactily" autocomplete="off" placeholder="公告对象" class="layui-input">
+							<a class="btn_blue2" style="float:right;" onclick="">人员选择</a>
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">公告内容</label>
+						<div class="layui-input-block">
+							<!--  <textarea name="" id="" placeholder="请输入内容" onkeyup="countnum(this);" class="layui-textarea"></textarea>	 -->
+							<script id="editor-id1" name="paramValue" type="text/plain" style="width: 100%; height: 500px;"></script>
+							<!-- <p onclick="kk()">sfsdf</p> -->
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">上传附件</label>
+						<div class="layui-input-block">
+							<div class="layui-upload">
+		 					   <div class="layui-upload-drag" id="test10" style="padding:5px;width:78%;">
+									  <i class="layui-icon"></i>
+									  <p>点击上传，或将文件拖拽到此处</p>
+							   </div>
+							   <a class="layui-btn" id="testListAction" style="position: absolute;right: 0px;top: 51px;">
+									<i class="layui-icon">&#xe62f;</i> 开始上传
+							   </a>
+						   		 <table class="layui-table">
+						     		 <colgroup>
+									    <col width="200">
+									    <col width="60">
+									    <col width="60">
+									    <col width="60">
+								 	 </colgroup>
+						      <tbody id="demoList">
+								   <script   id="artt1"  type="text/html">
+                    						{{each filelist value index}}
+                                    			<tr>
+                   					   				<td>{{value.attachName}}</td>
+                   					   				<td>{{value.attachSize}}kb</td>
+                   					  				<td><span style="color: #5FB878;">上传成功</span></td>
+                   					   				<td><a style="color:#339bf1;" index="{{index}}" onclick="aleafile('{{value.id}}',this,{{index}})">删除</a></td>
+                                    			</tr>
+	              				 			{{/each}}
+                  			 			</script>
+						      </tbody>
+						    </table>
+							</div> 
+						</div>
+					</div>
+					<div class="layui-form-item layui-form-text">
+						<label class="layui-form-label">流转意见</label>
+					</div>
+					<table class="layui-table admin-table">
+						<thead>
+							<tr>
+								<th style="display: none;">用户ID</th>
+								<th>操作人</th>
+								<th>操作</th>
+								<th>审核意见</th>
+								<th>流程方向</th>
+								<th>接收人</th>
+								<th>操作时间</th>
+							</tr>
+						</thead>
+						<tbody id="paging-data">
+						<script id="paging-script" type="text/html">
+							{{each records value index}}
+								<tr onclick="detail()"> 
+									<td style="display: none;">{{value.id}}</td>
+									<td>{{value.}}</td>
+									<td>{{value.}}</td>
+									<td>{{value.}}</td>
+									<td>{{value.}}</td>
+									<td>{{value.}}</td>
+									<td>{{value.}}</td>
+								</tr>
+							{{/each}}
+							</script>
+						</tbody>
+						</table>
+						</div>
+				<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+					<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+				</div>
+			</form>
+			
+			<div class="layui-tab-item">内容2</div>	
+		</div>
+	</div>
+	</div>   
+	    
+	    
+	<!-- 审批-->
+	<div class="m_10" style="display: none; z-index: 19940200;" id="win-yes-object">
+	<div id="win-newsms-object">
+		<form class="layui-form layui-form-pane" id="add-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">审批选择</label>
+				<div class="layui-input-block">
+					<a class="layui-btn layui-btn-primary" onclick="agree()" style="margin-left:20px;"><i class="layui-icon">&#xe6c6;</i> 同意</a>
+					<a class="layui-btn layui-btn-primary" onclick="noagree()"><i class="layui-icon">&#xe6c5;</i> 拒绝</a>
+				</div>
+			</div>
+			<div class="agree" style="display:none">
+				<div class="layui-form-item">
+					<label class="layui-form-label" title="下一级审批环节">审批环节</label>
+					<div class="layui-input-block">
+						<input type="text" name="" id="" lay-verify="required|spactily" placeholder="下一级审批环节"  autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label" title="下一级审批处理人">审批处理人</label>
+					<div class="layui-input-block">
+						<input type="text" name="" id="" lay-verify="required|spactily" placeholder="下一级审批处理人"  autocomplete="off" class="layui-input">
+					</div>
+				</div>
+			</div>
+			<div class="noagree" style="display:none">
+				<div class="layui-form-item">
+					<label class="layui-form-label" title="回退到申请人">回退</label>
+					<div class="layui-input-block">
+						<input type="text" name="" id="" lay-verify="required|spactily" placeholder="回退到申请人"  autocomplete="off" class="layui-input">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item layui-form-text">
+				<label class="layui-form-label">审批意见</label>
+				<div class="layui-input-block">
+					 <textarea name="" id="" onkeyup="countnum(this);"  class="layui-textarea"></textarea>	
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<a href="#" style="float:right;color:blue;">使用常用意见</a>
+			</div>
+			<div class="layui-input-block">
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<a class="layui-btn layui-btn-primary" onclick="submit()">
+						<li class="fa fa-eraser"></li> 提交
+					</a>
+				</div>
+			</div>
+
+			</div>
+		</form>
+	</div>
+	
+	
+	<!-- 考勤补签审核 -->
+	<div style="display: none;" class="" id="win-check-object" style="margin-bottom:50px;">
+	<div class="layui-tab layui-tab-brief m_t0" lay-filter="docDemoTabBrief">
+		<ul class="layui-tab-title">
+		    <li class="layui-this">流程表单</li>
+		    <li>流程图</li>
+		</ul>
+		<div class="layui-tab-content">
+			<div class="layui-tab-item layui-show">
+		    <!--公共信息审批流程-->
+				<form class="layui-form layui-form-pane" id="new-object-form">
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+					<div class="layui-form-item">
+						<label class="layui-form-label">选择</label>
+						<div class="layui-input-block">
+							<a class="layui-btn layui-btn-primary" onclick="yes()" style="margin-left:20px;"><i class="layui-icon">&#xe6c6;</i>审批处理</a>
+							<!-- <a class="layui-btn layui-btn-primary" onclick="noagree()"><i class="layui-icon">&#xe6c5;</i> 拒绝</a> -->
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">申请人</label>
+						<div class="layui-input-block">
+							<input type="text" name="" id="" lay-verify="required|spactily" autocomplete="off" placeholder="申请人" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">部门</label>
+						<div class="layui-input-block">
+							<input type="text" name="" id="" lay-verify="required|spactily" autocomplete="off" placeholder="部门" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item">
+						<label class="layui-form-label">申请时间</label>
+						<div class="layui-input-block">
+							<input type="text" name="" id="" lay-verify="required|spactily" autocomplete="off" placeholder="申请时间" class="layui-input">
+						</div>
+					</div>
+					
+					
+					<table class="layui-table admin-table">
+					<thead>
+						<tr>
+							<th style="display: none;">用户ID</th>
+							<th>时间</th>
+							<th>状态</th>
+							<th>打卡信息</th>
+							<th>原因</th>
+						</tr>
+					</thead>
+					<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+							{{each records value index}}
+								<tr onclick="detail()"> 
+									<td style="display: none;">{{value.id}}</td>
+									<td>{{value.}}</td>
+									<td>{{value.}}</td>
+									<td>{{value.}}</td>
+									<td>{{value.}}</td>
+								</tr>
+							{{/each}}
+					</script>
+					</tbody>
+					</table>
+					
+					<div class="layui-form-item layui-form-text">
+						<label class="layui-form-label">流转意见</label>
+					</div>
+					<table class="layui-table admin-table">
+						<thead>
+							<tr>
+								<th style="display: none;">用户ID</th>
+								<th>操作人</th>
+								<th>操作</th>
+								<th>审核意见</th>
+								<th>流程方向</th>
+								<th>接收人</th>
+								<th>操作时间</th>
+							</tr>
+						</thead>
+						<tbody id="paging-data">
+						<script id="paging-script" type="text/html">
+							{{each records value index}}
+								<tr onclick="detail()"> 
+									<td style="display: none;">{{value.id}}</td>
+									<td>{{value.}}</td>
+									<td>{{value.}}</td>
+									<td>{{value.}}</td>
+									<td>{{value.}}</td>
+									<td>{{value.}}</td>
+									<td>{{value.}}</td>
+								</tr>
+							{{/each}}
+							</script>
+						</tbody>
+						</table>
+				<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+					<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+				</div>
+			</form>
+			
+			<div class="layui-tab-item">内容2</div>	
+		</div>
+	</div>
+	</div>   
+	
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script>
+		tool.timeset("#startTime","#endTime");
+		var pform;
+		//添加事件
+		layui.use(['form','laydate'],function() {
+			pform = layui.form;
+			var laydate = layui.laydate;
+			loadData();
+			// 日期插件 
+	/* 		laydate.render({
+				  elem: '#startTime' //指定元素
+			}); */
+			
+			pform.on('select(id)', function(data) {
+	            //参数 1：当前元素id，参数2：顶级元素id（用来锁定唯一元素）
+                $("#qBpmnId").find("option").remove();
+                $("#qBpmnId").append( "<option value=''>请选择</option>" );
+                if(data.value.length>0){
+					$("#typeId").val(data.value);
+				}else{
+					var emel=$(data.elem).parent().prev();
+					if(emel.find('select').length>0){
+						$("#typeId").val(emel.find('select option:selected').val())
+					}else{
+						$("#typeId").val("");
+					}
+				}
+                if(data.value!=''){
+                    var _csrf = $("#_csrf").val();
+                    var pm = {
+                        cateGoryId : data.value,
+                        _csrf : _csrf
+                    };
+                    tool.post("/act/actAljoinBpmn/setCategoryBpmn",pm,
+                        function(data) {
+                            for (var i = 0; i < data.length; i++) {
+                                $("#qBpmnId").append( "<option value='"+data[i].id+"'>"+data[i].processName+"</option>" );
+                            }
+                            pform.render();
+                        }, false)
+                }
+	            tool.selectLinkTagByPid("id","win-add-object",data);
+	    	});
+		});
+		
+		//查询
+		function select() {
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+			param.title =$('#searchKey').val();
+			param.url = "../ioaWaitWork/selectWaitingTask";
+		 	tool.loadpage(param);
+		} 
+
+		//加载流程list
+		function loadData(fillingDateIsAsc,urgencyIsAsc) {
+		    var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+            param.fillingDateIsAsc = fillingDateIsAsc;
+            param.urgencyIsAsc = urgencyIsAsc;
+			param.formType =$('#typeId').val();
+			param.title =$('#searchKey').val();
+			param.founder =$('#createUserName').val();
+			param.receiveBegTime =$('#startTime').val();
+            param.receiveEndTime =$('#endTime').val();
+			param.urgency =$('#isUrgent').val();
+			param.referenceNumber = $('#referenceNumber').val();
+			param.serialNumber = $('#serialNumber').val();
+            param.processName= $("#qBpmnId option:checked").text() == '请选择' ? "" : $("#qBpmnId option:checked").text();
+			param.url = "../ioaWaitWork/selectWaitingTask";
+		 	tool.loadpage(param);
+		 
+		 	if(urgencyIsAsc=="0"||urgencyIsAsc=="1"){
+				param.urgencyIsAsc=urgencyIsAsc;
+				if(urgencyIsAsc=="1"){
+						$(".up").attr("src","../../web/images/uptrue.png");
+						$(".down").attr("src","../../web/images/downgray.png");
+					}else{
+						$(".up").attr("src","../../web/images/upgray.png");
+						$(".down").attr("src","../../web/images/downture.png");
+					}
+				
+			}
+			if(fillingDateIsAsc=="0"||fillingDateIsAsc=="1"){
+				param.fillingDateIsAsc=fillingDateIsAsc;
+				if(fillingDateIsAsc=="1"){
+						$(".up1").attr("src","../../web/images/uptrue.png");
+						$(".down1").attr("src","../../web/images/downgray.png");
+					}else{
+						$(".up1").attr("src","../../web/images/upgray.png");
+						$(".down1").attr("src","../../web/images/downture.png");
+					}
+				
+			}
+		}
+		
+		//公共信息审批流程
+		function pub_msg() {
+			var index = layer.open({
+				title : '处理-xxx',
+				maxmin : false,
+				type : 1,
+				area: ['500px', '400px'],
+				content : $('#win-pubmsg-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		//审批弹窗
+		function yes() {
+			var index = layer.open({
+				title : '审批处理',
+				maxmin : false,
+				type : 1,
+				area: ['500px', '400px'],
+				content : $('#win-yes-object')
+			});
+			pform.render();
+		}
+		/*切换按钮  */
+		function change_btn(){
+			$("#sign").hide();
+			$("#btns").show();
+		}
+		function agree(){
+			$(".agree").show();
+			$(".noagree").hide();
+		}
+		function noagree(){
+			$(".agree").hide();
+			$(".noagree").show();
+		}
+		
+		function showImg(processInstanceId) {
+			var index = layer.open({
+				title : '流程图',
+				maxmin : false,
+				type : 1,                                     
+				content : '<img src="../ioaWaitWork/showImg?processInstanceId='+processInstanceId+'" />'
+			});
+			pform.render();
+			layer.full(index);
+		}
+		function openIsMyTask(id,processName,taskDefKey,bpmnId,businessKey,signInTime){
+			var param = new Object()
+			param.taskId = id;		
+			param._csrf = $("#_csrf").val()			
+			tool.post("../ioaWaitWork/isMyTask", param, function(data){				
+				if (data.code == 0) {	
+					openForm(id,processName,taskDefKey,bpmnId,businessKey,signInTime);
+				} else {
+					tool.success(data.message);		
+					loadData();
+				}				
+			}, false); 
+		}
+	 	//详情对象
+		function openForm(id,processName,taskDefKey,bpmnId,businessKey,signInTime) {
+			var index = layer.open({
+				title : processName,
+				maxmin : false,
+				type : 2,
+				//isIndexLog判断是否从标签页进入
+				content : '../../act/modeler/openForm.html?id='+bpmnId+'&activityId='+id+'&taskId='+taskDefKey+'&businessKey='+businessKey+'&signInTime='+signInTime+'&isWait=1'+'&isIndexLog=0',
+			    end:function(){ 
+				       //刷新列表数据 
+				       loadData(); 
+				    }
+
+			});
+			pform.render();
+			layer.full(index);
+		}	
+	 	/* 高级搜索 */
+	 	function search_h(){
+			$(".sear").toggle();
+		}
+		//考勤补签审核
+		function pub_check() {
+			var index = layer.open({
+				title : '考勤补签审核',
+				maxmin : false,
+				type : 1,
+				content : $('#win-check-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		
+		//批量签收
+		function claimTaskAll(){
+			var chenked=$(".check-id:checked").val([]);//此为重点  
+			var ids = "";  
+			var str = "";
+       		for(var i=0;i<chenked.length;i++){ 
+       			str += chenked[i].id +",";
+       			ids += chenked[i].value +",";  
+            }
+       		
+       		var strs= new Array(); //定义一数组 
+       		strs=str.split(","); //字符分割 
+       		for (i=0;i<strs.length ;i++ ) 
+       		{ 
+       			if(strs[i]!=""){
+           			tool.error("请选择未签收过的任务");
+           			loadData();
+           			return;
+           		}
+       		} 
+       		
+       		if(ids==""){
+       			tool.error("请选择需要签收的记录");
+       			return;
+       		}
+       		
+       		layer.confirm('确定签收吗 ?', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				var _csrf = $("#_csrf").val();			
+			 	var data = {
+			 		 ids:ids,	
+					 _csrf:_csrf, 
+				}  	
+				tool.post("../ioaWaitWork/claimTask",data,function(retMsg){
+					if (retMsg.code == 0) {
+						tool.success(retMsg.message);
+						loadData();
+					} else {
+						tool.error(retMsg.message);
+					}
+				},false)
+			});
+       	//	loadData();
+		}
+		function defalt_td(event){
+			event.cancelBubble=true;
+		}
+
+	</script>
+</body>
+
+</html>

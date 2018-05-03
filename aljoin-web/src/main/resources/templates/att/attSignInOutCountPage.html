@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title></title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css"
+	media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet"
+	href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<style>
+	.menuContentAndList{
+	 padding:30px; 
+	}
+</style>
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}"
+		id="${_csrf.parameterName}" value="${_csrf.token}" />
+		
+	<!-- tree -->
+	<div class="admin-main">
+		<div  class="tree_left">
+			<div class="left" >
+			  <input id="citySel" class="tree_search" type="text" value="" onkeyup="AutoMatch(this)" placeholder="搜索">
+		    </div>
+			<ul id="treeDemo" class="ztree"></ul> 
+		</div>
+		<!-- 岗位 -->
+		<div id="post_list" style="width: 78%; float:left;" class="m_l10">
+	  <blockquote class="layui-elem-quote" style="padding: 5px;">	
+		<form class="layui-form" action="../attSignInOut/export" method="get" id="action_form">
+		<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+		<input type="hidden" name="deptId" id="deptTreeId"/>
+		<input type="hidden" name="deptName" id="deptTreeName"/>
+		     
+             
+            <div class="layui-input-inline">
+			  <a class="layui-btn layui-btn-middle" onclick="thisWeek()">本周</a>
+			</div>
+			<div class="layui-input-inline">
+			   <a class="layui-btn layui-btn-middle"onclick="thisMonth()">本月</a>
+			</div>
+			<div style="float:right;">
+			<div class="layui-input-inline m_r10">
+			 <span>统计时间</span>
+			</div>
+			<div class="layui-input-inline m_r20">
+				 <input type="text" name="time1"  class="inp_date" id="startTime" readonly>
+			</div>
+			<div class="layui-input-inline m_r10">
+			 <span>至</span>
+			</div>
+			<div class="layui-input-inline m_r20">
+				  <input type="text" name="time2" class="inp_date" id="endTime"  readonly>
+			</div>
+	
+		 	<div class="layui-input-inline">
+			 <@a code="100201" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData()" iclass="layui-icon"
+								 icon="&#xe615;" text="查询"/>
+		    </div>	
+			<div class="layui-input-inline">
+			   <@a code="100202" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="actionGo()" text="导出excel"/>			
+		    </div>	
+		    </div>
+         </form>    
+       </blockquote> 
+		<div class="layui-field-box layui-form" style="padding: 0 0 20px 0;">
+			<table class="layui-table admin-table">
+			    <colgroup>
+				    <col width="6%">
+				    <col width="13%">
+				    <col width="13%">
+				    <col width="13%">
+				    <col width="13%">
+				    <col width="13%">
+				    <col width="13%">
+				    <col width="13%">
+ 				 </colgroup>
+				<thead>
+					<tr>
+						<th style="display: none;">用户ID</th>
+						<th onclick="Daktail()">序号</th>
+						<th>处室</th>
+						<th>人员</th>
+						<th>未签到<img src="../../web/images/upgray.png" class="up" onclick="up_down1('2')";><img src="../../web/images/downgray.png" class="down" onclick="up_down1('1')"></th>
+						<th>未签退<img src="../../web/images/upgray.png" class="up1" onclick="up_down2('2')";><img src="../../web/images/downgray.png" class="down1" onclick="up_down2('1')"></th>
+						<th>迟到<img src="../../web/images/upgray.png" class="up2" onclick="up_down3('2')";><img src="../../web/images/downgray.png" class="down2" onclick="up_down3('1')"></th>
+						<th>早退<img src="../../web/images/upgray.png" class="up3" onclick="up_down4('2')";><img src="../../web/images/downgray.png" class="down3" onclick="up_down4('1')"></th>
+						<th>补签<img src="../../web/images/upgray.png" class="up4" onclick="up_down5('1')";><img src="../../web/images/downgray.png" class="down4" onclick="up_down5('2')"></th>
+					</tr>
+				</thead>
+				<tbody id="content">
+					<script id="test" type="text/html">
+                    {{if str.length==0}}
+                       <tr>
+							<td colspan="8" style="text-align:center">
+                                                                                          暂无数据
+							</td>
+						</tr>
+                     {{/if}}
+					{{each str value index}}
+						<tr>
+							<td style="display: none;">{{value.id}}</td>
+							<td>{{index+1}}</td>
+							<td title="{{value.department}}">{{value.department}}</td>
+							<td>{{value.signUserName}}</td>
+							<td>{{value.noneSignInNums}}</td>
+							<td>{{value.noneSignOutNums}}</td>
+							<td>{{value.lateNums}}</td>
+							<td>{{value.leaveEarlyNums}}</td>
+							<td>{{value.signPatchNums}}</td>
+						</tr>
+					{{/each}}
+					</script> 
+				</tbody>
+			</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page"
+				style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+
+	
+   </div>
+   
+   <!-- 考勤补签 -->
+	<div id="auth-div" style="display: none; padding-left: 10px; padding-right: 10px;">
+	  <div class="layui-tab  layui-tab-brief m_t0" lay-filter="docDemoTabBrief">
+		<form class="layui-form  " id="heheda" action="" >
+		  <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+		      <ul class="layui-tab-title">
+				    <li class="layui-this">处理公共信息</li>
+				    <li class="">流程表单</li>
+				    <li class="">流程图</li>
+			</ul>
+		<div class="layui-tab-content">
+		   	<div class="layui-tab-item content_sel layui-show">
+		   	   1
+		  	  </div>
+		     <div class="layui-tab-item content_sel ">
+		      2
+		   	 </div>
+		     <div class="layui-tab-item content_sel ">
+		      3
+		    </div>
+		</div>
+		<div class="layui-field-box layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+		
+				 <table class="layui-table butable">
+				  <thead>
+				    <tr>
+				      <th>时间</th>
+				      <th>状态</th>
+				      <th>说明</th>
+				    </tr> 
+				  </thead>
+				  <tbody id="buAtt">
+				  
+				  </tbody>
+			 </table>
+			 <div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-update-submit">
+						<i class="fa fa-save"></i> 提交
+					</button>
+					<button class="layui-btn layui-btn-primary" type="reset">
+						<i class="fa fa-eraser"></i> 重置
+					</button>
+				</div>
+		</div>
+		
+		</form>
+	</div>
+	</div>
+	<input type="hidden"  id="thistype"  value="3">
+	<!-- 是否有导出的文件 -->
+	<input type="hidden"  id="ecxelout"  >
+	<script type="text/javascript" src="../../web/plugins/layui/layui.js"></script>
+	<script type="text/javascript"
+		src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.ztree.exhide-3.5.min.js"></script>
+	<script type="text/javascript" src="../../web/js/tool.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+
+	<script>
+	   //导出判断
+	   function actionGo(){
+		   var length=$("#ecxelout").val();
+		   if(length!=0){
+			   $("#action_form").submit();
+		   }else{
+			   tool.error("暂无数据,无法导出")
+		   }
+	   }
+		//时间控件
+		tool.dateTime('#startTime','#endTime','',false);
+		var pform;
+		//添加事件
+		layui.use(['form','element'], function() {
+			pform = layui.form();
+			var element = layui.element();
+			/* loadData();  */
+		});
+		//生成树
+		var setting = {
+				data : {
+					simpleData : {
+						enable : true
+					}
+				},
+				callback : {
+					beforeClick : beforeClick
+				}
+			};
+		var param = new Object();
+		param._csrf = $("#_csrf").val();
+		redern();
+		function redern() {
+			tool.post("/aut/autDepartment/getDepartmentList", param, postCallBack_newtree);
+		}
+		var obj = [];
+		var zTreeObj; 
+		function postCallBack_newtree(data) {
+			for (var i = 0; i < data.length; i++) {
+				obj.push({
+					id : data[i].id,
+					pId : data[i].parentId,
+					name : data[i].deptName,
+					obj : {
+						deptCode : data[i].deptCode,
+						deptLevel : data[i].deptLevel,
+						isActive : data[i].isActive,
+						parentId : data[i].parentId,
+						parentCode : data[i].parentCode
+					}
+				}) 
+			}  
+			zTreeObj = $.fn.zTree.init($("#treeDemo"), setting, obj);
+		}
+
+		var hiddenNodes=[];	//用于存储被隐藏的结点
+		var targetParent = [];
+		function getParentByChild(node){
+			if(node.parentTId != null){
+				targetParent.push(node.getParentNode());
+				getParentByChild(node.getParentNode());
+			}
+		}
+		
+		//过滤ztree显示数据
+		function AutoMatch(){
+			//显示上次搜索后背隐藏的结点
+			zTreeObj.showNodes(hiddenNodes);
+			//查找不符合条件的叶子节点
+			targetParent = [];
+			function filterFunc(node){
+				var _keywords=$("#citySel").val();
+				if(node.name.indexOf(_keywords)!=-1) {
+					getParentByChild(node)
+					return false;
+				}
+				return true;		
+			};
+			//获取不符合条件的叶子结点
+			hiddenNodes=zTreeObj.getNodesByFilter(filterFunc);
+			//隐藏不符合条件的叶子结点
+			zTreeObj.hideNodes(hiddenNodes);
+			//显示满足条件的根节点
+			zTreeObj.showNodes(targetParent);
+			zTreeObj.expandAll(true);
+		};
+         var initLoadIndex;
+		//获取数节点加载岗位列表
+		function beforeClick(hh, treeNode) {
+			initLoadIndex = layer.load(2, {});
+			$("#deptTreeId").val(treeNode.id);
+			$("#deptTreeName").val(treeNode.name);
+			$("#startTime").val("");
+			$("#endTime").val("");
+			loadData(treeNode.id,treeNode.name,'1');
+		}
+	 	//加载岗位list
+	 	var id1 , deptName1;//点击后对应的id和name
+		function loadData(id,deptName,type) {
+			$("#thistype").val("3");
+			id1=id;
+			deptName1 = deptName;
+			var _csrf = $("#_csrf").val();
+			
+		 	var data = { 
+		 			 deptId:$("#deptTreeId").val(),
+		 			 deptName:$("#deptTreeName").val(),
+		 			 time1:$("#startTime").val(),
+		 			 time2:$("#endTime").val(),
+		 			 
+					 _csrf:_csrf, 
+				}  	
+		 	if(type=="1"){
+		 		tool.post("../attSignInOut/getAttSignInCountList",data,callBt,true); 
+		 	}else{
+		 		 if($("#startTime").val()==""&&$("#endTime").val()=="") {
+		 			tool.post("../attSignInOut/getAttSignInCountList",data,callBt,true); 
+		 		 }else {
+		 			tool.post("../attSignInOut/getAttSignInCountList",data,callBt,true); 
+		 		 }
+		 		
+		 	}
+		 	
+		 	
+		}  
+	 	function callBt(data){
+	 		//给隐藏的input  赋值导出文件的长度
+	 		$("#ecxelout").val(data.length);
+	 		var str={str:data}
+	 	 	var html = template('test', str);
+			document.getElementById('content').innerHTML = html; 
+			layer.close(initLoadIndex);
+	 	}
+	 	//根据时间查询
+		function timesearch() {
+	 		var time1 = $("#startTime").val();
+	 		var time2 = $("#endTime").val();
+			var _csrf = $("#_csrf").val();
+		 	var data = {
+		 			 deptId:id1,
+		 			 deptName:deptName1,	
+		 			 time1:time1,
+		 			 time2:time2,		
+					 _csrf:_csrf, 
+				}  	
+		 	tool.post("../attSignInOut/getAttSignInCountList",data,timeback,false);  	
+		}  
+	 	function timeback(data){
+	 		var str={str:data}
+	 	 	var html = template('test', str);
+			document.getElementById('content').innerHTML = html; 
+	 	}
+	 	function nowDateG(){
+	 		    var nowDate = new Date();
+	            var year = nowDate.getFullYear();
+	            var month = nowDate.getMonth() + 1 < 10 ? "0" + (nowDate.getMonth() + 1) : nowDate.getMonth() + 1;
+	            var day = nowDate.getDate() < 10 ? "0" + nowDate.getDate() : nowDate.getDate();
+	            var dateStr = year + "-" + month + "-" + day;
+	 		     return dateStr;
+	 	}
+	 	//本周
+		function thisWeek() {
+			 var week=getWeekStartAndEnd(0);
+            $("#startTime").val(week[0]);  
+            $("#endTime").val(nowDateG()) ; 
+            
+           /*  $("#startTime").val("");  
+            $("#endTime").val(""); */
+            
+	 		$("#thistype").val("1");
+			var _csrf = $("#_csrf").val();
+		 	var data = {	
+		 			deptId:$("#deptTreeId").val(),
+		 			 deptName:$("#deptTreeName").val(),	
+					 _csrf:_csrf, 
+					 thisWeek:true,
+				}  	
+		 	tool.post("../attSignInOut/getAttSignInCountList",data,weekback,false);  	
+		}  
+		function weekback(data){
+	 		var str={str:data}
+	 	 	var html = template('test', str);
+			document.getElementById('content').innerHTML = html; 
+	 	}
+	 	//本月
+		function thisMonth() {
+			$("#thistype").val("2");
+			 var one=getCurrentMonthFirst();
+			 $("#startTime").val(one[0])  
+             $("#endTime").val(nowDateG()) 
+             /* $("#startTime").val("");  
+             $("#endTime").val(""); */
+			var _csrf = $("#_csrf").val();
+		 	var data = {	
+		 			deptId:$("#deptTreeId").val(),
+		 			 deptName:$("#deptTreeName").val(),
+					 _csrf:_csrf, 
+					 thisMonth:true,
+				}  	
+		 	tool.post("../attSignInOut/getAttSignInCountList",data,monthback,false);  	
+		}  
+		function monthback(data){
+	 		var str={str:data}
+	 	 	var html = template('test', str);
+			document.getElementById('content').innerHTML = html; 
+	 	}
+		//未签到升降序
+		function up_down1(flag){
+			var time1 = $("#startTime").val();
+	 		var time2 = $("#endTime").val();
+	 		var value=$("#thistype").val();	
+			if(flag==1){
+				/* $(".up").attr("src","../../web/images/uptrue.png");
+				$(".down").attr("src","../../web/images/downgray.png"); */
+				
+				$(".up").attr("src","../../web/images/upgray.png");
+				$(".down").attr("src","../../web/images/downture.png");
+				
+				var _csrf = $("#_csrf").val();
+			 	var data = {	
+			 			deptId:$("#deptTreeId").val(),
+			 			deptName:$("#deptTreeName").val(),	
+			 			time1:time1,
+			 			time2:time2,
+						 _csrf:_csrf, 
+						 orderByNoneSignIn:2,
+					}  
+			
+			 //如果点击本月或者本周	
+			   if(value=="1"){
+				   data.thisWeek=true;
+			   }else if(value=="2"){
+				   data.thisMonth=true;
+			   }
+			 	tool.post("../attSignInOut/getAttSignInCountList",data,up_down,false);
+			}
+			else if(flag==2){
+				/* $(".up").attr("src","../../web/images/upgray.png");
+				$(".down").attr("src","../../web/images/downture.png"); */
+				$(".up").attr("src","../../web/images/uptrue.png");
+				$(".down").attr("src","../../web/images/downgray.png");
+				var _csrf = $("#_csrf").val();
+			 	var data = {	
+			 			deptId:$("#deptTreeId").val(),
+			 			 deptName:$("#deptTreeName").val(),
+						 _csrf:_csrf, 
+						 time1:time1,
+				 		 time2:time2,
+						 orderByNoneSignIn:1,
+					} 
+			 	  if(value=="1"){
+					   data.thisWeek=true;
+				   }else if(value=="2"){
+					   data.thisMonth=true;
+				   }
+			 	tool.post("../attSignInOut/getAttSignInCountList",data,up_down,false);
+			}
+		
+		};
+		function up_down(data){
+	 		var str={str:data}
+	 	 	var html = template('test', str);
+			document.getElementById('content').innerHTML = html; 
+	 	}
+		//未签退升降序
+		function up_down2(flag){
+			var time1 = $("#startTime").val();
+	 		var time2 = $("#endTime").val();
+	 		var value=$("#thistype").val();	
+			if(flag==1){
+				var _csrf = $("#_csrf").val();
+			 	var data = {	
+			 			deptId:$("#deptTreeId").val(),
+			 			 deptName:$("#deptTreeName").val(),	
+			 			 time1:time1,
+				 		 time2:time2,
+						 _csrf:_csrf, 
+						 orderByNoneSignOut:2,
+					}
+			 	  if(value=="1"){
+					   data.thisWeek=true;
+				   }else if(value=="2"){
+					   data.thisMonth=true;
+				   }
+			 	tool.post("../attSignInOut/getAttSignInCountList",data,up_down,false);
+			}
+			else if(flag==2){
+				var _csrf = $("#_csrf").val();
+			 	var data = {	
+			 			deptId:$("#deptTreeId").val(),
+			 			 deptName:$("#deptTreeName").val(),	
+						 _csrf:_csrf, 
+						 time1:time1,
+				 		 time2:time2,
+						 orderByNoneSignOut:1,
+					}
+			 	  if(value=="1"){
+					   data.thisWeek=true;
+				   }else if(value=="2"){
+					   data.thisMonth=true;
+				   }
+			 	tool.post("../attSignInOut/getAttSignInCountList",data,up_down,false);
+			}
+			if(flag==1){
+				/* $(".up1").attr("src","../../web/images/uptrue.png");
+				$(".down1").attr("src","../../web/images/downgray.png"); */
+				$(".up1").attr("src","../../web/images/upgray.png");
+				$(".down1").attr("src","../../web/images/downture.png");
+			}else{
+				/* $(".up1").attr("src","../../web/images/upgray.png");
+				$(".down1").attr("src","../../web/images/downture.png"); */
+				$(".up1").attr("src","../../web/images/uptrue.png");
+				$(".down1").attr("src","../../web/images/downgray.png");
+			}
+		};
+		//迟到升降序
+		function up_down3(flag){
+			var time1 = $("#startTime").val();
+	 		var time2 = $("#endTime").val();
+	 		var value=$("#thistype").val();	
+			if(flag==1){
+				var _csrf = $("#_csrf").val();
+			 	var data = {	
+			 			deptId:$("#deptTreeId").val(),
+			 			 deptName:$("#deptTreeName").val(),	
+						 _csrf:_csrf, 
+						 time1:time1,
+				 		 time2:time2,
+						 orderByLate:2,
+					}
+			 	  if(value=="1"){
+					   data.thisWeek=true;
+				   }else if(value=="2"){
+					   data.thisMonth=true;
+				   }
+			 	tool.post("../attSignInOut/getAttSignInCountList",data,up_down,false);
+			}
+			else if(flag==2){
+				var _csrf = $("#_csrf").val();
+			 	var data = {	
+			 			deptId:$("#deptTreeId").val(),
+			 			 deptName:$("#deptTreeName").val(),	
+						 _csrf:_csrf, 
+						 time1:time1,
+				 		 time2:time2,
+						 orderByLate:1,
+					}  
+			 	  if(value=="1"){
+					   data.thisWeek=true;
+				   }else if(value=="2"){
+					   data.thisMonth=true;
+				   }
+			 	tool.post("../attSignInOut/getAttSignInCountList",data,up_down,false);
+			}
+			if(flag==1){
+				/* $(".up2").attr("src","../../web/images/uptrue.png");
+				$(".down2").attr("src","../../web/images/downgray.png"); */
+				$(".up2").attr("src","../../web/images/upgray.png");
+				$(".down2").attr("src","../../web/images/downture.png");
+			}else{
+				/* $(".up2").attr("src","../../web/images/upgray.png");
+				$(".down2").attr("src","../../web/images/downture.png"); */
+				$(".up2").attr("src","../../web/images/uptrue.png");
+				$(".down2").attr("src","../../web/images/downgray.png");
+			}
+		};
+		//早退升降序
+		function up_down4(flag){
+			var time1 = $("#startTime").val();
+	 		var time2 = $("#endTime").val();
+	 		var value=$("#thistype").val();	
+			if(flag==1){
+				var _csrf = $("#_csrf").val();
+			 	var data = {	
+			 			deptId:$("#deptTreeId").val(),
+			 			 deptName:$("#deptTreeName").val(),	
+						 _csrf:_csrf,
+						 time1:time1,
+				 		 time2:time2,
+						 orderByLeaveEarly:2,
+					}  	
+			 	 if(value=="1"){
+					   data.thisWeek=true;
+				   }else if(value=="2"){
+					   data.thisMonth=true;
+				   }
+			 	tool.post("../attSignInOut/getAttSignInCountList",data,up_down,false);
+			}
+			else if(flag==2){
+				var _csrf = $("#_csrf").val();
+			 	var data = {	
+			 			deptId:$("#deptTreeId").val(),
+			 			 deptName:$("#deptTreeName").val(),
+						 _csrf:_csrf, 
+						 time1:time1,
+				 		 time2:time2,
+						 orderByLeaveEarly:1,
+					} 
+			 	 if(value=="1"){
+					   data.thisWeek=true;
+				   }else if(value=="2"){
+					   data.thisMonth=true;
+				   }
+			 	tool.post("../attSignInOut/getAttSignInCountList",data,up_down,false);
+			}
+			if(flag==1){
+			/* 	$(".up3").attr("src","../../web/images/uptrue.png");
+				$(".down3").attr("src","../../web/images/downgray.png"); */
+				$(".up3").attr("src","../../web/images/upgray.png");
+				$(".down3").attr("src","../../web/images/downture.png");
+			}else{
+				/* $(".up3").attr("src","../../web/images/upgray.png");
+				$(".down3").attr("src","../../web/images/downture.png"); */
+				$(".up3").attr("src","../../web/images/uptrue.png");
+				$(".down3").attr("src","../../web/images/downgray.png");
+			} 
+		}; 
+		//补签升降序
+		function up_down5(flag){
+			var time1 = $("#startTime").val();
+	 		var time2 = $("#endTime").val();
+	 		var value=$("#thistype").val();	
+			if(flag==1){
+				var _csrf = $("#_csrf").val();
+			 	var data = {	
+			 			deptId:$("#deptTreeId").val(),
+			 			 deptName:$("#deptTreeName").val(),	
+						 _csrf:_csrf,
+						 time1:time1,
+				 		 time2:time2,
+						 orderByNoneSignIn:2,
+					} 
+			 	 if(value=="1"){
+					   data.thisWeek=true;
+				   }else if(value=="2"){
+					   data.thisMonth=true;
+				   }
+			 	tool.post("../attSignInOut/getAttSignInCountList",data,up_down,false);
+			}
+			else if(flag==2){
+				var _csrf = $("#_csrf").val();
+			 	var data = {	
+			 			deptId:$("#deptTreeId").val(),
+			 			 deptName:$("#deptTreeName").val(),	
+						 _csrf:_csrf, 
+						 time1:time1,
+				 		 time2:time2,
+						 orderByNoneSignIn:1,
+					}  
+			 	 if(value=="1"){
+					   data.thisWeek=true;
+				   }else if(value=="2"){
+					   data.thisMonth=true;
+				   }
+			 	tool.post("../attSignInOut/getAttSignInCountList",data,up_down,false);
+			}
+			if(flag==1){
+				$(".up4").attr("src","../../web/images/uptrue.png");
+				$(".down4").attr("src","../../web/images/downgray.png");
+			}else{
+				$(".up4").attr("src","../../web/images/upgray.png");
+				$(".down4").attr("src","../../web/images/downture.png");
+			}
+		};
+		/* function exportex(){
+			var _csrf = $("#_csrf").val();
+			var time1 = $("#startTime").val();
+	 		var time2 = $("#endTime").val();
+		 	var data = {	
+		 			_csrf:_csrf,
+		 			deptId:id1,
+		 			deptName:deptName1,	
+		 			time1:time1,
+		 			time2:time2,
+				}  
+			tool.post("../attSignInOut/export",data,function exp(){},false);
+		} */
+		
+		//考勤补签审核弹出框
+		function Daktail(){
+			var index = layer.open({
+				title : "考勤补签",
+				type : 1,
+				maxmin : false,
+				content : $('#auth-div')
+			});
+		   
+			pform.render();
+			layer.full(index);
+		}
+		
+		//获取本月第一天和最后一天
+        function getCurrentMonthFirst(){
+        	var arr=[];
+        	var myDate = new Date();
+            var year = myDate.getFullYear();
+            var month = myDate.getMonth()+1;
+            if (month<10){
+                month = "0"+month;
+            }
+            var firstDay =year+"-"+month+"-01";
+            
+            myDate = new Date(year,month,0);
+            var lastDay = year+"-"+month+"-"+myDate.getDate();
+            arr.push(firstDay)
+            arr.push(lastDay)
+            return arr
+       	}
+        //获取本周第一天和最后一天
+        function getWeekStartAndEnd(AddWeekCount) { 
+		    //起止日期数组   
+		    var startStop = new Array(); 
+		    //一天的毫秒数   
+		    var millisecond = 1000 * 60 * 60 * 24; 
+		    //获取当前时间   
+		    var currentDate = new Date();
+		    //相对于当前日期AddWeekCount个周的日期
+		    currentDate = new Date(currentDate.getTime() + (millisecond * 7*AddWeekCount));
+		    //返回date是一周中的某一天
+		    var week = currentDate.getDay(); 
+		    //返回date是一个月中的某一天   
+		    var month = currentDate.getDate();
+		    //减去的天数   
+		    var minusDay = week != 0 ? week - 1 : 6; 
+		    //获得当前周的第一天   
+		    var currentWeekFirstDay = new Date(currentDate.getTime() - (millisecond * minusDay)); 
+		    //获得当前周的最后一天
+		     var currentWeekLastDay = new Date(currentWeekFirstDay.getTime() + (millisecond * 6));
+		    //添加至数组   
+		    startStop.push(getDateStr3(currentWeekFirstDay)); 
+		    startStop.push(getDateStr3(currentWeekLastDay)); 
+		   
+		    return startStop; 
+		} 
+        
+        function getDateStr3(date) {
+            var year = "";
+            var month = "";
+            var day = "";
+            var now = date;
+            year = ""+now.getFullYear();
+            if((now.getMonth()+1)<10){
+                month = "0"+(now.getMonth()+1);
+            }else{
+                month = ""+(now.getMonth()+1);
+            }
+            if((now.getDate())<10){
+                day = "0"+(now.getDate());
+            }else{
+                day = ""+(now.getDate());
+            }
+            return year+"-"+month+"-"+day;
+        }
+	</script>
+</body>
+
+</html>

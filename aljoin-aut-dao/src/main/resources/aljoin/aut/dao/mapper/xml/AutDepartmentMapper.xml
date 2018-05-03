@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.aut.dao.mapper.AutDepartmentMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.aut.dao.entity.AutDepartment">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="dept_name" property="deptName" />
+		<result column="dept_code" property="deptCode" />
+		<result column="dept_level" property="deptLevel" />
+		<result column="is_active" property="isActive" />
+		<result column="dept_rank" property="deptRank" />
+		<result column="parent_id" property="parentId" />
+		<result column="parent_code" property="parentCode" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name, dept_name, dept_code, dept_level, is_active, dept_rank, parent_id, parent_code
+    </sql>
+
+	<!--根据部门ID批量查询部门信息-->
+	<select id="selectByIds" resultMap="BaseResultMap" parameterType="java.util.List">
+		SELECT
+			<include refid="Base_Column_List" />
+		FROM  aut_department
+		<where>
+			is_delete = 0
+			AND id IN
+			<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</where>
+	</select>
+</mapper>

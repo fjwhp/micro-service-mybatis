@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>菜单管理</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<!-- <link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css"> -->
+<link rel="stylesheet" href="../../web/plugins/font-aljoin/iconfont.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+ <link rel="stylesheet" href="../../web/css/public.css" /> 
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main" style="margin: 10px;">
+		<blockquote class="layui-elem-quote" style="padding: 5px;">
+			<form class="layui-form" action="">
+			<div style="float:right">
+				<div class="layui-input-inline">
+					<input type="text" name="searchKey" id="searchKey" placeholder="请输入菜单名称" autocomplete="off" class="layui-input"
+						style="height: 30px; line-height: 30px;">
+				</div> 
+				<span><@a code="010602" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData()" iclass="layui-icon"
+					icon="&#xe615;" text="搜索"/></span>
+			</div>
+				<div>
+					<span><@a code="010601" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="openAddWin()" iclass="layui-icon"
+						icon="&#xe608;" text="新增"/></span>
+				</div>
+			</form>
+		</blockquote>
+		<div class="layui-field-box layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table admin-table">
+			    <colgroup>
+				    <col width="4%">
+				    <col width="10%">
+				    <col width="10%">
+				    <col width="8%">
+				    <col width="8%">
+				    <col width="15%">
+				    <col width="10%">
+				    <col width="8%">
+				    <col width="8%">
+  				</colgroup>
+				<thead>
+					<tr>
+						<th style="width: 20px;"><input type="checkbox" lay-skin="primary" lay-filter="paging_check-all"></th>
+						<th style="display: none;">菜单ID</th>
+						<th>一级菜单名称</th>
+						<th>二级菜单名称</th>
+						<th>菜单编码</th>
+						<th>排序</th>
+						<th>链接</th>
+						<th>图标样式</th>
+						<th>图标</th>
+						<th>是否激活</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td><input type="checkbox" lay-skin="primary" class="check-id" id="{{value.id}}"></td>
+							<td style="display: none;">{{value.id}}</td>
+							{{if value.menuLevel == 1}}<td>{{value.menuName}}</td><td></td>{{/if}}
+							{{if value.menuLevel == 2}}<td></td><td>{{value.menuName}}</td>{{/if}}
+							<td>{{value.menuCode}}</td>
+							<td>{{value.menuRank}}</td> 
+							<td>{{value.menuHref}}</td>
+							<td>{{value.menuIcon}}</td>
+							<td><li class="fa {{value.menuIcon}}"></li></td>
+							<td>{{if value.isActive == 1}}<font color="green">激活</font>{{/if}}{{if value.isActive == 0}}<font color="red">冻结</font>{{/if}}</td>
+							<td style="width:210px;">
+								{{if value.menuLevel == 1}}<@a code="000303" href="javascript:void(0)" class="layui-btn layui-btn-primary layui-btn-mini" id="show-edit" onclick="openAddWin2('{{value.menuCode}}','{{value.menuName}}')" text="新增子菜单"/>{{/if}}
+								<@a code="000304" href="javascript:void(0)" class="layui-btn layui-btn-mini" id="show-edit" onclick="showEdit('{{value.id}}')" text="编辑"/>
+								<@a code="000305" href="javascript:void(0)" class="layui-btn layui-btn-warm layui-btn-mini" id="show-view" onclick="showView('{{value.id}}')" text="详情"/>
+								<@a code="000306" href="javascript:void(0)" class="layui-btn layui-btn-danger layui-btn-mini" id="show-delete" onclick="showDelete('{{value.id}}')" text="删除"/>
+							</td>
+						</tr>
+					{{/each}}
+					</script>
+				</tbody>
+			</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	<!-- 新增对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 10px; z-index: 19940200;" id="win-add-object">
+		<form class="layui-form layui-form-pane" id="add-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">菜单级别</label>
+				<@select dict="MENU_LEVEL" layVerify="required" id="menuLevel_s" name="menuLevel_s" class="layui-input-block" def="1"/>
+				<input type="hidden" id="menuLevel" name="menuLevel" value="1" />
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">菜单名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="menuName"  maxlength = "50" id="menuName" lay-verify="required" autocomplete="off" placeholder="菜单名称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">菜单链接</label>
+				<div class="layui-input-block">
+					<input type="text" name="menuHref" id="menuHref"  maxlength = "100"  onkeyup="value=value.replace(/[\u4E00-\u9FA5]/g,'')" autocomplete="off" placeholder="菜单链接(如果没有维护二级菜单需要填写链接)" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">图标样式</label>
+				<div class="layui-input-block">
+					<input type="text" name="menuIcon" id="menuIcon" maxlength = "50" onkeyup="value=value.replace(/[\u4E00-\u9FA5]/g,'')" 
+					 lay-verify="required" autocomplete="off" placeholder="图标样式(http://fontawesome.io/icons)"	class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="menuRank" id="menuRank" maxlength="3" onkeyup="value=value.replace(/[^\d]/g,'')"  lay-verify="number" autocomplete="off" placeholder="排序" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<@select dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive" class="layui-input-block" def="1"/>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+
+		</form>
+	</div>
+	<!-- 新增对象窗口2 -->
+	<div style="padding: 10px; display: none; padding-right: 10px; z-index: 19940200;" id="win-add-object2">
+		<form class="layui-form layui-form-pane" id="add-object-form2">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" name="parentCode" id="parentCode" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">菜单级别</label>
+				<@select dict="MENU_LEVEL" layVerify="required" id="menuLevel_s" name="menuLevel_s" class="layui-input-block" def="2"/>
+				<input type="hidden" id="menuLevel" name="menuLevel" value="2" />
+				<input type="hidden" id="menuCode" name="menuCode" />
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">父菜单</label>
+				<div class="layui-input-block">
+					<input type="text" name="parentMenuName" id="parentMenuName" autocomplete="off" placeholder="菜单名称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">菜单名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="menuName"  maxlength = "50" id="menuName" lay-verify="required" autocomplete="off" placeholder="菜单名称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">菜单链接</label>
+				<div class="layui-input-block">
+					<input type="text" name="menuHref" maxlength = "100"   onkeyup="value=value.replace(/[\u4E00-\u9FA5]/g,'')"  id="menuHref" lay-verify="required" autocomplete="off" placeholder="菜单链接" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">图标样式</label>
+				<div class="layui-input-block">
+					<input type="text" name="menuIcon" id="menuIcon"     maxlength = "50" onkeyup="value=value.replace(/[\u4E00-\u9FA5]/g,'')" 
+					 lay-verify="required" autocomplete="off" placeholder="图标样式(http://fontawesome.io/icons)"		class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="menuRank" id="menuRank" maxlength="11" onkeyup="value=value.replace(/[^\d]/g,'')" lay-verify="number" autocomplete="off" placeholder="排序" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<@select dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive" class="layui-input-block" def="1"/>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit2">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+
+		</form>
+	</div>
+	<!-- 编辑对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 10px;" id="win-update-object">
+		<form class="layui-form layui-form-pane" id="update-object-form">
+			<input type="hidden" name="id" id="id">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">菜单级别</label>
+				<@select dict="MENU_LEVEL" layVerify="required" id="menuLevel_s" name="menuLevel_s" class="layui-input-block" def=""/>
+				<input type="hidden" id="menuLevel" name="menuLevel" />
+				<input type="hidden" id="menuCode" name="menuCode" />
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">父菜单</label>
+				<div class="layui-input-block">
+					<input type="text" name="parentMenuName"   id="parentMenuName" autocomplete="off" placeholder="菜单名称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">菜单名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="menuName" id="menuName"   maxlength = "50"   lay-verify="required" autocomplete="off" placeholder="菜单名称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">菜单链接</label>
+				<div class="layui-input-block">
+					<input type="text" name="menuHref" id="menuHref"  maxlength = "100" onkeyup="value=value.replace(/[\u4E00-\u9FA5]/g,'')"  lay-verify="required" autocomplete="off" placeholder="菜单链接" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">图标样式</label>
+				<div class="layui-input-block">
+					<input type="text" name="menuIcon" id="menuIcon"  maxlength = "50"  onkeyup="value=value.replace(/[\u4E00-\u9FA5]/g,'')"  lay-verify="required" autocomplete="off" placeholder="图标样式(http://fontawesome.io/icons)"
+						class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="menuRank" id="menuRank" maxlength="11" onkeyup="value=value.replace(/[^\d]/g,'')" lay-verify="number" autocomplete="off" placeholder="排序" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<@select dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive" class="layui-input-block" def="1"/>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-update-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 详情对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 10px;" id="win-view-object">
+		<form class="layui-form layui-form-pane" id="view-object-form">
+			<input type="hidden" name="id" id="id">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">菜单级别</label>
+				<@select dict="MENU_LEVEL" layVerify="required" id="menuLevel_s" name="menuLevel_s" class="layui-input-block" def=""/>
+				<input type="hidden" id="menuLevel" name="menuLevel" />
+				<input type="hidden" id="menuCode" name="menuCode" />
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">父菜单</label>
+				<div class="layui-input-block">
+					<input type="text" name="parentMenuName" id="parentMenuName" autocomplete="off" placeholder="菜单名称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">菜单名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="menuName"   maxlength = "50" 
+					 id="menuName" lay-verify="required" autocomplete="off" placeholder="菜单名称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">菜单链接</label>
+				<div class="layui-input-block">
+					<input type="text" name="menuHref" id="menuHref" maxlength = "100"  onkeyup="value=value.replace(/[\u4E00-\u9FA5]/g,'')"
+					 lay-verify="required" autocomplete="off" placeholder="菜单链接" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">图标样式</label>
+				<div class="layui-input-block">
+					<input type="text" name="menuIcon" id="menuIcon"  maxlength = "50" onkeyup="value=value.replace(/[\u4E00-\u9FA5]/g,'')"  lay-verify="required" autocomplete="off" placeholder="图标样式(http://fontawesome.io/icons)"
+						class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="menuRank" id="menuRank" maxlength="3" onkeyup="value=value.replace(/[^\d]/g,'')" lay-verify="number" autocomplete="off" placeholder="排序" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<@select dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive" class="layui-input-block" def="1"/>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">版本号</label>
+				<div class="layui-input-block">
+					<input type="text" name="version" id="version" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">创建时间</label>
+				<div class="layui-input-block">
+					<input type="text" name="createTime" id="createTime" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">创建者</label>
+				<div class="layui-input-block">
+					<input type="text" name="createUserName" id="createUserName" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">修改时间</label>
+				<div class="layui-input-block">
+					<input type="text" name="lastUpdateTime" id="lastUpdateTime" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">修改者</label>
+				<div class="layui-input-block">
+					<input type="text" name="lastUpdateUserName" id="lastUpdateUserName" lay-verify="required" autocomplete="off" placeholder="昵称"
+						class="layui-input">
+				</div>
+			</div>
+			<div class="btn_fixed" >
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+			</div>
+		</form>
+	</div>
+	<script type="text/javascript" src="../../web/plugins/layui/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool.js"></script>
+	<script>
+		var pform;
+		//添加事件
+		layui.use('form', function() {
+			pform = layui.form();
+			pform.on('select(isActive)', function(data) {
+				//alert(data.value);
+				//form.render('checkbox');
+			});
+			//自定义表单校验
+			pform.verify({
+				checkRepwd : function(value) {
+					if (value != $("#add-object-form").find("#userPwd").val()) {
+						return "两次输入的密码不一致";
+					}
+				},
+				checkRepwd2 : function(value) {
+					if (value != $("#update-object-form").find("#userPwd").val()) {
+						return "两次输入的密码不一致";
+					}
+				}
+			});
+			//监听新增提交
+			pform.on('submit(form-add-submit)', function(data) {
+				tool.post("../autMenu/add", $("#add-object-form").serialize(), postCallBack, false);
+				return false;
+			});
+			//监听新增提交2
+			pform.on('submit(form-add-submit2)', function(data) {
+				tool.post("../autMenu/add", $("#add-object-form2").serialize(), postCallBack, false);
+				return false;
+			});
+			//监听新增提交
+			pform.on('submit(form-update-submit)', function(data) {
+				tool.post("../autMenu/update", $("#update-object-form").serialize(), postCallBack, false);
+				return false;
+			});
+			//初始化出发数据加载
+			loadData();
+		});
+		//加载数据
+		function loadData() {
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 100;
+			param.url = "../autMenu/list";
+			param.menuName = $("#searchKey").val();
+			tool.loadpage(param);
+		}
+		//获取勾选数据id
+		function getCheckItmes() {
+			$(".check-id:checked").each(function() {
+				//console.log($(this).attr("id"));
+				;
+			});
+		}
+		//打开新增对象窗口
+		function openAddWin() {
+			$('#add-object-form').find("#menuLevel_s").attr("disabled", "disabled");
+			var index = layer.open({
+				title : '新增',
+				maxmin : false,
+				type : 1,
+				content : $('#win-add-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		//打开新增对象窗口2
+		function openAddWin2(parentCode, parentMenuName) {
+			$('#add-object-form2').find("#menuLevel_s").attr("disabled", "disabled");
+			$('#add-object-form2').find("#parentCode").val(parentCode);
+			$('#add-object-form2').find("#parentMenuName").val(parentMenuName);
+			$('#add-object-form2').find("#parentMenuName").attr("disabled", "disabled");
+			var index = layer.open({
+				title : '新增子菜单',
+				maxmin : false,
+				type : 1,
+				content : $('#win-add-object2')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		//新增对象回调
+		function postCallBack(retMsg) {
+			if (retMsg.code == 0) {
+				 layer.alert(retMsg.message, {
+	                    title : "操作提示",
+	                    icon : 1,
+	                    closeBtn:0
+	                }, function(index) {
+	                	$("button[type='reset']").trigger("click");
+	    				loadData();
+	   				    layer.closeAll();
+	                });
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+		//编辑对象
+		function showEdit(id) {
+			var object = tool.getById("../autMenu/getById", id);
+			var autMenu = object.autMenu;
+			for ( var key in autMenu) {
+				$("#update-object-form").find("#" + key).val(autMenu[key]);
+			}
+			$("#update-object-form").find("#menuLevel_s").val(autMenu.menuLevel);
+			$("#update-object-form").find("#menuLevel_s").attr("disabled", "disabled");
+			if (autMenu.menuLevel == 1) {
+				$("#update-object-form").find("#parentMenuName").parent().parent().hide();
+				//如果是一级菜单，则菜单链接不用必填
+				$("#update-object-form #menuHref").removeAttr("lay-verify");
+				$("#update-object-form #menuHref").removeClass("layui-form-danger");
+			} else {
+				$("#update-object-form").find("#parentMenuName").parent().parent().show();
+				$("#update-object-form").find("#parentMenuName").val(object.parentMenu.menuName);
+				$("#update-object-form").find("#parentMenuName").attr("disabled", "disabled");
+				//如果是二级菜单，则菜单链接必填
+				$("#update-object-form #menuHref").attr("lay-verify", "required");
+			}
+			var index = layer.open({
+				title : '编辑',
+				maxmin : false,
+				type : 1,
+				content : $('#win-update-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		//详情对象
+		function showView(id) {
+			var object = tool.getById("../autMenu/getById", id);
+			var autMenu = object.autMenu;
+			for ( var key in autMenu) {
+				$("#view-object-form").find("#" + key).val(autMenu[key]);
+			}
+			$("#view-object-form").find("#menuLevel_s").val(autMenu.menuLevel);
+			if (autMenu.menuLevel == 1) {
+				$("#view-object-form").find("#parentMenuName").parent().parent().hide();
+			} else {
+				$("#view-object-form").find("#parentMenuName").parent().parent().show();
+				$("#view-object-form").find("#parentMenuName").val(object.parentMenu.menuName);
+				$("#view-object-form").find("#parentMenuName").attr("disabled", "disabled");
+			}
+
+			$('#view-object-form :input').attr("disabled", "disabled");
+			var index = layer.open({
+				title : '详情',
+				maxmin : false,
+				type : 1,
+				content : $('#win-view-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		//删除对象
+		function showDelete(id) {
+			layer.confirm('确定删除 ?', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				var retMsg = tool.deleteById("../autMenu/delete", id)
+				if (retMsg.code == 0) {
+					tool.success(retMsg.message);
+					loadData();
+				} else {
+					tool.error(retMsg.message);
+				}
+			});
+		}
+	</script>
+</body>
+
+</html>

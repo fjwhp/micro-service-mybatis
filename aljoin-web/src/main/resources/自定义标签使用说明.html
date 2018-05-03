@@ -1,0 +1,4 @@
+#自定义freemarker的selectTable标签(根据表名，value,option后去数据库对应值)
+<@selectTable table="dev_project" layVerify="required" id="projectId" name="projectId" class="layui-input-block" def="" key="id" text="project_name" where="and is_active=1"/>
+
+<@selectLink table="res_resource_type" layVerify="required"  id="type_id"  name="type_id" class="layui-input-inline" def="" key="id" text="type_name" level="1" levelName="type_level" rankName="type_rank" where=" AND is_active=1"/>

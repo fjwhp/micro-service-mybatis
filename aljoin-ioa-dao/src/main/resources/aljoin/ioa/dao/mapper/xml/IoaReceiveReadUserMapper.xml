@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.ioa.dao.mapper.IoaReceiveReadUserMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.ioa.dao.entity.IoaReceiveReadUser">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="receive_read_object_id" property="receiveReadObjectId" />
+		<result column="receive_file_id" property="receiveFileId" />
+		<result column="read_user_id" property="readUserId" />
+		<result column="read_user_full_name" property="readUserFullName" />
+		<result column="read_dept_id" property="readDeptId" />
+		<result column="read_dept_name" property="readDeptName" />
+		<result column="is_read" property="isRead" />
+		<result column="read_time" property="readTime" />
+		<result column="read_opinion" property="readOpinion" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name, receive_read_object_id, receive_file_id, read_user_id, read_user_full_name, read_dept_id, read_dept_name, is_read, read_time, read_opinion
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM ioa_receive_read_user WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="IoaReceiveReadUser">
+    	INSERT INTO ioa_receive_read_user(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{receiveReadObjectId}, #{receiveFileId}, #{readUserId}, #{readUserFullName}, #{readDeptId}, #{readDeptName}, #{isRead}, #{readTime}, #{readOpinion})
+    </insert>
+
+</mapper>

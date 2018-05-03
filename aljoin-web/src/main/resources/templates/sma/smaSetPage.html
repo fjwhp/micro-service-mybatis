@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>系统设置</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<style>
+.m_l_blue{border-left:solid 7px ${ALJOIN_CURRENT_MAIN_COLOR};
+		  height:42px;line-height:42px;
+		/*   border-bottom:solid 1px #c9d3d6; */
+		  border-radius: 8px 0 0 0;
+		  margin-bottom:10px;
+		  font-weight:bold;font-size:16px;
+}
+</style>
+</head>
+<body>  
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main" id="win-newsms-object">
+		<form class="layui-form layui-form-pane" id="add-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" name="params['is_mail_sms']"  id="is_mail_sms" />
+<!-- 			<div class="layui-form-item">
+				<label class="" style="font-weight:bold;font-size:16px;width:200px; ">邮件设置</label>
+			</div> -->
+			
+			<div class="m_l_blue layui-form-item">
+				<span class="l m_l20 font_sty">邮件设置</span>
+			</div>
+			
+			
+			<!-- <div class="layui-form-item">
+				<label style="width:200px;" class="layui-form-label">邮件短信</label>
+				<div class="layui-input-inline" style="width:50%">
+					 <input type="radio"  name="aa"  value="1" title="打开">
+      				 <input type="radio" name="aa"  value="0" title="关闭">	
+				</div>
+			</div> -->
+			<div class="layui-form-item">
+				<label style="width:200px;"   class="layui-form-label" title="撤回并删除有效时间">撤回并删除有效时间(分钟)</label>
+				<div class="layui-input-inline" style="width:50%">
+					<input type="text" name="params['allow_revoke_time']" id="allow_revoke_time" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="4"  lay-verify="required|number" autocomplete="off" placeholder="撤回并删除有效时间(分钟)" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label style="width:200px;" class="layui-form-label" title="个人邮件空间大小">个人邮件空间限制(MB)</label>
+				<div class="layui-input-inline" style="width:50%">
+					<input type="text" name="params['personal_mail_space']" id="personal_mail_space" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="4" lay-verify="required|number" autocomplete="off" placeholder="个人邮件空间限制(MB)" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label style="width:200px;" class="layui-form-label" title="领导邮件空间大小">领导邮件空间限制(MB)</label>
+				<div class="layui-input-inline" style="width:50%">
+					<input type="text" name="params['leader_mail_space']" id="leader_mail_space" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="4" lay-verify="required|number" autocomplete="off" placeholder="领导邮件空间限制(MB)" class="layui-input">
+				</div>
+			</div>
+	<!-- 		<div class="layui-form-item">
+				<label class="" style="font-weight:bold;font-size:16px;width:200px;">系统附件大小</label>
+			</div> -->
+			<div class="m_l_blue layui-form-item">
+				<span class="l m_l20 font_sty">系统附件大小</span>
+			</div>
+			<div class="layui-form-item">
+				<label style="width:200px;" class="layui-form-label" title="系统附件大小">系统附件大小(MB)</label>
+				<div class="layui-input-inline" style="width:50%">
+					<input type="text" name="params['sys_attachment_size']" id="sys_attachment_size" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="4"  lay-verify="required|number" autocomplete="off" placeholder="系统附件大小(MB)" class="layui-input">
+				</div>
+			</div>
+		
+			
+			<div class="btn_fixed">
+				<div style="float: right;">
+				 	<button class="layui-btn" lay-submit="" lay-filter="form-add-submit">
+						<i class="fa fa-save"></i> 提交
+					</button> 
+		<!-- 			<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 保存
+					</button> -->
+				</div>
+			</div>
+		</form>
+	</div>
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script>
+		//定义layui
+		var pform;
+		layui.use(['form','element'], function() {
+			pform = layui.form;
+			//监听新增提交
+			pform.on('submit(form-add-submit)', function(data) {
+				var s= $("#add-object-form").find("input[type='radio']:checked").val()
+				$("#is_mail_sms").val(s);
+				tool.post("/sma/systemMaintain/sysSet", $("#add-object-form").serialize(),postCallBack, false);
+				return false;
+			});
+		});
+		//新增对象回调
+		function postCallBack(retMsg) {
+			if (retMsg.code == 0) {
+				tool.success(retMsg.message);
+				detail();
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+		detail();
+		 function detail(){
+			 var  param={
+					 _csrf:$("#_csrf").val()
+			  }
+			 tool.post("/sma/systemMaintain/sysSetDetail",param,function(data){
+				 if(null != data){
+                     $(data).each(function(index,value) {
+						if(data[index].paramKey == 'allow_revoke_time'){
+							//时间
+                            $("#allow_revoke_time").val(data[index].paramValue);
+						}
+						if(data[index].paramKey == 'personal_mail_space'){
+                            //个人邮件
+                            $("#personal_mail_space").val(data[index].paramValue);
+						}
+						if(data[index].paramKey == 'leader_mail_space'){
+                             //领导邮件
+                             $("#leader_mail_space").val(data[index].paramValue);
+						}
+						if(data[index].paramKey == 'sys_attachment_size'){
+                            //系统
+                            $("#sys_attachment_size").val(data[index].paramValue);
+						}
+						if(data[index].paramKey == 'is_mail_sms'){
+                             //系统
+                             var isMailSms = data[index].paramValue;
+                            //邮件短信
+                            $("#add-object-form").find("input[type='radio']").each(function(index,value){
+                                if(value.value==isMailSms){
+                                    $(this).attr("checked",true)
+                                }
+                            });
+                         }
+                     });
+				 }
+
+			 },false)
+		 }
+		
+	</script>
+</body>
+</html>

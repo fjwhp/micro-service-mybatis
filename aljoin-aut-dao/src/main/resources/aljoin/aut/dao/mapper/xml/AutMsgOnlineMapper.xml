@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.act.dao.mapper.AutMsgOnlineMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.aut.dao.entity.AutMsgOnline">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="msg_type" property="msgType" />
+		<result column="msg_content" property="msgContent" />
+		<result column="from_user_id" property="fromUserId" />
+		<result column="from_user_name" property="fromUserName" />
+		<result column="from_user_full_name" property="fromUserFullName" />
+		<result column="receive_user_name" property="receiveUserName" />
+		<result column="receive_user_id" property="receiveUserId" />
+		<result column="is_read" property="isRead" />
+		<result column="read_time" property="readTime" />
+		<result column="business_key" property="businessKey" />
+		<result column="is_active" property="isActive" />
+		<result column="go_url" property="goUrl" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name, msg_type, msg_content, from_user_id, from_user_name, from_user_full_name, receive_user_name, receive_user_id, is_read, read_time, business_key, is_active, go_url
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM aut_msg_online WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="AutMsgOnline">
+    	INSERT INTO aut_msg_online(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{msgType}, #{msgContent}, #{fromUserId}, #{fromUserName}, #{fromUserFullName}, #{receiveUserName}, #{receiveUserId}, #{isRead}, #{readTime}, #{businessKey}, #{isActive}, #{goUrl})
+    </insert>
+
+</mapper>

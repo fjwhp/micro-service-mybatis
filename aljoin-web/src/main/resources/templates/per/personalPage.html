@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>个人信息</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+</head>
+<body> 
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="l" style="width:20%;">
+		<div style="width:140px;height:133px;margin:40px;">
+			<img src="../../web/images/0.jpg" style="width:140px;height:140px;border-radius:80px;border:solid 8px #c4e5f4;">
+		</div>
+		<div style="font-size:16px;color:#666;text-align:center;margin-bottom:30px;">王伟杰</div>
+		<div style="text-align:center;">
+			<a class="btn_blue2">更换头像</a>
+		</div>
+	</div>
+	<div class="layui-tab layui-tab-brief l" lay-filter="docDemoTabBrief" style="width:78%;border-left:solid 1px #e6e6e6;">
+		<ul class="layui-tab-title m_l30">
+		    <li class="layui-this">个人信息</li>
+		    <li>修改密码</li>
+		</ul>
+		<div class="layui-tab-content">
+		  	<div class="layui-tab-item layui-show content_sel">
+		  		<!--个人信息-->
+				<div class="admin-main" id="win-newsms-object">
+					<form class="layui-form layui-form-pane" id="add-object-form">
+						<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+						<div class="layui-form-item" style="display:none;">
+							<label class="layui-form-label">公共信息id</label>
+							<div class="layui-input-block">
+								<input type="text" name="AutUserPub.id" id="id" lay-verify="" autocomplete="off" placeholder="账号" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">账号</label>
+							<div class="layui-input-block">
+								<input type="text" name="AutUser.userName" id="userName" lay-verify="" autocomplete="off" placeholder="账号" class="layui-input" readonly="readonly">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">姓名</label>
+							<div class="layui-input-block">
+								<input type="text" name="AutUser.fullName" id="fullName" lay-verify="" autocomplete="off" placeholder="姓名" class="layui-input" readonly="readonly">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">部门</label>
+							<div class="layui-input-block">
+								<input type="text" name="AutDepartment.deptName" id="deptName" lay-verify="" autocomplete="off" placeholder="部门" class="layui-input" readonly="readonly">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">岗位</label>
+							<div class="layui-input-block">
+								<input type="text" name="AutPosition.positionName" id="positionName" lay-verify="" autocomplete="off" placeholder="岗位" class="layui-input" disabled>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">手机</label>
+							<div class="layui-input-block">
+								<input type="text" name="AutUserPub.phoneNumber" id="phoneNumber" lay-verify="" autocomplete="off" placeholder="手机" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">电话</label>
+							<div class="layui-input-block">
+								<input type="text" name="AutUserPub.telNumber" id="telNumber" lay-verify="" autocomplete="off" placeholder="电话" class="layui-input">
+							</div>
+						</div>
+					
+						<div class="layui-form-item">
+							<label class="layui-form-label">胸牌号</label>
+							<div class="layui-input-block">
+								<input type="text" name="AutUserPub.chestCardNumber" id="chestCardNumber" lay-verify="" autocomplete="off" placeholder="胸牌号" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">传真</label>
+							<div class="layui-input-block">
+								<input type="text" name="AutUserPub.faxNumber" id="faxNumber" lay-verify="" autocomplete="off" placeholder="传真" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">执法证号</label>
+							<div class="layui-input-block">
+								<input type="text" name="AutUserPub.lawNumber" id="lawNumber" lay-verify="" autocomplete="off" placeholder="执法证号" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">电子邮件</label>
+							<div class="layui-input-block">
+								<input type="text" name="AutUser.userEmail" id="userEmail" lay-verify="" autocomplete="off" placeholder="电子邮件" class="layui-input">
+							</div>
+						</div>
+					
+						<div class="layui-input-block" style="margin-top: 15px;">
+							<div style="float: right;">
+								<button class="layui-btn" lay-submit="" lay-filter="form-add-submit">
+									<i class="fa fa-save"></i> 保存
+								</button>
+							</div>
+						</div>
+					</form>
+				</div>
+		  	</div>
+		    <div class="layui-tab-item">
+			    <!-- 修改秘密-->
+				<div class="admin-main" id="win-newsms-object">
+					<form class="layui-form layui-form-pane" id="updatePwd-object-form">
+						<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+						<div class="layui-form-item">
+							<label class="layui-form-label">原密码</label>
+							<div class="layui-input-block">
+								<input type="password" name="AutUser.userPwd" id="userPwd" lay-verify="required|spactily" autocomplete="off" placeholder="原密码" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">新密码</label>
+							<div class="layui-input-block">
+								<input type="password" name="newUserPwd" id="newUserPwd" lay-verify="required|spactily" autocomplete="off" placeholder="新密码" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">再次输入</label>
+							<div class="layui-input-block">
+								<input type="password" name="newUserPwdConfirm" id="newUserPwdConfirm" lay-verify="required|spactily" autocomplete="off" placeholder="再次输入新密码" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-input-block" style="margin-top: 15px;">
+							<div style="float: right;">
+								<button class="layui-btn" lay-submit="" lay-filter="form-updatepwd-submit">
+									<i class="fa fa-save"></i> 保存
+								</button> 
+							</div>
+						</div>
+					</form>
+				</div>
+		    </div>
+		</div>
+	</div>  
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script>
+		//定义layui
+		var pform;
+		layui.use(['form','element'], function() {
+			pform = layui.form;
+			// 个人信息-个人信息-新增及更新
+			pform.on('submit(form-add-submit)',function(data){
+				tool.post("/per/autUserPub/update",$("#add-object-form").serialize(),postCallBack_add,false)
+				return false;
+			})
+		});
+    	  
+		//短信详情
+		function detail() {
+			var index = layer.open({
+				title : '详情',
+				maxmin : false,
+				type : 1,
+				content : $('#win-detail-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+      
+		function postCallBack_add(retMsg) {
+			if (retMsg.code == 0) {
+				tool.success(retMsg.message);
+				detail();
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+		
+		detail();
+		function detail(){
+		// 个人中心-个人信息-详情
+		var object;
+		var empty = {};
+		tool.post("/per/autUserPub/getById",{_csrf:$("#_csrf").val()},function(data){
+			 object = $.extend(empty,data.autDepartment,data.autPosition,data.autUser,data.autUserPub);
+		},false)
+		for ( var key in object) {
+			$("#add-object-form").find("#" + key).val(object[key]);
+		} 
+		}
+		
+		function postCallBack_update(retMsg){
+			if (retMsg.code == 0) {
+				tool.success(retMsg.message);
+				 $('#demoList').empty();
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+		
+		//修改密码
+		layui.use(['form','element'], function() {
+			pform = layui.form;
+			// 个人信息-个人信息-修改密码
+			pform.on('submit(form-updatepwd-submit)',function(data){
+				tool.post("/per/autUserPub/updatePwd",$("#updatePwd-object-form").serialize(),postCallBack_update,false)
+				return false;
+			})
+		});
+	</script>
+</body>
+</html>

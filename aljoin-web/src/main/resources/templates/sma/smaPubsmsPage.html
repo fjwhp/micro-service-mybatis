@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>公共信息管理</title>
+<link rel="stylesheet"
+	href="/getCssStyle?css=static/web/plugins/layui/css/layui.css"
+	media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet"
+	href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet"
+	href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}"
+		id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="layui-tab layui-tab-brief m_t0"
+		lay-filter="docDemoTabBrief">
+		<ul class="layui-tab-title">
+			<li class="layui-this"><@a code="160301"
+				href="javascript:void(0)" text="公共信息管理"/></li>
+			<li><@a code="160302" href="javascript:void(0)" text="新建分类"/></li>
+		</ul>
+		<div class="layui-tab-content">
+			<div id="onehidden" class="layui-tab-item layui-show content_sel">
+				<div class="">
+					<blockquote class="layui-elem-quote"
+						style="padding: 5px; text-align: right;">
+						<form class="layui-form" action="">
+							<div>
+								<div class="layui-input-inline m_r10">
+									<span>状态</span>
+								</div>
+								<div class="layui-input-inline m_r20" style="text-align: left;">
+									<select name="isActive" id="isActive_" lay-verify="required"
+										style="width: 150px; height: 32px;">
+										<option value=""></option>
+										<option value="0">无效</option>
+										<option value="1">有效</option>
+									</select>
+								</div>
+								<div class="layui-input-inline">
+									<input type="text" name="name" id="categoryName"
+										placeholder="请输入分类查询" maxlength="50" autocomplete="off"
+										class="layui-input" style="height: 30px; line-height: 30px;">
+								</div>
+								<span><@a code="160303" href="javascript:void(0)"
+									class="layui-btn layui-btn-small" id="" onclick="loadData()"
+									iclass="layui-icon" icon="&#xe615;" text="查询"/></span>
+							</div>
+							<!-- 	    <div class="layui-input-inline">
+						  	<span><a class="layui-btn layui-btn-small" onclick="onclick="showDeletes()"><i class="layui-icon">&#xe640;</i>删除</a></span>
+						</div> -->
+						</form>
+					</blockquote>
+					<!-- 
+					<form class="layui-form" action="">
+					<div>
+						<div class="layui-input-inline m_r10" >
+						 <span>分类</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							<input type="text" class="inp_w120px" name="name" id="categoryName">
+						</div>
+						<div class="layui-input-inline m_r10">
+						 	<span>状态</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+					      		<select name="isActive" id="isActive_" lay-verify="required" style="width:150px;height:32px;">
+							        <option value=""></option>
+							        <option value="0">无效</option>
+							        <option value="1">有效</option>
+					      		</select>
+					   	</div>
+						<span><a class="btn_search_blue" id="" onclick="loadData()" style="float:right;">查询</a></span>
+				    </div>
+				    
+					</form> -->
+					<div class="layui-form">
+						<table class="layui-table admin-table">
+							<thead>
+								<tr>
+									<th style="display: none;">用户ID</th>
+									<th style="width: 40px;">序号</th>
+									<th style="width: 120px;">分类</th>
+									<th style="width: 40px;">排序</th>
+									<th style="width: 120px;">流程</th>
+									<th style="width: 80px;">创建人</th>
+									<th style="width: 120px;">创建时间</th>
+									<th style="width: 60px;">状态</th>
+									<th style="width: 80px;">操作</th>
+								</tr>
+							</thead>
+							<tbody id="paging-data">
+								<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr > 
+							<td style="display: none;">{{value.id}}</td>
+							<td>{{value.no}}</td>
+							<td>{{value.name}}</td>
+							<td>{{value.rank}}</td>
+                            <td>{{if value.processName!="null"}}{{value.processName}}{{/if}}</td>
+                            <td>{{value.createUserFullName}}</td>
+                            <td>{{value.createTime}}</td>
+							<td>{{value.status}} </td>
+							<td>
+								<@a code="160304" href="javascript:void(0)" class="table_btn table_link" id="show-edit" onclick="edit('{{value.id}}')" text="编辑"/>
+								<@a code="160305112" href="javascript:void(0)" class="table_btn table_link" id="show-delete" onclick="showDelete('{{value.id}}',this)" text="删除"/>
+							</td>
+						</tr>
+					{{/each}}
+					</script>
+							</tbody>
+						</table>
+					</div>
+					<div class="admin-table-page"
+						style="border-width: 0px; z-index: 0;">
+						<div id="paging-footer" class="page"
+							style="background-color: white; text-align: center;"></div>
+					</div>
+				</div>
+			</div>
+			<div id="twohidden" class="layui-tab-item">
+				<!-- 新建分类 -->
+				<div class="" id="win-newsms-object">
+					<form class="layui-form layui-form-pane" id="add-object-form">
+						<input type="hidden" name="${_csrf.parameterName}"
+							value="${_csrf.token}" />
+						<div class="layui-form-item">
+							<label class="layui-form-label">类别名称</label>
+							<div class="layui-input-block">
+								<input type="text" name="name" id="name" maxlength="20"
+									lay-verify="required|spactily" autocomplete="off"
+									placeholder="类别名称" class="layui-input react">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">排序</label>
+							<div class="layui-input-block">
+								<input type="text" name="categoryRank" id="categoryRank"
+									lay-verify="required"
+									onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="4"
+									autocomplete="off" placeholder="排序" class="layui-input react">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">流程使用</label>
+							<div class="layui-input-block">
+								<input type="radio" name="isUse" value="1" title="是"
+									lay-filter="isUse" class="reactradio"> <input
+									type="radio" name="isUse" id="reactradio" value="0" title="否"
+									checked lay-filter="isUse" class="reactradio">
+							</div>
+						</div>
+						<div class="layui-form-item" id="selectsId">
+							<label class="layui-form-label">流程分类</label> <@selectLink
+							table="act_aljoin_category" layVerify="" id="category_id"
+							class="layui-input-inline" def="" key="id" text="category_name"
+							level="1" levelName="category_level" rankName="category_rank"
+							where=" AND is_active=1"/>
+						</div>
+						<div class="layui-form-item" id="useProcessName_add">
+							<label class="layui-form-label">使用流程</label>
+							<div class="layui-input-block">
+								<input type="hidden" name="processName" id="processName_add"
+									value="" /> <select name="processId" lay-verify=""
+									id="processId_add" lay-filter="processId">
+									<option value=""></option>
+								</select>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">使用群体</label>
+							<div class="layui-input-block">
+								<input type="hidden" style="width: 81%; float: left;"
+									name="useGroupName" id="useGroupName_add" autocomplete="off"
+									placeholder="使用群体" class="layui-input react"
+									readonly="readonly">
+								<div type="text" id="useGroupName_add1"
+									class="newgg input_btn reset1" readonly="readonly"></div>
+								<a class="btn_blue2 btn_blue2one" style="float: right;">人员选择</a>
+								<input type="hidden" id="useGroupId_add" name="useGroupId"
+									value="" class="react reset">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">状态</label>
+							<div class="layui-input-block">
+								<input type="radio" name="isActive" id="reactwu" class="reactwu"
+									value="1" title="有效" checked> <input type="radio"
+									name="isActive" value="0" class="reactwu" title="无效">
+							</div>
+						</div>
+						<div style="float: right;">
+							<button class="layui-btn" lay-submit=""
+								lay-filter="form-add-submit">
+								<i class="fa fa-save"></i> 保存
+							</button>
+							<!-- <button type="reset" class="layui-btn layui-btn-primary">
+							<li class="fa fa-eraser"></li> 重置
+						</button> -->
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<!-- 人员选择树 -->
+		<div style="display: none; z-index: 19940200;"
+			id="win-personal-object">
+			<div class="search_h">
+				<input id="peopelSel" class="tree_search1 reset" type="text"
+					value="" placeholder="搜索"> <a
+					class="layui-btn layui-btn-small" id="" onclick="searchNodes()"><i
+					class="layui-icon">&#xe615;</i>搜索</a> <a
+					class="layui-btn layui-btn-small layui-btn-primary"
+					style="margin-left: 2px;" type="reset" onclick="reset_tree()"><li
+					class="fa fa-eraser"></li> 重置</a> <label type="text" id="resultKey"
+					class="form-control">
+					<div>
+						<a id="clickUp" class="tree_up" onclick="clickUp()"><i
+							class="layui-icon">&#xe619;</i></a> <a id="clickDown"
+							class="tree_down" onclick="clickDown()"><i class="layui-icon">&#xe61a;</i></a>
+					</div> <label id="number" class="tree_number"></label>
+				</label>
+			</div>
+			<div class="tree_h">
+				<ul id="treeDemo" class="ztree treeDemo1" name="treeDemo"
+					style="display: block"></ul>
+			</div>
+			<div class="sure_h">
+				<a class="layui-btn layui-btn-small sure_s"><li
+					class="fa fa-save"></li> 确定</a>
+			</div>
+		</div>
+
+		<input type="hidden" id="hiddeNcategoryId">
+		<!-- 编辑分类 -->
+		<div
+			style="padding: 10px; display: none; z-index: 19940200; padding-bottom: 50px;"
+			class="m_edit" id="win-editsms-object">
+			<form class="layui-form layui-form-pane" id="edit-object-form">
+				<input type="hidden" name="${_csrf.parameterName}"
+					value="${_csrf.token}" /> <input type="hidden" name="id" id="id"
+					value="" />
+
+				<div class="layui-form-item">
+					<label class="layui-form-label">类别名称</label>
+					<div class="layui-input-block">
+						<input type="text" name="name" id="name"
+							lay-verify="required|spactily" autocomplete="off"
+							placeholder="类别名称" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">排序</label>
+					<div class="layui-input-block">
+						<input type="text" name="categoryRank" id="categoryRank"
+							lay-verify="required" onkeyup="value=value.replace(/[^\d]/g,'')"
+							maxlength="4" autocomplete="off" placeholder="排序"
+							class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">流程使用</label>
+					<div class="layui-input-block">
+						<input type="radio" name="isUse" id="trueUse" value="1" title="是"
+							lay-filter="isUse_edit"> <input type="radio" name="isUse"
+							id="falseUse" value="0" title="否" checked lay-filter="isUse_edit">
+					</div>
+				</div>
+				<div class="layui-form-item" id="selectsId_edit">
+					<label class="layui-form-label">流程分类</label> <@selectLink
+					table="act_aljoin_category" layVerify="" id="category_id_a"
+					name="category_id" class="layui-input-inline react" def="" key="id"
+					text="category_name" level="1" levelName="category_level"
+					rankName="category_rank" where=" AND is_active=1"/>
+				</div>
+				<div class="layui-form-item" id="useProcessName">
+					<label class="layui-form-label">使用流程</label>
+
+					<div class="layui-input-block">
+						<input type="hidden" class="react" id="processName"
+							name="processName" /> <select name="processId" lay-verify=""
+							id="processId" lay-filter="processId_edit">
+						</select>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">使用群体</label>
+					<div class="layui-input-block">
+						<div type="text" id="useGroupName1" class="newgg input_btn reset1"
+							readonly="readonly"></div>
+						<!-- <input type="text" style="width:81%;float:left;" name="useGroupName" id="useGroupName" lay-verify="required|spactily" autocomplete="off" placeholder="参会人员" class="layui-input" readonly="readonly"> -->
+						<input type="hidden" name="useGroupName" id="useGroupName"
+							class="newgg input_btn reset1" readonly="readonly"> <a
+							class="btn_blue2 btn_bluetwo" style="float: right;">人员选择</a> <input
+							type="hidden" id="useGroupId" name="useGroupId" value=""
+							class="reset">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">状态</label>
+					<div class="layui-input-block">
+						<input type="radio" name="isActive" id="trueActive" value="1"
+							title="有效"> <input type="radio" name="isActive"
+							id="falseActive" value="0" title="无效">
+					</div>
+				</div>
+				<div class="btn_fixed">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary"
+						onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+					<div style="float: right;">
+						<button class="layui-btn" lay-submit=""
+							lay-filter="form-edit-submit">
+							<i class="fa fa-save"></i> 保存
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<div id="cloneIdfather" style="display: none">
+			<!--<@selectLink table="act_aljoin_category" layVerify=""  id="category_id" name="category_id"  class="layui-input-inline" def="" key="id" text="category_name" level="1" levelName="category_level" rankName="category_rank" where=" AND is_active=1"/>-->
+		</div>
+	</div>
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript"
+		src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script type="text/javascript"
+		src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript"
+		src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script>
+		//定义layui
+		var pform;
+		var hiId;
+		layui.use([ 'form', 'element' ], function() {
+			pform = layui.form;
+
+			pform.on('select(category_id)', function(data) {
+				//参数 1：当前元素id，参数2：顶级元素id（用来锁定唯一元素）
+
+				if (data.value.length > 0) {
+					$("#hiddeNcategoryId").val(data.value);
+				} else {
+					var emel = $(data.elem).parent().prev();
+					if (emel.find('select').length > 0) {
+						$("#hiddeNcategoryId").val(
+								emel.find('select option:selected').val())
+					} else {
+						$("#hiddeNcategoryId").val("");
+					}
+				}
+				getCotent(data.value, 0);
+				tool.selectLinkTagByPid("category_id", "win-newsms-object",
+						data)
+			});
+			pform.on('select(category_id_a)', function(data) {
+				//参数 1：当前元素id，参数2：顶级元素id（用来锁定唯一元素）
+				if (data.value.length > 0) {
+					$("#hiddeNcategoryId").val(data.value);
+				} else {
+					var emel = $(data.elem).parent().prev();
+					if (emel.find('select').length > 0) {
+						$("#hiddeNcategoryId").val(
+								emel.find('select option:selected').val())
+					} else {
+						$("#hiddeNcategoryId").val("");
+					}
+				}
+				getCotent(data.value, 1);
+				tool.selectLinkTagByPid("category_id_a", "edit-object-form",
+						data)
+			});
+			pform.on('submit(form-add-submit)', function(data) {
+				pform.render();
+				var isUse = $(".reactradio:checked").val();
+				var isActive = $(".reactwu:checked").val();
+				var param = {
+					_csrf : $("#_csrf").val(),
+					name : $("#add-object-form").find("#name").val(),
+					categoryRank : $("#add-object-form").find("#categoryRank")
+							.val(),
+					isUse : isUse,
+					category_id : $("#hiddeNcategoryId").val(),
+					processId : $("#processId_add").val(),
+					processName : $("#processName_add").val(),
+					useGroupName : $("#useGroupName_add").val(),
+					useGroupId : $("#useGroupId_add").val(),
+					isActive : isActive
+
+				}
+				tool.post("/pub/pubPublicInfoCategory/add", param, function(
+						retMsg) {
+					if (retMsg.code == 0) {
+						layer.alert(retMsg.message, {
+							title : "操作提示",
+							icon : 1,
+							closeBtn : 0
+						}, function(index) {
+							$("#hiddeNcategoryId").val("");
+							clearForm();
+							location.reload();
+						});
+
+					} else {
+						tool.error(retMsg.message);
+					}
+				}, false);
+				return false;
+			});
+			loadData();
+
+			//是否使用流程
+			pform.on('radio(isUse)', function(data) {
+				if ($(this).val() == '0') {
+					$("#selectsId").hide();
+					$("#useProcessName_add").hide();
+					$("#win-newsms-object").find("#category_id").removeAttr(
+							"lay-verify");
+					$("#processId_add").removeAttr("lay-verify");
+				} else {
+					$("#selectsId").show();
+					$("#useProcessName_add").show();
+					$("#win-newsms-object").find("#category_id").attr(
+							"lay-verify", "required");
+					$("#processId_add").attr("lay-verify", "required");
+					pform.render();
+				}
+			});
+			//是否使用流程
+			pform.on('radio(isUse_edit)', function(data) {
+				if ($(this).val() == '0') {
+					$("#selectsId_edit").hide();
+					$("#useProcessName").hide();
+					$("#edit-object-form").find("#category_id_a").removeAttr(
+							"lay-verify");
+					$("#edit-object-form").find("#processId").removeAttr(
+							"lay-verify");
+
+				} else {
+					$("#selectsId_edit").show();
+					$("#useProcessName").show();
+					$("#edit-object-form").find("#category_id_a").attr(
+							"lay-verify", "required");
+					$("#edit-object-form").find("#processId").attr(
+							"lay-verify", "required");
+					var categoryId = 0;
+					$("#category_id").find("option").each(function(index) {
+						if ($(this).text() == '公共信息') {//
+							categoryId = $(this).val();
+							return;
+						}
+					});
+					$("#category_id").val(categoryId);
+					pform.render();
+				}
+			});
+
+			//是否使用流程
+			pform.on('select(processId)', function(data) {
+				$("#processName_add").val($(this).text());
+			});
+
+			//编辑是否使用流程
+			pform.on('select(processId_edit)', function(data) {
+				var value = $("#edit-object-form").find("#processId").find(
+						"option:selected").text();
+				// if(value!="请选择"){
+				$("#edit-object-form").find("#processName").val(value)
+				// }
+			});
+			//监听岗位编辑提交
+			pform.on('submit(form-edit-submit)', function(data) {
+				var val = $("#edit-object-form").find(
+						"input[name='isUse']:checked").val();
+				if (val == 0) {
+					$("#edit-object-form").find("#processName").val("");
+					$("#edit-object-form").find("#processId").val("");
+					pform.render();
+				}
+				tool.post("/pub/pubPublicInfoCategory/update", $(
+						"#edit-object-form").serialize(), postCallBackEdit,
+						false);
+				return false;
+			});
+		});
+
+		//分页列表
+		function loadData() {
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+			param.url = "/pub/pubPublicInfoCategory/list";
+			param.isActive = $("#isActive_").val();
+			param.name = $("#categoryName").val();
+			tool.loadpage(param);
+		}
+		//清除数据
+		function clearForm() {
+			$("#win-newsms-object").find("#category_id").val(" ");
+			$(".layui-tab-title").find("li").eq(0).addClass("layui-this");
+			$(".layui-tab-title").find("li").eq(1).removeClass("layui-this");
+			$("#twohidden").removeClass("layui-show");
+			$("#onehidden").addClass("layui-show");
+			$("#win-newsms-object").find(".react").each(function(index, value) {
+				$(this).val("")
+			})
+			$("#reactradio").prop("checked", true);
+			$("#reactwu").prop("checked", true);
+			$("#processId_add").empty();
+			$("#processId_add").append('<option value="">请选择</option>')
+			$(".nextselects").remove();
+			$("#selectsId").hide();
+			$("#useProcessName_add").hide();
+			$('.reset').val("");
+			$('.reset1').html("");
+			pform.render();
+			loadData();
+			layer.closeAll();
+
+		}
+
+		//选择流程分类 自动加载分类下的流程
+		function getCotent(id, type) {
+			var param = {
+				_csrf : $("#_csrf").val(),
+				id : id
+			}
+			tool.post("/pub/pubPublicInfo/bpmnList", param, function(data) {
+				$("#processId_add").empty();
+				$("#processId_add").append('<option value="">请选择</option>');
+				$("#processId").empty();
+				$("#processId").append('<option value="">请选择</option>');
+				var str = "";
+				for (var i = 0; i < data.length; i++) {
+					str += ' <option value="'+data[i].processId+'">'
+							+ data[i].processName + '</option>'
+				}
+				if (type == 0) {
+					$("#processId_add").append(str);
+				} else {
+					$("#processId").append(str);
+				}
+				pform.render();
+			}, false)
+		}
+
+		//第一次没有执行点击事件时 需要判断radio的值是否需要隐藏元素
+		$("#add-object-form").find("input[name='isUse']").each(
+				function(index, value) {
+					if (value.value == '0') {
+						$("#selectsId").hide();
+						$("#useProcessName_add").hide();
+					} else {
+						$("#selectsId").show();
+						$("#useProcessName_add").show();
+					}
+				});
+
+		//第一次没有执行点击事件时 需要判断radio的值是否需要隐藏元素
+		$("#edit-object-form").find("input[name='isUse_edit']").each(
+				function(index, value) {
+					if (value.value == '0') {
+						$("#selectsId_edit").hide();
+						$("#useProcessName").hide();
+					} else {
+						$("#selectsId_edit").show();
+						$("#useProcessName").show();
+					}
+				});
+
+		$(".btn_blue2one").click(
+				function() {
+					tool.treeDemo("win-personal-object", "treeDemo",
+							"useGroupId_add", "useGroupName_add",
+							"useGroupName_add1");
+					$("#number").html("");
+				})
+		$(".btn_bluetwo").click(
+				function() {
+					tool.treeDemo("win-personal-object", "treeDemo",
+							"useGroupId", "useGroupName", "useGroupName1");
+					$("#number").html("");
+				})
+
+		//重置树
+		function reset_tree() {
+			var mytree = $.fn.zTree.getZTreeObj("treeDemo");
+			//打开弹窗前重置节点以及关闭展开状态，避免叠加
+			$('.reset').val("");
+			$("#number").html("");
+			$('.reset1').html("");
+			mytree.checkAllNodes(false)
+			mytree.expandAll(false);
+		}
+		//用按钮查询节点  
+		/*  function searchNodes(){  
+		     var mytree = $.fn.zTree.getZTreeObj("treeDemo");  
+		     var keywords=$("#peopelSel").val();  
+		     var nodes = mytree.getNodesByParamFuzzy("name", keywords, null);  
+		     if (nodes.length>0) {  
+		         mytree.selectNode(nodes[0]);  
+		     }  
+		 }
+		 */
+
+		//共信息分类详情
+		function edit(id) {
+			//每次打开编辑把拉下框赋值到初始状态
+			$("#category_id_a").val(" ")
+			var object = tool.getById("/pub/pubPublicInfoCategory/getById", id);
+			$(".nextselects").remove();
+			if (object.processCategory != null) {
+				for (var i = 0; i < object.processCategory.length; i++) {
+					$("#selectsId_edit").children(".layui-input-inline").eq(i)
+							.children("select").val(object.processCategory[i]);
+					tool.selectLinkTagByPid2("category_id_a", "selectsId_edit",
+							object.processCategory[i]);
+					getCotent(object.processCategory[i], 1)
+
+				}
+			} else {
+				$("#selectsId_edit").children(".layui-input-inline").eq(i)
+						.children("select").val("")
+			}
+
+			$("#useGroupName1").text(object.useGroupName);
+			for ( var key in object) {
+				$("#edit-object-form").find("#" + key).val(object[key]);
+				if (key == 'isUse') {
+					$("#edit-object-form")
+							.find("input[name='isUse']")
+							.each(
+									function(index, value) {
+										if (value.value == object[key]) {
+											// $(this).attr("checked",true);
+											if (value.value == '0'
+													|| value.value == null) {
+												$("#selectsId_edit").hide();
+												$("#useProcessName").hide();
+												$("#edit-object-form").find(
+														"#category_id_a")
+														.removeAttr(
+																"lay-verify");
+												$("#edit-object-form").find(
+														"#processId")
+														.removeAttr(
+																"lay-verify");
+
+											} else {
+												$("#selectsId_edit").show();
+												$("#useProcessName").show();
+												$("#edit-object-form").find(
+														"#category_id_a").attr(
+														"lay-verify",
+														"required");
+												$("#edit-object-form").find(
+														"#processId").attr(
+														"lay-verify",
+														"required");
+												var categoryId = 0;
+												$("#category_id")
+														.find("option")
+														.each(
+																function(index) {
+																	if ($(this)
+																			.text() == '公共信息') {//
+																		categoryId = $(
+																				this)
+																				.val();
+																		return;
+																	}
+																});
+												$("#category_id").val(
+														categoryId);
+												pform.render();
+											}
+										}
+									});
+				}
+
+			}
+
+			if (object.isActive == "1") {
+				$("#trueActive").prop("checked", true)
+			} else {
+				$("#falseActive").prop("checked", true)
+			}
+			if (object.isUse == "1") {
+
+				$("#trueUse").prop("checked", true)
+			} else {
+
+				$("#falseUse").prop("checked", true)
+			}
+			/*  $("#processId").empty();
+			 
+			 if(object.processId!=""||object.processId!=null){
+			 	$("#processId").append('<option value='+object.processId+'>'+object.processName+'</option>')
+			 } */
+			$("#processId").val(object.processId)
+
+			pform.render();
+			var index = layer.open({
+				title : '公共信息编辑',
+				maxmin : false,
+				type : 1,
+				content : $('#win-editsms-object')
+			});
+			pform.render();
+			layer.full(index);
+			/*      $("#edit-object-form").find("input[name='isUse_edit']").each(function(index,value){
+			         if(value.value=='0'){
+			             $("#selectsId_edit").hide();
+			             $("#useProcessName_edit").hide();
+			         }else{
+			             $("#selectsId_edit").show();
+			             $("#useProcessName_edit").show();
+			         }
+			     }); */
+		}
+
+		//编辑回调
+		function postCallBackEdit(retMsg) {
+			if (retMsg.code == 0) {
+				layer.alert(retMsg.message, {
+					title : "操作提示",
+					icon : 1,
+					closeBtn : 0
+				}, function(index) {
+					if ($(".layui-laypage-btn").length > 0) {
+						$(".layui-laypage-btn").trigger("click");
+					} else {
+						loadData()
+					}
+					layer.closeAll()
+
+				});
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+
+		//删除
+		function showDelete(id) {
+			var messgae = '<div><p>删除后将影响已发布信息!</p><p>您确定要删除该分类？</p></div>'
+			layer.confirm(messgae, {
+				icon : 7,
+				title : '提示'
+			}, function(index) {
+				var retMsg = tool.deleteById(
+						"/pub/pubPublicInfoCategory/delete", id);
+				layer.alert("删除成功", {
+					title : "操作提示",
+					icon : 1,
+					closeBtn : 0
+				}, function(index) {
+					if ($(".layui-laypage-btn").length > 0) {
+						$(".layui-laypage-btn").trigger("click");
+					} else {
+						loadData()
+					}
+					layer.close(index);
+				});
+			});
+		}
+	</script>
+</body>
+</html>

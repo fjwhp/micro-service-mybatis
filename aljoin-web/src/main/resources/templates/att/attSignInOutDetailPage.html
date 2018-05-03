@@ -1,0 +1,619 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta charset="utf-8">
+<title>demo控件</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" />
+<link rel="stylesheet" href="../../web/css/zhengls.css" />
+
+</head>
+
+<body>
+	
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main">
+	    <div class="tree_left">
+		     <div class="left" >
+		       <input id="citySel" class="tree_search" type="text" value="" onkeyup="AutoMatch(this)" placeholder="搜索">
+             </div>
+             <div id="menuContent" style=" margin-bottom: 100px;">
+             <ul  id="treeDemo" class="ztree"></ul>
+	    </div>
+		</div>
+	    <div class="m_l10" style="width:78%;float:left;">
+	    	<blockquote class="layui-elem-quote" style="padding: 5px;">
+			<form class="layui-form" action="" style="position: relative;">
+			  
+				 <div class="layui-input-inline">
+				 <a class="layui-btn layui-btn-middle" onclick="thisWeekGo()">本月</a>
+				</div>
+			   
+				<div class="layui-input-inline" style=" margin-left: 30%;">
+				 <button class="layui-btn layui-btn-small calendar_month_prev" id="calendar_month_prev">上月</button>
+				</div>
+				<div class="layui-input-inline"> 
+					 <input type="text" class="layui-input inp_w120px" id="startTime"  readonly style=" text-align: center;height: 30px;width: 170px;">
+				</div>
+		
+			    <div class="layui-input-inline">
+				 <button class="layui-btn layui-btn-small calendar_month_next" id="calendar_month_next" disabled="disabled" style="background:gray;">下月</button>
+				</div>
+				 
+				<!-- <div class="layui-input-inline" style="position: absolute;right: 0;"><@a code="100101" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData('search')" 
+				 iclass="layui-icon" icon="&#xe615;"	 text="查询"/></div>  -->
+			
+			</form>
+			</blockquote> 
+		  
+		    <div class="main_tips">
+				 <span>IP地址：</span>
+				 <input  type="radio" checked id="ipvlaue"  onclick="ipshowhide('0')"  name="ip"  value="0" style="margin-left:30px;" />
+				 <span>否</span>
+				 <input  type="radio"  onclick="ipshowhide('1')" name="ip"  value="1" style="margin-left:30px;"/>
+				 <span>是</span>
+		
+		  		<div class="tips_right">
+			  		 <div class="tips_right1 tip1">
+			  		  <i class="layui-icon" style="color: white;">&#xe605;</i>  
+			  		 </div>
+			  		 <span>准时打卡</span>
+			  		 <div class="tips_right1 tip2">
+			  		  <i class="layui-icon" style="color: white;">&#xe623;</i>  
+			  		 </div>
+			  		 <span>迟到</span>
+			  		 <div class="tips_right1 tip3">
+			  		  <i class="layui-icon" style="color: white;">&#xe623;</i>  
+			  		 </div>
+			  		 <span>早退</span>
+			  		 <div class="tips_right1 tip4">
+			  		  <i class="layui-icon" style="color: white;">&#x1006;</i>  
+			  		 </div>
+			  		 <span>无打卡</span>
+			  		 
+		  		</div>
+			</div>
+			
+			<div class="main_body  detailauto"  style=" height: 500px;">
+		  		<div class="layui-field-box  layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			    <table class="layui-table admin-table alldetail">
+			        
+                     <thead>
+					    <tr id="headone">
+					     
+					    </tr> 
+					  </thead>
+					   <tbody class="bufffa">
+						    <tr id="headTwo">
+						        
+						    </tr>
+				
+					  </tbody>
+				 </table>
+		       </div>
+		        <div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			      <div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+	          	</div>
+			</div>
+		</div>
+		
+	</div>
+	
+	  <input  type="hidden"  id="beforeId" />
+	  <input  type="hidden"  class="aasd" id="2017-10-02 00:00:00" value="1" />
+	  <input  type="hidden"  class="lastMonth" id="lastMonth" value="1" />
+	  <input  type="hidden"  class="nextMonth" id="nextMonth" value="1" />
+	  
+</body>
+    <script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script type="text/javascript" src="../../web/js/dataRi.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.exhide-3.5.min.js"></script>
+    <script type="text/javascript">
+      var pform;
+      var initLoadIndex;
+    layui.use(['laydate','form'], function(){
+    	  var laydate = layui.laydate;
+    	      pform   = layui.form
+    	   var nowtime = new Date();
+    	  var nowstr = nowtime.getFullYear()+"-"+(nowtime.getMonth()+1)+"-"+nowtime.getDate();    	  
+    	  //执行一个laydate实例
+    	  laydate.render({
+    	    elem: '#startTime'//指定元素,
+    	    ,type:'month' //选择月
+    	    ,max:nowstr
+    	    ,done:function(data){
+                
+                var  chooseM =  parseInt(data.split("-")[1]);
+    	    	var  chooseN =  parseInt(data.split("-")[0]);
+    	    	var currents = new Date();
+    	     	showYear=currents.getFullYear();
+                sshowMonth=currents.getMonth() + 1;
+                if(chooseM==sshowMonth&&showYear==chooseN){
+                	$("#calendar_month_next").attr("disabled","disabled");
+                    $("#calendar_month_next").css("background","gray");
+                }else{
+                	$("#calendar_month_next").removeAttr("disabled");
+                    $("#calendar_month_next").css("background","#339bf1");
+                }
+                setTimeout(function(){
+                	initLoadIndex = layer.load(2, {shade: [0.1,'#fff']});
+                	loadData('search');
+               },200)
+                
+    	    }
+    	  });
+    	  //本月
+    	  thisWeek();
+    	}); 
+    
+  
+    
+    var showYear,showMonth,mosd;
+    function thisWeek(){
+ 	    var current = new Date();
+ 	   showYear=current.getFullYear();
+ 	   showMonth=current.getMonth() + 1;
+ 	   if(showMonth<10){
+ 		  showMonth="0"+showMonth;
+ 	   }
+ 	   mosd=showYear+"-"+showMonth;
+ 	     $("#startTime").val(mosd)
+ 	  
+ 	      //loadData();
+   }
+    
+     function getNowDateTime(){
+    	   var current = new Date();
+     	   showYear=current.getFullYear();
+     	   showMonth=current.getMonth() + 1;
+     	   if(showMonth<10){
+     		  showMonth="0"+showMonth;
+     	   }
+     	   mosd=showYear+"-"+showMonth;
+     	   $("#startTime").val(mosd)
+     	   $("#calendar_month_next").attr("disabled","disabled");
+           $("#calendar_month_next").css("background","gray");
+     }
+     function thisWeekGo(){
+    	 initLoadIndex = layer.load(2, {shade: [0.1,'#fff']});
+    	 getNowDateTime();
+     	      loadData();
+     }
+     
+     
+     function loadpage (param) {	
+ 		var bottomPageSize = $("#"+param.container+"-footer").find(".layui-laypage-pagesize").val();
+ 		if (typeof(bottomPageSize) != "undefined") {
+ 			param.pageSize = bottomPageSize;
+ 		}
+ 		var initLoadIndex = layer.load(2, {
+ 			time : 1 * 300
+ 		});
+ 		param._csrf = $("#_csrf").val();
+ 		param.pageNum = 1;
+ 		var initPageData;
+ 		tool.post(param.url, param, function(initPageData) {
+ 			console.log( Math.ceil(initPageData.total/param.pageSize))
+ 			layui.laypage({
+ 				cont : param.container + "-footer",// 分页容器id
+ 				total : initPageData.total,// 总记录数
+ 				pages : Math.ceil(initPageData.total/param.pageSize),// 总页数
+ 				pageSize : param.pageSize,// 每页记录数
+ 				skip : true,// 是否显示跳转页
+ 				url : param.url,// 数据请求接口
+ 				jump : function(obj, first) {
+ 					// 得到了当前页，用于向服务端请求对应数据
+ 					if (first) {
+ 						// 关闭初次loading
+ 						layer.close(initLoadIndex);
+ 						render(param, initPageData)
+ 					} else {
+ 						param.pageNum = obj.curr;
+ 						var pageLoadIndex = layer.load(2, {
+ 							time : 1 * 300
+ 						});
+ 						tool.post(param.url, param, function(pageData) {
+ 							//console.log("非初始化："+pageData);
+ 							layer.close(pageLoadIndex);
+ 							render(param, pageData)
+ 						}, true);
+ 					}
+
+ 				}
+ 			});
+ 		}, true);
+ 	}
+     
+     function render (param, pageData) {
+    	 var data=pageData.records[0];
+    	 console.log(pageData)
+    		if(data.tdMaps==null||data.theadList==null){
+				layer.close(initLoadIndex);
+			}
+		    $("#ipvlaue").prop("checked",true);	
+			//按规定的顺序排序
+			// amSignInStatus  早上签到 '0-未操作(还在允许打卡的时间范围)，1-准时打卡，2-迟到，3-无打卡（表示过了打卡时间还没有进行签到操作）',
+			// amSignOutStatus 早上签退  '0-未操作(还在允许打卡的时间范围)，1-准时打卡，2-早退，3-无打卡（表示过了打卡时间还没有进行签到操作）',
+			// pmSignInStatus  下午签到 '0-未操作(还在允许打卡的时间范围)，1-准时打卡，2-迟到，3-无打卡（表示过了打卡时间还没有进行签到操作）',
+			// pmSignOutStatus 下午签退  '0-未操作(还在允许打卡的时间范围)，1-准时打卡，2-早退，3-无打卡（表示过了打卡时间还没有进行签到操作）',
+			var data=data;
+			var  strone,strtwo;//定义表格的头部  内容在strtwo后面
+			strone='<th></th>';
+			strtwo='<td></td>';
+			$("#headTwo").empty();
+			$("#headone").empty();
+			$("#headTwo").nextAll().remove();
+			if(data.tdMaps!=null){
+			var datasp=data.tdMaps[0];
+			var  count=0;//获得数据行数
+			for(var key  in datasp){
+				count++;
+			}
+			  //生成表头
+		       for(var i=0;i<data.theadList.length;i++){
+		    	   var datas=data.theadList[i].split(" ");
+		    	   strone+=' <th ><p>'+datas[0]+'</p><p>'+datas[1]+'</p></th>'
+		    	   if(datas[1]=='星期六'||datas[1]=='星期日'){
+		    		   strtwo+='<td style="padding:0;margin:0"></td>'
+		    	   }else{
+		    		   strtwo+='<td style="padding:0;margin:0">'+
+						          '<table class="layui-table admin-table neitable">'+
+		                           '<tbody>'+
+		                             '<td><div>早</div><div>上</div><div>签</div><div>到</div></td>'+
+		                             '<td><div>早</div><div>上</div><div>签</div><div>退</div></td>'+
+		                             '<td><div>下</div><div>午</div><div>签</div><div>到</div></td>'+
+		                             '<td><div>下</div><div>午</div><div>签</div><div>退</div></td>'+
+		                            '</tbody>'+
+		                         '</table>'+
+                       		 '</td>' 
+		    	   }
+		       }
+		       $("#headone").append(strone)
+		       $("#headTwo").append(strtwo)
+		      
+		       //生成表格内容
+		       var content="";
+		       for(var k=0;k<count;k++){
+		    	  //生成打卡数据表格
+		    	   content+='<tr class="xuanz  publicchoose">';
+		    	   content+='<td>用户</td>';
+		    	   for(var m=0;m<data.theadList.length;m++){
+		    		   var datas1=data.theadList[m].split(" ");
+		    		   if(datas1[1]=='星期六'||datas1[1]=='星期日'){
+		    			   content+='<td id="'+data.theadList[m]+'"></td>'
+		    		   }else{
+		    			   data.theadList[m]=data.theadList[m].replace(/\s+/g,"");
+		    			   content+='<td id="'+data.theadList[m]+'">'+
+						      '<table class="layui-table admin-table neitable">'+
+	                              '<tbody>'+
+	                               '<td  class="isWahtColor0 paone1"  content=""><i class="layui-icon"  style="color: white;"></i></td>'+
+	                               '<td  class="isWahtColor1 paone2"  content=""><i class="layui-icon"  style="color: white;"></i></td>'+
+	                               '<td  class="isWahtColor0 paone3"  content=""><i class="layui-icon"  style="color: white;">&#x1006;</i></td>'+
+	                               '<td  class="isWahtColor1 paone4"  content=""><i class="layui-icon"  style="color: white;">&#x1006;</i></td>'+
+	                              '</tbody>'+
+                      		 '</table>'+
+      			    	'</td>'
+		    		   }
+		    	   }
+		    	   content+='</tr>'; 
+		    	   //生成id表格
+		    	   content+='<tr class="ipTd  publicchoose">';
+		    	   content+='<td></td>';
+		    	   for(var m=0;m<data.theadList.length;m++){
+		    		   var datas1=data.theadList[m].split(" ");
+		    		   if(datas1[1]=='星期六'||datas1[1]=='星期日'){
+		    			   content+='<td id="'+data.theadList[m]+'"></td>'
+		    		   }else{
+		    			   data.theadList[m]=data.theadList[m].replace(/\s+/g,"");
+		    			   content+='<td id="'+data.theadList[m]+'">'+
+						        '<div class="amp1" style="width:100%;height:16px"></div>'+
+						        '<div class="amp2" style="width:100%;height:16px"></div>'+
+						        '<div class="pmp1" style="width:100%;height:16px"></div>'+
+						        '<div class="pmp2" style="width:100%;height:16px"></div>'+
+      			              '</td>'
+		    		   }
+		    	   }
+		    	   content+='</tr>';
+	    	   }
+		       $("#headTwo").after(content);
+		         /*  防止顺序错乱 用数组来存放数据 再经过数组按照排序值来重新排序   开始*/
+		         var arrName=[];
+			     var arrTotal=[];
+			      for(var key in datasp){
+			    	  arrName.push(key)
+			      }
+			          arrName.sort(function(a,b){
+			    	  a=a.substring(a.indexOf("(")+1,a.indexOf(")"));
+			    	  b=b.substring(b.indexOf("(")+1,b.indexOf(")"));
+			    	  return a-b;
+			      })
+			      for(var i=0;i<arrName.length;i++){
+					for(var keys in datasp){
+		　					　if(arrName[i]==keys){
+		　						arrTotal.push(datasp[keys])
+		　					　}
+					 }
+		          }
+			     /*  防止顺序错乱 用数组来存放数据 再经过数组按照排序值来重新排序  结束*/
+		       var flag = 0; 
+		       $(".bufffa").find(".xuanz").each(function(){
+		    	   var thisObj = this;
+		    	   var flag2 = 0;
+		    	   for(var key=0; key<arrName.length; key++){
+		    		   if(flag == flag2){
+		    			   var keyN=arrName[key];
+		    			   var subkey=keyN.substring(0,keyN.indexOf("("));
+		    			   $(thisObj).find("td").eq(0).text(subkey);
+		    			   $(thisObj).find("td").eq(0).attr("title",subkey);
+		    			   for(var keys in arrTotal[key]){
+		    				   var ke=keys.replace(/\s+/g,"");
+		    				   $(thisObj).find("#"+ke).find(".paone1").attr("content",arrTotal[key][keys][0]);
+		    				   $(thisObj).find("#"+ke).find(".paone2").attr("content",arrTotal[key][keys][1]);
+		    				   $(thisObj).find("#"+ke).find(".paone3").attr("content",arrTotal[key][keys][2]);
+		    				   $(thisObj).find("#"+ke).find(".paone4").attr("content",arrTotal[key][keys][3]);
+				    		   } 
+		    			  break;//当前配对上赋值完 就跳出当前循环  
+		    		   }
+		    		   flag2++;
+				   }
+		    	   flag++;
+		       });  
+		       
+		       var fla = 0;
+		       $(".bufffa").find(".ipTd").each(function(){
+		    	   var thisObj = this;
+		    	   var fla2 = 0; 
+		    	   for(var key=0; key<arrName.length; key++){
+		    		   if(fla == fla2){
+		    			   for(var keys in arrTotal[key]){
+		    				   var ke=keys.replace(/\s+/g,"");
+		    				   $(thisObj).find("#"+ke).find(".amp1").text(arrTotal[key][keys][4]);
+		    				   $(thisObj).find("#"+ke).find(".amp2").text(arrTotal[key][keys][5]);
+		    				   $(thisObj).find("#"+ke).find(".pmp1").text(arrTotal[key][keys][6]);
+		    				   $(thisObj).find("#"+ke).find(".pmp2").text(arrTotal[key][keys][7]);
+				    		   } 
+		    			   break;
+		    		   }
+		    		   fla2++;
+				   }
+		    	   fla++;
+		       });
+		       layer.close(initLoadIndex);
+		       //根据属性判断是哪种颜色
+		        $(".isWahtColor0").each(function(index,value){
+		        	var vak=$(this).attr("content");
+		        	if(vak==0){
+		        		//$(this).css("background","pink");
+		        		$(this).find("i").html("")
+		        	}else if(vak==1){
+		        		$(this).css("background","#3ddccd");
+		        		$(this).find("i").html("&#xe605;");
+		        	}else if(vak==2){
+		        		$(this).css("background","#ffc232");
+		        		$(this).find("i").html("&#xe623;");
+		        	}else if(vak==3){
+		        		$(this).css("background","#f15a5a");
+		        		$(this).find("i").html("&#x1006;")
+		        	}
+		        })
+		        $(".isWahtColor1").each(function(index,value){
+		        	var vak=$(this).attr("content");
+		        	if(vak==0){
+		        		//$(this).css("background","pink");
+		        		$(this).find("i").html("")
+		        	}else if(vak==1){
+		        		$(this).css("background","#3ddccd");
+		        		$(this).find("i").html("&#xe605;");
+		        	}else if(vak==2){
+		        		$(this).css("background","#ff953e");
+		        		$(this).find("i").html("&#xe623;");
+		        	}else if(vak==3){
+		        		$(this).css("background","#f15a5a");
+		        		$(this).find("i").html("&#x1006;")
+		        	}
+		        })
+		        
+		        //点击选择这条记录chakan
+		        $(".publicchoose").click(function(){
+		        	$(".publicchoose").each(function(ind,val){
+		        		$(this).css("background","#fff")
+		        	})
+		        	$(this).css("background","#f2f2f2")
+		        })
+		         //默认隐藏ip
+		         $(".ipTd").hide()
+			}
+ 		pform.render();
+ 		$(".layui-laypage-pagesize").val(param.pageSize);
+		$(".layui-laypage-pagesize").change(function(){
+			loadpage(param); 
+		});
+ 	
+ 	}
+  //加载数据
+	function loadData(id) {
+		var param = new Object();
+		param._csrf=$("#_csrf").val();
+		param.deptId=$("#beforeId").val();
+		param.container = "paging";
+		param.pageSize = 10;
+		param.url = "/att/attSignInOut/signInDetailListPage";
+		if(id==null){
+		    param.thisMonth=$("#startTime").val();//本月
+		}else if(id=="next"){
+			param.nextMonth = "1"
+		    param.queryYM =$("#startTime").val();
+		}else if(id=="prev"){
+			param.lastMonth = "1";
+			param.queryYM =$("#startTime").val();
+		}else if(id=="userid"){
+		    param.thisMonth=$("#startTime").val();
+		    param.queryYM =$("#startTime").val();
+		}else if(id=="search"){
+			param.monthBeg=$("#startTime").val();
+			param.queryYM =$("#startTime").val();
+		}
+		loadpage(param);
+		//param.lastMonth = "1";//$("#lastMonth").val();//上 月
+		//param.nextMonth = "1";//$("#nextMonth").val();//下 月
+		
+		
+	  }
+  
+	
+	   
+     
+      $(".calendar_month_next").click(function(){
+    	  var nowMonth=$("#startTime").val().split("-")[1];
+    	  var showYear=$("#startTime").val().split("-")[0];
+    	      showMonth=parseInt(nowMonth)+1;
+    	      showYear=parseInt(showYear)
+    	    if(showMonth==13)
+    	    {
+    	        showMonth=1;
+    	        showYear+=1;
+    	    }
+    	    if(showMonth<10){
+    	    	showMonth="0"+showMonth;
+    	    }
+    	    mosd=showYear+"-"+showMonth;
+    	    
+    	    var isDis=parseInt(showMonth);
+            var currents = new Date();
+            var showYear1=currents.getFullYear();
+                sshowMonth=currents.getMonth() + 1;
+              if(isDis+1>=sshowMonth&&showYear1==showYear){
+            	  $("#calendar_month_next").attr("disabled","disabled");
+                $("#calendar_month_next").css("background","gray");
+              } 
+              
+    	    $("#startTime").val(mosd);
+    	    initLoadIndex = layer.load(2, {shade: [0.1,'#fff']});
+    	    loadData("next");
+    	    return false;
+    });
+     $(".calendar_month_prev").click(function(){
+   	  var nowMonth=$("#startTime").val().split("-")[1];
+		   	showMonth=parseInt(nowMonth)-1;
+      var showYear=$("#startTime").val().split("-")[0];
+  	      showYear=parseInt(showYear)
+		    if(showMonth==0)
+		    {
+		        showMonth=12;
+		        showYear-=1;
+		    }
+		    if(showMonth<10){
+		    	showMonth="0"+showMonth;
+		    }
+		    mosd=showYear+"-"+showMonth;
+    	    $("#startTime").val(mosd);
+    	    initLoadIndex = layer.load(2, {shade: [0.1,'#fff']});
+    	    loadData("prev");
+    	    
+    	    
+    	    $("#calendar_month_next").removeAttr("disabled");
+    	     $("#calendar_month_next").css("background","#339bf1");
+    	    return false;
+   });
+    
+    </script>
+   <script>
+	//生成树
+	var setting = {
+			data : {
+				simpleData : {
+					enable : true
+				}
+			},
+			callback : {
+				beforeClick : beforeClick
+			}
+		};
+	var param = new Object();
+	param._csrf = $("#_csrf").val();
+	redern();
+	function redern() {
+		tool.post("/aut/autDepartment/getDepartmentList", param, postCallBack_newtree);
+	}
+	var obj = [];
+	var zTreeObj; 
+	function postCallBack_newtree(data) {
+		for (var i = 0; i < data.length; i++) {
+			obj.push({
+				id : data[i].id,
+				pId : data[i].parentId,
+				name : data[i].deptName,
+				obj : {
+					deptCode : data[i].deptCode,
+					deptLevel : data[i].deptLevel,
+					isActive : data[i].isActive,
+					parentId : data[i].parentId,
+					parentCode : data[i].parentCode
+				}
+			}) 
+		}  
+		zTreeObj = $.fn.zTree.init($("#treeDemo"), setting, obj);
+	}
+
+	var hiddenNodes=[];	//用于存储被隐藏的结点
+	var targetParent = [];
+	function getParentByChild(node){
+		if(node.parentTId != null){
+			targetParent.push(node.getParentNode());
+			getParentByChild(node.getParentNode());
+		}
+	}
+	
+	//过滤ztree显示数据
+	function AutoMatch(){
+		//显示上次搜索后背隐藏的结点
+		zTreeObj.showNodes(hiddenNodes);
+		//查找不符合条件的叶子节点
+		targetParent = [];
+		function filterFunc(node){
+			var _keywords=$("#citySel").val();
+			if(node.name.indexOf(_keywords)!=-1) {
+				getParentByChild(node)
+				return false;
+			}
+			return true;		
+		};
+		//获取不符合条件的叶子结点
+		hiddenNodes=zTreeObj.getNodesByFilter(filterFunc);
+		//隐藏不符合条件的叶子结点
+		zTreeObj.hideNodes(hiddenNodes);
+		//显示满足条件的根节点
+		zTreeObj.showNodes(targetParent);
+		zTreeObj.expandAll(true);
+	};
+
+   function beforeClick(hh, treeNode){
+	    initLoadIndex = layer.load(2, { shade: [0.1,'#fff']});
+	   getNowDateTime()
+	   $("#beforeId").val(treeNode.id);
+	    loadData("userid")
+   }
+   
+   
+   
+    //点击   列表是否显示ip
+    function ipshowhide(status){
+    	if(status=="0"){
+    		$(".ipTd").hide();
+    	}else{
+    		$(".ipTd").show();
+    	}
+    }
+    
+   </script>
+</html>

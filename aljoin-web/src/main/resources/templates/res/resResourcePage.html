@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>资源维护</title>
+	<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css"
+		  media="all" />
+	<link rel="stylesheet" href="../../web/css/global.css" media="all">
+	<link rel="stylesheet"
+		  href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="../../web/css/table.css" />
+	<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+	<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+</head>
+<style>
+/* 页签  */
+.title_tab{font-size:14px;padding: 6px 6px 6px 10px;color:#444a54;border-bottom:solid 1px #9ec8ea;font-weight:bold;}
+.title_tab i{color: #54abf2;font-size:16px;} 
+.font_icon{margin-right:6px;}
+</style>
+<body>
+<input type="hidden" name="${_csrf.parameterName}"
+	   id="${_csrf.parameterName}" value="${_csrf.token}" /> 
+<form class="layui-form" action="/res/file/download" method="get" id="action_form">
+	   <input type="hidden" name="groupName" id="groupName">
+	   <input type="hidden" name="fileName" id="fileName">
+	</form>
+<div class="admin-main" style="margin: 10px;">
+	<blockquote class="layui-elem-quote" style="padding: 5px;">
+		<form class="layui-form" action="">
+			<div style="float: right;">
+				<div class="layui-input-inline">
+					<input type="text" name="searchKey" id="searchKey" placeholder="请输入文件名或文件备注" autocomplete="off" class="layui-input"
+						   style="height: 30px; line-height: 30px;">
+				</div>
+				<span><@a code="070202" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick=" render()" iclass="layui-icon"
+					icon="&#xe615;" text="搜索"/></span>
+			</div>
+			<span><@a code="070201" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="openAddWin()" iclass="layui-icon"
+						icon="&#xe62f;" text="上传"/></span>
+			
+		</form>
+	</blockquote>
+	<div class="layui-field-box  layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+		<table class="layui-table admin-table">
+			<thead>
+			<tr>
+				<th style="width: 20px;"><input type="checkbox" lay-skin="primary" lay-filter="paging_check-all"></th>
+				<th>文件名</th>
+				<th>文件备注</th>
+				<th>资源分类</th>
+				<th>操作人</th>
+				<th>上传时间</th>
+				<th style="width:300px;">操作</th>
+			</tr>
+			</thead>
+			<tbody id="paging-data">
+			<script id="paging-script" type="text/html">
+				{{each records value index}}
+				<tr>
+					<td><input type="checkbox"  class="check-id"  lay-skin="primary"   id="{{value.id}}"></td>
+					<td>{{value.resResource.orgnlFileName}}</td>
+					<td>{{value.resResource.fileDesc}}</td>
+                    <td>{{value.resResourceType.typeName}}</td>
+                    <td>{{value.resResource.createUserName}}</td>
+                    <td>{{value.resResource.uploadTime}}</td>
+					<td>
+						<@a code="070203" href="javascript:void(0)" class="layui-btn layui-btn-mini" id="show-edit" onclick="showEdit('{{value.resResource.id}}')" text="编辑"/>
+						<@a code="070204" href="javascript:void(0)" class="layui-btn layui-btn-warm layui-btn-mini" id="show-view" onclick="showDelete('{{value.resResource.id}}')" text="删除"/>
+						<@a code="070205" href="javascript:void(0)" class="layui-btn layui-btn-danger layui-btn-mini" id="show-delete" onclick="showDownload('{{value.resResource.groupName}}','{{value.resResource.fileName}}')" text="下载"/>							</td>
+					</td>
+				</tr>
+				{{/each}}
+			</script>
+			</tbody>
+		</table>
+	</div>
+	<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+		<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+	</div>
+</div>
+<!-- tree -->
+<div style="width: 30%; float: left; margin-bottom: 100px;">
+	<!-- <form class=" layui-form layui-form-pane" action="">
+        <div class="layui-form-item">
+          <@select dict="IS_LOCKED" layVerify="required" id="isAccountLocked" name="isAccountLocked" class="layui-input-inline" def=""/>
+         </div>
+    </form> -->
+	<ul id="treeDemo" class="ztree"></ul>
+</div>
+
+<!-- 上传窗口 -->
+<div style="padding: 10px; display: none; padding-right: 40px; z-index: 19940200;"
+	 id="win-add-object">
+	<form class="layui-form layui-form-pane" id="add-object-form2">
+
+		<input type="hidden" name="${_csrf.parameterName}"
+			   value="${_csrf.token}" />
+		<div class="layui-form-item"  id="selectsId">
+			<@selectLink table="res_resource_type" layVerify="required"  id="type_id"  name="type_id" class="layui-input-inline" def="" key="id" text="type_name" level="1" levelName="type_level" rankName="type_rank" where=" AND is_active=1"/>
+		</div>
+		<div class="layui-form-item layui-form-text">
+			<label class="layui-form-label">资源描述</label>
+			<div class="layui-input-block">
+				<textarea name="fileDesc"  id="fileDesc" value="" lay-verify="required|fileDescLength" placeholder="输入内容不能超过20字"  class="layui-textarea"></textarea>
+			</div>
+		</div>
+
+
+		<div class="layui-upload">
+			<div class="layui-upload-drag" id="test10">
+			  <i class="layui-icon"></i>
+			  <p>点击上传，或将文件拖拽到此处</p>
+			</div>
+			
+            <div class="layui-upload-list">
+				<table class="layui-table">
+					<thead>
+					<tr><th>文件名</th>
+						<th>大小</th>
+						<th>状态</th>
+						<th>操作</th>
+					</tr></thead>
+					<tbody id="demoList"></tbody>
+				</table>
+			</div>
+			<button type="button" class="layui-btn" id="testListAction">开始上传</button>
+		</div>
+		<div class="layui-input-block" style="margin-top: 15px;">
+			<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+			<div style="float: right;">
+				<button class="layui-btn" lay-submit="" lay-filter="form-add-submit">
+					<i class="fa fa-save"></i> 保存
+				</button>
+				<button type="reset" class="layui-btn layui-btn-primary">
+					<li class="fa fa-eraser"></li> 重置
+				</button>
+			</div>
+		</div>
+		<input type="hidden"  lay-verify="required" id="requiredHidden" />
+	</form>
+</div>
+<!-- 树详情对象窗口 -->
+<div style="padding: 10px; display: none; padding-right: 40px;"
+	 id="win-view-object">
+	<form class="layui-form layui-form-pane" id="view-object-form">
+		<input type="hidden" name="id" id="id">
+		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+		<div class="layui-form-item">
+			<label class="layui-form-label">分类名称</label>
+			<div class="layui-input-block">
+				<input type="text" name=typeName" lay-verify="required" id="typeName_det"
+					   autocomplete="off" class="layui-input" disabled>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">分类排序</label>
+			<div class="layui-input-block">
+				<input type="text" name="typeRank" lay-verify="required|number"  id="typeRank_det"
+					   autocomplete="off" class="layui-input" disabled>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">是否激活</label>
+			<div class="layui-input-block">
+				<input type="text" name="isActive" lay-verify="required" id="isActive_det"
+					   autocomplete="off" class="layui-input" disabled>
+			</div>
+		</div>
+		<div class="layui-input-block" style="margin-top: 15px;">
+			<a href="javascript:void(0)" class="layui-btn layui-btn-primary"
+			   onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+		</div>
+	</form>
+</div>
+<div id="cloneIdfather" style="display:none">
+	<@selectLink table="res_resource_type" layVerify="required"  id="type_id"  name="type_id" class="layui-input-inline cloneId" def="" key="id" text="type_name" level="1" levelName="type_level" rankName="type_rank" where=" AND is_active=1"/>
+</div>
+<!-- 树编辑对象窗口 -->
+  <form id="update-object-formput">
+     <input type="hidden" name="fileTypeId" id="fileTypeId">
+     <input type="hidden" name="id" id="id">
+     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+     <input type="hidden" name="fileDesc" id="fileDesc" value="">
+     
+  </form>
+<div style="padding: 10px; display: none; padding-right: 40px;"
+	 id="win-update-object">
+	<form class="layui-form layui-form-pane" id="update-object-form">
+		<input type="hidden" name="type_id" id="id_edit"> <input
+			type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+		<div class="layui-form-item">
+			<label class="layui-form-label">分类名称</label>
+			 <div id="emptySelect">
+			   
+		     </div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">资源描述</label>
+			<div class="layui-input-block">
+			<input type="text" name="fileDesc" lay-verify="required"  id="fileDesc1"
+					 class="layui-input" placeholder="请输入内容" >
+				</div>
+		</div>
+
+		<div class="layui-input-block" style="margin-top: 15px;">
+			<a href="javascript:void(0)" class="layui-btn layui-btn-primary"
+			   onclick="layer.closeAll();"><i class="fa fa-backward"></i>
+				返回</a>
+			<div style="float: right;">
+				<button class="layui-btn" lay-submit=""
+						lay-filter="form-update-submit">
+					<i class="fa fa-save"></i> 保存
+				</button>
+				<button type="reset" class="layui-btn layui-btn-primary">
+					<li class="fa fa-eraser"></li> 重置
+				</button>
+			</div>
+		</div>
+	</form>
+</div>
+<input  type="hidden"  id="fileTypeId" name="fileTypeId" value="" />
+
+<!-- 分类  文件 隐藏域 -->
+<form id="allFileLei">
+	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div id="FileLei">
+        
+	</div>
+	<div id="FileLei1">
+
+	</div>
+
+</form>
+<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+<script type="text/javascript"
+		src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+<script type="text/javascript" src="../../web/js/template-web.js"></script>
+<script type="text/javascript" src="../../web/js/jquery.js"></script>
+<script type="text/javascript"
+		src="../../web/js/jquery.ztree.all.min.js"></script>
+<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+
+<script>
+
+    var pform;
+    var fileTypeName;
+    //添加layui事件
+    layui.use('form', function() {
+        pform = layui.form;
+        //上传
+        pform.on('submit(form-add-submit)', function(data) {
+        	//console.log(arr.length,nameArr.length)
+        	$("#FileLei").empty();
+        	$("#FileLei").append(
+        			
+        			'<input  type="hidden"  id="fileDescHidden" name="resResource.fileDesc" value="'+$("#fileDesc").val()+'" />'+
+        			'<input  type="hidden"  id="fileTypeIdHidden" name="resResource.fileTypeId" value="'+$("#fileTypeId").val()+'" />'
+        			)
+            $("#FileLei1").empty();
+            var str="";
+            for(var i=0;i<arr.length;i++){
+                str += '<input type="hidden" name="resResourceList['+i+'].groupName" value="'+arr[i].resResource.groupName+'" />';
+                str += '<input type="hidden" name="resResourceList['+i+'].fileName" value="'+arr[i].resResource.fileName+'" />';
+                str += '<input type="hidden" name="resResourceList['+i+'].orgnlFileName" value="'+arr[i].resResource.orgnlFileName+'" />';
+                str += '<input type="hidden" name="resResourceList['+i+'].fileSize" value="'+arr[i].resResource.fileSize+'" />';
+                str += '<input type="hidden" name="resResourceList['+i+'].fileType" value="'+arr[i].resResource.fileType+'" />';
+            }
+            $("#FileLei1").append(str);
+            tool.post("../resResource/add",$("#allFileLei").serialize(),postCallBack_add,false) 
+            //提交后 再情况存放文件的数组 避免重复提交
+            arr.splice(0,arr.length);
+            nameArr.splice(0,nameArr.length);
+            $("#requiredHidden").attr("lay-verify","required");
+            return false;
+        });
+
+        //监听tree编辑提交
+        pform.on('submit(form-update-submit)', function(data){
+        	$("#update-object-formput").find("#fileTypeId").val($("#fileTypeId").val());
+        	$("#update-object-formput").find("#fileDesc").val($("#fileDesc1").val())
+            tool.post("../resResource/update",$("#update-object-formput").serialize(), postCallBack_edit,false); 
+            return false;
+        });
+
+        pform.on('select(type_id)', function(data) {
+            //参数 1：当前元素id，参数2：顶级元素id（用来锁定唯一元素）
+            $("#fileTypeId").val(data.value)
+            tool.selectLinkTagByPid("type_id","win-add-object",data)
+            fileTypeName = $("#selectsId #type_id option[value='"+$("#fileTypeId").val()+"']").text()
+        });
+        pform.verify({
+        	fileDescLength:function(value){
+        		if(value.length>20){
+        			return "输入内容超过20字"
+        		}
+        	}
+        })
+    });
+    
+    render();
+    function render(){
+        layui.use('form', function() {
+            loadData();
+        })
+    }
+      
+    function postCallBack_add(retMsg) {
+		if (retMsg.code == 0) {
+			tool.success(retMsg.message);
+			 $('#demoList').empty();
+			 render();
+		} else {
+			tool.error(retMsg.message);
+		}
+	}
+    function showDownload(groupName,fileName){
+    	$("#groupName").val(groupName);
+    	$("#fileName").val(fileName);
+		$("#action_form").submit();
+
+    }
+    //编辑列表留在当前页
+    function postCallBack_edit(retMsg) {
+		if (retMsg.code == 0) {
+			tool.success(retMsg.message);
+			 $('#demoList').empty();
+			 if($(".layui-laypage-btn").length>0){
+				 $(".layui-laypage-btn").trigger("click")
+			 }else{
+				 render();
+			 }
+			
+		} else {
+			tool.error(retMsg.message);
+		}
+	}
+    //加载数据
+    function loadData() {
+        var param = new Object();
+        param.container = "paging";
+        param.pageSize = 10;
+        param.url = "../resResource/pageList";
+        param.orgnlFileName = $("#searchKey").val();
+        param.fileDesc = $("#searchKey").val();
+        tool.loadpage(param);
+    }
+    //删除
+    function showDelete(id){
+        layer.confirm('确定删除 ?', {
+            icon : 3,
+            title : '提示'
+        }, function() {
+            var retMsg = tool.deleteById("../resResource/delete", id);
+            if (retMsg.code == 0) {
+                tool.success(retMsg.message);
+                layer.closeAll();
+                render();
+            } else {
+                tool.error(retMsg.message);
+            }
+        })
+    }
+    
+    //编辑
+    function showEdit(id){
+    	//资源分类id..
+    	$("#update-object-formput").find("#id").val(id)
+    	
+    	//克隆
+    	var  cloneSelct=null;
+    	cloneSelct =$("#cloneIdfather").find(".cloneId").clone();
+    	$("#emptySelect").empty();
+    	$("#emptySelect").append(cloneSelct);
+    	
+    	 //去除编辑里分类的必填
+        $("#update-object-form").find("#type_id").removeAttr("lay-verify")
+        var object = tool.getById("../resResource/getById", id);
+        $("#fileDesc1").val(object.fileDesc)
+        var index = layer.open({
+            title : '编辑',
+            maxmin : false,
+            type : 1,
+            content : $('#win-update-object')
+        });
+        pform.render();
+        layer.full(index);
+    }
+    
+    //上传
+    function openAddWin() {
+    	//打开上传窗口前设置必填属性
+    	
+    	$("#requiredHidden").attr("lay-verify","required")
+    	if(arr.length>0){
+    		$("#requiredHidden").removeAttr("lay-verify")
+    	}
+        var index = layer.open({
+            title : '新增',
+            maxmin : false,
+            type : 1,
+            content : $('#win-add-object')
+        });
+        layer.full(index);
+    }
+
+    var arr=[];//放路径
+    var nameArr=[];//放本地文件名
+    clickfleupload();
+    var fileData = tool.getfiletiao('../../util/utilController/getAllowType') //调取后台文件格式 大小数据
+    function clickfleupload(){
+        layui.use('upload', function(){
+            var upload = layui.upload;
+            //多文件列表示例
+            var demoListView = $('#demoList')
+                ,uploadListIns = upload.render({
+                 elem: '#test10'
+                ,url: '/res/file/upload'
+                ,accept: 'file'//接收文件
+                ,exts:fileData.allowType//接收文件后缀
+                ,method: 'post'
+                ,size:10000   //文件大小  kb
+                ,data:{_csrf:$("#_csrf").val(),allowType:fileData.allowType,limitSize:fileData.limitSize,fileModuleName:"RES_RESOURCE"}//上传的参数
+                ,multiple: true//是否多文件上传
+                ,auto: false//设置是否自动上传(true)   false需要指定一个bindAction按钮来点击上传
+                ,bindAction: '#testListAction'
+                ,choose: function(obj){ //选中玩文件调用
+               		//var typeId = $("#fileTypeId").val();
+                //alert($("#selectsId #type_id option[value='"+$("#fileTypeId").val()+"']").text());
+                //alert(fileTypeName);
+                    var files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                    //读取本地文件
+                    obj.preview(function(index, file, result){
+                        nameArr.push({fileName:file.name,index:index})
+                        var tr = $(['<tr id="upload-'+ index +'">'
+                            ,'<td>'+ file.name +'</td>'
+                            ,'<td>'+ (file.size/1014).toFixed(1) +'kb</td>'
+                            ,'<td>等待上传</td>'
+                            ,'<td>'
+                            ,'<button class="layui-btn layui-btn-mini demo-reload layui-hide">重传</button>'
+                            ,'<button class="layui-btn layui-btn-mini layui-btn-danger demo-delete" index="'+index+'">删除</button>'
+                            ,'</td>'
+                            ,'</tr>'].join(''));
+
+                        //单个重传
+                        tr.find('.demo-reload').on('click', function(){
+                            obj.upload(index, file);
+                            return false;
+                        });
+                        //删除
+                        tr.find('.demo-delete').on('click', function(){
+                        	var index = $(this).attr("index");
+                              //没上传 时   或者上传成功时    删掉数组中的数据
+                        		for(var i=0;i<nameArr.length;i++){
+                        			if(nameArr[i].index==index){
+                        				nameArr.splice(i,1)
+                        			}
+                        		}
+                        		for(var i=0;i<arr.length;i++){
+                        			if(arr[i].index==index){
+                        				arr.splice(i,1)
+                        			}
+                        		}
+                        		if(arr.length==0){
+                        			$("#requiredHidden").attr("lay-verify","required")
+                        		}
+                           delete files[index]; //删除对应的文件
+                            tr.remove();
+                            return false; 
+                        });
+                        //上传成功的 要删除对应的文件
+                        $("#testListAction").on("click",function(){
+                            delete files[index];
+                        })
+                        demoListView.append(tr);
+                    });
+                }
+                ,done: function(res, index, upload){//开始上传到接口调用
+                
+                    //res 后台返回给前台的数据
+                    var item = this.item;
+                    //console.log(res)
+                    if(res!=""){ //上传成功
+                    	 //上传成功后 把隐藏的必填去除
+                     	$("#requiredHidden").removeAttr("lay-verify");
+                    	arr.push({resResource:res.object[0],index:index})
+                        var tr = demoListView.find('tr#upload-'+ index)
+                            ,tds = tr.children();
+                        tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
+                       // tds.eq(3).html('')
+                       // delete files[index]; //删除文件队列已经上传成功的文件
+                        return;
+                    }
+                    this.error(index, upload);
+                }
+                ,error: function(index, upload){
+                	    //如果上传失败 删除源文件名数组中的这项目
+                		for(var i=0;i<nameArr.length;i++){
+                			if(nameArr[i].index==index){
+                				nameArr.splice(i,1);
+                			}
+                		}
+                    var tr = demoListView.find('tr#upload-'+ index)
+                        ,tds = tr.children();
+                    tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
+                    tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
+                }
+            });
+        });
+    }
+    
+</script>
+
+
+</body>
+
+</html>

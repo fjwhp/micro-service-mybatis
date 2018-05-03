@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>月报审批</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<link rel="stylesheet" href="../../web/css/zhengls.css" media="all">
+<link rel="stylesheet" href="../../web/css/multsel.css" media="all">
+<style>
+	.thisweek{width:10px;height:20px;background:#ff5454;margin-right:6px;float:left;}
+	.table_sty{width:50%;margin-left:15px;margin-top:14px;height: 400px;overflow: auto;}
+	.blue_border{border:solid 1px #339bf1;}
+    div#audit-member-list a:hover {
+        background-color:#f1f1f1;
+    }
+</style>
+</head>
+<body>
+<div class="admin-main" id="receivedMR-detail-object">
+		<form class="layui-form layui-form-pane" id="receivedMR-detail-form" style="padding-top:40px;">
+			<!-- <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> -->
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" id="${_csrf.parameterName}"/>
+			<input type="hidden" id="bizId" value="${bizId}">
+			<input type="hidden" id="bizType" value="${bizType}">
+			<input type="hidden" id="taskId" value="${taskId}">
+			<input type="hidden" id="processInstanceId" value="${processInstanceId}">
+		    <!-- <div class="layui-form-item" >
+		    	<input type="text" id="titleMR_edit" value="" name="createtimeMR" style="border:none" lay-verify="required" autocomplete="off" class="layui-input" readonly>
+		    </div> -->
+		    
+		    <!-- 标题 -->
+			 <div class="" style="text-align: center;">
+				 <span id="titlereceivedMR_edit" style="font-size:16px;font-weight: bold;word-wrap:break-word"></span>
+			</div> 
+			
+		    <div class="layui-form-item">
+				<span style="margin-left:30px;">提交时间：</span>
+				<span id="createtimeMR_received" ></span>
+				<div class="r" style="margin-right:30px;">
+					<span>部门：</span>
+					<span class="" id="userDeptMR_received"></span>
+				
+				</div>
+			</div>
+		    <table class="layui-table">
+			  <thead>
+			   
+			    <colgroup>
+					<col width="20%">
+					<col width="50%">
+					<col width="30%">
+				</colgroup>
+			    <tr>
+			      <th>日期</th>
+			      <th>内容</th>
+			      <th>附件</th>
+			      <!-- <th>操作</th> -->
+			    </tr> 
+			  </thead>
+			  <tbody id="tbody_receivedMR">
+			<!-- 	 <tr id="leadertr_view" style="display:none">
+			      <td>工作建议</td>
+			      <td colspan="2">
+			      <textarea style='height:40px;width:100%;border:none' name='advice' id="advice_receivedMR"></textarea>
+			      </td>
+			    </tr>  -->
+			    <tr id="leadertr_view">
+			      <td>主管领导意见</td>
+			      <td colspan="2">
+			      <!-- <textarea style='height:40px;width:100%;border:none' name='comment' id="comment_receivedMR"></textarea> -->
+			       <div style='width:100%;border:none;white-space: normal' name='comment' id="comment_receivedMR"></div> 
+			      
+			      </td>
+			    </tr>
+			    <tr id="">
+			      <td colspan="3">
+			      <span>
+			      	说明：<br/>
+			      	1、每月五日前提交主管领导；<br/>
+					2、每月一表，历史可查，请认真填写。<br/>
+			      </span>
+			      </td>
+			    </tr>
+			  </tbody>
+			</table>
+			<!-- <div class="layui-form-item" id="attachmentMR_review">
+				<label class="layui-form-label">附件列表</label> 
+			</div> -->
+			<div class="layui-form-item" id="attachmentMR_review">
+				<label class="" style="font-weight:bold;">附件:</label> 
+			</div>
+				<div class="layui-upload-list" id="attachmentMR_reviews" style="width:50%;">
+				       <table class="layui-table">
+				       <colgroup>
+						    <col width="60%">
+						    <col width="20%">
+						    <col width="20%">
+					</colgroup>	
+				       
+					      	<!-- <thead>
+						        <tr><th>文件名</th>
+						        <th>大小</th>
+						        <th>操作</th>
+						      	</tr>
+						    </thead> -->
+					      	<tbody id="demoListMR_reviews">
+							<script id="arttMR_review"  type="text/html">
+								{{each filelist value index}}
+								<tr>
+									<td style="border:none;">{{value.orgnlFileName}}</td>
+									<td style="border:none;">{{value.fileSize}}kb</td>
+									<td style="border:none;color:#339bf1;">
+										<a onclick="showDownload('{{value.groupName}}','{{value.fileName}}')" style="color:#339bf1;cursor:pointer">下载</a>
+									</td>
+								</tr>
+								{{/each}}
+							</script>
+							</tbody>
+				       </table>
+				    </div>
+				<div class="btn_fixed_top" id="btns">
+				   <!--  <div style="float:left;">
+				        <a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="parent.layer.closeAll()"><i class="fa fa-backward "></i> 返回</a>
+				    </div>
+					<div class="r"> -->
+					<div>
+						<a class="flow_btn" onclick="fixed.print('receivedMR-detail-form')"><i class="layui-icon">&#xe621;</i>打印</a>
+						<a class="flow_btn btns" onclick="showHisImg()"><i class="layui-icon">&#xe62c;</i>流程图</a>
+						<a class="flow_btn" onclick="daily()"><i class="layui-icon">&#xe60a;</i>流转日志</a>			
+					</div>
+				</div>
+				
+			</form>
+		</div>
+	<!-- 日志 -->
+	<div class="" id="win-daily-object" style="display:none;">
+		<form class="layui-form layui-form-pane admin-main">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form">
+				  <table class="layui-table admin-table">
+				  	  <colgroup>
+					      <col width="10%">
+					      <col width="20%">
+					      <col width="10%">
+					      <col width="15%">
+					      <col width="45%">
+					      <col>
+					  </colgroup>
+					<thead>
+						<tr>
+							<th style="display: none;">用户ID</th>
+							<th>操作人</th>
+							<th>流程方向</th>
+							<th>接收人</th>
+							<th>操作时间</th>
+							<th>审核意见</th>
+						</tr>
+					</thead>
+					<tbody id="paging2-data">
+					<script id="paging2-script" type="text/html">
+					{{each loglist value index}}
+						<tr > 
+							<td style="display: none;">{{value.taskId}}</td>
+							<td title="{{value.operationName}}">{{value.operationName}}</td>
+							<td title="{{value.direction}}">{{value.direction}}</td>
+							<td title="{{value.recevieUserName}}">{{value.recevieUserName}}</td>
+							<td>{{value.operationTime}}</td>
+							<td style="white-space:normal;word-wrap: break-word;">{{value.comment}} </td>
+						</tr>
+					{{/each}}
+					</script>
+					</tbody>
+					</table>
+			  </div>
+			  <div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+					<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+			  </div>
+		</form>
+	</div>
+
+	<!-- 审批填写意见弹窗 -->
+	<div class="m_10" id="win-suggest-object" style="display:none;">
+		<form class="layui-form" id="win-suggest-form">
+		<div class="l" style="width:58%;">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+						<div class="layui-form-item">
+				<label class="layui-form-label" style="width:111px;font-weight:bold;">审批选择：</label>
+				<div class="layui-input-block">
+					<a class="layui-btn layui-btn-primary blue_border yes judge_btn" onclick="agree()">同意</a>
+					<a class="layui-btn layui-btn-primary no judge_btn" onclick="noagree()" id="no_agree_btn">回退</a>
+				</div>
+			</div>
+			<div class="agree">
+				 <div class="layui-form-item">
+					<label class="l" style="margin-left:14px;font-weight:bold;">下一级审批环节：</label>
+					<!-- <label style="margin-left:14px;">审批</label> -->
+					<div class="layui-input-inline" style="z-index:2001;">
+					   <select name="nextNode" lay-verify="" id="nextNode">
+					    </select>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<!-- option1 -->
+					<div id="audit-orgn">
+						<label class="l" style="font-weight:bold;">下一级审批处理人：</label>
+						<div class="l" style="width:73%"> 
+							<div id="n_receiverName" class="judge input_btn reset1" readonly="readonly"></div>
+							<a class="btn_blue2 r m_t10" onclick="personlSeclectOpen()">请选择</a>
+							<input type="hidden" name="receiverId"  id="n_receiverNameid" class="reset">
+                            <input type="hidden" id="n_receiverName_" class="reset">
+							<input type="hidden" id="deptId" class="reset">
+							<input type="hidden" id="deptUserId" class="reset">
+							<input type="hidden" id="openType" value = "1">
+							<input type="hidden" id="isNotEnd" class="reset" value="1"><!-- 值为0是结束节点 -->
+						</div>
+					</div>
+					
+					<!-- option2 -->
+					<div class="m_t10" id="audit-member">
+						<div class="multsel l" defval="0">
+							<span class="view" style="font-weight:bold;">下一级审批处理人：</span>
+							<div class="selist" id="audit-member-list">
+
+							</div>
+						</div>
+						<div id="testarea" class="judge1 input_btn reset1 l" readonly="readonly"></div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="noagree" style="display:none">
+			<!-- 	<div class="layui-form-item">
+					<label class="layui-form-label" title="回退到申请人">回退</label>
+					<div class="layui-input-block">
+						<input type="text" name="" id="" lay-verify="spactily" placeholder="回退到申请人"  autocomplete="off" class="layui-input">
+					</div>
+				</div> -->
+				<div class="layui-form-item">
+					<label class="l" style="margin-left:27px;font-weight:bold;">回退到上一级：</label>
+					<!-- <label style="margin-left:14px;">审批</label> -->
+					<div class="layui-input-inline" style="z-index:2001;">
+					   <!--<select name="city" lay-verify="">
+
+					    </select>-->
+						<span id="pre-nodeName"></span>
+					</div>
+				</div>
+			</div>
+		<!-- 	<div class="layui-form-item layui-form-text">
+				<label class="layui-form-label">审批意见</label>
+				<div class="layui-input-block">
+					 <textarea name="" id="comment"   class="layui-textarea"></textarea>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<a href="#" style="float:right;color:blue;">使用常用意见</a>
+			</div> -->
+
+				<label style="font-weight:bold;">意见：</label>
+				<textarea id="draw_sug" style="height:150px;width:97%;margin-top:5px;" maxlength="95" onkeyup="countnum(this);"></textarea>
+				<div class="r hand" onclick="add_sug()"><span class="table_btn"><small  style="color:#333;margin-right:20px;"><span id="count">0</span>/95</small>加入常用意见</span></div>
+			</div>
+			<div class="layui-form l judge_table" style="width:40%;">
+				  <table class="layui-table admin-table">
+				  	  <colgroup>
+					      <col width="15%">
+					      <col width="85%">
+					      <col>
+					  </colgroup>
+					<thead>
+						<tr>
+							<th>序号</th>
+							<th>常用意见</th>
+						</tr>
+					</thead>
+
+                      <tbody id="opinion-data">
+                      <script id="opinion-script" type="text/html">
+                          {{each opinionlist value index}}
+                          <tr >
+                              <td>{{index+1}}</td>
+                              <td title="" class="hand" onclick="click_font(this)"><p class="hand sug" style="white-space: normal;">{{value.content}}</p></td>
+                          </tr>
+                          {{/each}}
+                      </script>
+                      </tbody>
+					</table>
+			  </div>
+			<div class="" style="margin:10px 0;">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="parent.layer.closeAll();" style="margin-right:10px;"><i class="fa fa-backward"></i> 返回</a>
+				<div style="float: right;margin-right:15px;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit" id="form-add-submit">
+						<i class="fa fa-save"></i> 确认
+					</button>
+				</div>
+				<div style="float: right;margin-right:15px;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-jump-submit" style="display: none" id="form-jump-submit">
+						<i class="fa fa-save"></i> 确认
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 人员选择树 -->
+	<div style="display: none;z-index: 19940200;" id="win-personal-object">
+		<div class="search_h">
+			<input id="peopelSel" class="tree_search1 reset" type="text" value="" placeholder="搜索">
+			<a class="layui-btn layui-btn-small" id="" onclick="searchNodes()"><i class="layui-icon">&#xe615;</i>搜索</a>
+			<a class="layui-btn layui-btn-small layui-btn-primary" style="margin-left:2px;" type="reset" onclick="reset_tree()"><li class="fa fa-eraser"></li> 重置</a>
+			<label type="text"  id="resultKey" class="form-control">  
+                <div>  
+                    <a id="clickUp" class="tree_up" onclick="clickUp()"><i class="layui-icon">&#xe619;</i></a>  
+                    <a id="clickDown" class="tree_down" onclick="clickDown()"><i class="layui-icon">&#xe61a;</i></a>  
+                </div>  
+                <label id="number" class="tree_number"></label>  
+            </label>  
+        </div>
+        <div class="tree_h">
+        	<ul id="treeDemo" class="ztree treeDemo1" name="treeDemo" style="display:block"></ul>
+        </div>
+        <div class="sure_h">
+		    <a class="layui-btn layui-btn-small sure_s"><li class="fa fa-save"></li> 确定</a>
+		</div>
+	</div>
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+    <script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../../web/js/multsel.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../../web/js/fixedform.js"></script>
+	<script>
+		//定义layui    
+		var taskId = $("#taskId").val();
+		var processInstanceId=$("#processInstanceId").val();
+	    var _csrf = $("#_csrf").val();
+	    var bizId = $("#bizId").val();
+		var pform;
+		layui.use(['form','element'], function() {
+			pform = layui.form;
+        	/*审批完成任务*/
+            fixed.completeTask("form-add-submit","/off/offMonthReport/completeTask",taskId,_csrf,bizId);
+            /*填写意见*/
+			fixed.addComment("form-savecomment-submit",taskId,_csrf,$("#draw_sug").val());
+			/*回退到上一节点*/
+            fixed.jump2Task2("form-jump-submit","/off/offMonthReport/jump2Task2",taskId,bizId,_csrf);
+            
+		});
+        //清除事件(用于在办列表详情)
+        //clearEvent();
+        //常用意见列表
+        fixed.opinionList();
+	    /*下拉多选初始化*/
+        multselInit();
+        /*检查任务是否已被签收*/
+      //  fixed.checkClaim(taskId,_csrf);
+        /*页面详情*/
+	    detail_receivedMR(bizId,"0"); 
+        
+		/*签收*/
+		function change_btn(){
+            fixed.claimTask(taskId,_csrf);
+		}
+		/*审批弹窗*/
+		function agree(){
+            $("#form-jump-submit").attr("style","display:none");
+            $("#form-add-submit").removeAttr("style");
+			$(".agree").show();
+			$(".noagree").hide();
+			$(".yes").addClass("blue_border");
+			$(".no").removeClass("blue_border");	
+		}
+		/*回退弹窗*/
+		function noagree(){
+           $("#form-add-submit").attr("style","display:none");
+           $("#form-jump-submit").removeAttr("style");
+           fixed.getPreTaskInfo(taskId,_csrf);
+		}
+		//审批弹窗
+		function yes() {
+            fixed.checkNextTaskInfo("/off/offMonthReport/checkNextTaskInfo",taskId,_csrf);
+            fixed.getNextTaskInfo(taskId,_csrf);
+		}
+		/* 日志 */
+		function daily(){
+            fixed.getAllTaskLogInfo("/off/offMonthReport/getAllPinsInfo",processInstanceId,_csrf);
+		}
+		function  showHisImg(){						
+			fixed.showHisImg($('#processInstanceId').val());
+		}
+	/*	function agree(){
+			$(".agree").show();
+			$(".noagree").hide();
+			$(".yes").addClass("blue_border");
+			$(".no").removeClass("blue_border");	
+		}
+		function noagree(){
+			$(".agree").hide();
+			$(".noagree").show();
+			$(".yes").removeClass("blue_border");
+			$(".no").addClass("blue_border");
+		}*/
+		/* 常用意见 */
+		function suggest(){
+			var index = layer.open({
+				title : '填写意见',
+				maxmin : false,
+				type : 1,
+				shadeClose: true,
+                area: ['900px', '510px'],
+				content : $('#win-suggest-object')
+			});
+			/* layer.full(index); */
+		}
+		//点击添加常用意见
+		function click_font(obj){
+			var a = $(obj).find('.sug').text();
+			/* var b = $('#draw_sug').val(); */
+			$('#draw_sug').val(a);
+		}	
+		function add_sug(){
+			layer.confirm('确定加入常用意见？', {
+				  icon:3,
+				  btn: ['确定','取消'] //按钮
+				}, function(){
+                    fixed.addOpinion();
+				}, function(){
+				  
+				});
+		}
+		//人员选择树
+		function personlSeclectOpen(){	  
+			var openType = $("#openType").val();
+			var deptId = $("#deptId").val();
+			var uId = $("#deptUserId").val();
+			if(openType == "3"){
+				/* 选择受理人和候选用户，有选择部门时，弹出组织机构数 */
+				tool.treeDemo("win-personal-object",'treeDemo',"n_receiverNameid","n_receiverName_","n_receiverName",false,"",deptId,"","",uId);
+			}else{
+				/* 未选择受理人和候选用户，包含选择后找不到对应的办理或候选用户，弹出组织机构树，优先级最高 */
+				tool.treeDemo("win-personal-object","treeDemo","n_receiverNameid","n_receiverName_","n_receiverName",false,"","","","");
+			}  
+			//tool.treeDemo("win-personal-object",'treeDemo',"n_receiverNameid","","n_receiverName",false,"",$("#deptId").val());
+			$("#number").html("");
+		}
+        //用按钮查询节点  
+        /* function searchNodes(){  
+            var keywords=$("#peopelSel").val();  
+            var nodes = mytree.getNodesByParamFuzzy("name", keywords, null);  
+            if (nodes.length>0) {  
+                mytree.selectNode(nodes[0]);  
+            }  
+        }  */ 
+		//重置树
+		function reset_tree(){
+			var mytree = $.fn.zTree.getZTreeObj("treeDemo");
+		    //打开弹窗前重置节点以及关闭展开状态，避免叠加
+		    $("#number").html("");
+			$('.reset').val("");
+			$('.reset1').html("");
+			mytree.checkAllNodes(false)
+		    mytree.expandAll(flase);
+		}
+
+		//===============已收月报详情弹窗=================
+		function detail_receivedMR(id,isread){
+			$("#createtimeMR_received").html("");
+			$("#userDeptMR_received").html("");
+			$(".worklog_receivedMR").remove()
+			var object = tool.getById("/off/offMonthReport/getSubmitById", id);
+			//console.log(object);
+			var monthReportDetailList = object.monthReportDetailList
+			$("#createtimeMR_received").html(object.submitTime);
+			$("#userDeptMR_received").html(object.belongDept);
+			//$("#th_receivedMR").text(username + "的工作月报")
+			$("#comment_receivedMR").html(object.comment);
+			$("#titlereceivedMR_edit").html(object.title)  //已收月报详情头上建个标题字大一点，明显一点
+			
+			for (var value of monthReportDetailList){
+			    //console.log(value);
+				var str = '<tr class="worklog_receivedMR">'
+				str += "<td>"+value.offMonthReportDetail.workDate+"</td>"	
+				str += "<td style='white-space: normal;'><p readonly>"+value.offMonthReportDetail.content+"</p></td>" 	
+				/* str += "<td style="">"+value.offMonthReportDetail.content+"</td>" */
+			    str += "<td>"
+			    if(value.resResourceList){
+			    	for(resource of value.resResourceList){
+			    		var groupName="'"+resource.groupName+"'";
+			    		var fileName="'"+resource.fileName+"'";
+				    	str += '<div><div style="width:80%;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;float:left;" title="'+resource.orgnlFileName+'">'+resource.orgnlFileName+'</div><a class="downLoad" onclick="showDownload('{{value.groupName}}','{{value.fileName}}')">下载</a></div>'  
+				    }
+			    }
+			    str += "</td>"
+			  //  str += '<td><a onclick="log_update('+value.offMonthReportDetail.id+')">编辑</a></td>'
+			    str += "</tr>"  
+			  $("#leadertr_view").before(str)
+			  //$("#tbody_receivedMR").before(str)
+			}
+			
+			var fileBack=object.resResourceMRList;
+		    var filelist={filelist:fileBack};
+		    $('#demoListMR_reviews').html(template("arttMR_review", filelist));
+		}
+        //流程作废
+        $("#void-process").on("click",function () {
+            if($("#processInstanceId").val() == ''){
+                fixed.voidProcess("/off/offMonthReport/void",taskId,bizId,_csrf);
+            }
+        });
+        function clearEvent() {
+            if($("#processInstanceId").val() != ''){
+                $("#btns").find("a").each(function (index) {
+                    $(this).removeAttr("onclick");
+                });
+            }
+        }
+        //撤回
+        function revoke_btn() {
+            fixed.revokeProcess();
+        }
+      //下载附件
+        function showDownload(groupName,fileName){
+	    	$("#groupName").val(groupName);
+	    	$("#fileName").val(fileName);
+			$("#action_form").submit();
+    	}
+	</script>
+</body>
+</html>

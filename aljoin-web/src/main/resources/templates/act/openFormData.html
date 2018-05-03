@@ -1,0 +1,1931 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>表单解析器</title>
+<link rel="stylesheet"	href="../../aljoin-act/form-design/css/bootstrap.min.css">
+<link rel="stylesheet"	href="../../aljoin-act/form-design/css/font-awesome.min.css" />
+<link rel="stylesheet"	href="../../aljoin-act/form-design/dist/gridstack.css" />
+<link rel="stylesheet" type="text/css"	href="../../aljoin-act/form-design/css/default.css">
+<link rel="stylesheet" type="text/css" href="../../aljoin-act/form-design/css/bootstrap-datetimepicker.css">
+<link media="all" rel="stylesheet" type="text/css"	href="../../aljoin-act/form-design/inputfile/css/fileinput.css" />
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<link rel="stylesheet" href="../../web/css/zhengls.css" media="all">
+<link rel="stylesheet" href="../../web/css/multsel.css" media="all">
+<style type="text/css"> 
+/* 按钮浮动 */
+.blue_border{border:solid 1px #339bf1;color:#339bf1;}
+.blue_border:hover{border:solid 1px #339bf1;color:#339bf1;} 
+div#audit-member-list a:hover {background-color:#f1f1f1;}
+.form-top-container .btn-group > button,
+.form-top-container .btn.btn-default.btn-sm{
+	display: inline-block;
+    background-color: #009688;
+    color: #fff;
+    white-space: nowrap;
+    text-align: center;
+    border: none;
+    border-radius: 2px !important;
+    cursor: pointer;
+    opacity: .9;
+    margin:3px 6px;
+    height: 32px;
+    line-height: 32px;
+    padding: 0 15px;
+    background-color: #339bf1;
+    font-size: 14px;
+}
+/*修改 */
+.form-top-container {
+	width: 100%;
+	padding: 0px 5px;
+}
+
+.form-top-container>* {
+	width: 100%;
+}
+
+.grid-stack-item-content {
+	/* 解析时隐藏滚动条 */
+	overflow-x: visible !important;
+	overflow-y: visible !important;
+}
+/*  pageoffice */
+.pobmodal-overlay{
+    display: none; 
+}
+#form-content-div {
+	overflow-y: visible !important;
+}
+
+.i_show_aljoin_label_p {
+    height: 30px;
+    padding: 5px 0px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px
+}
+#btn-controlShow button{
+     display:none;
+}
+ #form-content-div-form .grid-stack-item {
+   display:none;
+}
+.readonly_style{
+   	background-color:#ffffff !important;
+	cursor:default !important;
+}
+#style_xh_numli{
+  cursor:pointer;
+}
+#win-update-object .opinion_wrap{
+  margin-bottom:10px;
+}
+#win-update-object .opinion_wrap table >*{
+  font-size:14px;
+}
+#win-update-object #style_xh_numtr span{
+    width: 16px;
+    height:16px;
+    line-height: 16px;
+    font-size: 12px;
+    background-color: rgb(255, 255, 255);
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(210, 210, 210);
+    border-radius: 2px;
+    transition: 0.1s linear;
+    display:block;
+    margin: 0px auto;
+    cursor:pointer;
+}
+#win-update-object #style_xh_numtr span.add_text{
+    border-color: #01a5fa;
+    background-color: #01a5fa;
+    color: #fff;
+}
+#win-update-object .bottom_return button:first-child{
+    display: inline-block;
+    height: 32px;
+    line-height: 32px;
+    padding: 0 15px;
+    background-color: #339bf1;
+    color: #fff;
+    white-space: nowrap;
+    text-align: center;
+    font-size: 14px;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    opacity: .9;
+}
+#win-update-object .bottom_return button:last-child{
+    border: 1px solid #C9C9C9;
+    background-color: #fff;
+    color: #555;
+    display: inline-block;
+    height: 32px;
+    line-height: 32px;
+    padding: 0 15px;
+    white-space: nowrap;
+    text-align: center;
+    font-size: 14px;
+    border-radius: 2px;
+    cursor: pointer;
+    opacity: .9;
+}
+.button-style{
+    color: #339bf1;
+    border-color: #339bf1;
+}
+/* 图片附件回调操作 */
+.widget_datasrc_push{   
+  width:100%;
+  height: 80px;     
+  margin-top: 5px;
+  padding: 5px;
+  overflow: hidden;
+  background-color: #f5f5f5;
+  position: relative;
+}
+.widget_datasrc_push p{
+  width:400px;
+  height:25px;
+  line-height:25px;
+  margin:0px 10px;
+}
+.widget_datasrc_push p a{
+  width:280px;
+  height:25px;
+  float: left;
+  display:block;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.widget_datasrc_push p span{
+  width:80px;
+  height:25px;
+  float: left;
+  display:block;
+  color: #33a1ff;
+  margin-left:35px;
+  cursor:pointer;
+}
+button.src_push_absolu{
+   position: absolute;
+   right: 5px;
+   bottom: 3px;
+}
+.widget_datasrc_push.on{
+  width: 715px;
+  height: 250px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-left: -350px;
+  margin-top: -158px;
+  padding: 0px;
+  overflow: hidden;
+  z-index: 9999;
+  background-color: #fff;
+  box-shadow: 1px 1px 50px rgba(0,0,0,.3);
+}
+.widget_datasrc_push.on .head-title{
+  width: 100%;
+  height: 45px;
+  line-height: 45px;
+  background-color: #f8f8f8;
+  padding: 0px 10px;
+}
+.widget_datasrc_push.on .min-content{
+  height: 165px;
+  overflow: auto;
+}
+.widget_datasrc_push.on p{
+   width: 310px; 
+   float: left;
+}
+.widget_datasrc_push.on a{
+   max-width: 215px;
+}
+.widget_datasrc_push.on span{
+   width: 50px;
+}
+/* 
+*整理以下代码请新建文件存放 
+*/
+
+.form-top-container > *,.area-text-tyle{
+	font-size:14px;
+	color:#333333;
+}
+textarea.area-text-style{
+	max-height:114px;
+}
+.i_show_aljoin_label_p{
+    height: 30px;
+    padding: 5px 0px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px
+}
+input.text-style,
+select.select-style{
+	height:32px;
+	line-height:32px;
+	font-size:14px;
+	color:#333333;
+}
+.button-style{
+    color: #339bf1;
+    border-color: #339bf1;
+}
+/* 
+*整理以上代码请新建文件存放
+*/
+</style>
+<!--[if IE]>
+		<script src="../../aljoin-act/form-design/js/html5shiv.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+	<input type='hidden' name='${_csrf.parameterName}' id='${_csrf.parameterName}' value='${_csrf.token}' />
+	<input type='hidden' id='bpmnId' value='${bpmnId}' />	
+	<input type='hidden' id='formId' value='${formId?c}' />
+	<input type='hidden' id='showWidgetIds' value='${showWidgetIds!}' />	
+	<input type='hidden' id='editWidgetIds' value='${editWidgetIds!}' />	
+	<input type='hidden' id='notNullWidgetIds' value='${notNullWidgetIds!}' />
+	<input type='hidden' id='commentWidgetIds' value='${commentWidgetIds!}' />
+	<input type='hidden' id='operateAuthIds' value='${operateAuthIds!}' />	
+	<input type='hidden' id='activityId' value='${activityId!}' />
+	<input type='hidden' id='signInTime' value='${signInTime!}' />
+	<input type='hidden' id='isUrgent' value='1' />
+	<input type='hidden' id='attachId' name="attachId" value='' />
+	<!-- <input type='hidden' id='thisTaskUserComment' name="thisTaskUserComment" value='' /> -->
+	<input type='hidden' id='redHeadWidgetIds' value='${redHeadWidgetIds!}' />
+	<input type='hidden' id='saveMarkWidgetIds' value='${saveMarkWidgetIds!}' />
+	
+	<!-- 回退隐藏域 -->
+	<input type='hidden' id='targetTaskKey_back' value='' />
+	<input type='hidden' id='targetUserId_back' value='' />
+	
+	<!--在办详情所需参数-->
+	<input type='hidden' id='isWait' name="isWait" value='${isWait!}' />
+	<input type='hidden' id='processInstanceId' name="processInstanceId" value='${processInstanceId!}' />
+    <!--顶部填写意见 -->
+    <input type='hidden' id='topButtonComment' name="topButtonComment" value='' />
+    <!--控制签收 -->
+    <input type='hidden' id='checkActivityIdNull' name="checkActivityIdNull" value='' />
+    <!--附件下载 -->
+    <form class="layui-form" action="/res/file/download" method="get" id="action_form">
+	 <input type="hidden" name="groupName" id="groupName">
+	 <input type="hidden" name="fileName" id="fileName">
+	</form>
+	<!--附件 -->
+	<#list runDataList as runData>
+		<input type="hidden" id="orgnl_${runData.formWidgetId}" value="${runData.formWidgetValue}">
+		<input type="hidden" id="sourceData_${runData.formWidgetId}" value="${runData.dataResource!}">
+	    <input type="hidden" id="dataReadIs_${runData.formWidgetId}" value="${runData.isRead}">
+		<#assign formWidgetSize = 0 >
+		<#list attachList as attach>
+			<#if (runData.id == attach.bizId)>
+				<input type="hidden" id="attach_id_orgnl_${runData.formWidgetId}${formWidgetSize}" value="${attach.id}">
+				<input type="hidden" id="attach_name_orgnl_${runData.formWidgetId}${formWidgetSize}" value="${attach.orgnlFileName}">
+				<input type="hidden" id="attach_path_orgnl_${runData.formWidgetId}${formWidgetSize}" value="${attach.attachPath}">
+				<#assign formWidgetSize = formWidgetSize+1>
+			</#if>
+		</#list>
+	</#list>
+	<div class="form-top-container"  style="margin-top: 0px;padding-top:40px;">
+		<div>
+			<div class="btn-group btn_fixed_top" role="group" aria-label="..." style="padding-top: 5px;width:99%;" id="btn-controlShow">
+				<!-- <a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="parent.layer.closeAll();" style="margin-right:10px;"><i class="fa fa-backward"></i> 返回</a>
+				<div style="float:right;"> -->
+				<div  style="margin: 0px 13px 0px 15px;">
+					<button type="button" class="btn btn-default flow_btn" id="aljoin-task-print" style="margin: 0px;margin-right: 13px;">打印</button>
+					<!-- <button type="button" class="btn btn-default btn-sm" id="aljoin-task-flowcharts" onclick="showImg()" style="margin: 0px;margin-right: 13px;border-radius:0px;">流程图</button> -->
+					<button type="button" class="btn btn-default flow_btn" id="aljoin-task-flowcharts" onclick="showImg()" style="margin: 0px;margin-right: 13px;">流程图</button>
+					<button type="button" class="btn btn-default flow_btn" id="aljoin-task-circulation-opinion" onclick="circulaOpi();" style="margin: 0px;margin-right: 13px;">传阅意见</button>
+					<button type="button" class="btn btn-default flow_btn" id="aljoin-task-circulation-log" style="margin: 0px;margin-right: 13px;">流转日志</button>					
+					<div class="btn-group" role="group" id="aljoin-task-urgent_div" style="margin-right: 13px;">
+					    <button type="button" type="button" class="btn btn-default flow_btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin: 0px;border:solid 1px #339bf1;background:#fff;color:#339bf1;height: 26px;line-height: 26px;">
+					                  加急设置
+					      <span class="caret"></span>
+					    </button>
+					    <ul class="dropdown-menu" style="margin-top: -123px;">
+					      <li><a href="javascript:void(0);" id="aljoin-task-urgent1">一般</a></li>
+					      <li><a href="javascript:void(0);" id="aljoin-task-urgent2">紧急</a></li>
+					      <li><a href="javascript:void(0);" id="aljoin-task-urgent3">加急</a></li>
+					    </ul>
+				  	</div>
+					<button type="button" class="btn btn-default flow_btn" id="aljoin-task-opinion" style="margin: 0px;margin-right: 13px;border-radius:0px!important;">填写意见</button>
+					<button type="button" class="btn btn-default flow_btn" id="aljoin-task-close" style="margin: 0px;border-radius:0px!important;">作废</button>
+				</div>
+			  
+			</div>
+			<div class="container-fluid" id="print-obj"
+				style="padding-left: 0px; padding-right: 0px;">
+				<div>
+					<div class="container-fluid" id="form-content-div"
+						style="padding-left: 0px; padding-right: 0px;verflow-y: scroll; margin-left: 0px;">
+						<form class="" id="form-content-div-form"></form>
+					</div>
+				</div>
+			</div>
+			<!-- 意见域对象窗口 -->
+			<div style="padding: 10px; display: none; padding-right: 40px;" id="win-update-object">
+				<div class="opinion_wrap">
+                    <textarea class="form-control readonly_style" id="opinion_textelement" name="opinion_textelement" onchange="setWidgetTextMain()" rows="3" style="padding: 5px;" placeholder="自定义意见域"></textarea>
+				</div>
+				<div class="opinion_wrap">
+					<table class="table">
+					    <thead>
+						    <tr>
+						        <th width:90%;>意见域文本</th>
+						        <th style="text-align: center;width:10%;">选择</th>
+						    </tr>
+					    </thead>
+					    <tbody id="style_xh_numtr">
+					    
+					    </tbody>
+					</table>				
+				</div>				
+				<div class="opinion_wrap bottom_return" style="float: right;">
+				   	<button type="return" onclick="storageDataT();layer.closeAll()">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<button type="return" onclick="layer.closeAll();">
+						<li class="fa fa-backward"></li> 返回
+					</button>
+				</div>							    
+			</div>
+			<!-- 意见域对象窗口 -->			
+		</div>
+	</div>
+	
+	<!-- 审批/填写意见弹窗 -->
+	<div class="m_10" style="z-index: 19940200; display: none;" id="win-yes-object">
+	<div id="win-newsms-object">
+		<input type="text" id="taskformdata" autocomplete="off"  style="display: none">
+		<input type="text" id="isTask" autocomplete="off"  style="display: none">
+		<form class="layui-form" id="add-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="l" style="width:58%;">
+			<div class="layui-form-item">
+				<label class="layui-form-label" style="width:133px;font-weight:bold;">审批选择:</label>
+				<div class="layui-input-block">
+					<a class="layui-btn layui-btn-primary blue_border yes judge_btn" onclick="agree()">同意</a>
+					<a class="layui-btn layui-btn-primary no judge_btn" onclick="noagree()">回退</a>
+				</div>
+			</div>
+		 	<div class="agree">
+				 <div class="layui-form-item">
+				 	<!-- option1 -->
+				 	<div style="display: none" id="audit-member">
+						<label class="l" style="margin:0 7px 0 11px;font-weight:bold;">下一级审批环节：</label>
+						<div class="layui-input-inline" style="z-index:2001;">
+						   <select name="nextNode"  id="nextNode" lay-verify="" lay-filter="selectUser">
+						   </select>
+						</div>
+						<div class="p_t10 cl">
+							<div class="multsel l" defval="0">
+								<span class="view" style="font-weight:bold;">下一级审批处理人</span>
+								<div class="selist" id="audit-member-list">
+								</div>
+							</div>
+							<div id="testarea" class="judge1 input_btn reset1 l" readonly="readonly" style="min-height:28px;"></div>
+						</div>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<!-- option2 -->
+					<div style="display: none" id="audit-orgn">
+					<label style="font-weight:bold;margin-left:15px;">下一级审批环节:</label>
+					<table class="layui-table" style="width: 97%;margin-top: 10px;border: none;">
+				      <colgroup>
+						    <col width="20%">
+						    <col width="65%">
+						    <col width="30%">
+					  </colgroup>
+					  <thead>
+						  <tr>
+							   <th>环节</th>
+							   <th>审批人员</th>
+							   <th>操作</th>
+						  </tr>
+					  </thead>
+                            <tbody id="objList">        	
+							<script id="obj-script"  type="text/html">
+                    			 {{each notfreelist value index}}
+                                    	<tr>
+                   					   		<td title="{{value.taskName}}" class="uname">{{value.taskName}}</td>
+                   					   		<td>
+												<div style="border:1px solid #ccc;height:80px;overflow:auto;font-size:14px;padding: 10px 10px;white-space: normal;" id="readUserNames{{index}}" class="test reset1 userList_name">{{value.readUserNames}}</div>
+												<input type="hidden" id="replace{{index}}" value="{{value.userName}}">	 
+												<input type="hidden" id="readUserkeys{{index}}"  value="{{value.taskKey}}" class="reset uid_key">
+												<input type="hidden" id="readUserIds{{index}}" value="{{value.userId}}" class="reset uid_key uid userList_id">														  
+                                            </td>
+                    						<td>
+												<a class="btn_blue2 r m_t10 taskKeyClass" style="padding: 4px 24px;" ind="{{index}}" value="{{value.taskKey}}" onclick="personlSeclectOpen('{{index}}','{{value.userList.length}}','readUserIds{{index}}','readUserNames{{index}}',this)">人员选择</a>
+											</td>
+                                    	</tr>
+	              				 {{/each}}
+                  			</script>
+						</tbody>
+			    	</table> 
+				</div>	
+				</div>
+			</div>
+
+			<div class="noagree" style="display:none">
+				<div class="layui-form-item">
+					<label class="l" style="margin-left:9px;">回退到上一级：</label>
+					<div class="layui-input-inline" style="z-index:2001;">
+						<span id="pre-nodeName"></span>
+					</div>
+				</div>
+			</div>
+
+
+				<div>
+					<label style="font-weight:bold;">意见：</label>
+					<textarea id="thisTaskUserComment" class="draw_sug" style="height:100px;width:97%;margin-top:5px;" onkeyup="countnum(this);" maxlength="95"></textarea>
+					<div class="r hand" onclick="add_sug()"><span class="table_btn"><small  style="color:#333;margin-right:20px;"><span id="count">0</span>/95</small>加入常用意见</span></div>
+				</div>	
+			</div>
+			<div class="layui-form l judge_table" style="width:40%;">
+				  <table class="layui-table admin-table">
+				  	  <colgroup>
+					      <col width="15%">
+					      <col width="85%">
+					      <col>
+					  </colgroup>
+					<thead>
+						<tr>
+							<th>序号</th>
+							<th>常用意见</th>
+						</tr>
+					</thead>
+					<tbody id="opinion-data">
+					<script id="opinion-script" type="text/html">
+					{{each opinionlist value index}}
+						<tr > 
+							<td>{{index+1}}</td>
+							<td title="" class="hand" onclick="click_font(this)"><p class="hand sug" style="white-space: normal;">{{value.content}}</p></td>
+						</tr>
+					{{/each}}
+					</script>
+					</tbody>
+					</table>
+			 </div>
+		
+			<div class="cl" style="margin:10px 0;">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();" style="margin-right:10px;"><i class="fa fa-backward"></i> 返回</a>
+					<div style="float: right;">
+						<button class="layui-btn" lay-submit="" lay-filter="form-add-submit" id="form-add-submit">
+							<i class="fa fa-save" style="color:#FFF"></i> 确认
+						</button>
+					</div>
+					<div style="float: right;margin-right:15px;">
+						<button class="layui-btn" lay-submit="" lay-filter="form-jump-submit" style="display: none" id="form-jump-submit">
+							<i class="fa fa-save"></i> 确认
+						</button>
+					</div>
+				</div> 
+				</form>
+			</div>
+				
+			</div>
+	<!-- 一级人员弹窗 -->
+	<div style="display: none;z-index: 19940200;margin-bottom:20px;" id="win-human-object">
+	<div class="layui-form" style="margin:10px;">
+		<!-- <input id="peopelSel_1" class="tree_search1 reset" type="text" value="" placeholder="搜索" style="margin-left:0px;width: 69%;">
+		<a class="layui-btn layui-btn-small" id="" onclick="searchNodes()"><i class="layui-icon">&#xe615;</i>搜索</a> -->
+		<table class="layui-table admin-table">
+			<colgroup>
+				<col width="20%">
+				<col width="80%">
+				<col>
+			</colgroup>
+			<thead>
+				<tr>
+					<th style="width: 20px;"><input type="checkbox" lay-skin="primary" lay-filter="human-check-all" id="human-checkall"></th>
+					<th>用户</th>
+				</tr>
+			</thead>
+			<tbody id="paging5-data">
+				<script id="paging5-script" type="text/html">
+					{{each userList value index}}
+						<tr>
+							<td>
+								<input type="checkbox" class="human"  lay-skin="primary" lay-filter="human-checksign" uId="{{value.userId}}" uName="{{value.userName}}">
+							</td>
+							<td>{{value.userName}}</td>
+						</tr>
+					{{/each}}
+				</script>
+			</tbody>
+	 	</table>
+
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging5-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	</div>
+	<!-- 人员选择树 -->
+	<div style="display: none;z-index: 19940200;margin-bottom:20px;" id="win-personal-object">
+		<input id="peopelSel" class="tree_search1 reset" type="text" value="" placeholder="搜索">
+		<a class="layui-btn layui-btn-small" id="" onclick="searchNodes()"><i class="layui-icon">&#xe615;</i>搜索</a>
+		<a class="layui-btn layui-btn-small layui-btn-primary" style="margin-left:2px;" type="reset" onclick="reset_tree(treeDemo)"><li class="fa fa-eraser"></li> 重置</a>
+		<ul id="treeDemo" class="ztree treeDemo1" name="treeDemo" style="display:block"></ul>
+	</div>
+		<!-- 传阅情况及意见 -->
+	<div class="admin-main" style="display: none;z-index: 19940200;padding-bottom:60px;" id="win-batchidea-object">
+		<!-- 已阅人员 -->
+		<div class="p_t10">
+			<span class="e6ed l">已阅人员：</span>
+			<div id="inReadUserNames" class="l" style="word-wrap:break-word;width:85%;"></div>
+		</div>
+		<!-- 未阅人员 -->
+		<div class="p_t10 cl">
+			<span class="e6ed l">未阅人员：</span>
+			<div id="toReadUserNames" class="l" style="word-wrap:break-word;width:85%;"></div>
+		</div>
+		<div class="cl m_10" >
+		<table class="layui-table admin-table">
+			<colgroup>
+				<col width="6%">
+				<col width="8%">
+				<col width="10%">
+				<col width="16%">
+				<col width="60%">
+				<col>
+			</colgroup>
+			<thead>
+				<tr>
+					<th>序号</th>
+					<th>操作人</th>
+					<th>部门</th>
+					<th>时间</th>
+					<th>意见</th>
+				</tr>
+			</thead>
+			<tbody id="paging4-data">
+				<script id="paging4-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td>{{(current-1)*size+index+1}}</td>
+							<td>{{value.createUserFullName}}</td>
+							<td>{{value.deptName}}</td>
+							<td>{{value.createTime}}</td>
+							<td>{{value.returnOpinonTime}}</td>
+						</tr>
+					{{/each}}
+				</script>
+			</tbody>
+	 	</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging4-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	<!-- 日志 -->
+	<div class="m_10" id="win-daily-object" style="display:none;">
+		<form class="layui-form layui-form-pane admin-main">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form">
+				<table class="layui-table admin-table">
+					<colgroup>
+						<col width="10%">
+						<col width="20%">
+						<col width="10%">
+						<col width="15%">
+						<col width="45%">
+						<col>
+					</colgroup>
+					<thead>
+					<tr>
+						<th style="display: none;">用户ID</th>
+						<th>操作人</th>
+						<th>流程方向</th>
+						<th>接收人</th>
+						<th>操作时间</th>
+						<th>审核意见</th>
+					</tr>
+					</thead>
+					<tbody id="paging2-data">
+					<script id="paging2-script" type="text/html">
+						{{each loglist value index}}
+						<tr >
+							<td style="display: none;">{{value.taskId}}</td>
+							<td title="{{value.operationName}}" style="cursor: pointer;">{{value.operationName}}</td>
+							<td title="{{value.direction}}" style="cursor: pointer;">{{value.direction}}</td>
+							<td title="{{value.recevieUserName}}" style="cursor: pointer;">{{value.recevieUserName}}</td>
+							<td>{{value.operationTime}}</td>
+							<td>{{value.comment}} </td>
+						</tr>
+						{{/each}}
+					</script>
+					</tbody>
+				</table>
+			</div>
+			<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+				<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+			</div>
+		</form>
+	</div>
+</body>
+<script src="../../aljoin-act/form-design/js/jquery.min.js"></script>
+<script src="../../aljoin-act/form-design/js/jquery-ui.min.js"></script>
+<script src="../../aljoin-act/form-design/inputfile/js/fileinput.js"></script>
+<script src="../../aljoin-act/form-design/inputfile/js/locales/zh.js"></script>
+<script src="../../aljoin-act/form-design/js/bootstrap.min.js"></script>
+<script src="../../aljoin-act/form-design/js/lodash.min.js"></script>
+<script src="../../aljoin-act/form-design/dist/gridstack.js"></script>
+<script src="../../aljoin-act/js/uuid.js"></script>
+<script	src="../../aljoin-act/form-design/js/bootstrap-datetimepicker.js"></script>
+<script	src="../../aljoin-act/form-design/datetimepicker-locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="../../aljoin-act/layer/layer.js"></script>
+<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+<script type="text/javascript"
+		src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+
+<script src="../../aljoin-act/js/jquery.base64-2.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/lang/zh-cn/zh-cn.js"></script>
+<script type="text/javascript" src="../../web/js/tool_formtype.js"></script>
+<script type="text/javascript" src="../../web/js/template-web.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../web/js/multsel.js"></script>
+<script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../web/js/fixedioa.js"></script>
+<script type="text/javascript" src="../../pageoffice.js" id="po_js_main"></script>
+<script type="text/javascript" charset="utf-8" src="../../web/js/fixedform.js"></script>
+<script type="text/javascript">
+	$(function() {
+		var htmlCode = $.base64.decode("${html}");
+		//$(htmlCode).find('div[data-gs-auto-position="yes"]').attr("data-gs-auto-position","no");
+		$(htmlCode).appendTo("#form-content-div-form");
+		//设置自动位置属性为no
+		$(".form-top-container").find('div[data-gs-auto-position="yes"]').attr("data-gs-auto-position", "no");
+		//禁止移动
+		$("#form-content-div-form").children("div").children().attr("data-gs-no-move","data-gs-no-move");
+		//删除"删除"标签
+		$(".form-top-container").find(".delete_widget_").remove();
+		//删除背景色
+		$(".grid-stack-item-content").css("background-color", "");
+		$(".grid-stack").css("background-color", "white");
+		var options = {
+			float : true,
+			cell_height : 40,
+			vertical_margin : 0,
+	
+		};
+		$('.grid-stack').gridstack(options);
+		
+		//去除大小大小拖拽图标
+		$(".ui-icon-gripsmall-diagonal-se").remove();
+		//联动绑定数据源
+		bindContactSelectJson();   //解析联动绑定数据源的代码放在openForm.js文件执行;
+		//去除控件右上角的标签名
+		deleteRightWidgetFlag();
+		//解析日期(时间)区间
+		parserDateTimePeriod();
+		//解析图片控件
+		parserImageWidget();
+		//解析附件控件
+		parserAttachWidget();
+		//解析表格控件
+		parserDatagridWidget();
+		//解析文本编辑器
+		parserUeditorWidget();
+		//解析标签
+		parserWidget_label();
+	});	 
+	//解析文本编辑器
+	function parserUeditorWidget(){
+		$("div[id^='editor-template_']").each(function(){
+			var input = $(this).find("input");
+			var inputId =input.attr("id");
+			var editor = "<script id=\""+inputId+"\" name=\""+inputId+"\" type=\"text/plain\" style=\"height:220px;\"><\/script>";
+			//input.parent().empty();
+			input.parent().append(editor);
+			var ue = UE.getEditor(inputId);
+			input.parent().find("span").remove();
+			input.remove();
+		});
+	}
+	//解析表格控件
+	function parserDatagridWidget() {
+		$("div[id^='datagrid-template_']").each(function(){
+			//数据来源
+			var aljoin_data_source = $(this).attr("aljoin-data-source");
+			//系统数据源
+			var aljoin_sys_data_source = $(this).attr("aljoin-sys-data-source");
+			//允许增加列
+			var aljoin_allow_add_column = $(this).attr("aljoin-allow-add-column");
+			//允许删除列
+			var aljoin_allow_del_column = $(this).attr("aljoin-allow-del-column");
+			//允许增加行
+			var aljoin_allow_add_row = $(this).attr("aljoin-allow-add-row");
+			//允许删除行
+			var aljoin_allow_del_row = $(this).attr("aljoin-allow-del-row");
+			//显示边框
+			var aljoin_show_border = $(this).attr("aljoin-show-border");
+			
+			
+			//总行平均
+			var aljoin_show_total_row_average = $(this).attr("aljoin-show-total-row-average");
+			//总行平均合计
+			var aljoin_show_total_row_average_sum = $(this).attr("aljoin-show-total-row-average-sum"); 
+			//行总合计
+			var aljoin_show_total_row_statistics_sum = $(this).attr("aljoin-show-total-row-statistics-sum");
+			//数据来源
+			if(aljoin_data_source == 1){
+				//数据来源:自定义				
+				//删除input的setting div
+				$(this).find("div[id^='ldis_']").remove();
+				aljsonTdAttribute(this); //属性设置
+
+			}else{
+				//系统数据源
+				//清空原有数据源，已第一行数据的数据格式对服务器的数据进行渲染
+				//删除非第一个tr元素
+				$(this).find("tbody").find("tr:not(:first)").remove();
+				var trDom = $(this).find("tbody").children("tr:first").clone();
+				var temData=new Array();
+				//根据选择的系统数据源获取数据,构造表格数据
+				var param = new Object();
+		    	param.type = $(this).attr("aljoin-sys-data-source");
+		    	param._csrf = $("#_csrf").val();
+		    	var theadTrObj = $(this).find("thead").find("tr");
+		    	var tbodyTrObj =$(this).find("tbody");
+				tool.post("../actAljoinForm/getAllSource", param,function(retMsg) {
+					var colNum = 0; //列数
+					var rowNum = retMsg.length; //行数					
+					for(temp in retMsg[0]){
+						colNum++;
+					}
+					for(var y=0;y<rowNum-1;y++){
+						tbodyTrObj.append("<tr class=\"i_am_data_tr\">"+trDom.html()+"</tr>");
+					}
+					//遍历后台数据
+					tbodyTrObj.children("tr").each(function(index){
+						for(var y in retMsg[index]){
+							temData.push(retMsg[index][y]);
+						}
+					});
+					
+					//分割数组
+					 var arrayData = temData;
+					 var dataParen = new Array();
+					 for(var i=0;i<arrayData.length;i=i+colNum){
+						 dataParen.push(arrayData.slice(i,i+colNum));
+					 }
+					  for(var i=0;i<dataParen.length;i++){
+						  tbodyTrObj.children("tr").eq(i).find("input.i_am_data").each(function(index){
+							  $(this).val(dataParen[i][index]);
+						  });
+					  }					
+				},false);
+				aljsonTdAttribute(this); //属性设置
+			}
+			//input属性函数
+			function aljsonTdAttribute(thisObj){
+				//解析具体数据（input）,先遍历行，在遍历行里面的input
+				var rowTotalAvg = 0;//总行平均
+				var rowTotalAvgSum = 0;//总行平均合计
+				var rowTotalSum = 0;//行总合计
+				var j = 0;//总行平均个数
+				var hasRowStatistics = $(thisObj).find("input[aljoin-ginput-is-statistics-result=1]").length;//是否有行小计
+				var hasRowAvg = $(thisObj).find("input[aljoin-ginput-is-average-result=1]").length;//是否有行平均
+				//列小计
+				var trIndex = 0;
+				var colTotalArr = new Array();
+				var colFirstHasStatistics = new Array(); 
+				$(thisObj).find(".i_am_data_tr").each(function(){
+					var rowStatistics = 0;//行小计
+					var rowAvg = 0;//行平均
+					var n = 0;
+					var rowStatisticsElement;
+					var rowAvgElement;
+					var tdIndex = 0; //列小计					
+					$(this).find(".i_am_data").each(function(){
+						var aljoin_ginput_is_edit = $(this).attr("aljoin-ginput-is-edit");
+						var aljoin_ginput_is_label = $(this).attr("aljoin-ginput-is-label");
+						var aljoin_ginput_is_bold = $(this).attr("aljoin-ginput-is-bold");
+						var aljoin_ginput_text_position = $(this).attr("aljoin-ginput-text-position");
+						var aljoin_ginput_text_color = $(this).attr("aljoin-ginput-text-color");
+						var aljoin_ginput_text_size = $(this).attr("aljoin-ginput-text-size");
+						
+						//行小计（小计）
+						var aljoin_ginput_is_row_statistics = $(this).attr("aljoin-ginput-is-row-statistics");
+						//行小计结果（小计）
+						var aljoin_ginput_is_statistics_result = $(this).attr("aljoin-ginput-is-statistics-result");
+						//列小计（小计）
+						var aljoin_ginput_is_column_statistics = $(this).attr("aljoin-ginput-is-column-statistics");
+						//行小计权重（小计）
+						var aljoin_ginput_row_statistics_weight = $(this).attr("aljoin-ginput-row-statistics-weight");
+						//列小计权重（小计）
+						var aljoin_ginput_column_statistics_weight = $(this).attr("aljoin-ginput-column-statistics-weight");
+						//行字体颜色（小计）
+						var aljoin_ginput_row_statistics_color = $(this).attr("aljoin-ginput-row-statistics-color");
+						//行字号大小（小计）
+						var aljoin_ginput_row_statistics_size = $(this).attr("aljoin-ginput-row-statistics-size");
+						//列字体颜色（小计）
+						var aljoin_ginput_column_statistics_color = $(this).attr("aljoin-ginput-column-statistics-color");
+						//列字号大小（小计）
+						var aljoin_ginput_column_statistics_size = $(this).attr("aljoin-ginput-column-statistics-size");
+						
+						//行平均（平均）
+						var aljoin_ginput_is_row_average = $(this).attr("aljoin-ginput-is-row-average");
+						//行平均结果（平均）
+						var aljoin_ginput_is_average_result = $(this).attr("aljoin-ginput-is-average-result");
+						//列平均（平均）
+						var aljoin_ginput_is_column_average = $(this).attr("aljoin-ginput-is-column-average");
+						//行平均权重（平均）
+						var aljoin_ginput_row_average_weight = $(this).attr("aljoin-ginput-row-average-weight");
+						//列平均权重（平均）
+						var aljoin_ginput_column_average_weight = $(this).attr("aljoin-ginput-column-average-weight");
+						//行字体颜色（平均）
+						var aljoin_ginput_row_average_color = $(this).attr("aljoin-ginput-row-average-color");
+						//行字号大小（平均）
+						var aljoin_ginput_row_average_size = $(this).attr("aljoin-ginput-row-average-size");
+						//列字体颜色（平均）
+						var aljoin_ginput_column_average_color = $(this).attr("aljoin-ginput-column-average-color");
+						//列字号大小（平均）
+						var aljoin_ginput_column_average_size = $(this).attr("aljoin-ginput-column-average-size");
+						
+						//行小计
+						if(hasRowStatistics > 0){
+							//有行小计
+							if(aljoin_ginput_is_row_statistics == 1){
+								//判断是否数值类型
+								if(!isNaN($(this).val()) && !isNaN(aljoin_ginput_row_statistics_weight)){
+									//数据*权重
+									rowStatistics += $(this).val()*aljoin_ginput_row_statistics_weight;
+								}
+								
+							}
+							
+						}
+						//行总合计
+						if(aljoin_ginput_is_row_statistics == 1){
+							//判断是否数值类型
+							if(!isNaN($(this).val()) && !isNaN(aljoin_ginput_row_statistics_weight)){
+								//数据*权重
+								rowTotalSum += $(this).val()*aljoin_ginput_row_statistics_weight;
+							}
+							
+						}
+						//行平均
+						if(hasRowAvg > 0){
+							//有行平均
+							if(aljoin_ginput_is_row_average == 1){
+								if(!isNaN($(this).val()) && !isNaN(aljoin_ginput_row_average_weight)){
+									//数据*权重
+									rowAvg += $(this).val()*aljoin_ginput_row_average_weight;
+									n++;
+									
+								}
+							}
+						}
+	                    //列小计
+						if(trIndex == 0){
+							if(aljoin_ginput_is_column_statistics == 1){
+								colFirstHasStatistics.push(1);
+								if(!isNaN($(this).val()) && !isNaN(aljoin_ginput_column_statistics_weight)){
+									//数据*权重
+								    colTotalArr.push($(this).val()*aljoin_ginput_column_statistics_weight);
+								}
+							}else{
+								colFirstHasStatistics.push(0);
+								colTotalArr.push("不统计");
+							}
+						}else{
+							if(colFirstHasStatistics[tdIndex] == 1){
+								//（列）加入统计
+								if(!isNaN($(this).val()) && !isNaN(aljoin_ginput_column_statistics_weight)){
+									//数据*权重
+								    colTotalArr[tdIndex] = colTotalArr[tdIndex] + $(this).val()*aljoin_ginput_column_statistics_weight;
+								}
+							}else{
+								//（列）不加入统计
+							}
+						}						
+						
+						var tdObj = $(this).parent();
+						if(aljoin_ginput_is_edit == 0){
+							$(this).attr("disabled","disabled");
+						}
+						var targetObj = tdObj;
+						if(aljoin_ginput_is_label == 1){
+							tdObj.text($(this).val());
+							//$(this).remove();
+						}else{
+							targetObj = $(this);
+						}
+						if(aljoin_ginput_is_bold == 1){
+							targetObj.css("font-weight","bold");
+						}
+						targetObj.css("font-size",aljoin_ginput_text_size+"px");
+						targetObj.css("color",aljoin_ginput_text_color);
+						if(aljoin_ginput_text_position == 1){
+							targetObj.css("text-align","left");
+						}else if(aljoin_ginput_text_position == 2){
+							targetObj.css("text-align","center");
+						}else{
+							targetObj.css("text-align","right");
+						}
+						
+						if(aljoin_ginput_is_statistics_result == 1){
+							//显示结果的元素
+							rowStatisticsElement = targetObj;
+						}
+						if(aljoin_ginput_is_average_result == 1){
+							//显示结果的元素
+							rowAvgElement = targetObj;
+						}
+						tdIndex++;
+						
+					});
+					//显示行小计和行平均
+					if(hasRowStatistics > 0){
+						if(rowStatisticsElement.is("input")){
+							rowStatisticsElement.val(rowStatistics);
+						}else{
+							rowStatisticsElement.text(rowStatistics);	
+						}
+					}
+					if(hasRowAvg > 0){
+						if(rowAvgElement.is("input")){
+							rowAvgElement.val((rowAvg/n).toFixed(2));
+						}else{
+							rowAvgElement.text((rowAvg/n).toFixed(2));
+						}
+					}			
+                    //总行平均合计                 
+                        rowTotalAvgSum += rowAvg/n; 
+                        j++;
+                        trIndex++;
+                				
+				});
+				 //列小计显示 
+				var colTotalDiv="<div class='i_coltotal_wrap'></div>";
+				$(thisObj).append(colTotalDiv);
+				for(var coli=0;coli<colTotalArr.length;coli++){
+					var colTotalAvg = (colTotalArr[coli]/trIndex).toFixed(2);
+					if(colTotalAvg=='NaN'){
+						colTotalAvg='无';
+					}
+					var colToli;
+					if(colFirstHasStatistics[coli]=='0'){
+						colToli = "<p></p>";
+					}else{
+						colToli = "<p><span>列合计："+colTotalArr[coli]+"</span><span>列平均："+colTotalAvg+"</span></p>";
+					}					    
+					$('.i_coltotal_wrap').append(colToli)
+					$('.i_coltotal_wrap p').css("width",100/colTotalArr.length+"%");
+										
+				}
+
+			   //总行平均,总行平均合计,行总合计
+			  if(aljoin_show_total_row_average == '1' ||  aljoin_show_total_row_average_sum == '1' ||  aljoin_show_total_row_statistics_sum == '1'){
+	               var div_All_Row='<div class=i_show_total_row></div>';
+	               $(thisObj).append(div_All_Row);	
+		   			 //总行平均合计
+		   			if(aljoin_show_total_row_average_sum == '1'){
+		   				var rowAverageSum = (rowTotalAvgSum).toFixed(2);
+		   				if(rowAverageSum = isNaN){
+		   					rowAverageSum = 0;
+		   				}
+		   				$('.i_show_total_row').append('<p><span>总行平均合计:</span>'+rowAverageSum+'</p>');	
+		   			}
+		  		     //总行平均
+		   			if(aljoin_show_total_row_average == '1'){
+		   				var rowAverage = (rowTotalAvgSum/j).toFixed(2);
+		   				if(rowAverage = isNaN){
+		   					rowAverage = 0;
+		   				}
+		   				$('.i_show_total_row').append('<p><span>总行平均:</span>'+rowAverage+'</p>');	
+		                   
+		   		    }
+		   			  //行总合计
+		   			if(aljoin_show_total_row_statistics_sum == '1'){ 
+		   				var rowStatisticsSum = rowTotalSum;
+		   				if(rowStatisticsSum = isNaN){
+		   					rowStatisticsSum = 0;
+		   				}
+		   				$('.i_show_total_row').append('<p><span>行总合计:</span>'+rowTotalSum+'</p>');	
+		   			}
+			  }
+			};
+			//允许增加列
+			if(aljoin_allow_add_column == 0){
+				$(this).find(".aljoin-allow-add-column_c").remove();
+			}
+			//允许删除列
+			if(aljoin_allow_del_column == 0){
+				$(this).find(".aljoin-allow-del-column_c").remove();
+			}
+			//允许增加行
+			var flag = 0;
+			if(aljoin_allow_add_row == 0){
+				$(this).find(".aljoin-allow-add-row_c").remove();
+				flag = 1;
+			}
+			//允许删除行
+			if(aljoin_allow_del_row == 0){
+				$(this).find(".aljoin-allow-del-row_c").remove();
+				if(flag == 1){
+					//如果新增和删除行都没有放出来，则删除最后一列
+					$(this).find("table").find(".last_column").remove();
+				}
+			}
+			//显示边框
+			if(aljoin_show_border == 1){
+				$(this).find("table").addClass("table-bordered");
+			}
+			//去掉设置按钮
+			$(this).find(".aljoin-ginput_setting_c").remove();
+			
+		});
+	}
+	//解析图片控件
+	function parserImageWidget() {
+		$("div[id^='image-template_']").each(function(){
+			var attachObj = $(this);
+			var maxFileSize = $(this).attr("aljoin-allow-file-size");
+			var maxFileCount = $(this).attr("aljoin-allow-file-count");
+			var _csrf = $("#_csrf").val();
+			var ctrlName = $(this).find("input[id^='aljoin_form_image_']").attr("name");
+			$(this).find("input[id^='aljoin_form_image_']").attr("data-upload-url","../../ioa/ioaWaitWork/upload");
+			//alert("ctrlName:"+ctrlName);
+			$(this).find("input[id^='aljoin_form_image_']").fileinput({
+				uploadExtraData:{"_csrf": _csrf,"name":ctrlName},
+				maxFileCount: maxFileCount,
+				maxFileSize: maxFileSize, 				
+                uploadAsync:false,
+				dropZoneEnabled: false,
+				showPreview : false, 
+				allowedFileTypes: ['image'], //上传图类型
+			    allowedFileExtensions: ['jpg', 'gif', 'png'],  //限制上传图片格式 
+				language: 'zh'
+			}).on("filebatchuploadsuccess", function (event, data, previewId, index) {				
+				
+				  filesDataMsgAll(attachObj,'widget_imgsrc_push',data);
+				  
+		    });	
+		});	
+	}
+	  $("#aljoin-task-flowchart").show();
+	//解析附件控件
+	function parserAttachWidget() {
+		$("div[id^='attach-template_']").each(function(){
+			var attachObj = $(this);
+			var maxFileSize = $(this).attr("aljoin-allow-file-size");
+			var maxFileCount = $(this).attr("aljoin-allow-file-count");
+			var _csrf = $("#_csrf").val();
+			var ctrlName = $(this).find("input[id^='aljoin_form_attach_']").attr("name");
+			$(this).find("input[id^='aljoin_form_attach_']").attr("data-upload-url","../../ioa/ioaWaitWork/upload");
+			$(this).find("input[id^='aljoin_form_attach_']").fileinput({
+				uploadExtraData:{"_csrf": _csrf,"name":ctrlName},
+				maxFileCount: maxFileCount,
+				maxFileSize: maxFileSize, 				
+                uploadAsync:false,
+				dropZoneEnabled: false,
+				showPreview : false,
+				allowedFileTypes: ['image','text','pdf', 'object'],
+				//showPreview: false,
+				language: 'zh'
+			}).on("filebatchuploadsuccess", function (event, data, previewId, index) {
+				
+				 filesDataMsgAll(attachObj,'widget_attachsrc_push',data);
+				 
+			});
+		});
+	}
+	//图片附件上传回调
+	function filesDataMsgAll(attachObj,element,data){
+		  var codeIs = data.response.code;
+		  if(codeIs == 1){
+	 		 layer.alert(data.response.message, {
+				icon : 0,
+				title : '提示'
+		   });
+	 		$(attachObj).children(".file-input").children(".kv-upload-progress").remove()
+		    return false;
+		  }
+		  var nameArray = data.files;	//名称数组
+		  var srcArray = data.response.object; //路径数组
+		  var srcPushSize = $(attachObj).children("#"+element).size();
+		  var headTitle = "附件";
+		  if(element == "widget_imgsrc_push"){
+			  headTitle = "图片";
+		  }
+		  if(srcPushSize == 0){
+         	  $(attachObj).append("<div id='"+element+"' class='widget_datasrc_push'><div class='head-title' style='display: none;'>"+headTitle+"</div><div class='min-content'></div></div>");
+		  }
+     	  for(var i = 0; i < srcArray.length;i++ ){
+    		  var waitWorkAttachId = data.response.object[i].waitWorkAttachId; //删除Id
+    		  var groupName = data.response.object[i].groupName;
+    		  var fileName = data.response.object[i].fileName;
+    		  var filesName = nameArray[i].name;  //文件名
+    		  var delFilesData = "<span onclick='delFilesData(this,\""+waitWorkAttachId+"\");'>删除</span>";
+     		 $(attachObj).children("#"+element).children(".min-content").append("<p><a href="+srcArray[i].relativePath+" title='"+filesName+"' onclick=\"downImgAttachData('"+groupName+"','"+fileName+"');return false;\" dalWorkId='"+waitWorkAttachId+"' groupName='"+groupName+"' fileName='"+fileName+"'>"+filesName+"</a>"+delFilesData+"</p>");             		  
+     	  }
+     	  var srcPushObj = $(attachObj).children("#"+element)
+     	  var intNum = srcPushObj.children(".min-content").children("p").size();
+     	  if(intNum > 3){
+             srcPushObj.append("<button type='button' class='btn btn-default btn-sm src_push_absolu' onclick='attachSrcPushMore(this)'>更多</button>");
+     	  } 		
+	}
+	//删除图片和附件
+	function delFilesData(thisObj,delId){
+			layer.confirm('是否删除？', {
+				  icon : 2,
+				  btn: ['是','否'] //按钮
+				}, function(){
+				  var isThisPSize = $(thisObj).parent().siblings("p").size();
+				  if(isThisPSize == 0){
+					  $(thisObj).parents(".widget_datasrc_push").remove();
+				  }
+			      var data = {
+			              id:delId,
+			              _csrf:$("#_csrf").val()
+			          }
+			          tool.post("/ioa/ioaCreateWork/deleteAttach",data,function(retMsg){
+			              if (retMsg.code == 0) {
+			           	   $(thisObj).parent("p").remove();
+			                  tool.success(retMsg.message);
+			              } else {
+			                  tool.error(retMsg.message);
+			           }
+			        },false);
+			      
+				}, function(){
+					//alert("取消操作");
+			});	
+	}
+	//下载图片和附件 
+	function downImgAttachData(groupName,fileName){
+		$("#groupName").val(groupName);
+    	$("#fileName").val(fileName);
+		$("#action_form").submit();
+	}
+	//解析日期(时间)区间
+	function parserDateTimePeriod(){
+		//解析日期
+		$("div[id^='date-template_']").each(function(){
+			var divObj = $(this);
+			$(this).find("input[type='text']").each(function(){
+				$("#"+$(this).attr("id")).datetimepicker({
+					language:  'zh-CN',
+					todayBtn:  1,
+					autoclose: 1,
+					format: 'yyyy-mm-dd',
+					startView: 2,
+					minView: 2,
+					//startDate: '2017-07-24',
+					forceParse: 0
+				});
+				if(divObj.attr("aljoin-default-now") == 1){
+					$("#"+$(this).attr("id")).datetimepicker("setValue",'${currentTime}');
+				}
+			});
+		});
+		//解析日期区间
+		$("div[id^='date_period-template_']").each(function(){
+			var n = 1;
+			var divObj = $(this);
+			$(this).find("input[type='text']").each(function(){
+				$("#"+$(this).attr("id")).datetimepicker({
+					language:  'zh-CN',
+					todayBtn:  1,
+					autoclose: 1,
+					format: 'yyyy-mm-dd',
+					startView: 2,
+					minView: 2,
+					//startDate: '2017-07-24',
+					forceParse: 0
+				});
+				if(n == 1){
+					//限定第二个时间控件的时间选择
+					$(this).change(function(){
+						var currentDate = $(this).val();
+						var nextDateWidgetId = $(this).parent().next().find("input[type='text']").attr("id");
+						if(currentDate != ""){
+							$("#"+nextDateWidgetId).val("");
+							$("#"+nextDateWidgetId).datetimepicker("setStartDate",currentDate);
+						}
+					});
+				}
+				n++;
+				if(divObj.attr("aljoin-default-now") == 1){
+					$("#"+$(this).attr("id")).datetimepicker("setValue",'${currentTime}');
+				}
+			});
+		});
+		//解析时间
+		$("div[id^='time-template_']").each(function(){
+			var divObj = $(this);
+			$(this).find("input[type='text']").each(function(){
+				$("#"+$(this).attr("id")).datetimepicker({
+					language:  'zh-CN',
+					todayBtn:  1,
+					autoclose: 1,
+					format: 'hh:ii',
+					startView: 1,
+					minView: 0,
+					maxView: 1,
+					forceParse: 0
+				});
+				if(divObj.attr("aljoin-default-now") == 1){
+					$("#"+$(this).attr("id")).datetimepicker("setValue",'${currentTime}');
+				}
+			});
+		});
+		//解析日期时间
+		$("div[id^='datetime-template_']").each(function(){
+			var divObj = $(this);
+			$(this).find("input[type='text']").each(function(){
+				$("#"+$(this).attr("id")).datetimepicker({
+					language:  'zh-CN',
+					todayBtn:  1,
+					autoclose: 1,
+					format: 'yyyy-mm-dd hh:ii',
+					startView: 2,
+					minView: 0,
+					maxView: 1,
+					forceParse: 0
+				});
+				if(divObj.attr("aljoin-default-now") == 1){
+					$("#"+$(this).attr("id")).datetimepicker("setValue",'${currentTime}');
+				}
+			});
+		});
+		//解析日期时间区间
+		$("div[id^='datetime_period-template_']").each(function(){
+			var n = 1;
+			var divObj = $(this);
+			$(this).find("input[type='text']").each(function(){
+				$("#"+$(this).attr("id")).datetimepicker({
+					language:  'zh-CN',
+					todayBtn:  1,
+					autoclose: 1,
+					format: 'yyyy-mm-dd hh:ii',
+					startView: 2,
+					minView: 0,
+					maxView: 1,
+					forceParse: 0
+				});
+				if(n == 1){
+					//限定第二个时间控件的时间选择
+					$(this).change(function(){
+						var currentDate = $(this).val();
+						var nextDateWidgetId = $(this).parent().next().find("input[type='text']").attr("id");
+						if(currentDate != ""){
+							$("#"+nextDateWidgetId).val("");
+							$("#"+nextDateWidgetId).datetimepicker("setStartDate",currentDate);
+						}
+					});
+				}
+				n++;
+				if(divObj.attr("aljoin-default-now") == 1){
+					$("#"+$(this).attr("id")).datetimepicker("setValue",'${currentTime}');
+				}
+			});
+		});
+		//解析办结时间
+		$("div[id^='biz_finish_time-template_']").each(function(){
+			var divObj = $(this);
+			$(this).find("input[type='text']").each(function(){
+				$("#"+$(this).attr("id")).datetimepicker({
+					language:  'zh-CN',
+					todayBtn:  1,
+					autoclose: 1,
+					format: 'yyyy-mm-dd hh:ii',
+					startView: 2,
+					minView: 0,
+					maxView: 1,
+					forceParse: 0
+				});
+				if(divObj.attr("aljoin-default-now") == 1){
+					$("#"+$(this).attr("id")).datetimepicker("setValue",'${currentTime}');
+				}
+			});
+		});
+		
+		
+		
+	}
+	//去除控件右上角的标签名
+	function deleteRightWidgetFlag(){
+		$('.right-widget-flag').remove();
+	}
+	//解析标签
+	function parserWidget_label() {		
+		$("div[id^='label-template_']").each(function() {
+			//获取文本
+			var aljoin_label_input_data = $(this).children('input').val();
+			//加粗
+			var aljoin_label_is_bold = $(this).attr("aljoin-label-is-bold");
+			//对齐
+			var aljoin_label_text_position = $(this).attr("aljoin-label-text-position");
+			//字体颜色
+			var aljoin_label_text_color = $(this).attr("aljoin-label-text-color");	
+			//字体大小
+			var aljoin_label_text_size = $(this).attr("aljoin-label-text-size");
+			var thisChLabel = '<p class=i_show_aljoin_label_p>'+aljoin_label_input_data+'</p>';
+			$(this).append(thisChLabel);			
+			$(this).children('p').css({
+				'font-size':aljoin_label_text_size+'px', 
+				'font-weight':aljoin_label_is_bold,
+				'text-align':aljoin_label_text_position,
+				'color':'#'+aljoin_label_text_color,
+			});			
+			$(this).children('input').css("display","none")
+		});
+	}
+	//联动绑定数据源
+	function bindContactSelectJson(){
+		$("div[id^='contact_select']").each(function(){
+			//获取数据源
+			var dataSource = $(this).attr("aljoin-data-source");
+			var json;
+			if(dataSource == 1){
+				//自动以数据源
+				var jsonStr ="";
+				var widgetId = $(this).children().children("input").val();
+				var orgnlVal = $("#orgnl_"+widgetId).val();
+				if(orgnlVal != "undefined" && $("#activityId").val() != ""){
+					jsonStr = $.base64.decode($(this).attr("aljoin-select-json"));
+					var jsonStrValAy = JSON.parse(jsonStr);
+					var orgnlValArr = orgnlVal.split(",");
+					for(var y =0; y <jsonStrValAy.length;y++){
+						//console.log(jsonStrValAy[y].id);
+						for(var i =0; i<orgnlValArr.length;i++){
+							orgnlVal = $.base64.decode(orgnlValArr[i]);
+							if(jsonStrValAy[y].id == orgnlVal){
+								jsonStrValAy[y].check = true;
+							}
+						}
+					}
+					jsonStr = JSON.stringify(jsonStrValAy);
+				}else{
+					jsonStr = $.base64.decode($(this).attr("aljoin-select-json"));
+				}
+				if(jsonStr == ""){
+					return;
+				}
+				json = JSON.parse(jsonStr);
+			}else{
+				//系统数据源，需要调用系统接口获取数据@TODO
+				var param = new Object();
+		    	param.type = $(this).attr("aljoin-sys-data-source");
+		    	param._csrf = $("#_csrf").val();
+				tool.post("../actAljoinForm/getAllSource", param,function(retMsg) {	
+					json = retMsg;
+				},false); 
+				
+			}
+			//清空数据
+			var selectObjArr = new Array();
+			$(this).find("select").each(function(){
+				$(this).empty();
+				selectObjArr.push($(this));
+			});
+			//alert(selectObjArr.length);
+			//设置第一级联动数据
+			//console.log(json);
+			var n = 1;
+			//alert($(this).find("select").length);
+			$(this).find("select").each(function(){
+				//alert(n);
+				if(n == 1){
+					//一级，构造一级数据，添加onchange事件触发构造二级数据，如果是有默认值，需要马上构造二级数据
+					$(this).append(makeOptionByJson(json,null,1));
+					//如果有默认选中，要带出下级数据
+					if($(this).val() != "" & $(this).val() != null){
+						$(selectObjArr[1]).empty();
+						$(selectObjArr[1]).append(makeOptionByJson(json,$(this).val(),2));
+					}
+					$(this).change(function(n){
+						$(selectObjArr[1]).empty();
+						$(selectObjArr[1]).append(makeOptionByJson(json,$(this).val(),2));
+					});
+				}else if(n == 2){
+					//二级，由于二级数是又一级触发的，所以这里不需要直接构造二级数据，但是需要给二级数据添加onchange事件,同理如果是有默认值，需要马上构造三级数据
+					if($(this).val() != "" & $(this).val() != null){
+						$(selectObjArr[2]).empty();
+						$(selectObjArr[2]).append(makeOptionByJson(json,$(this).val(),3));
+					}
+					$(this).change(function(n){
+						$(selectObjArr[2]).empty();
+						$(selectObjArr[2]).append(makeOptionByJson(json,$(this).val(),3));
+					});
+				}else if(n == 3){
+					//三级，和构造二级同理
+					if($(this).val() != "" & $(this).val() != null){
+						$(selectObjArr[3]).empty();
+						$(selectObjArr[3]).append(makeOptionByJson(json,$(this).val(),4));
+					}
+					$(this).change(function(n){
+						$(selectObjArr[3]).empty();
+						$(selectObjArr[3]).append(makeOptionByJson(json,$(this).val(),4));
+					});
+				}else if(n == 4){
+					//三级，和构造二级同理
+					if($(this).val() != "" & $(this).val() != null){
+						$(selectObjArr[4]).empty();
+						$(selectObjArr[4]).append(makeOptionByJson(json,$(this).val(),5));
+					}
+					$(this).change(function(n){
+						$(selectObjArr[4]).empty();
+						$(selectObjArr[4]).append(makeOptionByJson(json,$(this).val(),5));
+					});
+				}
+				//添加onchange事件
+				n++;
+			});
+			
+		});
+		
+	}
+	function makeOptionByJson(json,parent,level){
+		var option = "<option value=\"\"></option>";
+		for(var i=0;i<json.length;i++){
+			if(json[i].level == level){
+				if(parent != null){
+					if(json[i].parent == parent){
+						if(json[i].check){
+							option += "<option value=\""+json[i].id+"\" selected>"+json[i].text+"</option>";
+						}else{
+							option += "<option value=\""+json[i].id+"\">"+json[i].text+"</option>";
+						}
+					}
+				}else{
+					if(json[i].check){
+						option += "<option value=\""+json[i].id+"\" selected>"+json[i].text+"</option>";
+					}else{
+						option += "<option value=\""+json[i].id+"\">"+json[i].text+"</option>";
+					}
+				}
+			}
+		}
+		return option;
+	}
+	function tableOperate(optype,thisObj){
+		if(optype == 'edit'){
+			var text = $(thisObj).text();
+			$(thisObj).hide();
+			$(thisObj).next().val(text);
+			$(thisObj).next().show();
+			$(thisObj).next().focus();
+		}else if(optype == 'hideMe'){
+			var text = $(thisObj).prev().text($(thisObj).val());
+			$(thisObj).prev().show();
+			$(thisObj).hide();
+		}else if(optype == 'add'){
+			var i = $(thisObj).parent().parent().find("th").index($(thisObj).parent());
+			var th = "<th class=\"form-inline\"><span ondblclick=\"tableOperate('edit',this)\">新增属性</span><input type=\"text\" class=\"form-control input-sm\" style=\"width: 50px;display: none;height: 23px;font-size: 14px;\" onblur=\"tableOperate('hideMe',this)\"/><button class=\"btn btn-default btn-xs aljoin-allow-add-column_c\" onclick=\"tableOperate('add',this);return false;\"><span style=\"color: green;\" class=\"glyphicon glyphicon-plus-sign\"></span></button><button class=\"btn btn-default btn-xs aljoin-allow-del-column_c\" onclick=\"tableOperate('del',this);return false;\"><span style=\"color: red;\" class=\"glyphicon glyphicon-minus-sign\"></span></button></th>";
+			//插入列头
+			$(thisObj).parent().after(th);
+			$(thisObj).parent().parent().parent().parent().find("tbody").find("tr").each(function(){
+				//遍历每行增加数据列
+				var newTd = $(this).find("td:eq("+i+")").clone();
+				//修改id和name
+				newTd.find("div[id^='ldis_']").attr("id","ldis_"+Math.uuid(15));
+				var radioId = Math.uuid(15);
+				newTd.find("div[id^='ldis_']").find("input").each(function(){
+					var id = Math.uuid(15);
+					if($(this).attr("type") == "radio"){
+						$(this).attr("id",$(this).attr("id").substring(0,$(this).attr("id").lastIndexOf('_'))+"_"+id);
+						$(this).attr("name",$(this).attr("name").substring(0,$(this).attr("name").lastIndexOf('_'))+"_"+radioId);
+					}else{
+						$(this).attr("id",$(this).attr("id").substring(0,$(this).attr("id").lastIndexOf('_'))+"_"+id);
+						$(this).attr("name",$(this).attr("name").substring(0,$(this).attr("name").lastIndexOf('_'))+"_"+id);
+					}
+				});
+				$(this).find("td:eq("+i+")").after(newTd);
+			});
+		}else if(optype == 'del'){
+			//至少要剩下一列
+			if($(thisObj).parent().parent().find("th").length <= 2){
+				return;
+			}
+			var i = $(thisObj).parent().parent().find("th").index($(thisObj).parent());
+			$(thisObj).parent().parent().parent().parent().find("tbody").find("tr").each(function(){
+				//遍历每行删除数据列
+				$(this).find("td:eq("+i+")").remove();
+			});
+			//删除列头
+			$(thisObj).parent().remove();
+		}else if(optype == 'add-row'){
+			//新增行
+			var newRow = $(thisObj).parent().parent().clone();
+			//修改行内元素id和name
+			//修改id和name
+			newRow.find("div[id^='ldis_']").each(function(){
+				$(this).attr("id","ldis_"+Math.uuid(15));
+				var radioId = Math.uuid(15);
+				$(this).find("input").each(function(){
+					var id = Math.uuid(15);
+					if($(this).attr("type") == "radio"){
+						$(this).attr("id",$(this).attr("id").substring(0,$(this).attr("id").lastIndexOf('_'))+"_"+id);
+						$(this).attr("name",$(this).attr("name").substring(0,$(this).attr("name").lastIndexOf('_'))+"_"+radioId);
+					}else{
+						$(this).attr("id",$(this).attr("id").substring(0,$(this).attr("id").lastIndexOf('_'))+"_"+id);
+						$(this).attr("name",$(this).attr("name").substring(0,$(this).attr("name").lastIndexOf('_'))+"_"+id);
+					}
+				});
+			});
+			$(thisObj).parent().parent().after(newRow);
+		}else if(optype == 'del-row'){
+			if($(thisObj).parent().parent().parent().find("tr").length <= 1){
+				return;
+			}
+			//删除行
+			$(thisObj).parent().parent().remove();
+		}
+	}
+	
+	
+	var taskId = $("#activityId").val();
+	var _csrf = $("#_csrf").val();
+	
+	var pform;
+	//添加事件
+	layui.use('form', function() {
+		pform = layui.form;
+		
+		pform.on('select(selectUser)', function(data){
+			var str = '';
+			
+        	var nextNodes = document.getElementById("nextNode");
+            var value = nextNodes.options[nextNodes.selectedIndex].value;
+            //console.log(value);
+        	if(value=="" || value.indexOf("EndEvent_")==0){
+        		$("#testarea").html(""); 
+      	        $("#audit-member-list").html("");
+        	}else{
+       			 var param = {
+       	            	taskId:$("#activityId").val(),
+       	            	_csrf:_csrf,
+       	            	nextTaskKey:value
+       	            };
+       			 	//获取目标节点的候选班里人
+       	            tool.post("../../ioa/ioaWaitWork/getTaskUser",param,function(retMsg){
+       	            	var data = retMsg.object;
+       	       		  	var user=data[value];
+       	       		 	for (i=0;i<user.length ;i++ )
+       	             	{ 
+       	       		 		str += '<a class="seitem" value="'+user[i].id+'">'+user[i].fullName+'</a>';
+       	             	}
+       	       		 	
+       	       		 	$("#audit-member-list").empty();
+       	             	$("#audit-member-list").append(str);
+
+       	            },false);
+       	         $("#testarea").html(""); 
+        	}
+       	});
+		
+        /*回退到上一节点*/
+        //fixed.jumpTask("form-jump-submit","../../ioa/ioaWaitWork/jumpTask",taskId,_csrf);
+	});
+	
+    /*下拉多选初始化*/
+    multselInit();
+
+	/*切换按钮  */
+	function change_btn(){
+		$(".sign").hide();
+		$(".btns").show();
+	}
+	function agree(){
+		$(".agree").show();
+		$(".noagree").hide();
+		$(".yes").addClass("blue_border");
+		$(".no").removeClass("blue_border");
+		
+		$("#form-jump-submit").attr("style","display:none");
+	    $("#form-add-submit").removeAttr("style");
+	}
+
+	/* 常用意见 */
+	function suggest(){
+		var index = layer.open({
+			title : '填写意见',
+			maxmin : false,
+			type : 1,
+			shadeClose: true,
+            area: ['900px', '510px'],
+			content : $('#win-suggest-object')
+		});
+	}
+
+	//点击添加常用意见
+	function click_font(obj){
+		var a = $(obj).find('.sug').text();
+		$('.draw_sug').val(a);
+
+	}	
+	function add_sug(){
+		layer.confirm('确定加入常用意见？', {
+			  icon:3,
+			  btn: ['确定','取消'] //按钮
+			}, function(){
+				add_sugfun();
+			  /* layer.alert('添加成功', {icon: 1}); */
+			}, function(){
+			  
+			});
+	}	
+	function add_sugfun(){
+		if($(".draw_sug").val() ==""){
+    		layer.alert("请加入有内容的意见")
+    		return false;
+    	}
+    	
+        var pm = {
+            _csrf:_csrf,
+            content:$(".draw_sug").val()
+        };
+        tool.post("/per/autUsefulOpinion/add",pm,function(retMsg){
+            if (retMsg.code == 0) {
+                layer.alert(retMsg.message, {
+                    title : "操作提示",
+                    icon : 1,
+                    closeBtn : 0
+                }, function(index) {
+                	fixed.opinionList();
+                	layer.close(index);
+                });
+            } else {
+                tool.error(retMsg.message);
+            }
+        },false);
+	}
+	/*回退弹窗*/
+	function noagree(){
+		var pm = {
+			taskId : taskId,
+			_csrf : _csrf,
+			bpmnId : $("#bpmnId").val()
+		};
+		//获取上级节点（以谁提交过了为主）
+		tool.post("/ioa/ioaWaitWork/getPreTaskInfo", pm, function(retMsg) {
+			//console.log(retMsg)
+			if (retMsg.code != 0) {
+				tool.error(retMsg.message);
+			}else{
+				$(".agree").hide();
+				$(".noagree").show();
+				$(".yes").removeClass("blue_border");
+				$(".no").addClass("blue_border"); 	
+				$("#form-add-submit").attr("style", "display:none");
+				$("#form-jump-submit").removeAttr("style");
+				
+				var text = "";
+				var operator = ""	
+				text = retMsg.object.userFullName;
+                if(text != ""){
+                	operator = " [ 办理人："+text+" ]"
+                }
+            	$("#targetTaskKey_back").val(retMsg.object.activityKey);
+            	$("#targetUserId_back").val(retMsg.object.userId);
+                $("#pre-nodeName").text(retMsg.object.activityName + operator);
+			}
+		}, false);
+	}
+	//图片附件回调
+	function attachSrcPushMore(thisObj) {
+		$(thisObj).parent("div").hide();
+		$(thisObj).parent("div").addClass("on");
+		$(thisObj).attr("onclick", "attachSrcPushOff(this)");
+		$(thisObj).text("关闭");
+		$(thisObj).parent("div").show('300');
+		$(thisObj).parents(".grid-stack-item").css('z-index',999);
+	}
+	function attachSrcPushOff(thisObj) {
+		$(thisObj).parent("div").hide();
+		$(thisObj).parent("div").removeClass("on");
+		$(thisObj).attr("onclick", "attachSrcPushMore(this)");
+		$(thisObj).text("更多");
+		$(thisObj).parent("div").show('300');
+		$(thisObj).parents(".grid-stack-item").css('z-index');
+	}
+  
+    var pform;
+	layui.use('form', function() {
+	pform = layui.form;
+	var arr_name=[];
+    var arr_id=[];   
+   //监听单级人员复选框
+    pform.on('checkbox(human-checksign)', function(data) {
+    	treeArr=[];
+    	var child = $(data.elem).parents('table').find('tbody input[type="checkbox"]:checked');
+    	    $(child).each(function(index,vale){
+    	    	 var userId=$(this).attr("uid");
+    	    	 var userName=$(this).attr("uname");
+    	    	 
+    	    	treeArr.push({id:userId,name:userName,userId:userId,userName:userName})
+    	    })
+        var str="",namestr="",fullname="";
+    	var divs="";
+ 		$.each(treeArr,function(index,value){ 
+ 			str+=value.userId+";"
+ 			namestr+=value.userName+";"
+ 			fullname+=value.name+";";
+ 			divs+='<div class="layui-input-inline" style="position: relative;float:none;width:auto;">'+
+ 			 '<i class="layui-icon" onclick="removeElement(this)" strid="'+value.userId+'" namestr="'+value.userName+'"  fullname="'+value.name+'"   style="cursor: default; font-size:16px; color: #d9d9d9;position: absolute;right: -8px;z-index: 10; ">&#x1007;</i>'+  
+ 	    	 '<a class="layui-btn" style="cursor: pointer;color: black; background: none;height:26px;line-hieght:26px;padding-left:6px;padding-right:6px" >'+value.name+'</a>'+
+ 	    	 '</div>'	    		
+ 		})
+ 		
+ 		//console.log(treeArr)
+    	$("#win-newsms-object").find("#"+changeName).empty();
+		$("#win-newsms-object").find("#"+changeName).append(divs);
+    	//id赋值
+        $("#"+changeId).val(str);
+    });
+    //监听全选
+    pform.on('checkbox(human-check-all)', function(data) {
+    	var child = $(data.elem).parents('table').find('tbody input[type="checkbox"]');
+    	 
+			child.each(function(index, item) {
+				item.checked = data.elem.checked; 
+				
+				var userId = $(item).attr("uid");
+	            var userName = $(item).attr("uname");
+	            
+				if(data.elem.checked){
+					treeArr.push({id:userId,name:userName,userId:userId,userName:userName})
+					 //数组去重
+		   			 var res = [];
+		   			 var json = {};
+		   			 for(var i = 0; i < treeArr.length; i++){
+		   			  if(!json[treeArr[i].userId]){
+		   			   res.push(treeArr[i]);
+		   			   json[treeArr[i].userId] = 1;
+		   			  }
+		   			 }
+		   			treeArr=res;
+	            	var str="",namestr="",fullname="";
+	            	var divs="";
+	         		$.each(treeArr,function(index,value){ 
+	         			str+=value.userId+";"
+	         			namestr+=value.userName+";"
+	         			fullname+=value.name+";";
+	         			divs+='<div class="layui-input-inline" style="position: relative;float:none;width:auto;">'+
+	         			 '<i class="layui-icon" onclick="removeElement(this)" strid="'+value.userId+'" namestr="'+value.userName+'"  fullname="'+value.name+'"   style="cursor: default; font-size:16px; color: #d9d9d9;position: absolute;right: -8px;z-index: 10; ">&#x1007;</i>'+  
+	         	    	 '<a class="layui-btn" style="cursor: pointer;color: black; background: none;height:26px;line-hieght:26px;padding-left:6px;padding-right:6px" >'+value.name+'</a>'+
+	         	    	 '</div>'	    		
+	         		})
+	            	
+	            	$("#win-newsms-object").find("#"+changeName).empty();
+					$("#win-newsms-object").find("#"+changeName).append(divs);
+					//id赋值
+	                $("#"+changeId).val(str); 
+	
+	            }else{
+	            	 treeArr=[];
+	            	 $("#win-newsms-object").find("#"+changeName).empty();
+	            	 $("#"+changeId).val(""); 
+	            }      
+			});
+			pform.render('checkbox');
+    });
+});
+		var changeId="";
+		var changeName="";
+		var treeArr=[];   
+		//人员选择树
+		function personlSeclectOpen(p_index,len,c_Id,c_Name,myself){
+			treeArr=[];
+			arr_id = [];
+		    arr_name  = [];
+			var listArr = $(myself).attr("listArr");
+				//从JSON字符串转为对象
+			    listArr = JSON.parse(listArr);
+			    //console.log(listArr)
+			changeId=c_Id;
+			changeName=c_Name;
+			if($(".uname").text()!="结束"){
+				if(len > 1){//如果len 就弹用户列表
+					if(isFinishMergeTask>0){
+						tool.error("默认选择，不可更改")	
+					}else{
+					var userList2={userList:listArr};
+	                $('#paging5-data').html(template("paging5-script", userList2));
+			        	var index = layer.open({
+				            title : '人员',
+				            maxmin : false,
+				            type : 1,
+				            area:["250px","400px"],
+				            shadeClose: true,
+				            content : $('#win-human-object')
+				        });
+	                pform.render();
+					}    
+				   /*  },false); */
+				  //再次点击时列表复选框勾选
+	               if($("#"+changeId).val() != ""){
+			    		arr_id = $("#"+changeId).val().split(";");
+			    		//console.log("id:"+arr_id);
+			    		for(var i=0;i<arr_id.length;i++){
+			    			$(".human").each(function(index){
+			    				if(arr_id[i] == $(this).attr("uId")){
+			    					$(this).attr("checked",true)
+				    			}
+			    			});
+			    		}
+			    		pform.render(); 
+			    	}else{
+			    		$("#human-checkall").attr("checked",false);
+			    		pform.render();
+			    	} 
+				}else if(len==1){	
+					tool.error("只有一人默认选择，不可更改")	
+				}else{
+					tool.treeDemo("win-personal-object","treeDemo","readUserIds"+p_index,"readUserNames"+p_index,"",false,"","","",c_Name);
+				}
+			}else{
+				tool.error("即将结束，没有可选审批人员")
+			}
+     	} 
+		//用按钮查询节点  
+        function searchNodes(){  
+			var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+            var keywords=$("#peopelSel").val();
+            var nodes = treeObj.getNodesByParamFuzzy("name", keywords, null);
+            if (nodes.length>0) {
+                treeObj.selectNode(nodes[0]);
+            }  
+        }
+
+		//重置树
+		function reset_tree(){
+			var mytree = $.fn.zTree.getZTreeObj("treeDemo");
+		    //打开弹窗前重置节点以及关闭展开状态，避免叠加
+			$("#"+changeId).val("");
+			$("#"+changeName).html("");
+			mytree.checkAllNodes(false)
+		    mytree.expandAll(false);
+		}
+		function showImg(){
+			var processInstanceId = $("#processInstanceId").val();			
+		    var index = layer.open({
+		        title : '流程图',
+		        maxmin : false,
+		        type : 1,
+		        content : '<img src="/ioa/ioaWaitWork/showHisImg?processInstanceId='+processInstanceId+'" />'
+		    });
+		    pform.render();
+		    layer.full(index);
+		}
+		//加载传阅意见列表
+	function loadcirculaOpiList() {
+		var processInstanceId = $("#processInstanceId").val()
+		var param = new Object();
+		param.container = "paging4";
+		param.url = "/ioa/ioaCircula/openCirculaLogOpinon";
+		param._csrf = $("#_csrf").val();
+		param.processInstanceId = processInstanceId;
+		param.pageSize = 10;
+		tool.loadpage(param);
+	}
+		//传阅意见（已阅人员和未阅人员）
+	function circulaOpi() {   
+		var processInstanceId = $("#processInstanceId").val();
+		var param = new Object();
+		param.processInstanceId = processInstanceId;
+		param._csrf = $("#_csrf").val();
+		tool.post("/ioa/ioaCircula/openCirculaLog", param, function(retMsg) {
+			if (null != retMsg) {
+				$("#inReadUserNames").text(retMsg.object.readUser);
+				$("#toReadUserNames").text(retMsg.object.noRead);
+			}
+			//alert(retMsg.object.readUser);//已阅未阅列表
+			var index = layer.open({
+				title : '传阅情况及意见',
+				maxmin : false,
+				type : 1,
+				shadeClose : true,
+				content : $('#win-batchidea-object')
+			});
+			loadcirculaOpiList();
+			layer.full(index);
+		}, false);
+	}
+	
+</script>
+<script src="../../aljoin-act/js/openFormData.js"></script>
+</html>

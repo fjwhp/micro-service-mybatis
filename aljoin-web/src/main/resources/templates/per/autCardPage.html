@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>名片夹</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<link rel="stylesheet" href="../../web/css/zhengls.css" media="all">
+</head>
+<body> 
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="layui-tab layui-tab-brief m_t0" lay-filter="docDemoTabBrief" >
+		<ul class="layui-tab-title">
+		    <li class="layui-this"><@a code="150201" href="javascript:void(0)" text="名片夹"/></li>
+		    <li><@a code="150202" href="javascript:void(0)" text="名片管理"/></li>
+		</ul>
+		<!-- 名片分类 -->
+		<div class="layui-tab-content">
+		  	<div class="layui-tab-item layui-show content_sel"> 
+		  		<div class="">
+		  			<blockquote class="layui-elem-quote" style="padding:5px;">
+						<form class="layui-form" action="">
+							<div class="r">
+								<div class="layui-input-inline">
+									<input type="text" name="searchCategoryName" id="searchCategoryName" placeholder="请输入分类" autocomplete="off" class="layui-input"
+										style="height: 30px; line-height: 30px;" maxlength="20">
+								</div>
+								<span><@a code="150204" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadCategory()" iclass="layui-icon"
+									 icon="&#xe615;" text="查询"/></span>
+							</div>
+					 	    <div class="layui-input-inline">
+							<span lay-submit=""><@a code="150203" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="newone()" iclass="layui-icon"
+								 icon="&#xe608;" text="新增分类"/></span>
+							</div> 
+						</form>
+					</blockquote>
+					<div class="layui-form">
+						<table class="layui-table admin-table">
+					    	<colgroup>
+								<col width="10%">
+								<col width="10%">
+								<col width="70%">								
+								<col width="10%">
+								<col>
+							</colgroup>
+							<thead>
+								<tr>
+									<th style="display: none;">用户ID</th>
+									<th>序号</th>
+									<th>排序</th>
+									<th>分类</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+					<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr> 
+							<td style="display: none;">{{value.id}}</td>
+							<td>{{index+1}}</td>
+							<td>{{value.categoryRank}}</td>
+							<td>{{value.categoryName}}</td>
+							<td>
+								<@a code="150207" href="javascript:void(0)" class="table_btn" id="show-category-edit" onclick="postEdit('{{value.id}}',this)" text="编辑"/>
+								<@a code="150208" href="javascript:void(0)" class="table_btn" id="show-delete" onclick="deleteCategory('{{value.id}}',this)" text="删除"/>
+							</td>
+						</tr>
+					{{/each}}
+					</script>
+					</tbody>
+					</table>
+					</div>
+					<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+						<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+					</div>
+		  		</div>
+		  	</div>
+		    <div class="layui-tab-item content_sel">
+		     <!--名片管理tree-->
+				<div class="menuContentAndList">
+					<div id="menuContent" class="tree_left">
+						<div class="left" >
+							<input id="citySel" class="tree_search" type="text" value="" onkeyup="AutoMatch(this)" placeholder="搜索"/>	
+					    </div>
+						<ul id="treeDemo" class="ztree"></ul> 
+					</div>
+					<!-- 岗位 -->
+					<div id="post_list" style="width: 78%; float: left;margin-left:10px;">
+						<blockquote class="layui-elem-quote" style="padding:5px;">
+						<form class="layui-form" action="">
+							<div class="r">
+								<div class="layui-input-inline">
+									<input type="text" name="searchCardKey" id="searchCardKey" placeholder="输入姓名、手机号查询" maxlength="20" autocomplete="off" class="layui-input"
+										style="height: 30px; line-height: 30px;">
+								</div>
+								<span><@a code="150206" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData()" iclass="layui-icon"
+									 icon="&#xe615;" text="查询"/></span>
+							</div>
+					 	    <div class="layui-input-inline">
+							<span lay-submit=""><@a code="150205" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="newcard()" iclass="layui-icon"
+								 icon="&#xe61f;" text="新增名片"/></span>					 	    
+							</div> 
+						</form>
+						</blockquote>   
+					<div class="layui-field-box layui-form"
+						style="padding: 0 0 20px 0;">
+						<table class="layui-table admin-table">
+						    <colgroup>
+							    <col width="5%">
+							    <col width="8%">
+							    <col width="8%">
+							    <col width="9%">
+							    <col width="9%">
+							    <col width="10%">
+							    <col width="9%">
+							    <col width="9%">
+							    <col width="9%">
+							    <col width="15%">
+			 				 </colgroup>
+							<thead>
+								<tr>
+									<th style="display: none;">用户ID</th>
+									<th>序号</th>
+									<th>姓名</th>
+									<th>分类</th>
+									<th>单位</th>
+									<th>职务</th>
+									<th>手机</th>
+									<th>单位电话</th>
+									<th>传真</th>
+									<th>个人邮箱</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+					<tbody id="paging1-data">
+					<script id="paging1-script" type="text/html">
+					{{each records value index}}
+						<tr class="hand">
+							<td style="display: none;">{{if value.autCard.id != null}}{{value.autCard.id}}{{/if}}</td>
+							<td>{{index+1}}</td>
+							<td title="{{if value.autCard.userName!=null}}{{value.autCard.userName}}">{{value.autCard.userName}}{{/if}}</td>
+							<td title="{{value.autCardCategory.categoryName}}">{{if value.autCardCategory.categoryName!=null}}{{value.autCardCategory.categoryName}}{{/if}}</td>
+							<td title="{{value.autCard.companyName}}">{{if value.autCard.companyName!=null}}{{value.autCard.companyName}}{{/if}}</td>
+							<td title="{{value.autCard.positionName}}">{{if value.autCard.positionName!=null}}{{value.autCard.positionName}}{{/if}}</td>
+							<td title="{{value.autCard.phoneNumber}}">{{if value.autCard.phoneNumber!=null}}{{value.autCard.phoneNumber}}{{/if}}</td>
+							<td title="{{value.autCard.companyTel}}">{{if value.autCard.companyTel!=null}}{{value.autCard.companyTel}}{{/if}}</td>
+							<td title="{{value.autCard.companyFax}}">{{if value.autCard.companyFax!=null}}{{value.autCard.companyFax}} {{/if}}</td>
+							<td title="{{value.autCard.userMail}}">{{if value.autCard.userMail!=null}}{{value.autCard.userMail}}{{/if}}</td>
+							<td>
+								<@a code="150209" href="javascript:void(0)" class="table_btn" id="show-edit" onclick="editCard('{{value.autCard.id}}',this)" text="编辑"/>									                                         
+								<@a code="150210" href="javascript:void(0)" class="table_btn" id="show-edit" onclick="detail('{{value.autCard.id}}')" text="详情"/>
+								<@a code="150211" href="javascript:void(0)" class="table_btn" id="show-delete" onclick="deleteCard('{{value.autCard.id}}',this)" text="删除"/>
+							</td>
+						</tr>
+					{{/each}}
+					</script> 
+							</tbody>
+						</table>
+					</div>
+					<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+						<div id="paging1-footer" class="page" style="background-color: white; text-align: center;"></div>
+					</div>
+				</div>
+			</div>	
+		</div>
+	</div>  
+	<!-- 新增 名片分类-->
+	<div class="admin-main" style="display: none; z-index: 19940200;" id="win-new-object">
+		<div id="win-newsms-object">
+			<form class="layui-form layui-form-pane" id="add-cartcatrgoty-form">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<div class="layui-form-item">
+					<label class="layui-form-label"><span class="red_span">&nbsp;*&nbsp;</span>分类名称</label>
+					<div class="layui-input-block">
+						<input type="text" name="categoryName" maxlength="30" id="categoryName" lay-verify="required" autocomplete="off" placeholder="分类名称" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">排序</label>
+					<div class="layui-input-block">
+						<input type="text" name="categoryRank"  value="255" id="categoryRank"    maxlength="4" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" autocomplete="off" placeholder="排序" class="layui-input">
+					</div>
+				</div>
+				<div class="btn_fixed">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+					<div style="float: right;">
+						<button class="layui-btn" lay-submit="" lay-filter="form-add-submit">
+							<i class="fa fa-save"></i>保存
+						</button>
+						<!-- <button class="layui-btn layui-btn-primary">
+							<li class="fa fa-eraser"></li> 取消
+						</button>
+ -->					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<!-- 名片分类编辑 -->
+	<div class="admin-main" style="display: none; z-index: 19940200;" id="win-detail-catrgoty">
+		<div id="win-newsms-category">
+			<form class="layui-form layui-form-pane" id="edit-catrgoty-form">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<div class="layui-form-item" style="display:none;">
+					<label class="layui-form-label">分类名称id</label>
+					<div class="layui-input-block">
+						<input type="text" name="id" id="id" lay-verify="required" autocomplete="off" placeholder="内容" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label"><span class="red_span">&nbsp;*&nbsp;</span>分类名称</label>
+					<div class="layui-input-block">
+						<input type="text" name="categoryName" id="categoryName"  maxlength="30" lay-verify="required|spactily" autocomplete="off" placeholder="分类名称" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">排序</label>
+					<div class="layui-input-block">
+						<input type="text" value="255" name="categoryRank" maxlength="4"  onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();"  id="categoryRank" autocomplete="off" placeholder="排序" class="layui-input">
+					</div>
+				</div>
+				<div class="btn_fixed">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+					<div style="float: right;">
+						<button lay-submit="" class="layui-btn"  lay-filter="form-update-submit">
+							<li class="fa fa-save"></li> 保存
+						</button>
+						<!-- <button class="layui-btn layui-btn-primary" lay-filter="">
+							<i class="fa fa-eraser"></i> 取消
+						</button> -->
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	
+	<!-- 新增名片 -->
+	<div class="admin-main" style="display: none; margin-bottom:60px;" id="win-newcard-object">
+		<div id="win-newsms-object">
+			<form class="layui-form layui-form-pane" id="add-card-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<div class="layui-form-item">
+				    <label class="layui-form-label"><span class="red_span">&nbsp;*&nbsp;</span>分类</label>
+				    <div class="layui-input-block">
+				        <select name=categoryId id="categoryId" lay-verify="required">
+				         	<option value=""></option>
+				        </select>
+				    </div>
+			 	</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">职务</label>
+					<div class="layui-input-block">
+						<input type="text" name="positionName" id="positionName" maxlength="20" autocomplete="off" placeholder="职务" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label"><span class="red_span">&nbsp;*&nbsp;</span>姓名</label>
+					<div class="layui-input-block">
+						<input type="text" name="userName" id="userName" lay-verify="required" maxlength="10" autocomplete="off" placeholder="姓名" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+				    <label class="layui-form-label"><span class="red_span">&nbsp;*&nbsp;</span>性别</label>
+				    <div class="layui-input-block">
+				        <select name="gender" id="genderadd" lay-verify="required">
+				         	<option value=""></option>
+		       				<option value="0">男</option>
+					        <option value="1">女</option>
+				        </select>
+				    </div>
+			 	</div>
+			 	<div class="layui-form-item">
+					<label class="layui-form-label">单位名称</label>
+					<div class="layui-input-block">
+						<input type="text" name="companyName" id="companyName" maxlength="30" autocomplete="off" placeholder="单位名称" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">单位电话</label>
+					<div class="layui-input-block">
+						<input name="companyTel" id="companyTel" maxlength="15"  onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" autocomplete="off" placeholder="单位电话" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">单位传真</label>
+					<div class="layui-input-block">
+						<input type="text" name="companyFax" id="companyFax" maxlength="15"  onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" lay-verify="" autocomplete="off" placeholder="单位传真" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">单位地址</label>
+					<div class="layui-input-block">
+						<input type="text" name="companyAddress" id="companyAddress" maxlength="50"  lay-verify="" autocomplete="off" placeholder="单位地址" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">手机号</label>
+					<div class="layui-input-block">
+						<input type="text" name="phoneNumber" id="phoneNumber" maxlength="11" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9]+/,'');}).call(this)" onblur="this.v();" autocomplete="off" placeholder="手机号" class="layui-input phoneNumber">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">微信</label>
+					<div class="layui-input-block">
+						<input type="text" name="wechatNumber" id="wechatNumber" maxlength="20" lay-verify="" autocomplete="off" placeholder="微信" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">QQ</label>
+					<div class="layui-input-block">
+						<input type="mumber" name="qqNumber" id="qqNumber" maxlength="20" onkeyup="value=value.replace(/[^\d]/g,'')" autocomplete="off" placeholder="QQ" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">MSN</label>
+					<div class="layui-input-block">
+						<input type="text" name="msnNumber" id="msnNumber" maxlength="20" lay-verify="" autocomplete="off" placeholder="MSN" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">电子邮件</label>
+					<div class="layui-input-block">
+						<input type="text" name="userMail" id="userMail" maxlength="30"  autocomplete="off" placeholder="电子邮件" class="layui-input userMail">
+					</div>
+				</div>	
+				<div class="layui-form-item">
+					<label class="layui-form-label textarea_new">备注</label>
+					<div class="layui-input-block">
+						 <textarea name="remark" id="remark" placeholder="请输入内容" maxlength="200"  class="layui-textarea"></textarea>	
+					</div>
+				</div> 			
+				<div class="btn_fixed">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+					<div style="float: right;">
+							<a class="layui-btn layui-btn-small" lay-submit="" lay-filter="form-addcard-submit">
+									<i class="fa fa-eraser"></i>保存
+								</a>
+						<!-- <button class="layui-btn layui-btn-primary" lay-filter="">
+							<i class="fa fa-eraser"></i> 取消
+						</button> -->
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+ 	<!-- 编辑名片 -->
+	<div class="admin-main" style="display: none; z-index: 19940200;" id="win-edit-card">
+		<div id="win-newsms-object">
+			<form class="layui-form layui-form-pane" id="edit-card-form">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<div class="layui-form-item" style="display: none">
+					<label class="layui-form-label">名片id</label>
+					<div class="layui-input-block">
+						<input type="text" name="id" id="id" autocomplete="off" maxlength="30" class="layui-input" readonly="readonly">
+					</div>
+				</div>
+				<div class="layui-form-item">
+				    <label class="layui-form-label"><span class="red_span">&nbsp;*&nbsp;</span>分类</label>
+				    <div class="layui-input-block">
+				    
+				        <select name=categoryId id="categoryName" lay-verify="required">
+				         	<option value=""></option>
+				        </select>
+				    </div>
+			 	</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">职务</label>
+					<div class="layui-input-block">
+						<input type="text" name="positionName" maxlength="20" id="positionName" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label"><span class="red_span">&nbsp;*&nbsp;</span>姓名</label>
+					<div class="layui-input-block">
+						<input type="text" name="userName" lay-verify="required" id="userName" maxlength="10" lay-verify="required" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				
+				<div class="layui-form-item">
+				    <label class="layui-form-label"><span class="red_span">&nbsp;*&nbsp;</span>性别</label>
+				    <div class="layui-input-block">
+				        <select name="gender" id="gender" lay-verify="required">
+				         	<option value=""></option>
+		       				<option value="0">男</option>
+					        <option value="1">女</option>
+				        </select>
+				    </div>
+			 	</div>
+			 	<div class="layui-form-item">
+					<label class="layui-form-label">单位名称</label>
+					<div class="layui-input-block">
+						<input type="text" name="companyName" maxlength="30" id="companyName" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">单位电话</label>
+					<div class="layui-input-block">
+						<input type="text" name="companyTel" id="companyTel" maxlength="15" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">单位传真</label>
+					<div class="layui-input-block">
+						<input type="text" name="companyFax" id="companyFax" maxlength="15" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">单位地址</label>
+					<div class="layui-input-block">
+						<input type="text" name="companyAddress" id="companyAddress" maxlength="50" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">手机号</label>
+					<div class="layui-input-block">
+						<input type="text" name="phoneNumber" id="phoneNumber" maxlength="11" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9]+/,'');}).call(this)" onblur="this.v();" autocomplete="off" class="layui-input phoneNumber1">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">微信</label>
+					<div class="layui-input-block">
+						<input type="text" name="wechatNumber" id="wechatNumber" maxlength="20" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">QQ</label>
+					<div class="layui-input-block">
+						<input type="text" name="qqNumber" id="qqNumber" onkeyup="value=value.replace(/[^\d]/g,'')"  maxlength="20" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">MSN</label>
+					<div class="layui-input-block">
+						<input type="text" name="msnNumber" id="msnNumber" maxlength="20" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">电子邮件</label>
+					<div class="layui-input-block">
+						<input type="text" name="userMail" id="userMail" maxlength="30" autocomplete="off" class="layui-input userMail1">
+					</div>
+				</div>	
+				<div class="layui-form-item">
+					<label class="layui-form-label textarea_new">备注</label>
+					<div class="layui-input-block">
+						 <textarea name="remark" id="remark" placeholder="请输入内容" maxlength="200" class="layui-textarea"></textarea>	
+					</div>
+				</div> 
+				<div class="btn_fixed">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+					<div style="float: right;">
+							<a class="layui-btn layui-btn-small"  lay-submit="" lay-filter="form-updatecard-submit">
+									<i class="fa fa-eraser"></i>保存
+								</a>
+						<!-- <button class="layui-btn layui-btn-primary" lay-filter="">
+							<i class="fa fa-eraser"></i> 取消
+						</button> -->
+					</div>
+				</div>
+			</form>
+		</div>
+	</div> 
+	<!-- 名片详情 -->
+	<div class="admin-main" style="display: none; z-index: 19940200;" id="win-detail-card">
+		<div id="win-newsms-object">
+			<form class="layui-form layui-form-pane" id="detail-card-form">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<!-- 	<div class="layui-form-item" style="display: none">
+					<label class="layui-form-label">名片分类id</label>
+					<div class="layui-input-block">
+						<input type="text" name="categoryId" id="categoryId" maxlength="30" autocomplete="off" class="layui-input" readonly="readonly">
+					</div>
+				</div> -->
+			<!-- 	<div class="">
+					<span class="e6ed">分类id：</span>
+					<span id="categoryId"></span>
+				</div> -->
+			
+		<!-- 		<div class="layui-form-item" style="display: none">
+					<label class="layui-form-label">名片id</label>
+					<div class="layui-input-block">
+						<input type="text" name="id" id="id" autocomplete="off" maxlength="30" class="layui-input" readonly="readonly">
+					</div>
+				</div> -->
+			<!-- 	<div class="p_t10">
+					<span class="e6ed">名片id：</span>
+					<span id="id"></span>
+				</div>
+				 -->
+		<!-- 		<div class="layui-form-item">
+					<label class="layui-form-label">分类</label>
+					<div class="layui-input-block">
+						<input type="text" name="categotyName" id="categoryName"  autocomplete="off" class="layui-input" readonly="readonly">
+					</div>
+				</div> -->
+				<div class="p_t10">
+					<span class="e6ed">分类：</span>
+					<span id="cName"></span>
+				</div>
+				
+				<!-- <div class="layui-form-item">
+					<label class="layui-form-label">职务</label>
+					<div class="layui-input-block">
+						<input type="text" name="positionName" id="positionName" autocomplete="off" class="layui-input">
+					</div>
+				</div> -->
+				<div class="p_t10">
+					<span class="e6ed">职务：</span>
+					<span id="positionName"></span>
+				</div>
+				
+				<!-- <div class="layui-form-item">
+					<label class="layui-form-label">姓名</label>
+					<div class="layui-input-block">
+						<input type="text" name="userName" id="userName" lay-verify="required" autocomplete="off" class="layui-input">
+					</div>
+				</div> -->
+				<div class="p_t10">
+					<span class="e6ed">姓名：</span>
+					<span id="userName"></span>
+				</div>
+				
+			<!-- 	<div class="layui-form-item">
+				    <label class="layui-form-label">性别</label>
+				    <div class="layui-input-block">
+				        <select name="gender" id="gender" lay-verify="required">
+				         	<option value=""></option>
+		       				<option value="0">男</option>
+					        <option value="1">女</option>
+				        </select>
+				    </div>
+			 	</div> -->
+			 	<div class="p_t10">
+					<span class="e6ed">性别：</span>
+					<span id="gender"></span>
+				</div>
+			 	
+			 	
+			<!--  	<div class="layui-form-item">
+					<label class="layui-form-label">单位名称</label>
+					<div class="layui-input-block">
+						<input type="text" name="companyName" id="companyName" lay-verify="spactily" autocomplete="off" class="layui-input">
+					</div>
+				</div> -->
+				 <div class="p_t10">
+					<span class="e6ed">单位名称：</span>
+					<span id="companyName"></span>
+				</div>
+				
+				<!-- <div class="layui-form-item">
+					<label class="layui-form-label">单位电话</label>
+					<div class="layui-input-block">
+						<input type="text" name="companyTel" id="companyTel" lay-verify="spactily" autocomplete="off" class="layui-input">
+					</div>
+				</div> -->
+				<div class="p_t10">
+					<span class="e6ed">单位电话：</span>
+					<span id="companyTel"></span>
+				</div>
+				
+			<!-- 	<div class="layui-form-item">
+					<label class="layui-form-label">单位传真</label>
+					<div class="layui-input-block">
+						<input type="text" name="companyFax" id="companyFax" lay-verify="spactily" autocomplete="off" class="layui-input">
+					</div>
+				</div> -->
+				<div class="p_t10">
+					<span class="e6ed">单位传真：</span>
+					<span id="companyFax"></span>
+				</div>
+				
+				<!-- <div class="layui-form-item">
+					<label class="layui-form-label">单位地址</label>
+					<div class="layui-input-block">
+						<input type="text" name="companyAddress" id="companyAddress" lay-verify="spactily" autocomplete="off" class="layui-input">
+					</div>
+				</div> -->
+				<div class="p_t10">
+					<span class="e6ed">单位地址：</span>
+					<span id="companyAddress"></span>
+				</div>
+				
+			<!-- 	<div class="layui-form-item">
+					<label class="layui-form-label">手机号</label>
+					<div class="layui-input-block">
+						<input type="text" name="phoneNumber" id="phoneNumber" lay-verify="spactily" autocomplete="off" class="layui-input">
+					</div>
+				</div> -->
+				<div class="p_t10">
+					<span class="e6ed">手机号：</span>
+					<span id="phoneNumber"></span>
+				</div>
+				
+				
+				<!-- <div class="layui-form-item">
+					<label class="layui-form-label">微信</label>
+					<div class="layui-input-block">
+						<input type="text" name="wechatNumber" id="wechatNumber" lay-verify="spactily" autocomplete="off" class="layui-input">
+					</div>
+				</div> -->
+				<div class="p_t10">
+					<span class="e6ed">微信：</span>
+					<span id="wechatNumber"></span>
+				</div>
+				
+			<!-- 	<div class="layui-form-item">
+					<label class="layui-form-label">QQ</label>
+					<div class="layui-input-block">
+						<input type="text" name="qqNumber" id="qqNumber" lay-verify="spactily" autocomplete="off" class="layui-input">
+					</div>
+				</div> -->
+				<div class="p_t10">
+					<span class="e6ed">QQ：</span>
+					<span id="qqNumber"></span>
+				</div>
+				
+				<!-- <div class="layui-form-item">
+					<label class="layui-form-label">MSN</label>
+					<div class="layui-input-block">
+						<input type="text" name="msnNumber" id="msnNumber" lay-verify="spactily" autocomplete="off" class="layui-input">
+					</div>
+				</div> -->
+				<div class="p_t10">
+					<span class="e6ed">MSN：</span>
+					<span id="msnNumber"></span>
+				</div>
+				
+				<!-- <div class="layui-form-item">
+					<label class="layui-form-label">电子邮件</label>
+					<div class="layui-input-block">
+						<input type="text" name="userMail" id="userMail" lay-verify="spactily" autocomplete="off" class="layui-input">
+					</div>
+				</div>	 -->
+				<div class="p_t10">
+					<span class="e6ed">电子邮件：</span>
+					<span id="userMail"></span>
+				</div>
+				
+			<!-- 	<div class="layui-form-item layui-form-text">
+					<label class="layui-form-label">备注</label>
+					<div class="layui-input-block">
+						 <textarea name="remark" id="remark" placeholder="请输入内容" maxlength="70" class="layui-textarea"></textarea>	
+					</div>
+				</div>  -->
+				<div class="p_t10">
+					<span class="e6ed l">备注：</span>
+				<!-- 	<textarea name="remark" id="remark" placeholder="请输入内容" maxlength="500"  class="layui-textarea"></textarea> -->	
+					<div id="remark" class="l" style="word-wrap:break-word;width:85%;margin-top:2px;"></div>
+				</div>
+				
+				
+				<div class="btn_fixed">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+					<!-- <div style="float: right;">
+							<a class="layui-btn layui-btn-small" lay-submit="" lay-filter="form-updatecard-submit">
+									<i class="fa fa-eraser"></i>保存
+								</a>
+						<button class="layui-btn layui-btn-primary" lay-filter="">
+							<i class="fa fa-eraser"></i> 取消
+						</button>
+					</div> -->
+				</div>
+			</form>
+		</div>
+	</div>
+	<input type="hidden"  id="deptTreeId"  />
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.exhide-3.5.min.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script>
+		//定义layui
+		var pform;
+		layui.use(['form','element'], function() {
+			pform = layui.form;
+			var element = layui.element;
+			loadCategory();
+			loadData();
+			//名片分类新增
+			pform.on('submit(form-add-submit)', function(data) {
+				tool.post("/per/autCardCategory/add",$("#add-cartcatrgoty-form").serialize(data),postCallBack_update,false)
+				return false;
+			});
+			//名片分类编辑
+			pform.on('submit(form-update-submit)',function(data){
+				tool.post("/per/autCardCategory/update",$("#edit-catrgoty-form").serialize(),postCallBack_edit,false)
+				return false;
+			})
+			//名片新增
+			pform.on('submit(form-addcard-submit)',function(data){
+				addcard();
+			})
+			//名片编辑
+			pform.on('submit(form-updatecard-submit)',function(data){
+				editcard();
+			})
+			element.on('tab(docDemoTabBrief)', function(data){
+				getCategory();
+			});
+		});
+		//校验
+		function jy(){
+			/* 单位电话不必填--填则校验*/
+		    	var companyTel =$('#companyTel').val();
+				var companyTelReg =/^(\(\d{3,4}\)|\d{3,4}-|\s)?\d{7,14}$/;
+				if(companyTel!=""){
+					 if (!companyTelReg.test(companyTel)) {
+				          tool.error("请填写正确的电话！");
+				          return false;
+				        }
+				} 
+				/* 传真不必填--填则校验 */
+			 	var companyFax =$('#companyFax').val();
+				var companyFaxReg =/^[+]{0,1}(\d){1,3}[ ]?([-]?((\d)|[ ]){1,12})+$/;
+				if(companyFax!=""){
+					 if (!companyFaxReg.test(companyFax)) {
+				          tool.error("请填写正确的传真！");
+				          return false;
+				        }
+				} 
+				/* 新增-手机号不必填--填则校验 */
+				var phoneNumber =$('.phoneNumber').val();
+				var phoneNumberReg =/^1(3|4|5|7|8)\d{9}$/;
+				if(phoneNumber!=""){
+					 if (!phoneNumberReg.test(phoneNumber)) {
+				          tool.error("请填写正确的手机号！");
+				          return false;
+				        }
+				}
+				/* 编辑-手机号不必填--填则校验 */
+				var phoneNumber1 =$('.phoneNumber1').val();
+				var phoneNumberReg1 =/^1(3|4|5|7|8)\d{9}$/;
+				if(phoneNumber1!=""){
+					 if (!phoneNumberReg1.test(phoneNumber1)) {
+				          tool.error("请填写正确的手机号！");
+				          return false;
+				        }
+				}
+				/* QQ不必填--填则校验*/
+		/* 		var qqNumber =$('#qqNumber').val();
+				var qqNumberReg =/[1-9][0-9]{4,14}/;
+				if(companyTel!=""){
+					 if (!qqNumberReg.test(qqNumber)) {
+				          tool.error("请填写正确的QQ！");
+				          return false;
+				        }
+				} */
+				/* 新增-邮箱不必填--填则校验 */
+				var userMail =$('.userMail').val();
+				
+				var userMailReg =/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
+				if(userMail!=""){
+					 if (!userMailReg.test(userMail)) {
+				          tool.error("请填写正确的邮箱地址！");
+				          return false;
+				        }
+				}
+				/* 编辑-邮箱不必填--填则校验 */
+				var userMail1 =$('.userMail1').val();
+				var userMailReg1 =/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
+				if(userMail1!=""){
+					 if (!userMailReg1.test(userMail1)) {
+				          tool.error("请填写正确的邮箱地址！");
+				          return false;
+				        }
+				}
+		}
+		// 新增名片分类弹窗
+		function newone(){
+			var index = layer.open({
+				title : '新增名片分类',
+				maxmin : false,
+				type : 1,
+				content : $('#win-new-object')
+			});
+			 pform.render();
+			layer.full(index);
+		}
+		
+		//新增名片分类
+		function addone() {
+			tool.post("/per/autCardCategory/add",$("#add-cartcatrgoty-form").serialize(),function(data){},false)
+		}
+		//新增名片-弹窗
+		function newcard() {	
+			loadCategory();
+			var valueid=$("#deptTreeId").val();
+			$('#win-newcard-object').find("#categoryId").val(valueid);
+			var index = layer.open({
+				title : '新增名片',
+				maxmin : false,
+				type : 1,
+				content : $('#win-newcard-object')
+			});			
+			pform.render();
+			layer.full(index);
+			initAdd();
+		}
+		function initAdd(){			
+			$("#add-card-form").find('#positionName').val("");		
+			$("#add-card-form").find('#userName').val("");		
+			$("#add-card-form").find('#companyName').val("");
+			$("#add-card-form").find('#companyTel').val("");
+			$("#add-card-form").find('#companyFax').val("");
+			$("#add-card-form").find('#companyAddress').val("");
+			$("#add-card-form").find('#wechatNumber').val("");
+			$("#add-card-form").find('#phoneNumber').val("");
+			$("#add-card-form").find('#qqNumber').val("");
+			$("#add-card-form").find('#msnNumber').val("");
+			$("#add-card-form").find('#userMail').val("");
+			$("#add-card-form").find('#remark').val("");			
+		}
+		//新增名片-新增
+		function addcard() {
+			var a= jy();
+			 if(a==false){
+				 return false;
+			 }	
+			tool.post("/per/autCard/add",$("#add-card-form").serialize(),postCallBack_add,false)
+			render();	
+		}
+		//编辑名片-执行更新
+		function editcard() {
+			 var a= jy();
+			 if(a==false){
+				 return false;
+			 }
+			tool.post("/per/autCard/update",$("#edit-card-form").serialize(),postCallBack_updatecard,false)
+		}
+		//生成树
+		var setting = {
+				data : {
+					simpleData : {
+						enable : true
+					}
+				},
+				callback : {
+					beforeClick : beforeClick
+				}
+			};
+		var param = new Object();
+		param._csrf = $("#_csrf").val();
+		redern();
+		// 名片夹分类树
+		function redern() {
+			tool.post("/per/autCardCategory/getCardCategoryList", param, postCallBack_newtree,false);
+		}
+		
+		var zTreeObj; 
+		function postCallBack_newtree(data) {
+			var obj = [];
+			for (var i = 0; i < data.length; i++) {
+				obj.push({
+					id : data[i].id,
+					name : data[i].categoryName
+				}) 
+			}  
+			zTreeObj = $.fn.zTree.init($("#treeDemo"), setting, obj);
+		}
+
+		var hiddenNodes=[];	//用于存储被隐藏的结点
+		var targetParent = [];
+		function getParentByChild(node){
+			if(node.parentTId != null){
+				targetParent.push(node.getParentNode());
+				getParentByChild(node.getParentNode());
+			}
+		}
+
+
+		//过滤ztree显示数据
+		function AutoMatch(){
+			//显示上次搜索后背隐藏的结点
+			zTreeObj.showNodes(hiddenNodes);
+			//查找不符合条件的叶子节点
+			targetParent = [];
+			function filterFunc(node){
+				var _keywords=$("#citySel").val();
+				if(node.name.indexOf(_keywords)!=-1) {
+					getParentByChild(node)
+					return false;
+				}
+				return true;		
+			};
+			//获取不符合条件的叶子结点
+			hiddenNodes=zTreeObj.getNodesByFilter(filterFunc);
+			//隐藏不符合条件的叶子结点
+			zTreeObj.hideNodes(hiddenNodes);
+			//显示满足条件的根节点
+			zTreeObj.showNodes(targetParent);
+			zTreeObj.expandAll(true);
+		};
+		
+		//获取树节点加载名片列表
+		function beforeClick(hh, treeNode) {
+			//console.log(treeNode)
+			$("#deptTreeId").val(treeNode.id);
+			$("#deptTreeName").val(treeNode.name);
+			loadData(treeNode.id);
+		}		
+	 	//点击名片夹分类树，加载分类下的名片
+		function loadData(){	 		
+			var param = new Object();
+			var searchCardKey=$("#searchCardKey").val();	
+			param.userName = searchCardKey
+			param.phoneNumber = searchCardKey;
+			param.categoryId =$("#deptTreeId").val();		
+			param.container = "paging1";
+			param.pageSize = 10;
+			param.url = "/per/autCard/list";			
+			tool.loadpage(param);
+		}
+		function loadIntData(){	 		
+			var param = new Object();			
+			var searchCardKey=$("#searchCardKey").val();
+			param.categoryId =""		
+			param.userName = searchCardKey
+			param.phoneNumber = searchCardKey;	
+			param.container = "paging1";
+			param.pageSize = 10;
+			param.url = "/per/autCard/list";			
+			tool.loadpage(param);
+		}	 	
+		// 名片分类的分页列表
+	 	function loadCategory(){
+			var param = new Object();			
+			var searchCategoryName=$("#searchCategoryName").val();
+			param.categoryName = searchCategoryName;
+			param.container = "paging";
+			param.pageSize = 10;
+			param.url = "/per/autCardCategory/list";
+			tool.loadpage(param);
+		}
+	 	
+		//编辑名片-弹窗详情
+	 	function editCard(id,myself){
+			pageBtn = myself;
+	 		var object = tool.getById("/per/autCard/getById", id);
+	 		//console.log(object)
+			//赋值
+			for ( var key in object.autCard) {
+				$("#edit-card-form").find("#"+key).val(object.autCard[key]);
+			} 
+			for ( var key in object.autCardCategory) {
+				$("#edit-card-form").find("#"+key).val(object.autCardCategory[key]);
+			} 
+			$("#edit-card-form").find("#id").val(object.autCard.id);
+			$("#edit-card-form").find("#categoryId").val(object.autCardCategory.id);
+			$("#win-edit-card").find("#categoryName").val(object.autCardCategory.id);
+			var index = layer.open({
+				title : '编辑',
+				maxmin : false,
+				type : 1,
+				content : $('#win-edit-card')
+			});
+			pform.render();
+			layer.full(index);
+	 	}
+	 	//编辑名片-弹窗详情
+	 	function detail(id){
+	 		var object = tool.getById("/per/autCard/getById", id);
+	 		/* console.log(object) */
+			//赋值
+			for ( var key in object.autCard) {
+				if(key=='gender'){
+					if(object.autCard[key]=="0"){
+						$("#detail-card-form").find("#"+key).html("男");
+					}else{
+						$("#detail-card-form").find("#"+key).html("女");
+					}
+				}else{
+					$("#detail-card-form").find("#"+key).html(object.autCard[key]);
+				}				
+			} 
+			for ( var key in object.autCardCategory) {
+				if(key=="categoryName"){					
+					$("#detail-card-form").find("#cName").html(object.autCardCategory[key]);
+				}else if(key=="remark"){
+					$("#detail-card-form").find("#"+key).html(object.autCardCategory[key]);
+				}else{
+				//	alert(key+":"+object.autCardCategory[key]);
+					$("#datail-card-form").find("#"+key).html(object.autCardCategory[key]);
+				}	
+			} 
+			//$("#detail-card-form").find("#id").html(object.autCard.id);
+		//	$("#detail-card-form").find("#categoryId").html(object.autCardCategory.id);
+		 	var index = layer.open({
+				title : '名片详情',
+				maxmin : false,
+				type : 1,
+				content : $('#win-detail-card')
+			});
+			pform.render();
+			layer.full(index);
+	 	}
+
+		//更新名片-回调函数
+	 	function postCallBack_updatecard(retMsg){
+			if (retMsg.code == 0) {
+				layer.closeAll();
+				tool.success(retMsg.message);
+				var laypageBtn=$(pageBtn).parents(".admin-table").parent().next().find(".layui-laypage-btn");
+             	if(laypageBtn.length>0){
+             		laypageBtn.trigger("click");
+             	}else{
+             		var deptTreeId=$("#deptTreeId").val()
+    				loadData(deptTreeId);
+             	}
+			} else {
+				tool.error(retMsg.message);
+			}
+			
+		}
+		 //删除名片
+	    function deleteCard(id,myself){
+			
+	    	pageBtn = myself;
+	        layer.confirm('确定删除 ?', {
+	            icon : 3,
+	            title : '提示'
+	        }, function() {
+	            tool.deleteById("/per/autCard/delete", id);
+	            layer.alert("删除成功", {
+	                title : "操作提示",
+	                icon : 1
+	            }, function(index) {
+	            	var laypageBtn=$(pageBtn).parents(".admin-table").parent().next().find(".layui-laypage-btn");
+	              	if(laypageBtn.length>0){
+	              		laypageBtn.trigger("click");
+	              	}else{
+	              		var deptTreeId=$("#deptTreeId").val()
+	     				loadData(deptTreeId);
+	              	}
+	            	layer.close(index);
+	            });
+	        })
+	    }
+	 	//公用回调函数
+	 	function postCallBack_add(retMsg){
+			if (retMsg.code == 0) {				
+				layer.closeAll();
+				tool.success(retMsg.message);
+				render();
+				loadData();				
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+	 	// 名片分类的分页列表
+	 	function loadCategory(){
+			var param = new Object();
+			var searchCategoryName=$("#searchCategoryName").val();
+			param.categoryName = searchCategoryName;
+			param.container = "paging";
+			param.pageSize = 10;
+			param.url = "/per/autCardCategory/list";
+			tool.loadpage(param);
+		}
+	 	var pageBtn;
+	 	//编辑名片分类
+		function postEdit(id,myself) {
+			pageBtn=myself;
+			var object = tool.getById("/per/autCardCategory/getById", id);
+			//赋值
+			for ( var key in object) {
+				$("#edit-catrgoty-form").find("#" + key).val(object[key]);
+			} 
+			var index = layer.open({
+				title : '编辑',
+				maxmin : false,
+				type : 1,
+				content : $('#win-detail-catrgoty')
+			});
+			layer.full(index);
+		}
+	 
+		// 更新的回调函数
+		function postCallBack_update(retMsg){
+			if (retMsg.code == 0) {
+				layer.closeAll();
+				tool.success(retMsg.message);
+				redern();
+				loadData();
+			} else {
+				tool.error(retMsg.message);
+			}
+			loadCategory();
+		}
+		//编辑分页保留在当前页
+		function postCallBack_edit(retMsg){
+			if (retMsg.code == 0) {
+				layer.closeAll();
+				tool.success(retMsg.message);
+				    loadData();
+				    var laypageBtn=$(pageBtn).parents(".admin-table").parent().next().find(".layui-laypage-btn");
+	             	if(laypageBtn.length>0){
+	             		laypageBtn.trigger("click");
+	             		
+	             	}else{
+	             		loadCategory();
+	             	}
+	             	redern();
+			} else {
+				tool.error(retMsg.message);
+			}
+		
+		}
+		 //名片分类-删除
+	    function deleteCategory(id,myself){
+			pageBtn =  myself;
+	        layer.confirm('确定删除 ?', {
+	            icon : 3,
+	            title : '提示'
+	        }, function() {
+	            tool.deleteById("/per/autCardCategory/delete", id);
+	            layer.alert("删除成功", {
+	                title : "操作提示",
+	                icon : 1
+	            }, function(index) {
+	            	var laypageBtn=$(pageBtn).parents(".admin-table").parent().next().find(".layui-laypage-btn");
+		        	if(laypageBtn.length>0){
+		        		laypageBtn.trigger("click");
+		        	}else{
+		        		loadCategory();	  
+		        	}
+	            	layer.close(index);	 
+	            	redern();
+		            //render();
+	            	
+	            });
+	        })
+	    }
+		 
+		function render(){
+		    layui.use('form', function() {
+		        loadData();
+		    })
+		}
+		
+		getCategory();
+        //分类下拉框数据加载
+        function getCategory(){
+            var  param={
+                _csrf:$("#_csrf").val()
+            }
+            tool.post("/per/autCardCategory/getCardCategoryList",param,function(data){
+                $("#categoryId").empty();
+            	$("#edit-card-form").find("#categoryName").empty();
+                $("#categoryId").append('<option value="">请选择</option>');
+                $("#edit-card-form").find("#categoryName").append('<option value="">请选择</option>');
+                
+                var str="";
+                for(var i=0;i<data.length;i++){
+                    str+=' <option value="'+data[i].id+'">'+data[i].categoryName+'</option>';
+                }
+                
+                $("#categoryId").append(str);
+                $("#edit-card-form").find("#categoryName").append(str);
+              	//pform.render();
+            },false)
+        }
+	</script>
+</body>
+</html>

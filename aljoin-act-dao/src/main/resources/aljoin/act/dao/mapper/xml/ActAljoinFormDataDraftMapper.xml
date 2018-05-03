@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.act.dao.mapper.ActAljoinFormDataDraftMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.act.dao.entity.ActAljoinFormDataDraft">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="bpmn_id" property="bpmnId" />
+		<result column="operate_user_id" property="operateUserId" />
+		<result column="proc_task_id" property="procTaskId" />
+		<result column="proc_inst_id" property="procInstId" />
+		<result column="proc_def_id" property="procDefId" />
+		<result column="form_id" property="formId" />
+		<result column="widget_id" property="widgetId" />
+		<result column="form_widget_id" property="formWidgetId" />
+		<result column="form_widget_name" property="formWidgetName" />
+		<result column="form_widget_value" property="formWidgetValue" />
+		<result column="is_read" property="isRead" />
+		<result column="data_resource" property="dataResource" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name, bpmn_id, operate_user_id, proc_task_id, proc_inst_id, proc_def_id, form_id, widget_id, form_widget_id, form_widget_name, form_widget_value, data_resource,is_read
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM act_aljoin_form_data_draft WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="ActAljoinFormDataDraft">
+    	INSERT INTO act_aljoin_form_data_draft(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{bpmnId}, #{operateUserId}, #{procTaskId}, #{procInstId}, #{procDefId}, #{formId}, #{widgetId}, #{formWidgetId}, #{formWidgetName}, #{formWidgetValue}, #{isRead}, #{dataResource})
+    </insert>
+
+</mapper>

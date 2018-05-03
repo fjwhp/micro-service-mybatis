@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>固定资产信息管理</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" />
+<link rel="stylesheet" href="../../web/css/zhengls.css" /> 
+
+</head>
+<style>
+
+</style>
+<body>
+	
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main" >
+	<!-- <div style="font-size:16px;font-weight:bold;margin-bottom:5px;color:#339bf1;""><i class="fa fa-envelope-o" aria-hidden="true" data-icon="fa-envelope-o" style="margin-right:6px;"></i>收件箱</div> -->
+	<blockquote class="layui-elem-quote" style="padding: 5px;">
+			<form class="layui-form" action="">
+				<div style="float:right">
+					<span  ><@a code="200201" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData()"  iclass="layui-icon"
+						 icon="&#xe615;" text="查询"/></span>
+				</div>
+				<div class="layui-input-inline">
+				   <div class="layui-input-inline">
+					 <span>分类</span>
+					</div>
+					<div class="layui-input-inline m_r10 content_sel" >
+					           <@selectLink
+					   			table="ass_category" layVerify="" id="ass_id_search" 
+								class="layui-input-inline" def="" key="id" text="name"
+								level="1" levelName="category_level"  rankName="category_rank"
+								where=" AND is_active=1"/>
+						<input type="hidden" id="categoryId_search">		
+					</div>
+					
+					
+				   <div class="layui-input-inline">
+					 <span>物品名称</span>
+					</div>
+					<div class="layui-input-inline m_r10">
+						 <input type="text" name="assName" id="assName_search" placeholder="物品名称" lay-verify="" maxlength="20" autocomplete="off" class="layui-input" style="height: 30px; line-height: 30px;width:130px">
+					</div>
+				   <div class="layui-input-inline">
+					 <span>使用部门</span>
+					</div>
+					<div class="layui-input-inline m_r10">
+						 <input type="text" name="departmentName" id="departmentName_search" placeholder="使用部门" lay-verify="" maxlength="20" autocomplete="off" class="layui-input" style="height: 30px; line-height: 30px;width:130px">
+					</div>
+			       <div class="layui-input-inline">
+					 <span>负责人</span>
+					</div>
+					<div class="layui-input-inline m_r10">
+						 <input type="text" name="agentName" id="agentName_search" placeholder="负责人" lay-verify="" maxlength="20" autocomplete="off" class="layui-input" style="height: 30px; line-height: 30px;width:130px">
+					</div>
+			</form>
+	</blockquote>
+	    <div>
+	      <@a code="200204" href="javascript:void(0)" class="layui-btn" id="newCreate"  onclick="pubSet()"  text="新增" />
+	    </div>
+		<div class="layui-field-box  layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table admin-table">
+			      <!--  <colgroup>
+				    <col width="35">
+				    <col width="150">
+				    <col width="400">
+				    <col width="80">
+				    <col width="200">
+				    <col width="130">
+				    <col width="130"> 
+	 			 </colgroup> -->
+				<thead>
+					<tr>
+						<th style="display: none;">用户ID</th>
+						<th style="width:50px;">序号</th>
+						<th style="width:100px;">资产编号</th>
+						<th style="width:160px;">物品名称</th>
+						<th style="width:80px;">分类</th>
+						<th style="width:80px;">规格型号</th>
+						<th style="width:60px;">剩余数量</th>
+						<th style="width:80px;">存放地点</th>
+						<th style="width:100px;">使用部门</th>
+						<th style="width:80px;">负责人</th>
+						<th style="width:60px;">使用年限</th>
+						<th style="width:100px;">操作</th>
+					</tr>
+				</thead>
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr >
+							<td>{{(current-1)*size+index+1}}</td>
+							<td>{{value.assCode}}</td>
+							<td>{{value.assName}}</td>
+							<td>{{value.categoryName}}</td>
+							<td>{{value.assType}}</td>
+							<td>{{value.assNumber}}</td>
+							<td>{{value.inPlace}}</td>
+							<td title="{{value.departmentName}}">{{value.departmentName}}</td>
+							<td title="{{value.agentName}}">{{value.agentName}}</td>
+							<td>{{value.alreadyUseTime}}</td>
+							 <td>
+                                <@a code="200202" href="javascript:void(0)" class="table_btn l" id="show-edit" onclick="showEdit('{{value.id}}',this)" text="编辑"/>
+                                <@a code="200203" href="javascript:void(0)" class="table_btn l" id="show-edit" onclick="deletes('{{value.id}}')" text="删除"/>
+                            </td>
+						</tr>
+					{{/each}}
+					</script>
+					<!-- <@a code="090302" href="javascript:void(0)" class="layui-btn layui-btn-warm layui-btn-mini m_r10" id="show-view" onclick="showView('{{value.id}}','{{value.isImportant}}')" text="详情"/> -->
+				</tbody>
+			</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	
+    <!-- 新增维护 -->
+	<div class="" id="win-Main-object" style="display:none;padding: 10px 40px 10px 10px;">
+					<form class="layui-form layui-form-pane" id="Main-object-form" style="padding-bottom:60px;">
+					    <input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+						<input type="hidden" id="isActive" name="isActive" value="1">
+						<input type="hidden" id="categoryId" name="categoryId" >
+						<input type="hidden" id="categoryName" name="categoryName" >
+						<div class="layui-form-item">
+							<label class="layui-form-label">资产名称</label>
+							<div class="layui-input-block">
+								<input type="text" name="assName" id="assName" maxlength="50"  lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+							</div>
+						</div>
+					
+						<div class="layui-form-item" >
+							<label class="layui-form-label">物品分类</label>
+							   <@selectLink
+								table="ass_category" layVerify="required" id="ass_id_add" 
+								class="layui-input-inline" def="" key="id" text="name"
+								level="1" levelName="category_level"  rankName="category_rank"
+								where=" AND is_active=1"/>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">规格型号</label>
+							<div class="layui-input-block">
+								<input type="text" name="assType" id="assType" maxlength="50"  lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">编号</label>
+							<div class="layui-input-block">
+								<input type="text" name="assCode" id="assCode" maxlength="50"  lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">单位</label>
+							<div class="layui-input-block">
+								<input type="text" name="unit" id="unit" maxlength="50"  lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">数量</label>
+							<div class="layui-input-block">
+								<input type="text" name="assNumber" id="assNumber" maxlength="5" onkeyup="value=value.replace(/[^\d]/g,'')"  lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">存放地点</label>
+							<div class="layui-input-block">
+								<input type="text" name="inPlace" id="inPlace" maxlength="50"  lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">时间</label>
+							<div class="layui-input-block">
+								<input type="text" name="addTime"  readonly id="addTime" maxlength="50"  lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+						   <label class="layui-form-label">使用部门</label>
+							<div class="layui-input-block">
+							  <input type="hidden" name="departmentName"  id="receiveFullName" class="reset_use">
+								<div type="text" style="width:81%;float:left;" name="noticeObjName" id="" lay-verify="" autocomplete="off" placeholder="公告对象" class="newgg_use  reset1_use" readonly="readonly"></div>
+								<a class="btn_blue2" style="float:right;"  onclick="treeDemo_use('Main-object-form')">使用部门</a>
+								<input type="hidden" name="departmentId"  id="receiveUserId" class="reset_use">
+						    </div>
+						 </div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">负责人</label>
+						    <div class="layui-input-block">
+							    <input type="hidden" name="agentName"  id="noticeObjName_add" class="reset">
+								<div type="text" style="width:81%;float:left;" name="noticeObjName" id="noticeObjName_addDiv" lay-verify="" autocomplete="off" placeholder="公告对象" class="newgg reset1" readonly="readonly"></div>
+								<a class="btn_blue2 btn_blue2one" style="float:right;" >人员选择</a>
+								<input type="hidden" name="agentId"  id="noticeObjId_add" class="reset">
+							</div>
+						</div>
+					
+					   <div class="layui-form-item ">
+							<label class="layui-form-label">使用年限</label>
+							<div class="layui-input-block">
+								<input type="text" name="alreadyUseTime" id="alreadyUseTime"   maxlength="3" onkeyup="value=value.replace(/[^\d]/g,'')" lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+							</div>
+						</div>
+						<div class="btn_fixed">
+							<div style="float: right;">
+								<button class="layui-btn" lay-submit="" lay-filter="form-Use-submit">
+									<i class="fa fa-save"></i> 提交
+								</button>
+								<!-- <button type="reset" class="layui-btn layui-btn-primary">
+									<li class="fa fa-eraser"></li> 重置
+								</button> -->
+							</div>
+						</div>
+					</form>
+	</div>
+	<!-- 新增维护结束-->
+   <!-- 编辑维护 -->
+	<div class="" id="edit-Main-object" style="display:none;padding: 10px 40px 10px 10px;">
+					<form class="layui-form layui-form-pane" id="edit-object-form" style="padding-bottom:60px;">
+					    <input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+						<input type="hidden" id="isActive_edit" name="isActive" value="1">
+						<input type="hidden" id="id_edit" name="id" >
+						<input type="hidden" id="categoryId_edit" name="categoryId" >
+						<input type="hidden" id="categoryName_edit" name="categoryName" >
+						<div class="layui-form-item">
+							<label class="layui-form-label">资产名称</label>
+							<div class="layui-input-block">
+								<input type="text" name="assName" id="assName_edit" maxlength="50"  lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+							</div>
+						</div>
+					
+						<div class="layui-form-item" id="selectsId_edit">
+							<label class="layui-form-label">物品分类</label>
+							   <@selectLink
+								table="ass_category" layVerify="required" id="ass_id_edit" 
+								class="layui-input-inline" def="" key="id" text="name"
+								level="1" levelName="category_level"  rankName="category_rank"
+								where=" AND is_active=1"/>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">规格型号</label>
+							<div class="layui-input-block">
+								<input type="text" name="assType" id="assType_edit" maxlength="50"  lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">编号</label>
+							<div class="layui-input-block">
+								<input type="text" name="assCode" id="assCode_edit" maxlength="50"  lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">单位</label>
+							<div class="layui-input-block">
+								<input type="text" name="unit" id="unit_edit" maxlength="50"  lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">数量</label>
+							<div class="layui-input-block">
+								<input type="text" name="assNumber" id="assNumber_edit" maxlength="5" onkeyup="value=value.replace(/[^\d]/g,'')"  lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">存放地点</label>
+							<div class="layui-input-block">
+								<input type="text" name="inPlace" id="inPlace_edit" maxlength="50"  lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">时间</label>
+							<div class="layui-input-block">
+								<input type="text" name="addTime"  readonly id="addTime_edit" maxlength="50"  lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+						   <label class="layui-form-label">使用部门</label>
+							<div class="layui-input-block">
+							  <input type="hidden" name="departmentName"  id="receiveFullName_edit" class="reset_use">
+								<div type="text" style="width:81%;float:left;" name="noticeObjName" id="" lay-verify="" autocomplete="off" placeholder="公告对象" class="newgg_use  reset1_use" readonly="readonly"></div>
+								<a class="btn_blue2" style="float:right;"  onclick="treeDemo_use('edit-Main-object')">使用部门</a>
+								<input type="hidden" name="departmentId"  id="receiveUserId" class="reset_use">
+						    </div>
+						 </div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">负责人</label>
+						    <div class="layui-input-block">
+							    <input type="hidden" name="agentName"  id="noticeObjName_add_edit" class="reset">
+								<div type="text" style="width:81%;float:left;" name="noticeObjName" id="noticeObjName_addDiv_edit" lay-verify="" autocomplete="off" placeholder="公告对象" class="newgg reset1" readonly="readonly"></div>
+								<a class="btn_blue2 btn_blue2two" style="float:right;" >人员选择</a>
+								<input type="hidden" name="agentId"  id="noticeObjId_add_edit" class="reset">
+							</div>
+						</div>
+					
+					   <div class="layui-form-item ">
+							<label class="layui-form-label">使用年限</label>
+							<div class="layui-input-block">
+								<input type="text" name="alreadyUseTime" id="alreadyUseTime_edit" maxlength="50"  maxlength="5" onkeyup="value=value.replace(/[^\d]/g,'')" lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+							</div>
+						</div>
+						<div class="btn_fixed">
+							<div style="float: right;">
+								<button class="layui-btn" lay-submit="" lay-filter="form-Edit-submit">
+									<i class="fa fa-save"></i> 提交
+								</button>
+								<!-- <button type="reset" class="layui-btn layui-btn-primary">
+									<li class="fa fa-eraser"></li> 重置
+								</button> -->
+							</div>
+						</div>
+					</form>
+	</div>
+	<!-- 编辑维护结束-->
+  <!-- 人员选择树 -->
+	<div style="display: none;z-index: 19940200;" id="win-personal-object">
+		<div class="search_h">
+			<input id="peopelSel" class="tree_search1 reset" type="text" value="" placeholder="搜索">
+			<a class="layui-btn layui-btn-small" id="" onclick="searchNodes()"><i class="layui-icon">&#xe615;</i>搜索</a>
+			<a class="layui-btn layui-btn-small layui-btn-primary" style="margin-left:2px;" type="reset" onclick="reset_tree()"><li class="fa fa-eraser"></li> 重置</a>
+			<label type="text"  id="resultKey" class="form-control">  
+                <div>  
+                    <a id="clickUp" class="tree_up" onclick="clickUp()"><i class="layui-icon">&#xe619;</i></a>  
+                    <a id="clickDown" class="tree_down" onclick="clickDown()"><i class="layui-icon">&#xe61a;</i></a>  
+                </div>  
+                <label id="number" class="tree_number"></label>  
+            </label>  
+        </div>
+        <div class="tree_h">
+        	<ul id="treeDemo" class="ztree treeDemo1" name="treeDemo" style="display:block"></ul>
+        </div>
+	</div>
+	
+	<!--部门选择树 -->
+	<div style="display: none;z-index: 19940200;" id="win-personal_use-object">
+		<div class="search_h">
+			<input id="peopelSel1" class="tree_search1  reset_use" type="text" value="" placeholder="搜索">
+			<a class="layui-btn layui-btn-small" id="" onclick="searchNodes1()"><i class="layui-icon">&#xe615;</i>搜索</a>
+			<a class="layui-btn layui-btn-small layui-btn-primary" style="margin-left:2px;" type="reset" onclick="reset_tree1()"><li class="fa fa-eraser"></li> 重置</a>
+			<label type="text"  id="resultKey1" class="form-control">  
+                <div>  
+                    <a id="clickUp1" class="tree_up" onclick="clickUp1()"><i class="layui-icon">&#xe619;</i></a>  
+                    <a id="clickDown1" class="tree_down" onclick="clickDown1()"><i class="layui-icon">&#xe61a;</i></a>  
+                </div>  
+                <label id="number1" class="tree_number"></label>  
+            </label>  
+        </div>
+        <div class="tree_h">
+        	<ul id="treeDemo_use" class="ztree treeDemo1" name="treeDemo" style="display:block"></ul>
+        </div>
+        <div class="sure_h">
+      		<a class="layui-btn layui-btn-small sure_s"><li class="fa fa-save"></li> 确定</a>
+		</div>
+	</div>
+	<!-- 判断是新增还是编辑 -->
+	<input type="hidden" id="addOrEdit">
+	
+	<input type="hidden" id="gooId_edit">
+	<input type="hidden" id="gooName_edit">
+    <script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.exhide-3.5.min.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+
+	<script>
+	        tool.timeset1("#addTime");
+			var pform;
+			//添加事件
+			layui.use(['form','element'], function() {
+				var element=layui.element;
+				pform = layui.form;
+				
+				pform.on('select(ass_id_search)', function(data) {
+		            if(data.value.length>0){
+						$("#categoryId_search").val(data.value);
+					}else{
+						var emel=$(data.elem).parent().prev();
+						if(emel.find('select').length>0){
+							$("#categoryId_search").val(emel.find('select option:selected').val())
+						}else{
+							$("#categoryId_search").val("");
+						}
+					}
+		            tool.selectLinkTagByPid("ass_id_search","",data);
+		    	});
+				pform.on('select(ass_id_add)', function(data) {
+		            if(data.value.length>0){
+						$("#win-Main-object").find("#categoryId").val(data.value);
+						$("#win-Main-object").find("#categoryName").val($(data.elem).find("option:selected").text());
+						
+					}else{
+						var emel=$(data.elem).parent().prev();
+						if(emel.find('select').length>0){
+							$("#win-Main-object").find("#categoryId").val(emel.find('select option:selected').val())
+							$("#win-Main-object").find("#categoryName").val(emel.find('select option:selected').text())
+						}else{
+							$("#win-Main-object").find("#categoryId").val("");
+							$("#win-Main-object").find("#categoryName").val("");
+						}
+					}
+		            tool.selectLinkTagByPid("ass_id_add","",data);
+		    	});
+				pform.on('select(ass_id_edit)', function(data) {
+		            if(data.value.length>0){
+						$("#edit-Main-object").find("#categoryId_edit").val(data.value);
+						$("#edit-Main-object").find("#categoryName_edit").val($(data.elem).find("option:selected").text());
+						
+					}else{
+						var emel=$(data.elem).parent().prev();
+						if(emel.find('select').length>0){
+							$("#edit-Main-object").find("#categoryId_edit").val(emel.find('select option:selected').val())
+							$("#edit-Main-object").find("#categoryName_edit").val(emel.find('select option:selected').text())
+						}else{
+							$("#edit-Main-object").find("#categoryId_edit").val("");
+							$("#edit-Main-object").find("#categoryName_edit").val("");
+						}
+					}
+		            tool.selectLinkTagByPid("ass_id_edit","",data);
+		    	});
+		    	//新增
+				pform.on('submit(form-Use-submit)',function(data){
+					if($("#receiveFullName").val()==""){
+						tool.error("使用部门不能为空");
+						return false;
+					}
+					if($("#noticeObjName_add").val()==""){
+						tool.error("负责人不能为空");
+						return false;
+					}
+					if($("#noticeObjName_add").val().split(";").length>6){
+						tool.error("负责人最多5个");
+						return false;
+					}
+					layer.confirm('确定提交吗 ?', {
+	                    icon: 3,
+	                    title: '提示'
+	                },function(index){
+					  tool.post("../assInfo/add", $("#Main-object-form").serialize(), postCallBack_add, false);
+	                })
+					return false;
+				});
+		    	//编辑
+		    	pform.on('submit(form-Edit-submit)',function(data){
+		    		if($("#receiveFullName_edit").val()==""){
+						tool.error("使用部门不能为空");
+						return false;
+					}
+					if($("#noticeObjName_add_edit").val()==""){
+						tool.error("负责人不能为空");
+						return false;
+					}
+					if($("#noticeObjName_add_edit").val().split(";").length>6){
+						tool.error("负责人最多5个");
+						return false;
+					}
+					tool.post("../assInfo/update", $("#edit-object-form").serialize(), postCallBack_edit, false);
+					return false;
+				});
+				loadData();
+			})
+			//新增回调
+			function postCallBack_add(retMsg){
+				if (retMsg.code == 0) {
+					 layer.alert(retMsg.message, {
+		                    title : "操作提示",
+		                    icon : 1,
+		                    closeBtn:0
+		                }, function(index) {
+		                   tool.success(retMsg.message);
+		                   location.href="/ass/assInfo/assInfoPage"
+		                });
+				} else {
+					tool.error(retMsg.message);
+				}
+			}
+			//编辑回调
+			function postCallBack_edit(retMsg){
+				if (retMsg.code == 0) {
+					 layer.alert(retMsg.message, {
+		                    title : "操作提示",
+		                    icon : 1,
+		                    closeBtn:0
+		                }, function(index) {
+		                	if($(".layui-laypage-btn").length>0){
+		                		$(".layui-laypage-btn").trigger("click");
+		                	}else{
+		                		loadData();
+		                	}
+		                	layer.closeAll();
+		                });
+				} else {
+					tool.error(retMsg.message);
+				}
+			}
+			//列表
+			function loadData(){
+				var param = new Object();
+				param.container = "paging";
+				param.pageSize = 10;
+				param.assName = $("#assName_search").val();
+				param.url = "../assInfo/list";
+				param.departmentName = $("#departmentName_search").val();
+				param.agentName = $("#agentName_search").val();
+				param.categoryId = $("#categoryId_search").val();
+				tool.loadpage(param);
+			}
+			//新增维护
+			function pubSet(){
+				
+				var index = layer.open({
+					title : '新增',
+					maxmin : false,
+					type : 1,
+					content : $('#win-Main-object')
+				});
+				layer.full(index);
+			    pform.render();
+				
+			}
+			//选择
+			 $(".btn_blue2one").click(function(){
+		      	  tool.treeDemo("win-personal-object","treeDemo","noticeObjId_add","noticeObjName_add","noticeObjName_addDiv");
+		      	  $("#number").html("");
+		      })
+		      
+             //使用部门
+             var index1;
+            //组织机构
+            function treeDemo_use(type){
+            	
+            	var mytree;
+    			var param1 = {};
+            	param1._csrf = $("#_csrf").val();
+            	tool.post("/pub/public/organList",param1,function(data){
+            		 var  departmentList=data.departmentList;//部门
+            		 setting = {
+                             check : {
+                                 enable : true,
+                             },
+                             data : { simpleData : { enable : true }  },
+                             callback: {
+                                 onCheck: onCheck_use
+                             }
+                         };
+            		    var obj=[];
+            	        for(var i=0;i<departmentList.length;i++){
+            	            obj.push({id:departmentList[i].id,pId: departmentList[i].parentId,name:departmentList[i].deptName,necessary:0})
+            	        }
+            	        mytree= $.fn.zTree.init($("#treeDemo_use"), setting, obj);	 
+            	},false)
+            	
+            	 fuzhi(type);
+            	if(type=="Main-object-form"){
+            		$("#addOrEdit").val("0");
+            	}else{
+            		
+            		$("#addOrEdit").val("1");
+            	} 
+            	index1 = layer.open({
+                    title : '部门选择',
+                    maxmin : false,
+                    type : 1,
+                    shadeClose: true,
+                    area: ['360px', '500px'],
+                    content : $('#win-personal_use-object')
+                });
+            }
+          //赋值
+        	function fuzhi(type){
+        		  var objIds = $("#"+type).find("#receiveUserId").val();
+        	      var ids = [];
+        	      if(objIds.length>0 && objIds.lastIndexOf(";")>-1){
+        	          ids = objIds.substr(0,objIds.lastIndexOf(";")).split(";");
+        			}
+        	      if(ids.length>0){
+        	          var mytree = $.fn.zTree.getZTreeObj('treeDemo_use');
+        	          //打开弹窗前重置节点以及关闭展开状态，避免叠加
+        	          mytree.checkAllNodes(false)
+        	          mytree.expandAll(false);
+        	          for(var i=0;i<ids.length;i++){
+        	              var nodes= mytree.getNodeByParam("id",ids[i]);
+        	              if(nodes){
+        	                  nodes.checked=true;
+        					  mytree.selectNode(nodes,true);//指定选中ID的节点  
+        					  mytree.updateNode(nodes)
+        					  mytree.expandNode(nodes, true, true);//指定选中ID节点展开 
+        	              }
+        	          }
+        	      }
+        	}
+            //勾选用户
+      		 function onCheck_use(){ 
+          		 var  treeArr=[];
+          		 var zTree = $.fn.zTree.getZTreeObj("treeDemo_use");
+          		 var changeNodes = zTree.getChangeCheckedNodes();
+          		 console.log(changeNodes)
+          		 if(changeNodes.length>0){
+          		 $.each(changeNodes,function(index,value){
+          			 if(value.level>1){
+          			    treeArr.push({id:value.id,name:value.name})
+          			 }else if(value.level==1&&typeof(value.children) == "undefined"){
+          				 treeArr.push({id:value.id,name:value.name})
+          			 }
+          		 })
+          	   }
+      	    	if(treeArr.length>0){
+      	    		 var str="",namestr="",fullname="";
+      	    		 var divs="";
+      	    		$.each(treeArr,function(index,value){ 
+      	    			str+=value.id+";"
+      	    			fullname+=value.name+";";
+      	    		})
+      	    	  }else{
+      	    		  var str="",namestr="",fullname="";
+      	    	  }
+          		  if($("#addOrEdit").val()=="0"){
+      	    		$("#Main-object-form").find("#receiveUserId").val(str);
+      	    		$("#Main-object-form").find("#receiveFullName").val(fullname);
+      	    		$("#Main-object-form").find(".newgg_use").text(fullname);
+          		  }else{
+          			$("#edit-Main-object").find("#receiveUserId").val(str);
+      	    		$("#edit-Main-object").find("#receiveFullName_edit").val(fullname);
+      	    		$("#edit-Main-object").find(".newgg_use").text(fullname);
+          		  }
+          	 }
+            
+              //编辑选择
+      		 $(".btn_blue2two").click(function(){
+		      	  tool.treeDemo("win-personal-object","treeDemo","noticeObjId_add_edit","noticeObjName_add_edit","noticeObjName_addDiv_edit");
+		      	  $("#number").html("");
+		      })
+            //编辑
+            function showEdit(id){
+            	
+            	var object = tool.getById("../assInfo/getById",id);
+	            	$(".nextselects").remove();
+	 	            if(object.categoryIds!=null){            
+	 		            for(var i=0;i<object.categoryIds.length;i++){
+	 			    		$("#selectsId_edit").children(".layui-input-inline").eq(i).children("select").val(object.categoryIds[i].id);
+	 		            	tool.selectLinkTagByPid2("ass_id_edit","selectsId_edit",object.categoryIds[i].id);
+	 		            }
+	 		       }else{
+	 		    	   $("#selectsId_edit").children(".layui-input-inline").eq(i).children("select").val("")
+	 		       } 
+            	$("#gooId_edit").val(object.categoryId)
+            	$("#gooName_edit").val(object.categoryName) 
+            	for(var key in object){
+            		if(key=="addTime"){
+            			object[key]=object[key].substr(0,10);
+            		}
+            		$("#edit-Main-object").find("#"+key+"_edit").val(object[key])
+            	}
+            	$("#receiveFullName_edit").val(object.departmentName);
+            	$("#edit-Main-object").find(".newgg_use").html(object.departmentName);
+            	$("#edit-Main-object").find("#receiveUserId").val(object.departmentId);
+            	
+            	$("#noticeObjName_addDiv_edit").html(object.agentName);
+            	$("#noticeObjName_add_edit").val(object.agentName);
+            	$("#noticeObjId_add_edit").val(object.agentId);
+            	$("#selectsId_edit").find("select").each(function(index,value){
+					if(index>0){
+						$(this).removeAttr("lay-verify");
+					}
+				})
+            	var index = layer.open({
+					title : '编辑',
+					maxmin : false,
+					type : 1,
+					content : $('#edit-Main-object')
+				});
+				layer.full(index);
+			    pform.render();
+            	
+            }
+             //删除
+			function deletes(id){
+				layer.confirm('确定删除 ?', {
+					icon : 3,
+					title : '提示'
+				}, function(index) {
+					var retMsg = tool.deleteById("../assInfo/delete", id)
+					if (retMsg.code == 0) {
+			            loadData();
+						tool.success(retMsg.message);
+					} else {
+						tool.error(retMsg.message);
+					}
+				});
+			}
+             
+             
+             
+             
+			//树模糊搜索显示全部搜索对象
+			//用按钮查询节点  
+			var lastValue = "", nodeList = [], fontCss = {};  
+			function searchNodes1(){  
+				var mytree = $.fn.zTree.getZTreeObj("treeDemo_use");
+			    var keywords=$("#peopelSel1").val();  
+			    nodeList = mytree.getNodesByParamFuzzy("name", keywords, null);  
+			    if (nodeList.length>0) {  
+			        mytree.selectNode(nodeList[0]);  
+			    }else{
+				   	layer.msg("没有搜索结果！");  
+				   	$("#number1").html("")
+				    return ;  
+			    }  
+			    callNumber1();
+			}  
+			//键盘释放：当输入框的键盘按键被松开时，把查询到的数据结果显示在标签中  
+			function callNumber1(){  
+			   var zTree = $.fn.zTree.getZTreeObj("treeDemo_use");  
+			   //如果结果有值，则显示比例；如果结果为0，则显示"[0/0]"；如果结果为空，则清空标签框；  
+			   if(nodeList.length){  
+			       //让结果集里边的第一个获取焦点（主要为了设置背景色），再把焦点返回给搜索框  
+			       zTree.selectNode(nodeList[0],false);  
+			       //document.getElementById("peopelSel").focus();  
+			       clickCount=0; //防止重新输入的搜索信息的时候，没有清空上一次记录  
+			       //显示当前所在的是第一条  
+			       var number = Number(clickCount)+1;
+			       document.getElementById("number1").innerHTML="["+number+"/"+nodeList.length+"]";  
+			   }else if(nodeList.length == 0){  
+			       document.getElementById("number1").innerHTML="[0/0]";  
+			       zTree.cancelSelectedNode(); //取消焦点  
+			   }  
+			   //如果输入框中没有搜索内容，则清空标签框  
+			   if(document.getElementById("peopelSel1").value ==""){  
+			       document.getElementById("number1").innerHTML="";  
+			       zTree.cancelSelectedNode();  
+			   }  
+			}   
+			//点击向上按钮时，将焦点移向上一条数据  
+			function clickUp1(){  
+			   var zTree = $.fn.zTree.getZTreeObj("treeDemo_use");  
+			   //如果焦点已经移动到了最后一条数据上，就返回第一条重新开始，否则继续移动到下一条  
+			   if(nodeList.length==0){  
+			   	layer.msg("没有搜索结果！");  
+			       return ;  
+			   }else if(clickCount==0) {  
+			   	layer.msg("您已位于第一条记录上！");  
+			       return;  
+			       //让结果集里边的下一个节点获取焦点（主要为了设置背景色），再把焦点返回给搜索框  
+			       zTree.selectNode(nodeList[clickCount], false)  
+			   }else{  
+			       //让结果集里边的第一个获取焦点（主要为了设置背景色），再把焦点返回给搜索框  
+				   clickCount --;  
+			       zTree.selectNode(nodeList[clickCount], false);  
+			   }  
+			   var number=Number(clickCount)+1;
+			   //显示当前所在的是条数  
+			   document.getElementById("number1").innerHTML = "[" + number + "/" + nodeList.length + "]";  
+			}  
+			//点击向上按钮时，将焦点移向下一条数据  
+			function clickDown1(){  
+			   var zTree = $.fn.zTree.getZTreeObj("treeDemo_use");  
+			   //如果焦点已经移动到了最后一条数据上，则提示用户（或者返回第一条重新开始），否则继续移动到下一条  
+			   if(nodeList.length==0){  
+			   	layer.msg("没有搜索结果！");  
+			       return ;  
+			   }else if(nodeList.length==clickCount+1)  
+			   {  
+			   	layer.msg("您已位于最后一条记录上！")  
+			       return;  
+			   }else{  
+			       //让结果集里边的第一个获取焦点（主要为了设置背景色），再把焦点返回给搜索框  
+				   clickCount ++; 
+			       zTree.selectNode(nodeList[clickCount], false)  
+			   }  
+			   var number=Number(clickCount)+1;
+			   //显示当前所在的条数  
+			   document.getElementById("number1").innerHTML = "[" + number + "/" + nodeList.length + "]";  
+			}  
+			$("#peopelSel1").keydown(function(e) {  
+				  if (e.keyCode == 13) {  
+					  searchNodes1(); 
+				  }
+			})
+			
+			//重置树
+	    		function reset_tree(){
+	    			var mytree = $.fn.zTree.getZTreeObj("treeDemo");
+	    		    //打开弹窗前重置节点以及关闭展开状态，避免叠加
+	    			$('.reset').val("");
+	    			$('.reset1').html("");
+	    			searchNodes();
+	    			mytree.checkAllNodes(false)
+	    		    mytree.expandAll(false);
+	    		}
+				//重置树
+	    		function reset_tree1(){
+	    			var mytree = $.fn.zTree.getZTreeObj("treeDemo_use");
+	    		    //打开弹窗前重置节点以及关闭展开状态，避免叠加
+	    			$('.reset_use').val("");
+	    			$('.reset1_use').html("");
+	    			searchNodes1();
+	    			mytree.checkAllNodes(false)
+	    		    mytree.expandAll(false);
+	    		}
+	</script>
+</body>
+
+</html>

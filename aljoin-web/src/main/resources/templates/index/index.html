@@ -1,0 +1,814 @@
+<!DOCTYPE html >
+<html>
+<head>
+<meta charset="utf-8">
+<title>合强A9协同办公系统</title>
+<link rel="shortcut icon" href="web/images/favicon.ico">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css"
+	media="all" />
+<link rel="stylesheet" href="web/css/global.css" media="all">
+<link rel="stylesheet"
+	href="web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/plugins/font-aljoin/iconfont.css">
+<style>
+.banner_img {background: url(../../web/images/banner.png) no-repeat;background-size: 100% 100%;}
+.admin-login-box{background: url(../../web/images/log3.png) no-repeat;top:9px;left:20px; }
+/* 	.layui-nav li{
+		border-bottom:solid 1px #ccc;
+	} */
+.layui-nav-itemed {background: #1184bf;}
+.nav_style dl.layui-nav-child dd:hover {background: #33a1ff;}
+/* 	ul.layui-nav.layui-nav-tree.beg-navbar li:first-child{
+		background-color: #0d538e;
+    	color: #fff;
+	} */
+.banner_font {position: absolute;top: 18px;left: 60px;font-size: 18px;color: #fff;}
+/* 推送消息样式 */
+.msg_sty{width:100%;color: #666;cursor: pointer;overflow: hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1;}
+/* 加虚线特效 */
+ .layui-nav-tree .layui-nav-child dd.layui-this, .layui-nav-tree .layui-this, .layui-nav-tree .layui-this>a, .layui-nav-tree .layui-this>a:hover {
+    background-color: ${ALJOIN_CURRENT_MAIN_COLOR};
+    color: #fff!important;
+}   
+.nav_style dl.layui-nav-child a{
+	background-image:url("../../web/images/dashed.png");
+	background-repeat: no-repeat;
+    background-position: 13px;
+    background-size: 29px 38px;
+    border-left:solid 5px #1184bf;  
+}
+.nav_style dl.layui-nav-child a:hover {
+	background: ${ALJOIN_CURRENT_MAIN_COLOR};
+	background-image:url("../../web/images/dashed.png");
+	background-repeat: no-repeat;
+    background-position: 13px;
+    background-size: 29px 38px;
+    border-left:solid 5px ${ALJOIN_CURRENT_MAIN_COLOR};  
+} 
+.nav_style dl.layui-nav-child dd:hover {
+	background: ${ALJOIN_CURRENT_MAIN_COLOR};
+}  
+.nav_style dl.layui-nav-child .layui-this>dd {
+	background: ${ALJOIN_CURRENT_MAIN_COLOR};
+}  
+.nav_style dl.layui-nav-child .layui-this>a {
+	background: ${ALJOIN_CURRENT_MAIN_COLOR};
+	background-image:url("../../web/images/dashed_picked.png");
+	background-repeat: no-repeat;
+    background-position: 13px;
+    background-size: 29px 38px;
+    border-left:solid 5px #15fbff;   
+} 
+/* 控制菜单栏最后一个元素的虚线样式 */
+.nav_style .layui-nav-item dd:last-child a{
+	background-image:url("../../web/images/dashed_last.png");
+	background-repeat: no-repeat;
+    background-position: 13px;
+    background-size: 29px 38px;
+    border-left:solid 5px #1184bf; 
+} 
+.nav_style .layui-nav-item dd:last-child a:hover{
+	background: ${ALJOIN_CURRENT_MAIN_COLOR};
+	background-image:url("../../web/images/dashed_last.png");
+	background-repeat: no-repeat;
+    background-position: 13px;
+    background-size: 29px 38px;
+    border-left:solid 5px ${ALJOIN_CURRENT_MAIN_COLOR};  
+}
+.nav_style .layui-nav-item dd:last-child[class="layui-this"] a{
+	background: ${ALJOIN_CURRENT_MAIN_COLOR};
+	background-image:url("../../web/images/dashed_lastpicked.png");
+	background-repeat: no-repeat;
+    background-position: 13px;
+    background-size: 29px 38px;
+    border-left:solid 5px #15fbff; 
+}
+.fa-home{font-size:17px;}
+.layui-nav .layui-nav-item a:hover,.layui-nav .layui-this a {
+	color: #ffffff;
+}
+.layui-nav .layui-nav-item a {
+	display: block;
+	padding: 0px;
+	color: #333333;
+	transition: all .3s;
+	-webkit-transition: all .3s;
+	padding-left: 48px;
+}
+.layui-nav-tree .layui-nav-item a:hover {
+	background-color: ${ALJOIN_CURRENT_MAIN_COLOR} ;
+}
+.layui-nav {
+	position: relative;
+	/* padding: 0 20px; */
+	/* background-color: #207bc4; */
+	background-color: #ffffff;
+	color: #c2c2c2;
+	border-radius: 2px;
+	font-size: 0;
+	box-sizing: border-box!important
+}
+
+/* 头部tab */ 
+.layui-tab-title.head-tab{height:auto;}
+.admin-nav-card>.head-tab.layui-tab-title .layui-this:after{
+	top:0px;	
+}
+.layui-tab-brief[overflow]>.head-tab.layui-tab-title .layui-this:after{
+top:0px;
+}
+
+.layui-tab[overflow]>.head-tab.layui-tab-title{
+overflow:inherit;
+}
+
+.admin-nav-card>.head-tab.layui-tab-title .layui-this{
+border:none;
+}
+
+.admin-nav-card>.head-tab.layui-tab-title .layui-this:after{
+    border-bottom: 2px solid ${ALJOIN_CURRENT_MAIN_COLOR};
+}
+.layui-tab-bar {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 10;
+    width: 30px;
+    height: 35px;
+    line-height: 35px;
+    border-width: 0px;
+    border-radius: 2px;
+    background-color: #fff;
+    color: ${ALJOIN_CURRENT_MAIN_COLOR};
+}
+.t_icon_bg_color:hover
+{ 
+	color:#cccccc;
+}
+</style>
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<input type="hidden" id="ALJOIN_CURRENT_MAIN_COLOR" value="${ALJOIN_CURRENT_MAIN_COLOR}" />
+	<input type="hidden" id="ALJOIN_CURRENT_SUB_COLOR" value="${ALJOIN_CURRENT_SUB_COLOR}" />
+	<div class="layui-layout layui-layout-admin">
+		<div class="layui-header header header-demo" style="height: 48px;background-color: ${ALJOIN_CURRENT_MAIN_COLOR};">
+			<div class="layui-main">
+				<div class="admin-login-box" style="width: 250px;">
+					<div style="font-size: 18px;margin-left: 42px;color: #ffffff;padding-top: 4px;letter-spacing: 1px;cursor: pointer;" onclick="everyBodyGotoPageByURL('/tempMenu/indexPage')">合强A9协同办公系统</div>
+					<div class="admin-side-toggle" onclick="changeIconStatuc(this)">
+						<i class="icon aiconfont aicon-caozuo-shouqi t_icon_bg_color"  style="font-size: 27px;"></i>
+					</div>
+					<!-- <div class="admin-side-full">
+						<i class="fa fa-life-bouy" aria-hidden="true"></i>
+					</div> -->
+					
+					
+					<!-- <span class="banner_font">厦门智慧海洋综合信息服务平台</span> -->
+				</div>
+				<ul class="layui-nav admin-header-item admin-header-item2 t_menu_flag_" style="left: 310px;font-size: 30px;">
+				
+				</ul>
+				<ul class="layui-nav admin-header-item">
+					<li class="layui-nav-item" style="right: 140px;top:2px;">
+						<i class="icon aiconfont aicon-tongzhi3 t_icon_bg_color" style="cursor: pointer;color: #ffffff;font-size: 29px;" onmouseenter="onMouseIntOutIconColor(this,1)" onmouseleave="onMouseIntOutIconColor(this,2)"></i>
+						<dl class="layui-nav-child" style="top: 47px;border-width: 0px;background-color: #ffffff;border-radius: 4px;width: 240px;left:-99px;padding:0px;box-shadow:0 0px 30px #000;">
+							<div style="height: 48px;border-bottom-color: #cccccc;border-bottom-style: solid;border-bottom-width: 1px;">
+								<a class="msg_down_list_0"  href="javascript:void(0)" onclick="gotoTargetPage(this)" style="line-height: 46px;padding-left: 20px;" onmouseover="deleteMouseOverEvent(this)"><img alt="" src="../../web/icons/msg_01.png"><span style="margin-left: 8px;color: #666666;font-size: 16px;">最新消息提醒(<span style="color:#ff3030;font-size: 16px; " class="indexCount_top_0">0</span>)条</span><span style="text-align: right;"></span></a>
+							</div>
+							<div style="height: 42px;">
+									<a class="msg_down_list_0"  href="javascript:void(0)" onclick="everyBodyGotoPageByURL('/per/autMsgOnline/autMsgOnlinePage')" style="line-height: 41px;font-size: 14px;border-bottom-color: #cccccc;border-bottom-style: solid;border-bottom-width: 1px;margin-left: 20px;padding: 0px;" onmouseover="deleteMouseOverEvent(this)"><img alt="" src="../../web/icons/msg_02.png"><span style="margin-left: 8px;color: #333333;">在线消息</span></a>
+									<div style="position: relative;top: -39px;left: 110px;z-index: 1000;width: 130px;text-align: right;"><span style="margin-right: 20px;font-size: 16px;color: #ff3030;" class="indexCount_top_"  id="onlineMsg">0</span></div>
+							</div>
+							<div style="height: 42px;">
+								<a class="msg_down_list_0"  href="javascript:void(0)" onclick="everyBodyGotoPageByURL('ioa/ioaWaitWork/ioaWaitWorkPage')" style="line-height: 41px;font-size: 14px;border-bottom-color: #cccccc;border-bottom-style: solid;border-bottom-width: 1px;margin-left: 20px;padding: 0px;" onmouseover="deleteMouseOverEvent(this)"><img alt="" src="../../web/icons/msg_03.png"><span style="margin-left: 8px;color: #333333;">我的代办</span></a>
+								<div style="position: relative;top: -39px;left: 110px;z-index: 1000;width: 130px;text-align: right;"><span style="margin-right: 20px;font-size: 16px;color: #999999;" class="indexCount_top_" id="todoList" >0</span></div>
+							</div>
+							<div style="height: 42px;">
+								<a class="msg_down_list_0"  href="javascript:void(0)" onclick="everyBodyGotoPageByURL('ioa/ioaReceiveWork/ioaReceiveWorkPage')" style="line-height: 41px;font-size: 14px;border-bottom-color: #cccccc;border-bottom-style: solid;border-bottom-width: 1px;margin-left: 20px;padding: 0px;" onmouseover="deleteMouseOverEvent(this)"><img alt="" src="../../web/icons/msg_04.png"><span style="margin-left: 8px;color: #333333;">我的待阅</span></a>
+								<div style="position: relative;top: -39px;left: 110px;z-index: 1000;width: 130px;text-align: right;"><span style="margin-right: 20px;font-size: 16px;color: #ff3030;" class="indexCount_top_" id="toreadlist" >0</span></div>
+							</div>
+							<div style="height: 42px;">
+								<a class="msg_down_list_0"  href="javascript:void(0)" onclick="everyBodyGotoPageByURL('/pub/pubPublicInfo/pubNewPage')" style="line-height: 41px;font-size: 14px;border-bottom-color: #cccccc;border-bottom-style: solid;border-bottom-width: 0px;margin-left: 20px;padding: 0px;" onmouseover="deleteMouseOverEvent(this)"><img alt="" src="../../web/icons/msg_05.png" ><span style="margin-left: 8px;color: #333333;">通知公告</span></a>
+								<div style="position: relative;top: -39px;left: 110px;z-index: 1000;width: 130px;text-align: right;"><span style="margin-right: 20px;font-size: 16px;color: #ff3030;" class="indexCount_top_"  id="pubnotice">0</span></div>
+							</div>
+						</dl>
+					</li>
+					<div style="width: 24px;position: absolute;right: 20px;top: 12px;text-align: right;color: #ffffff;">
+						<!-- <i class="fa fa-power-off fa-lg" aria-hidden="true"  onclick="logout()" style="cursor: pointer;"></i> -->
+						<!-- <img alt="" src="../../web/icons/login_out.png" onclick="logout()" style="cursor: pointer;"> -->
+						<i class="icon aiconfont aicon-iconfonticon2 t_icon_bg_color" onclick="logout()" style="cursor: pointer;font-size: 24px;"></i>
+					</div>
+					<!-- <div style="width: 15px;position: absolute;right: 55px;top: 15px;text-align: right;color: #ffffff;">
+							<i class="fa fa-delicious fa-lg" aria-hidden="true"  onclick="logout()" style="cursor: pointer;"></i>
+							<img alt="" src="../../web/icons/color.png" onclick="logout()" style="cursor: pointer;">
+					</div> -->
+					
+					<li class="layui-nav-item" style="width: 27px;position: absolute;right: 61px;text-align: right;color: #ffffff;">
+						<i class="icon aiconfont aicon-shangyi t_icon_bg_color" style="cursor: pointer;font-size: 27px;"></i>
+						<dl class="layui-nav-child" style="top: 48px;border-width: 0px;background-color: #ffffff;border-radius: 4px;width: 240px;left:-215px;padding:0px;box-shadow:0 0px 30px #000;">
+							<div style="height: 240px;">
+								<div style="height: 40px;border-bottom-color: #cccccc;border-bottom-style: solid;border-bottom-width: 1px;line-height: 40px;font-size: 16px;color: #333333;padding-left: 16px;text-align: left;">风格选择</div>
+								<div>
+										<div style="position: relative;color: #000000;" id="div_theme_color_flag_">
+											<table style="width: 94px;border-color: #c9d3d6;font-size: 2px;position: absolute;top: 16px;left: 16px;">
+												<tr style="line-height: 10px;height: 10px;"><td colspan="2" style="background-color: #039adf;">&nbsp;</td></tr>
+												<tr style="line-height: 20px;height: 20px;"><td style="background-color: #ffffff;border-right-color: #cccccc;border-right-style: solid;border-right-width: 1px;border-bottom-color: #cccccc;border-bottom-style: solid;border-bottom-width: 1px;width: 44px;text-align: center;color: #039adf;cursor: pointer;" onclick="selectThisTheme('#039adf',this)" id="_039adf" class="theme_color_flag_"><i class="fa fa-check" aria-hidden="true"></i></td><td  style="background-color: #e6edf4;">&nbsp;</td></tr>
+											</table>
+											<table style="width: 94px;border-color: #c9d3d6;font-size: 2px;position: absolute;top: 16px;left: 130px;">
+												<tr style="line-height: 10px;height: 10px;"><td colspan="2" style="background-color: #df181b;">&nbsp;</td></tr>
+												<tr style="line-height: 20px;height: 20px;"><td style="background-color: #ffffff;border-right-color: #cccccc;border-right-style: solid;border-right-width: 1px;border-bottom-color: #cccccc;border-bottom-style: solid;border-bottom-width: 1px;width: 44px;text-align: center;color: #df181b;cursor: pointer;" onclick="selectThisTheme('#df181b',this)" id="_df181b" class="theme_color_flag_"><i class="fa fa-check" aria-hidden="true"></i></td><td  style="background-color: #e6edf4;">&nbsp;</td></tr>
+											</table>
+											<table style="width: 94px;border-color: #c9d3d6;font-size: 2px;position: absolute;top: 62px;left: 16px;">
+												<tr style="line-height: 10px;height: 10px;"><td colspan="2" style="background-color: #5f51a0;">&nbsp;</td></tr>
+												<tr style="line-height: 20px;height: 20px;"><td style="background-color: #ffffff;border-right-color: #cccccc;border-right-style: solid;border-right-width: 1px;border-bottom-color: #cccccc;border-bottom-style: solid;border-bottom-width: 1px;width: 44px;text-align: center;color: #5f51a0;cursor: pointer;" onclick="selectThisTheme('#5f51a0',this)" id="_5f51a0" class="theme_color_flag_"><i class="fa fa-check" aria-hidden="true" ></i></td><td  style="background-color: #e6edf4;">&nbsp;</td></tr>
+											</table>
+											<table style="width: 94px;border-color: #c9d3d6;font-size: 2px;position: absolute;top: 62px;left: 130px;">
+												<tr style="line-height: 10px;height: 10px;"><td colspan="2" style="background-color: #b3825c;">&nbsp;</td></tr>
+												<tr style="line-height: 20px;height: 20px;"><td style="background-color: #ffffff;border-right-color: #cccccc;border-right-style: solid;border-right-width: 1px;border-bottom-color: #cccccc;border-bottom-style: solid;border-bottom-width: 1px;width: 44px;text-align: center;color: #b3825c;cursor: pointer;" onclick="selectThisTheme('#b3825c',this)" id="_b3825c" class="theme_color_flag_"><i class="fa fa-check" aria-hidden="true"></i></td><td  style="background-color: #e6edf4;">&nbsp;</td></tr>
+											</table>
+											<table style="width: 94px;border-color: #c9d3d6;font-size: 2px;position: absolute;top: 108px;left: 16px;">
+												<tr style="line-height: 10px;height: 10px;"><td colspan="2" style="background-color: #00a362;">&nbsp;</td></tr>
+												<tr style="line-height: 20px;height: 20px;"><td style="background-color: #ffffff;border-right-color: #cccccc;border-right-style: solid;border-right-width: 1px;border-bottom-color: #cccccc;border-bottom-style: solid;border-bottom-width: 1px;width: 44px;text-align: center;color: #00a362;cursor: pointer;" onclick="selectThisTheme('#00a362',this)" id="_00a362" class="theme_color_flag_"><i class="fa fa-check" aria-hidden="true"></i></td><td  style="background-color: #e6edf4;">&nbsp;</td></tr>
+											</table>
+											<table style="width: 94px;border-color: #c9d3d6;font-size: 2px;position: absolute;top: 108px;left: 130px;">
+												<tr style="line-height: 10px;height: 10px;"><td colspan="2" style="background-color: #2fbbac;">&nbsp;</td></tr>
+												<tr style="line-height: 20px;height: 20px;"><td style="background-color: #ffffff;border-right-color: #cccccc;border-right-style: solid;border-right-width: 1px;border-bottom-color: #cccccc;border-bottom-style: solid;border-bottom-width: 1px;width: 44px;text-align: center;color: #2fbbac;cursor: pointer;" onclick="selectThisTheme('#2fbbac',this)" id="_2fbbac" class="theme_color_flag_"><i class="fa fa-check" aria-hidden="true"></i></td><td  style="background-color: #e6edf4;">&nbsp;</td></tr>
+											</table>
+											<table style="width: 94px;border-color: #c9d3d6;font-size: 2px;position: absolute;top: 154px;left: 16px;">
+												<tr style="line-height: 10px;height: 10px;"><td colspan="2" style="background-color: #353849;">&nbsp;</td></tr>
+												<tr style="line-height: 20px;height: 20px;"><td style="background-color: #ffffff;border-right-color: #cccccc;border-right-style: solid;border-right-width: 1px;border-bottom-color: #cccccc;border-bottom-style: solid;border-bottom-width: 1px;width: 44px;text-align: center;color: #353849;cursor: pointer;" onclick="selectThisTheme('#353849',this)" id="_353849" class="theme_color_flag_"><i class="fa fa-check" aria-hidden="true"></i></td><td  style="background-color: #e6edf4;">&nbsp;</td></tr>
+											</table>
+											<table style="width: 94px;border-color: #c9d3d6;font-size: 2px;position: absolute;top: 154px;left: 130px;">
+												<tr style="line-height: 10px;height: 10px;"><td colspan="2" style="background-color: #e75394;">&nbsp;</td></tr>
+												<tr style="line-height: 20px;height: 20px;"><td style="background-color: #ffffff;border-right-color: #cccccc;border-right-style: solid;border-right-width: 1px;border-bottom-color: #cccccc;border-bottom-style: solid;border-bottom-width: 1px;width: 44px;text-align: center;color: #e75394;cursor: pointer;" onclick="selectThisTheme('#e75394',this)" id="_e75394" class="theme_color_flag_"><i class="fa fa-check" aria-hidden="true"></i></td><td  style="background-color: #e6edf4;">&nbsp;</td></tr>
+											</table>
+										</div>
+								</div>
+							</div>
+						</dl>
+					</li>
+					
+					
+					<div style="width: 15px;position: absolute;right: 112px;top: 12px;text-align: right;color: #ffffff;">
+							<!-- <i class="fa fa-question-circle-o fa-lg" aria-hidden="true"  onclick="logout()" style="cursor: pointer;"></i> -->
+							<i class="icon aiconfont aicon-wenhao t_icon_bg_color" style="cursor: pointer;font-size: 25px;"></i>
+					</div>
+					<!-- <div style="width: 15px;position: absolute;right: 125px;top: 15px;text-align: right;color: #ffffff;">
+							<i class="fa fa-bell-o  fa-lg" aria-hidden="true"  onclick="logout()" style="cursor: pointer;"></i>
+							<img alt="" src="../../web/icons/message_call.png" onclick="logout()" style="cursor: pointer;">
+					</div> -->
+					<div id="total_msg_count_div" style="position: absolute;right: 105px;top: 7px;text-align: center;color: #ffffff;border-color: #FFFFFF;border-style: solid;border-width: 1px;border-radius:100%;font-size: 12px;background-color: red;padding-left: 2px;padding-right: 2px;min-width: 10px;display: none;">
+					</div>
+					<div style="width: 15px;position: absolute;right: 224px;top: 11px;text-align: right;color: #ffffff;">
+					<button class="btn_sign" style="background: none;color:#ffffff;border:solid 1px #ffffff; width: 56px;height: 28px;text-align: center; line-height: 28px;
+				  border-radius:6px;font-size:14px;cursor:pointer;" onclick="indexStatus()">签到</button>
+					</div>
+					<div id="date_div_"  style="position: absolute;right: 257px;top: 8px;width: 106px;text-align: right;font-size:14px;color: #ffffff;"></div>
+					<div id="time_div_"  style="position: absolute;right: 302px;top: 26px;font-size:14px;text-align: left;width: 60px;color: #ffffff;"></div>
+					<div id="week_div_"  style="position: absolute;right: 257px;top: 24px;width: 43px;text-align: right;font-size:14px;color: #ffffff;"></div>
+				</ul>
+				
+				<!-- <div style="width: 15px;position: absolute;right: 20px;top: 15px;text-align: right;color: #ffffff;">
+						<i class="fa fa-power-off fa-lg" aria-hidden="true"  onclick="logout()" style="cursor: pointer;"></i>
+						<img alt="" src="../../web/icons/login_out.png" onclick="logout()" style="cursor: pointer;">
+				</div>
+				<div style="width: 15px;position: absolute;right: 55px;top: 15px;text-align: right;color: #ffffff;">
+						<i class="fa fa-delicious fa-lg" aria-hidden="true"  onclick="logout()" style="cursor: pointer;"></i>
+						<img alt="" src="../../web/icons/color.png" onclick="logout()" style="cursor: pointer;">
+				</div>
+				<div style="width: 15px;position: absolute;right: 90px;top: 15px;text-align: right;color: #ffffff;">
+						<i class="fa fa-question-circle-o fa-lg" aria-hidden="true"  onclick="logout()" style="cursor: pointer;"></i>
+						<img alt="" src="../../web/icons/help.png" onclick="logout()" style="cursor: pointer;">
+				</div>
+				<div style="width: 15px;position: absolute;right: 125px;top: 15px;text-align: right;color: #ffffff;">
+						<i class="fa fa-bell-o  fa-lg" aria-hidden="true"  onclick="logout()" style="cursor: pointer;"></i>
+						<img alt="" src="../../web/icons/message_call.png" onclick="logout()" style="cursor: pointer;">
+				</div>
+				<div id="total_msg_count_div" style="position: absolute;right: 105px;top: 7px;text-align: center;color: #ffffff;border-color: #FFFFFF;border-style: solid;border-width: 1px;border-radius:50px;font-size: 12px;background-color: red;padding-left: 2px;padding-right: 2px;min-width: 10px;display: none;">
+				</div>
+				<div style="width: 15px;position: absolute;right: 197px;top: 10px;text-align: right;color: #ffffff;">
+				<button style="font-size:16px;background: none;color:#ffffff;border:solid 1px #ffffff; width: 56px;height: 30px;text-align: center; line-height: 30px;
+			  border-radius:6px;font-size:14px;cursor:pointer;" onclick="indexStatus()">签到</button>
+				</div> -->
+			</div>
+		</div>
+		<div class="layui-side ayui-side_0" style="top: 48px;z-index: 999;height: 58px;border-bottom-color: ${ALJOIN_CURRENT_SUB_COLOR};border-bottom-width: 1px;border-bottom-style: dashed;">
+			<div style="padding-left: 10px;padding-top: 10px;float: left;color: ${ALJOIN_CURRENT_SUB_COLOR};">
+				<#if IMGURL == "">
+					<i class="fa fa-user-circle-o" aria-hidden="true" style="font-size: 37px;cursor: pointer;" onclick="everyBodyGotoPageByURL('/per/autUserPub/autUserPubPage')"></i>
+				<#else>
+					<img alt="" src="${IMGURL}"  style="border-radius:100%;width: 38px;height: 38px;cursor: pointer;" onclick="everyBodyGotoPageByURL('/per/autUserPub/autUserPubPage')">
+				</#if>
+			</div><!-- border-radius -->
+			<div style="padding-left: 58px;padding-top: 13px;font-size: 12px;">
+				<div style="color: #333333;cursor: pointer;" title="${CURRENT_NICK_NAME}">
+				${CURRENT_NICK_NAME}
+				</div>
+				<div style="color: #afb7ba;cursor: pointer;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;font-family: 微软雅黑;"  title="${CURRENT_DEPT_NAMES}">
+				${CURRENT_DEPT_NAMES}
+				</div>
+			</div>
+		</div>
+		<div class="layui-side ayui-side_0" style="top: 106px;z-index: 999;">
+			<div style="padding-left: 10px;padding-top: 10px;float: left;line-height: 25px;padding-left: 44px;color: #848f92;" id="left_top_menu_name_"></div>
+		</div>
+		
+		<div class="layui-side nav_style" id="admin-side" style="top: 148px;">
+			<div class="layui-side-scroll" id="admin-navbar-side"
+				lay-filter="side"></div>
+		</div>
+		<div class="layui-body" style="bottom: 0px;top: 48px;overflow-y:hidden;" id="admin-body">
+
+			<div class="layui-tab admin-nav-card layui-tab-brief"
+				lay-filter="admin-tab" style="">
+				<ul class="layui-tab-title head-tab" style="">
+					<!-- <li class="layui-this"><i class="fa fa-desktop"
+						aria-hidden="true"></i> <cite>我的桌面</cite></li> -->
+				</ul>
+				<div class="layui-tab-content"
+					style="min-height: 500px; padding: 0 0 0 0;border-left-color: #c9d3d6;border-left-width: 1px;border-left-style: solid;">
+					<!-- <div class="layui-tab-item layui-show"  id="iframe_div_0">
+						<iframe src="" id=""></iframe>
+					</div> -->
+				</div>
+			</div>
+
+		</div>
+		<!-- 	<div class="layui-footer footer footer-demo" id="admin-footer">
+			<div class="layui-main">
+				<p>2017-2020 &copy; xmsoa 版权所有 闽ICP备12024298号</p>
+			</div>
+		</div>  -->
+		<div class="site-tree-mobile layui-hide">
+			<i class="layui-icon">&#xe602;</i>
+		</div>
+		<div class="site-mobile-shade"></div>
+		<form action="/logout.do" method="post" class="logout-form">
+			<input type="hidden" name="${_csrf.parameterName}"
+				id="${_csrf.parameterName}" value="${_csrf.token}" />
+		</form>
+	</div>
+	<!-- 修改密码窗口 -->
+	<div style="padding: 10px; display: none;" id="win-change-pwd">
+		<form class="layui-form layui-form-pane" id="change-pwd-form">
+			<div class="layui-form-item">
+				<input type="hidden" name="${_csrf.parameterName}"
+					value="${_csrf.token}" /> <label class="layui-form-label">原密码</label>
+				<div class="layui-input-block">
+					<input type="password" name="oldPwd" id="oldPwd"
+						lay-verify="required" autocomplete="off" placeholder="原密码"
+						class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">新密码</label>
+				<div class="layui-input-block">
+					<input type="password" name="newPwd" id="newPwd"
+						lay-verify="required" autocomplete="off" placeholder="新密码"
+						class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">新密码确认</label>
+				<div class="layui-input-block">
+					<input type="password" name="newPwd2" id="newPwd2"
+						lay-verify="newPwd2" autocomplete="off" placeholder="新密码确认"
+						class="layui-input">
+				</div>
+			</div>
+			<div class="layui-input-block"
+				style="text-align: right; margin-top: 15px;">
+				<button class="layui-btn layui-btn-small" lay-submit=""
+					lay-filter="form-change-submit">确定修改</button>
+				<button type="reset"
+					class="layui-btn layui-btn-small layui-btn-primary">重置</button>
+			</div>
+		</form>
+	</div>
+	<div style="display: none" id="msgContent"></div>
+	<!-- 隐藏的顶部菜单按钮 -->
+	<div class="t_menu_flag_" style="display: none;position: absolute;left: 310px;top: 48px;z-index: 1000;background-color: ${ALJOIN_CURRENT_MAIN_COLOR};color: #ffffff;opacity:0.9" id="show_more_menu_div"></div>
+</body>
+<script type="text/javascript" src="web/plugins/layui/layui.js"></script>
+<script type="text/javascript" src="web/js/jquery.js"></script>
+<script type="text/javascript" src="web/js/tool.js"></script>
+<script type="text/javascript" src="web/js/index.js"></script>
+<script type="text/javascript" src="ws/sockjs.min.js"></script>
+<script type="text/javascript" src="ws/stomp.min.js"></script>
+<script type="text/javascript" src="ws/websocket.js"></script>
+<script>
+    var paretnIndex="false"//收阅文件 从在线消息进入 最后确定 标识
+    var width =document.body.clientWidth; 
+    var height = window.screen.availHeight; 
+	var isOpenMsg = "false"; // 在线窗口 是否打开
+	var isMail="false";  //邮件详情返回首页
+	var layIndex = 0;
+	var prompObjVal="";  //在线消息个数 
+	var maxMsgLength = 4; //在线通知 的最大长度 4=3,5=4 递增递减-1
+	//$("#admin-navbar-side>li:first").attr("class", "layui-this")
+	var array = [];
+	layui.use(['form'], function() {
+		//var $ = layui.jquery, layer = layui.layer;
+		var form = layui.form();
+		//表单
+		form.verify({
+			newPwd2 : function(value) {
+				if (value != $("#newPwd").val()) {
+					return "两次输入的密码不一致";
+				}
+			}
+		});
+		//监听提交
+		form.on('submit(form-change-submit)', function(data) {
+			tool.post("index/doChangePwd", $("#change-pwd-form").serialize(),
+					postCallBack, false);
+			return false;
+		});
+		initThemeDivStyle();
+		msgCheck();
+
+	});
+	
+	function initThemeDivStyle(){
+		var m_c = $("#ALJOIN_CURRENT_MAIN_COLOR").val();
+		//rgba(3,154,223,1)
+		var m_c_0 = m_c.substring(m_c.indexOf("(")+1,m_c.indexOf(")"));
+		var m_c_0_arr = m_c_0.split(",");
+		var x = parseInt(m_c_0_arr[0]).toString(16)+"";
+		var y = parseInt(m_c_0_arr[1]).toString(16)+"";
+		var z = parseInt(m_c_0_arr[2]).toString(16)+"";
+		if(x.length == 1){
+			x = "0"+x;
+		}
+		if(y.length == 1){
+			y = "0"+y;
+		}
+		if(z.length == 1){
+			z = "0"+z;
+		}
+		m_c_0  = x+y+z;
+		$("#div_theme_color_flag_").find(".theme_color_flag_").css("color","#ffffff");
+		$("#div_theme_color_flag_").find("#_"+m_c_0).css("color",m_c);
+	}
+	
+	function msgCheck(){
+		tool.post("/aut/autDataStatistics/checkMsg",{_csrf:$("#_csrf").val()},function(data){
+			if (data.code == 0) {
+				var i = Number(data.object);
+				if(i>0){
+					packageMsg("当前共<span style='color:red;' class='onNum'>"+i+"</span>条未读消息",0);
+				}
+			} else {
+				tool.error(data.message);
+			}
+		}, true);
+	}
+	function pushArray() {
+		var arr = new Array(5);
+	}
+
+	function postCallBack(retMsg) {
+		if (retMsg.code == 0) {
+			tool.success(retMsg.message);
+		} else {
+			tool.error(retMsg.message);
+		}
+	}
+	function logout() {
+		layer.confirm('确定注销 ?', {
+			icon : 3,
+			title : '提示'
+		}, function(index) {
+			layer.msg("注销成功！", {
+                icon : 1,
+                time : 400
+            }, function(index) {
+            	$(".logout-form").submit();
+            });
+		});
+	}
+	function openChangePwd() {
+		layer.open({
+			title : '修改密码',
+			maxmin : true,
+			type : 1,
+			content : $('#win-change-pwd'),
+			area : [ '400px', '260px' ]
+		});
+	}
+	function userInfoPage() {
+		/* parent.tab.tabAdd({
+			href : "index/userInfoPage",
+			icon : "fa-user",
+			title : "个人信息"
+		}); */
+		$("iframe").remove();//删除初始化的iframe
+		$(".layui-this").removeClass("layui-this");
+		$(".layui-nav-tree", window.parent.document).find("li").removeClass("layui-nav-itemed");
+		tool.linkJump('/per/autUserPub/autUserPubPage','','fa-bell-o','在线通知');
+		
+	}
+	//topicCallback-广播回调，point2pointCallback--点对点回调
+	connect(topicCallback, point2pointCallback);
+	function topicCallback(d) {
+	}
+	function point2pointCallback(d) {
+		//在线通知弹窗推送
+		if(d != null && d.code != null){ 
+            if (d.code.indexOf("100") > -1) {
+            	var titleTx = d.message;
+            	//截取多余的title字符
+                var titleTx = titleTx.substring((titleTx.indexOf("“")+1),(titleTx.length-1));
+                var msgContent = $("#msgContent");
+                packageMsg('<a class="msg_sty" onclick="gotopage(\'' + d.object.goUrl + '&titleTx='+titleTx+'\',\''+d.object.id+'\')" title="'+ d.message + '">'+ d.message + '</a><span style="color: #666;float: right;font-size:12px;margin-top:1px;">'+d.object.createTime+'</span>',0);
+            }
+            if (d.code.indexOf("200") > -1) {
+                timeing(d);
+            }
+        }
+        //iframeWin.sureChoose();  
+		//推送消息数字叠加
+		if($("#indexPageIframe").length>0){
+			//document.getElementById("indexPageIframe").contentWindow.workTotal(); //调用子集推送数字 
+			workTotal();//改成调用本页面的
+			var prompObj = $("#mywidth").children(".onNum");
+			//获取子集iframe
+			/* var iframePage = document.getElementById('indexPageIframe').contentWindow;
+			var onlineObj =iframePage.document.getElementById('onlineMsg');
+			prompObjVal = onlineObj.text;
+			prompObjVal = parseInt(prompObjVal)+1;
+			prompObj.text(prompObjVal); */
+			//根据code值来刷新对应模块
+			var contentCode = d.code;
+			if(contentCode != null){
+				contentCode = contentCode.substring(0,contentCode.lastIndexOf("_"));
+				if(contentCode == "online_msg_mail"){
+					document.getElementById("indexPageIframe").contentWindow.loadData(); //调用子集邮件方法
+				}else if(contentCode == "online_msg_togetherwork"){
+					document.getElementById("indexPageIframe").contentWindow.getWaitWork(); //调用子集待办方法 
+				}else if(contentCode=="online_msg_meeting"){
+					$("#indexPageIframe").contents().find(".layui-laydate-content").find(".layui-this").trigger("click");  //调用子集我的会议
+				}
+			}
+		}else{
+			var prompObj = $("#mywidth").children(".onNum");
+			tool.post("/aut/autDataStatistics/indexCount",{_csrf:$("#_csrf").val()},function(data){
+			   var data=data.object;
+			    for(var i=0;i<data.length;i++){
+			    	if(data[i].objectKey=="onlineMsg"){
+			    		prompObjVal = data[i].objectCount;
+						prompObjVal = parseInt(prompObjVal);
+						prompObj.text(prompObjVal);
+			    	}
+			    }
+			},false);
+		}
+		
+	}
+	// 负责封装消息，然后推送
+	function packageMsg(newMsg,isInit){
+		//alert($("#mywidth").length);
+		//消息内容容器
+		var msgContent="";
+		if(isInit == 1){
+			msgContent = newMsg;
+		}else{
+			$("#mywidth").empty();
+			array.push(newMsg);
+			if(array.length>maxMsgLength){
+				array.splice(1,1);
+			}
+			array.forEach(function(value, index, array){
+				if(value!="" ){
+					if(msgContent==""){
+						msgContent=value;
+					}else{
+						msgContent=msgContent+"<br>"+value;
+					}
+					
+				}
+				
+			});			
+		}
+		pushMsg(msgContent);
+	}
+	
+	//推送消息  只负责消息展示，不负责消息内容封装
+	function pushMsg(content) {
+	   var newH = height-300+'px';
+	   //width-find(".layui-layer-dialog").width()+
+		if (isOpenMsg == "true") {
+			$("#mywidth").html(content);
+		}else{
+			layIndex = layer.open({
+				title : "消息通知",
+				id:"mywidth",
+				btn : [ "查看更多" ],
+				skin:'msg_style',
+				zIndex : layer.zIndex,
+				yes : function(index, layero) {
+					$("iframe").remove();
+					closeMsgDialog(index);
+					layer.setTop(layero);
+					$(".layui-this").removeClass("layui-this");
+					$(".layui-nav-tree", window.parent.document).find("li").removeClass("layui-nav-itemed");
+					//tool.linkJump('/per/autMsgOnline/autMsgOnlinePage','','fa-bell-o','在线通知');
+					everyBodyGotoPageByURL("/per/autMsgOnline/autMsgOnlinePage")
+				},
+				shade : false,
+				
+				/* offset : ['75%','80.5%'],  */
+				//这里content是一个普通的String
+				content : content,
+				offset : 'rb', 
+				cancel : function(index) {
+					//右上角关闭回调
+					//closeMsgDialog();
+					closeMsgDialog(index);
+					//return false 开启该代码可禁止点击该按钮关闭
+				}
+			});
+			isOpenMsg = "true";
+		}
+		
+
+	}
+	//关闭消息对话框
+	function closeMsgDialog(index) {
+		isOpenMsg = "false";
+		array.length = 0;
+		if(index != ''){
+			layer.close(index);
+		}else{
+			layer.closeAll();
+		}
+	}
+	//点击在线消息跳转到对应页面
+	function gotopage(url,id) { 
+		var param = new Object()
+		param.msgId = id;
+		param.callUrl=url;
+		param._csrf = $("#_csrf").val();
+		tool.post("aut/autDataStatistics/minus", param, function(data){
+			if (data.code == 0) {	
+				parent.tab.deleteTab(parent.tab.getCurrentTabId());
+				//跳转到发件箱
+				parent.tab.tabAdd({
+					href : url,
+					icon : "fa-user",
+					title : "消息通知"
+				});
+				$("a[data-url='/tempMenu/indexPage']", window.parent.document).parent().removeClass("layui-this");
+				$("a[data-url='" + url + "']", window.parent.document).parent().addClass("layui-this");
+				$("a[data-url='" + url + "']", window.parent.document).parent().parent().parent().addClass("layui-nav-itemed"); 
+			} else {
+				tool.success(data.message);	
+			}	
+		}, false);
+		closeMsgDialog(layIndex);
+		//var newMsg = "当前共<span style='color:red;' class='onNum'>"+(prompObjVal-1)+"</span>条未读消息";
+		//packageMsg(newMsg,1);
+		if($("#indexPageIframe").length>0){
+			document.getElementById("indexPageIframe").contentWindow.workTotal();  //刷新首页数字
+		}
+	}
+
+	
+	
+	//打卡提醒框	
+	function timeing(data) {
+	    var obj = data.object;
+		 var message ='<img class="" style="width:30px;margin-right:6px"  src="../../web/images/warning.png" >'+'<span>'+obj.msg+'!</span>';
+		layer.open({
+			content :'<div style="text-align:center;">'+message+'</div>',
+			btn : [obj.signType],
+			title:'签到提醒',
+			closeBtn : 0,
+			shadeClose : false,
+			yes : function(index) { 
+				$.ajax({
+					url : "/att/attSignInOut/confirmSign",
+					async : false,
+					type : "post",
+					dataType : "json",
+					data : {_csrf:$("#_csrf").val()},
+					success : function(data) {
+						if (data.code == 0) {
+							layer.alert(data.message, {
+								title : "签到成功",
+								closeBtn:0,
+								area:['430px'],
+								icon : 1,
+							}, function(index) {
+								layer.close(index);
+							});
+						} else {
+							if (data.message != null) {
+								layer.alert(data.message, {
+									title : "签到失败",
+									closeBtn:0,
+									icon : 2
+								}, function(index) {
+									layer.close(index);
+								});
+							}
+
+						}
+					},
+					error:function(error){
+						//如果失败退回登录页
+						location.href="/";
+					}
+				});
+			}
+		});
+	}
+	
+	if (!Array.prototype.forEach) {  
+	    Array.prototype.forEach = function(callback, thisArg) {  
+	        var T, k;  
+	        if (this == null) {  
+	            throw new TypeError(" this is null or not defined");  
+	        }  
+	        var O = Object(this);  
+	        var len = O.length >>> 0; // Hack to convert O.length to a UInt32  
+	        if ({}.toString.call(callback) != "[object Function]") {  
+	            throw new TypeError(callback + " is not a function");  
+	        }  
+	        if (thisArg) {  
+	            T = thisArg;  
+	        }  
+	        k = 0;  
+	        while (k < len) {  
+	            var kValue;  
+	            if (k in O) {  
+	                kValue = O[k];  
+	                callback.call(T, kValue, k, O);  
+	            }  
+	            k++;  
+	        }  
+	    };  
+	}  
+	
+	//避免详情页返回找不到这个函数
+	function loadData(){
+		
+	}
+	function changeIconStatuc(thisObj){
+		if($(thisObj).find("i").hasClass("icon aiconfont aicon-caozuo-shouqi")){
+			$(thisObj).find("i").removeClass("icon aiconfont aicon-caozuo-shouqi");
+			$(thisObj).find("i").addClass("icon aiconfont aicon-caozuo-zhankai");
+		}else{
+			$(thisObj).find("i").removeClass("icon aiconfont aicon-caozuo-zhankai");
+			$(thisObj).find("i").addClass("icon aiconfont aicon-caozuo-shouqi");
+		}
+	}
+
+	function selectThisTheme(colorCode,thisObj){
+		var data = "colorCode="+colorCode+"&_csrf="+$("#_csrf").val();
+		layer.confirm('确定更换皮肤(更换后将刷新页面) ?', {
+			icon : 3,
+			title : '提示'
+		}, function(index) {
+			tool.post("index/changeCssStyle",data,function(co){
+				if (co.code == 0) {
+					//tool.success(co.message);
+					/* $(".theme_color_flag_").css("color","#ffffff");
+					$(thisObj).css("color",colorCode); */
+					location.href="/";
+				} else {
+					tool.error(co.message);
+				}
+			}, false);
+		});
+	}
+</script>
+<style>
+.msg_style .layui-layer-title {
+    color: #666666;
+}
+.msg_style .layui-layer-btn .layui-layer-btn0 {
+    border-color: #fff;
+    background-color: #fff;
+    color: #fff;
+}
+.msg_style .layui-layer-btn {
+    text-align: right;
+    padding: 0 0px 2px;
+    pointer-events: auto;
+    user-select: none;
+    -webkit-user-select: none;
+    border-top: solid 1px #ccc;
+}
+</style>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>固定资产信息管理</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" />
+<link rel="stylesheet" href="../../web/css/zhengls.css" /> 
+
+</head>
+<style>
+
+</style>
+<body>
+	
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main" >
+	<!-- <div style="font-size:16px;font-weight:bold;margin-bottom:5px;color:#339bf1;""><i class="fa fa-envelope-o" aria-hidden="true" data-icon="fa-envelope-o" style="margin-right:6px;"></i>收件箱</div> -->
+	 <blockquote class="layui-elem-quote" style="padding: 5px;">
+	        <form class="layui-form" action="/ass/assInfo/export" method="get" id="action_form">
+		        <input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+		        <input type="hidden" name="ids" id="ids_form">
+	        </form>
+			<form class="layui-form" action="">
+				<div style="float:right">
+					<span  ><@a code="200301" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData()"  iclass="layui-icon"
+						 icon="&#xe615;" text="查询"/></span>
+				</div>
+				<div class="layui-input-inline">
+				   <div class="layui-input-inline">
+					 <span>流程名称</span>
+					</div>
+					<div class="layui-input-inline m_r10">
+						 <input type="text" name="" id="processName" placeholder="流程名称" lay-verify="" maxlength="20" autocomplete="off" class="layui-input" style="height: 30px; line-height: 30px;width:130px">
+					</div>
+				   <div class="layui-input-inline">
+					 <span>标题</span>
+					</div>
+					<div class="layui-input-inline m_r10">
+						 <input type="text" name="" id="processTitle" placeholder="标题" lay-verify="" maxlength="20" autocomplete="off" class="layui-input" style="height: 30px; line-height: 30px;width:130px">
+					</div>
+			        <div class="layui-input-inline">
+					 	<span>发起时间</span>
+					</div>
+              		<div class="layui-input-inline m_r10">
+						 <input type="text" name="" id="startTime" placeholder="" lay-verify="" maxlength="20" autocomplete="off" class="layui-input" style="height: 30px; line-height: 30px;width:130px">
+					</div>
+			         <div class="layui-input-inline">
+					 	<span>至</span>
+					</div>
+					<div class="layui-input-inline m_r10">
+						 <input type="text" name="" id="endTime" placeholder="" lay-verify="" maxlength="20" autocomplete="off" class="layui-input" style="height: 30px; line-height: 30px;width:130px">
+					</div>
+			</form>
+	</blockquote> 
+	    <div>
+	              <@a code="200302" href="javascript:void(0)" class="layui-btn" id="newCreate"  onclick="openForm_Go('购置申请','1')" text="购置申请" />
+	      	      <@a code="200303" href="javascript:void(0)" class="layui-btn" id="newCreate"  onclick="openForm_Go('验收','2')" text="验收" />
+	      	      <@a code="200304" href="javascript:void(0)" class="layui-btn" id="newCreate"  onclick="openForm_Go('领用','3')" text="领用" />
+	      	      <@a code="200305" href="javascript:void(0)" class="layui-btn" id="newCreate"  onclick="openForm_Go('移交','4')" text="移交" />
+	      	      <@a code="200306" href="javascript:void(0)" class="layui-btn" id="newCreate"  onclick="openForm_Go('报废','5')" text="报废" />
+	      	      <@a code="200306111" href="javascript:void(0)" class="layui-btn" id="newCreate"  onclick="Inventory()"   text="盘点" />
+	    </div>
+		<div class="layui-field-box  layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table admin-table">
+			      <!--  <colgroup>
+				    <col width="35">
+				    <col width="150">
+				    <col width="400">
+				    <col width="80">
+				    <col width="200">
+				    <col width="130">
+				    <col width="130"> 
+	 			 </colgroup> -->
+				<thead>
+					<tr>
+						<th style="display: none;">用户ID</th>
+						<th style="width:50px;">序号</th>
+						<th style="width:150px;">流程名称</th>
+						<th style="width:250px;">标题</th>
+						<th style="width:150px;">发起时间</th>
+						<th style="width:130px;">紧急程度</th>
+					</tr>
+				</thead>
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr >
+							<td>{{(current-1)*size+index+1}}</td>
+							<td>{{value.processName}}</td>
+							<td onclick="GoProCeSs('{{value.processInstanceId}}','{{value.processTitle}}')" class="table_link" style="cursor:pointer" title="{{value.processTitle}}">{{value.processTitle}}</td>
+							<td>{{value.startTime}}</td>
+				            <td>{{value.urgentStatus}}</td>
+						</tr>
+					{{/each}}
+					</script>
+					<!-- <@a code="090302" href="javascript:void(0)" class="layui-btn layui-btn-warm layui-btn-mini m_r10" id="show-view" onclick="showView('{{value.id}}','{{value.isImportant}}')" text="详情"/> -->
+				</tbody>
+			</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	
+   	<!-- 入库、申购、报溢、报损、盘点 -->
+	<div class="" id="win-INOut-object" style="display:none;padding: 10px 40px 10px 10px;">
+					<form class="layui-form layui-form-pane" id="INOut-object-form">
+					    <input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+						<!-- （1:入库 2:报溢 3:领用 4:报损） -->
+						<input type="hidden"  name="assStatus" id="assStatus">
+						<!-- 名称、类别、数量、单位、id  list -->
+						<div class="layui-form-item">
+							<label class="layui-form-label">标题</label>
+							<div class="layui-input-block">
+								<input type="text" name="title" id="title" readonly  lay-verify="required" autocomplete="off" maxlength="20" placeholder="标题" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">经办人</label>
+							<div class="layui-input-inline">
+							  	<input type="hidden" name="applicationId" id="applicationId" >
+								<input type="text" name="applicationName" id="applicationName" maxlength="50" readonly lay-verify="required" autocomplete="off" placeholder="经办人" class="layui-input">
+							</div>
+							<label class="layui-form-label">部门</label>
+							<div class="layui-input-inline">
+							    <input type="hidden" name="deptId" id="deptId" >
+								<input type="text" name="deptName" id="deptName" maxlength="50" readonly  lay-verify="" autocomplete="off" placeholder="部门" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item ">
+							<label class="layui-form-label">单证日期</label>
+							<div class="layui-input-inline">
+								<input type="text" name="submitTime" id="submitTime" maxlength="50" readonly  lay-verify="" autocomplete="off" placeholder="单证日期" class="layui-input">
+							</div>
+							<label class="layui-form-label">单证编号</label>
+							<div class="layui-input-inline">
+								<input type="text" name="" id="listCode" maxlength="30"  lay-verify="" readonly autocomplete="off" placeholder="单证编号" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">申请描述</label>
+							<div class="layui-input-block">
+								<textarea name="content" maxlength="450" id="content" placeholder="申请描述" lay-verify="required" class="layui-textarea"></textarea>
+							</div>
+						</div>
+						<div class="btn_fixed">
+							<div style="float: right;">
+								<button class="layui-btn" lay-submit="" lay-filter="form-GooInOut-submit">
+									<i class="fa fa-save"></i> 提交
+								</button>
+								<!-- <button type="reset" class="layui-btn layui-btn-primary">
+									<li class="fa fa-eraser"></li> 重置
+								</button> -->
+							</div>
+						</div>
+					</form>
+	</div>
+	<!-- 入库、申购、报溢、报损、盘点结束 -->
+   <input type="hidden" name="processInstanceId" id="processInstanceId" value="" />
+    <script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.exhide-3.5.min.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../../web/js/readReceipt.js"></script>
+
+	<script> 
+		    tool.dateTime('#startTime','#endTime','YYYY-MM-DD',false);
+			var pform,initLoadIndex;
+			//添加事件
+			layui.use(['form','element'], function() {
+				var element=layui.element;
+				pform = layui.form;
+				
+				
+				pform.on('select(ass_id_search)', function(data) {
+		            if(data.value.length>0){
+						$("#categoryId_search").val(data.value);
+					}else{
+						var emel=$(data.elem).parent().prev();
+						if(emel.find('select').length>0){
+							$("#categoryId_search").val(emel.find('select option:selected').val())
+						}else{
+							$("#categoryId_search").val("");
+						}
+					}
+		            tool.selectLinkTagByPid("ass_id_search","",data);
+		    	});
+		        pform.on('submit(form-GooInOut-submit)',function(data){
+		        	layer.confirm('确定提交吗 ?', {
+		                   icon: 3,
+		                   title: '提示'
+		           }, function (index) {
+			               layer.close(index);
+			               initLoadIndex = layer.load(2, {});
+				           tool.post("../assProcess/add",$("#INOut-object-form").serialize(),function(retMsg){
+				        	   layer.close(initLoadIndex);
+								 if (retMsg.code == 0) {
+									   clearForm();
+			                           layer.closeAll();
+			                           loadData();
+			                           openForm(retMsg);
+			                       } else {
+			                           tool.error(retMsg.message);
+			                       }
+				           },true)
+		           })
+		           return false;	
+		        })
+				loadData();
+			})
+			
+			
+			
+		     //跳转到流程
+			function openForm(data1) {
+				var data = data1.object;
+				var id = data.id;
+				var processName = data.processName;
+				var bpmnId = data.bpmnId;
+				var taskDefKey = data.taskDefKey;
+				var businessKey = data.businessKey;
+				var signInTime = data.signInTime
+				var index = layer.open({
+					title : processName,
+					maxmin : false,
+					type : 2,
+					content : '../../act/modeler/openForm.html?id='+bpmnId+'&activityId='+id+'&taskId='+taskDefKey+'&businessKey='+businessKey+'&signInTime='+signInTime+'&isWait=1'+'&isIndexLog=0',
+					cancel: function(){ 
+					    //右上角关闭回调
+					    layer.closeAll();
+					    //return false 开启该代码可禁止点击该按钮关闭
+					  },
+					success: function(layero, index){
+						//var body = layer.getChildFrame('body', index);
+						var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
+						iframeWin.$("#sub").trigger("click") 
+					}
+				});
+				pform.render();
+				layer.full(index);
+			}
+			function clearForm(){
+				$("#win-INOut-object").find("#content").val("");
+				$("#win-INOut-object").find("#listCode").val("");
+			}
+			//列表
+			function loadData(){
+				var param = new Object();
+				param.container = "paging";
+				param.pageSize = 10;
+				param.name = $("#processName").val();
+				param.title = $("#processTitle").val();
+				param.url = "../assProcess/getAllTask";
+				param.startTime = $("#startTime").val();
+				param.endTime = $("#endTime").val();
+				tool.loadpage(param);
+			}
+			
+			//
+			/* function pubSet(type,status){
+				$("#assStatus").val(status);
+				$("#win-INOut-object").find("#title").val(type);
+				getCurrent();
+				var index = layer.open({
+					title : type,
+					maxmin : false,
+					type : 1,
+					content : $('#win-INOut-object')
+				});
+				layer.full(index);
+			    pform.render();
+				
+			}
+			
+			function getCurrent(){
+				tool.post("/goo/gooInOut/getCurrent",{_csrf:$("#_csrf").val()},function(data){
+					$("#win-INOut-object").find("#applicationName").val(data.userName);
+					$("#win-INOut-object").find("#applicationId").val(data.userId);
+					$("#win-INOut-object").find("#deptName").val(data.dept);
+					$("#win-INOut-object").find("#deptId").val(data.deptId);
+					$("#win-INOut-object").find("#submitTime").val(data.submitTime);
+				})
+			} */
+			 $(".btn_blue2one").click(function(){
+		      	  tool.treeDemo("win-personal-object","treeDemo","noticeObjId_add","noticeObjName_add","noticeObjName_addDiv");
+		      	  $("#number").html("");
+		      })
+                
+		     //盘点到处excel
+			function Inventory(){
+				  if($(".moreInput:checked").length==0){
+						tool.error('至少选中一个'); 
+				  }else{
+					  var ids="";
+					  $(".moreInput:checked").each(function(index,value){
+						   ids+=$(this).attr("id")+";";
+					  })
+					  $("#ids_form").val(ids);
+					  $("#action_form").submit();
+				  }
+			}
+			 
+			 
+			 //获取对应的流程id
+			 function getBpmnId(status){
+				  var param={},id;
+				  param._csrf = $("#_csrf").val();
+				  param.assStatus = status;
+				  tool.post("../assProcess/getBpmnId",param,function(data){
+					  if(data.code=="0"){
+						 id=data.object;
+					  }else{
+						  tool.error(data.message);
+						  return false;
+					  }
+				  },false)
+				 return id;
+			 }
+			//跳转流程
+			 function openForm_Go(type,status) {
+					var id = getBpmnId(status);
+					var index = layer.open({
+						title : type,
+						maxmin : false,
+						type : 2,
+						content : '../../act/modeler/openForm.html?id='+id
+					});
+					pform.render();
+					layer.full(index);
+			}
+			
+			 function GoD(id){
+				 var businessKey;
+				 tool.post("/ass/assProcess/getBusinessKey",{_csrf:$("#_csrf").val(),processInstanceId:id},function(data){
+					 console.log(data)
+					 businessKey = data.object;
+				},false)
+				return businessKey;
+			 }
+			//
+			function GoProCeSs(processInstanceId,title){
+				var businessKey = GoD(processInstanceId);
+					   //详情对象
+					 if(businessKey.indexOf('ioaReceiveFile')>-1){
+						 var strs = new Array(); //定义一数组 
+							strs = businessKey.split(",");
+							for (i = 0; i < strs.length; i++) {
+								processInstanceId = strs[i];
+		
+							}
+						$("#processInstanceId").val(processInstanceId);				
+						readReceipt.inReadHisDetail(processInstanceId);
+						return;
+					 }else{
+					    $("#processInstanceId").val('');
+			            var index = layer.open({
+			            title : title,
+			            maxmin : false,
+			            type : 2,
+			            content : '../../act/modeler/openForm.html?processInstanceId='+processInstanceId+'&businessKey='+businessKey+'&isWait=0'
+			           
+			        });
+				   }
+					 pform.render();
+					 layer.full(index);
+			}
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>办公用品领用</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" />
+<link rel="stylesheet" href="../../web/css/zhengls.css" /> 
+
+</head>
+<style>
+
+</style>
+<body>
+	
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main" >
+	<!-- <div style="font-size:16px;font-weight:bold;margin-bottom:5px;color:#339bf1;""><i class="fa fa-envelope-o" aria-hidden="true" data-icon="fa-envelope-o" style="margin-right:6px;"></i>收件箱</div> -->
+	<blockquote class="layui-elem-quote" style="padding: 5px;">
+			<form class="layui-form" action="">
+				<div style="float:right">
+					<span  ><@a code="180301" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData()"  iclass="layui-icon"
+						 icon="&#xe615;" text="查询"/></span>
+				</div>
+				
+				<div class="layui-input-inline">
+				
+				   <div class="layui-input-inline">
+						<span>分类</span>
+					</div>
+					<div class="layui-input-inline m_r10 content_sel">
+					   <@selectLink
+						table="goo_category" layVerify="required" id="goo_id" name="id"
+						class="layui-input-inline" def="" key="id" text="name"
+						level="1" levelName="category_level" rankName="category_rank"
+						where=" AND is_active=1"/>
+				   </div>
+				   <div class="layui-input-inline">
+					 <span>物品名称</span>
+					</div>
+					<div class="layui-input-inline m_r10">
+						 <input type="text" name="searchKey" id="searchKey" placeholder="请输入物品名称" lay-verify="" maxlength="20" autocomplete="off" class="layui-input" style="height: 30px; line-height: 30px;width:130px">
+					</div>
+				   <div class="layui-input-inline">
+					 	<span>状态</span>
+					</div>
+					<div class="layui-input-inline m_r10 content_sel" >
+					      <select name="isStatus"  id="isStatus" class="layui-input layui-unselect"  >
+					        <option value="">请选择</option>
+					        <option value="0">正常</option>
+					        <option value="1">预警</option>
+	     				  </select>
+					</div>
+              		
+			   
+			</form>
+	</blockquote>
+	    <div>
+	      <@a code="180302"  href="javascript:void(0)" class="layui-btn" id="newCreate"  onclick="pubSet('1')" text="领用" />
+	      <@a code="180303"  href="javascript:void(0)" class="layui-btn" id="newCreate1" onclick="pubSet('2')" text="申购" />
+	    </div>
+		<div class="layui-field-box  layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table admin-table">
+			      <!--  <colgroup>
+				    <col width="35">
+				    <col width="150">
+				    <col width="400">
+				    <col width="80">
+				    <col width="200">
+				    <col width="130">
+				    <col width="130"> 
+	 			 </colgroup> -->
+				<thead>
+					<tr>
+					    <th style="width: 20px;"><input type="checkbox" lay-skin="primary" id="paging_check-all" lay-filter="paging_check-all"></th>
+						<th style="display: none;">用户ID</th>
+						<th style="width:50px;">序号</th>
+						<th>物品名称</th>
+						<th style="width:200px;">分类</th>
+						<th style="width:100px;">剩余数量<img src="../../web/images/upgray.png"  class="up" onclick="loadData('1','0')";><img src="../../web/images/downgray.png" class="down" onclick="loadData('2','0')";></th>
+						<th style="width:60px;">单位</th>
+						<th style="width:60px;">状态</th>
+						<th style="width:160px;">物品编号</th>
+					</tr>
+				</thead>
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+                
+					{{each records value index}}
+						<tr >
+                            <td ><input type="checkbox"  class="check-id  moreInput"  lay-skin="primary"   id="{{value.id}}" gooName="{{value.gooName}}"  categoryName="{{value.categoryName}}" unit="{{value.unit}}" categoryId="{{value.categoryId}}" number="{{value.number}}"></td>
+                            <td style="display: none;">{{value.id}}</td>
+							<td>{{value.no}}</td>
+                            <td class="table_link" style="cursor:pointer" onclick="detail('{{value.id}}')">{{value.gooName}}</td>
+                            <td>{{value.categoryName}}</td>
+                            <td>{{value.number}}</td>
+                            <td>{{value.unit}}</td>
+                            <td {{if value.status=="1"}}style="color:red"{{/if}}>{{if value.status=="0"}}正常{{/if}}{{if value.status=="1"}}预警{{/if}}</td>
+                            <td>{{value.gooCode}}</td>
+						</tr>
+					{{/each}}
+					</script>
+					<!-- <@a code="090302" href="javascript:void(0)" class="layui-btn layui-btn-warm layui-btn-mini m_r10" id="show-view" onclick="showView('{{value.id}}','{{value.isImportant}}')" text="详情"/> -->
+				</tbody>
+			</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	<!-- 办公用品详情 -->
+	<div class="admin-main" style="display: none; z-index: 19940200;margin-bottom:60px;" id="win-detail-object">
+			<form class="layui-form layui-form-pane" id="detail-object-form">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<input type="hidden" name="id" id="id">
+				<div class="" style="text-align: center;">
+					 <span id="name_detail" style="font-size:16px;font-weight: bold;word-wrap:break-word"></span>
+				</div>
+		
+				<div class="p_t10">
+					<span class="e6ed">物品编号：</span>
+					<span id="gooCode_detail"></span>
+				</div>
+				<div class="p_t10">
+					<span class="e6ed">当前库存：</span>
+					<span id="number_detail"></span>
+				</div>
+				<div class="p_t10 cl">
+					<span class="e6ed">单位：</span>
+					<span id="unit_detail"></span>
+				</div>
+				<div class="p_t10 cl">
+					<span class="e6ed">预警值：</span>
+					<span id="emerNum_detail"></span>
+				</div>
+				<div class="p_t10 cl">
+					<span class="e6ed">排序：</span>
+					<span id="gooRank_detail"></span>
+				</div>
+				<div class="p_t10 cl">
+					<span class="e6ed l">物品简介：</span>
+					<div id="content_detail" class="l" style="word-wrap:break-word;width:85%;"></div>
+				</div>
+				
+			
+			<div class="p_t10 cl" >
+			   <div class="layui-tab">
+			 		<ul class="layui-tab-title">
+					    <li class="layui-this" id="mine"><@a code="140102" href="javascript:void(0)" text="入库记录"/></li>
+					    <li id="create" ><@a code="140104" href="javascript:void(0)" text="出库记录"/></li>
+					</ul>
+					<div class="layui-tab-content">
+			        	<div class="layui-tab-item layui-show content_sel"  id="mineD">
+			        	    <table class="layui-table admin-table">
+			        	     <thead>
+								<tr>
+									<th style="width:50px;">序号</th>
+									<th style="width:120px;">单证编号</th>
+									<th style="width:200px;">流程名称</th>
+									<th style="width:60px;">出库数量</th>
+									<th style="width:120px;">操作时间</th>
+									<th style="width:120px;">操作人</th>
+								</tr>
+							</thead>
+			        	     <tbody id="paging_In-data">
+				            	<script id="paging_In-script" type="text/html">
+                                 {{if records.length==0}}<tr><td colspan="6" style="text-align:center">暂无数据</td></tr>{{/if}}
+					             {{each records value index}}
+						            <tr class="removeTr">
+                                      <td>{{index+1}}</td>
+                                      <td>{{value.listCode}}</td>
+                                      <td>{{if value.inOutStatus=="1"}}入库{{/if}}{{if value.inOutStatus=="2"}}报溢{{/if}}{{if value.inOutStatus=="3"}}领用{{/if}}{{if value.inOutStatus=="4"}}报损{{/if}}</td>
+                                      <td>{{value.number}}</td>
+                                      <td>{{value.auditTime}}</td>
+                                      <td>{{value.publishName}}</td>
+						            </tr>
+					             {{/each}}
+								</script>
+			               	</tbody>
+			               </table>
+			        	</div>
+			        	<div class="layui-tab-item"  >
+			        	 <table class="layui-table admin-table">
+			        	     <thead>
+								<tr>
+									<th style="width:50px;">序号</th>
+									<th style="width:120px;">单证编号</th>
+									<th style="width:200px;">流程名称</th>
+									<th style="width:60px;">出库数量</th>
+									<th style="width:120px;">操作时间</th>
+									<th style="width:120px;">操作人</th>
+								</tr>
+							</thead>
+			        	     <tbody id="paging_out-data">
+				            	<script id="paging_out-script" type="text/html">
+                                  {{if records.length==0}}<tr><td colspan="6" style="text-align:center">暂无数据</td></tr>{{/if}}
+					             {{each records value index}}
+						            <tr class="removeTr">
+                                      <td>{{index+1}}</td>
+                                      <td>{{value.listCode}}</td>
+                                      <td>{{if value.inOutStatus=="1"}}入库{{/if}}{{if value.inOutStatus=="2"}}报溢{{/if}}{{if value.inOutStatus=="3"}}领用{{/if}}{{if value.inOutStatus=="4"}}报损{{/if}}</td>
+                                      <td>{{value.number}}</td>
+                                      <td>{{value.auditTime}}</td>
+                                      <td>{{value.publishName}}</td>
+
+						            </tr>
+					             {{/each}}
+								</script>
+			               	</tbody>
+			               </table>
+			        	</div>
+			        </div>	
+			     </div>   
+			</div>
+				<div class="btn_fixed">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+				    <div style="float: right;">
+			        </div>
+				</div>
+			</form>
+		</div>
+		
+	<!-- 办公用品详情结束 -->
+	
+	<!-- 领用、申购 -->
+	<div class="" id="win-INOut-object" style="display:none;padding: 10px 40px 10px 10px;">
+					<form class="layui-form layui-form-pane" id="INOut-object-form">
+					    <input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+						<!-- （1:入库 2:报溢 3:领用 4:报损） -->
+						<input type="hidden" name="inOutStatus"  id="inOutStatus">
+						<!-- 名称、类别、数量、单位、id  list -->
+						<div id="ListInput">
+						</div>
+				
+						<div class="layui-form-item">
+							<label class="layui-form-label">标题</label>
+							<div class="layui-input-block">
+								<input type="text" name="" id="title_InOut"  lay-verify="required" autocomplete="off" maxlength="20" placeholder="标题" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">经办人</label>
+							<div class="layui-input-inline">
+								<input type="text" name="" id="publishName_InOut" maxlength="50" lay-verify="required" autocomplete="off" placeholder="经办人" class="layui-input">
+							</div>
+							<label class="layui-form-label">部门</label>
+							<div class="layui-input-inline">
+								<input type="text" name="" id="deptName_InOut" maxlength="50"  lay-verify="required" autocomplete="off" placeholder="部门" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item ">
+							<label class="layui-form-label">单证日期</label>
+							<div class="layui-input-inline">
+								<input type="text" name="" id="submitTime_InOut" maxlength="50"  lay-verify="required" autocomplete="off" placeholder="单证日期" class="layui-input">
+							</div>
+							<label class="layui-form-label">单证编号</label>
+							<div class="layui-input-inline">
+								<input type="text" name="" id="listCode_InOut" maxlength="50"  lay-verify="" readonly autocomplete="off" placeholder="保存后自动生成" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">申请描述</label>
+							<div class="layui-input-block">
+								<textarea name="" maxlength="450" id="content_InOut" placeholder="申请描述" lay-verify="required" class="layui-textarea"></textarea>
+							</div>
+						</div>
+						<div class="layui-form-item ">
+						     <div class="layui-form-label" title="办公用品列表">办公用品列表</div>
+						         <div class="layui-input-block">
+									<table class="layui-table butable">
+										<colgroup>
+									      <col width="40%">
+									      <col width="20%">
+									      <col width="10%">
+									      <col width="10%">
+									      <col width="20%">
+					  					</colgroup>
+									  <thead>
+									    <tr>
+									      <th>名称</th>
+									      <th>类别</th>
+									      <th>数量</th>
+									      <th>单位</th>
+									      <th>操作</th>
+									    </tr> 
+									  </thead>
+									  <tbody id="buAtt">
+							
+									  
+									  </tbody>
+									</table>
+								</div>	
+						</div>
+						
+						
+						<div class="btn_fixed">
+							<div style="float: right;">
+								<button class="layui-btn" lay-submit="" lay-filter="form-GooInOut-submit">
+									<i class="fa fa-save"></i> 提交
+								</button>
+								<!-- <button type="reset" class="layui-btn layui-btn-primary">
+									<li class="fa fa-eraser"></li> 重置
+								</button> -->
+							</div>
+						</div>
+					</form>
+	</div>
+	<!-- 领用、申购 结束-->
+
+	<input type="hidden" id="gooId" >
+    <script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+
+	<script>
+			var pform,initLoadIndex;
+			//添加事件
+			layui.use(['form','element'], function() {
+				var element=layui.element;
+				pform = layui.form;
+				
+				
+				pform.on('select(goo_id)', function(data) {
+		            if(data.value.length>0){
+						$("#gooId").val(data.value);
+					}else{
+						var emel=$(data.elem).parent().prev();
+						if(emel.find('select').length>0){
+							$("#gooId").val(emel.find('select option:selected').val())
+						}else{
+							$("#gooId").val("");
+						}
+					}
+		            tool.selectLinkTagByPid("goo_id","",data);
+		    	});
+				pform.on('submit(form-GooInOut-submit)', function(data){
+					if($(".trLength").length<=0){
+						tool.error("至少选择一条");
+						return false;
+					}
+					layer.confirm('确定提交吗 ?', {
+		                   icon: 3,
+		                   title: '提示'
+		           }, function (index) {
+			            layer.close(index);
+			            initLoadIndex = layer.load(2, {});
+			            
+						if($("#inOutStatus").val()=="3"){
+							var url ='/goo/gooInOut/add';
+						}else{
+							var url ='/goo/gooPurchase/add';
+						}
+						$("#ListInput").empty();
+						var strl="";
+						$("#buAtt").find("tr").each(function(i,value){
+							   strl+='<input type="hidden" name="gooInfoList['+i+'].gooName" value="'+$(this).attr("gooname")+'"  />';
+		                       strl+='<input type="hidden" name="gooInfoList['+i+'].categoryId" value="'+$(this).attr("categoryId")+'"  />';
+		                       strl+='<input type="hidden" name="gooInfoList['+i+'].categoryName" value="'+$(this).attr("categoryname")+'"  />';
+		                       strl+='<input type="hidden" name="gooInfoList['+i+'].gooId" value="'+$(this).attr("id")+'"  />';
+	 	                       strl+='<input type="hidden" name="gooInfoList['+i+'].gooNumber" value="0"  />'
+		                       strl+='<input type="hidden" name="gooInfoList['+i+'].number" value="'+$(this).find("#number").val()+'"  />'
+		                       strl+='<input type="hidden" name="gooInfoList['+i+'].unit" value="'+$(this).attr("unit")+'"  />'
+		                       strl+='<input type="hidden" name="gooInfoList['+i+'].title" value="'+$("#title_InOut").val()+'"  />'
+		                       strl+='<input type="hidden" name="gooInfoList['+i+'].publishName" value="'+$("#publishName_InOut").val()+'"  />'
+		                       strl+='<input type="hidden" name="gooInfoList['+i+'].deptName"  value="'+$("#deptName_InOut").val()+'" />'
+		                       strl+='<input type="hidden" name="gooInfoList['+i+'].submitTime"  value="'+$("#submitTime_InOut").val()+'"  />'
+		                       strl+='<input type="hidden" name="gooInfoList['+i+'].listCode" value="'+$("#listCode_InOut").val()+'"  />'
+		                       strl+='<input type="hidden" name="gooInfoList['+i+'].content" value="'+$("#content_InOut").val()+'"  />'
+		                       if($("#inOutStatus").val()=="3"){
+		                       strl+='<input type="hidden" name="gooInfoList['+i+'].inOutStatus" value="'+$("#inOutStatus").val()+'"  />'
+		                       }
+	
+						})
+						$("#ListInput").append(strl);
+						tool.post(url,$("#INOut-object-form").serialize(),function(retMsg){
+							layer.close(initLoadIndex);
+							 if (retMsg.code == 0) {
+								   clearForm();
+		                           layer.closeAll();
+		                           loadData();
+		                           openForm(retMsg);
+		                       } else {
+		                           tool.error(retMsg.message);
+		                       }
+						},true)
+		           })
+					return false;
+				})
+		
+				loadData();
+			})
+			//跳转到流程
+			function openForm(data1) {
+				var data = data1.object;
+				var id = data.id;
+				var processName = data.processName;
+				var bpmnId = data.bpmnId;
+				var taskDefKey = data.taskDefKey;
+				var businessKey = data.businessKey;
+				var signInTime = data.signInTime
+				var index = layer.open({
+					title : processName,
+					maxmin : false,
+					type : 2,
+					content : '../../act/modeler/openForm.html?id='+bpmnId+'&activityId='+id+'&taskId='+taskDefKey+'&businessKey='+businessKey+'&signInTime='+signInTime+'&isWait=1'+'&isIndexLog=0',
+					cancel: function(){ 
+					    //右上角关闭回调
+					    layer.closeAll();
+					    //return false 开启该代码可禁止点击该按钮关闭
+					  },
+					success: function(layero, index){
+						//var body = layer.getChildFrame('body', index);
+						var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
+						iframeWin.$("#sub").trigger("click") 
+					}
+				});
+				pform.render();
+				layer.full(index);
+			}
+			//列表
+			function loadData(){
+				var param = new Object();
+				param.container = "paging";
+				param.pageSize = 10;
+				param.categoryId = $("#gooId").val();
+				param.name = $("#searchKey").val();
+				param.url = "../gooInfo/list";
+				param.status = $("#isStatus").val();
+				console.log(param)
+				tool.loadpage(param);
+			}
+			//qing
+			function clearForm(){
+				$("#content_InOut").val("");
+				$("#listCode_InOut").val("");
+			}
+			
+			//查看详情
+			function detail(id){
+				var object = tool.getById("../gooInfo/getById", id);
+				var gooInOut = object.gooInOut;
+				$(".removeTr").remove();
+				var dataIn={records:[]},dataout={records:[]};
+				if(gooInOut!=null&gooInOut!=""){
+					for(var i=0;i<gooInOut.length;i++){
+						 if(gooInOut[i].inOutStatus=="1"||gooInOut[i].inOutStatus=="2"){
+							 dataIn.records.push(gooInOut[i]);
+						 }else{
+							 dataout.records.push(gooInOut[i]);
+						 }
+					 }
+				} 
+				$("#paging_out-data").html(template("paging_out-script",dataout));
+				$("#paging_In-data").html(template("paging_In-script",  dataIn));
+				for ( var key in object) {
+					$("#win-detail-object").find("#" + key+"_detail").text(object[key]);
+				}
+				var index = layer.open({
+					title : '详情',
+					maxmin : false,
+					type : 1,
+					content : $('#win-detail-object')
+				});
+				layer.full(index);
+			    pform.render();
+			}
+			//经办人 部门 时间填充
+		 
+			function getCurrent(){
+				tool.post("/goo/gooInOut/getCurrent",{_csrf:$("#_csrf").val()},function(data){
+					console.log(data)
+					$("#publishName_InOut").val(data.userName);
+					$("#deptName_InOut").val(data.dept);
+					$("#submitTime_InOut").val(data.submitTime);
+				})
+			}
+			//领用,申购
+			function pubSet(type){
+				
+				  if($(".moreInput:checked").length==0){
+						tool.error('至少选中一个'); 
+						 
+				  }else{
+				  getCurrent();	  
+				  var title;	  
+				  if(type=="1"){
+					  title="领用";
+					  $("#inOutStatus").val("3");
+					  var as;
+					  $(".moreInput:checked").each(function(index,value){
+						 var snumber=$(this).attr("number");
+						 if(snumber=="0"){
+							 as=false;
+						 }
+					  })
+					  if(as==false){
+						  tool.error("存在数量为0的不能领用");
+						  return false;
+					  }
+				  }else if(type=="2"){
+					  title="申购";
+					  $("#inOutStatus").val("");
+				  } 
+				  $("#buAtt").empty();
+				  var html="";
+				  $(".moreInput:checked").each(function(index,value){
+					 var gooname=$(this).attr("gooname"),categoryname=$(this).attr("categoryname"),unit=$(this).attr("unit"),id=$(this).attr("id"),categoryId=$(this).attr("categoryId"),number=$(this).attr("number");
+					 html+="<tr class='trLength' gooname="+gooname+" categoryname="+categoryname+" unit="+unit+" id="+id+" categoryId="+categoryId+" number="+number+"><td>"+gooname+"</td><td>"+categoryname+"</td><td><input type='text' id='number' maxlength='5' lay-verify='required|number' onkeyup='empty(this)' title='"+title+"' placeholder='剩余数量"+number+"' class='layui-input'></td><td>"+unit+"</td><td><a class='table_btn' style='cursor:pointer' onclick='removeC(this)'>移除</a></td></tr>"
+				  })
+				  $("#buAtt").append(html);
+				  
+				  $("#title_InOut").val(title);
+				  var index = layer.open({
+						title : title,
+						maxmin : false,
+						type : 1,
+						content : $('#win-INOut-object')
+					});
+					layer.full(index);
+				    pform.render();
+				 }
+				
+			}
+			 //只能输入数字	
+			 function empty(myseld){
+				 $(myseld).val($(myseld).val().replace(/\D|^0/g,''));
+				 var number = Number($(myseld).parent().parent().attr("number"));
+				 var title = $(myseld).attr("title");
+				 if(title=="领用"){
+					 if(Number($(myseld).val())>number){
+						 $(myseld).val("");
+					 }
+				 }
+			 }
+			 //移除物品
+			 function removeC(myself){
+				 if($(".trLength").length<=1){
+					 layer.confirm('最后一条删除后将无法提交,确定删除吗 ?', {
+		                   icon: 3,
+		                   title: '提示'
+		           }, function (index) {
+		        	   $(myself).parent().parent().remove(); 
+		        	   layer.close(index);
+		           })
+					 
+				 }else{
+					 $(myself).parent().parent().remove(); 
+				 }
+			 }
+
+	</script>
+</body>
+
+</html>

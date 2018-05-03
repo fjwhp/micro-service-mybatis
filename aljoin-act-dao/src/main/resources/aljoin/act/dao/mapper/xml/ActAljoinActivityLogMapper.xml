@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.act.dao.mapper.ActAljoinActivityLogMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.act.dao.entity.ActAljoinActivityLog">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="operate_user_id" property="operateUserId" />
+		<result column="operate_full_name" property="operateFullName" />
+		<result column="operate_time" property="operateTime" />
+		<result column="operate_status" property="operateStatus" />
+		<result column="receive_user_ids" property="receiveUserIds" />
+		<result column="receive_full_names" property="receiveFullNames" />
+		<result column="comment" property="comment" />
+		<result column="last_task_name" property="lastTaskName" />
+		<result column="current_task_name" property="currentTaskName" />
+		<result column="next_task_name" property="nextTaskName" />
+		<result column="last_task_id" property="lastTaskId" />
+		<result column="current_task_id" property="currentTaskId" />
+		<result column="next_task_id" property="nextTaskId" />
+		<result column="proc_def_id" property="procDefId" />
+		<result column="last_task_def_key" property="lastTaskDefKey" />
+		<result column="current_task_def_key" property="currentTaskDefKey" />
+		<result column="next_task_def_key" property="nextTaskDefKey" />
+		<result column="proc_inst_id" property="procInstId" />
+		<result column="execution_id" property="executionId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name, operate_user_id, operate_full_name, operate_time, operate_status, receive_user_ids, receive_full_names, comment, last_task_name, current_task_name, next_task_name, last_task_id, current_task_id, next_task_id, proc_def_id, last_task_def_key,current_task_def_key,next_task_def_key, proc_inst_id, execution_id
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM act_aljoin_activity_log WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="ActAljoinActivityLog">
+    	INSERT INTO act_aljoin_activity_log(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{operateUserId}, #{operateUserName}, #{operateTime}, #{operateStatus}, #{receiveUserId}, #{receiveFullName}, #{comment}, #{lastTaskName}, #{currentTaskName}, #{nextTaskName}, #{lastTaskId}, #{currentTaskId}, #{nextTaskId}, #{procDefId}, #{taskDefKey}, #{procInstId}, #{executionId})
+    </insert>
+
+</mapper>

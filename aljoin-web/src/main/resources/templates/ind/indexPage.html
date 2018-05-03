@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>首页</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" />
+<link rel="stylesheet" href="../../web/css/zhengls.css" /> 
+<style>
+	.layui-table td, .layui-table th{padding: 4px 8px}
+	.layui-table th{color:#333;font-size:14px;}
+	.layui-table td{color:#666;font-size:14px;}
+	.top{height: 35px;border-bottom: solid 1px #c9d3d6;padding-top: 10px;background: #fff;}
+	.box{float:left;width:14%;}
+	.box_2{float:right;}
+	.btn_sign{color:#fba15f;border:solid 1px #fba15f; width: 56px;height: 30px;text-align: center; line-height: 30px;
+			  border-radius:6px;font-size:14px;cursor:pointer;}
+	
+	.box a{font-size:16px;}	
+	.pic1{background:url(../../web/images/index_1.png)no-repeat;
+	     background-size:100% 100%;width:21px;height:26px;display:block;position: relative;
+    	 margin-top: -2px;}
+    .pic2{background:url(../../web/images/index_4.png)no-repeat;
+	     background-size:100% 100%;width:20px;height:26px;display:block;position: relative;
+    	 margin-top: -2px;}
+    .pic3{background:url(../../web/images/index_3.png)no-repeat;
+	     background-size:100% 100%;width:25px;height:26px;display:block;position: relative;
+    	 margin-top: -2px;}
+    .pic4{background:url(../../web/images/index_2.png)no-repeat;
+	     background-size:100% 100%;width:25px;height:25px;display:block;position: relative;
+    	 margin-top: -2px;}
+	.box .col{color:#718096;margin-left:10px;cursor:pointer;display:block;}
+	.box .org{color:#fba15f;margin-left:10px;top: 3px;position: relative;}	  
+	.font_sty{font-size:16px;font-weight:bold;color:#808080;}
+	.checkmore{cursor:pointer;font-size:14px;color:#808080;}
+	.li_sty .layui-tab-title li{font-size:14px;font-weight:bold;color:#666;}	
+	.li_sty1 .layui-tab-title li{font-size:14px;font-weight:bold;color:#666;padding: 0 6px;}
+	  
+	.con_left{width:66.5%;float:left;padding:0 10px;}
+	.con_right{width:31%;float:left;}
+	.m_l_blue{border-left:solid 7px ${ALJOIN_CURRENT_MAIN_COLOR};height:42px;line-height:42px;border-bottom:solid 1px #c9d3d6;border-radius: 8px 0 0 0;}
+	
+	.leftbox,.rightbox{width:100%;height:460px;margin-top:10px;border-radius:8px;border:solid 1px #c9d3d6;background:#fff;}
+	
+	.searchKey{margin: 15px 20px;height: 35px;width:88%; line-height: 26px; text-align:center;border-radius: 6px;
+    border: solid 1px #ccc;}
+
+  	/* 日历百分百样式 */
+    div#layui-laydate1,.rightbox1 .layui-laydate-main.laydate-main-list-0,.rightbox1 .layui-laydate-content table{width:100%;border:none;} 
+	
+	.rbox_wrap{padding:12px 10px;}
+	.rbox{
+		font-size: 14px;
+	    background: #fff;
+	    margin: 2px 0px;
+	    /* border-radius: 6px; */
+	    /* padding: 5px 18px; */
+	    padding-left: 8px;
+	    padding-bottom: 6;
+	    margin-bottom: 4px;
+     }
+	.rbox_inwrap{height:116px;overflow:auto;position: relative;}
+	.rbox1{font-weight:bold;color:#666;}
+	.rbox2{color:#666;}
+	.open_btn{color: red;position: absolute;right: 12px;margin-top: -124px;cursor: pointer;}
+	/* 拖拽样式 */
+	.sortable-ghost {opacity: 0.4;background-color: #F4E2C9;}
+	
+	
+ 
+    #content tr,#content td{
+	  border:1px solid #ccc;
+	}	
+	
+	.layui-laydate .layui-this {
+    background: ${ALJOIN_CURRENT_MAIN_COLOR}!important;
+    color: #fff!important;
+}
+</style>
+</head>
+   
+<body style="background:#e6edf4;">
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="wrap">
+		<!-- <div class="top">
+			<div class="box" style="padding-left:3%;">
+				<i class="pic1 l"></i>
+				<a class="col l" onclick="onlinemsg()">在线通知</a>
+				<a class="org l indexCount" id="onlineMsg">0</a>
+			</div>
+			<div class="box">
+				<i class="pic2 l"></i>
+				<a class="col l" onclick="toreadlist()">待阅文件</a>
+				<a class="org l indexCount" id="toreadlist" >0</a>
+			</div>
+			<div class="box">
+				<i class="pic3 l"></i>
+				<a class="col l" onclick="pubnotice()">通知公告</a>
+				<a class="org l indexCount" id="pubnotice">0</a>
+			</div>
+			<div class="box">
+				<i class="pic4 l"></i>
+				<a class="col l" onclick="todoList()">我的待办</a>
+				<a class="org l indexCount" id="todoList" >0</a>
+			</div>
+			<div class="box_2">
+				
+				<div class="r" style="margin:0 30px;">
+					 <div id="timeing1" style="font-size:14px;color:#536176;"></div>
+					 <div id="timeing2" style="font-size:14px;color:#718096;"></div>
+				</div>
+				<button class="btn_sign r"  style="margin:-2px 0 0 0;font-size:16px;background: none;" onclick="indexStatus()"></button>
+			</div>
+		</div> -->
+		
+		<div class="content" style="display:block;width:100%;">
+			<div class="con_left" id="drag_left">
+				<div class="leftbox"  id='todowork' drag-id="1">
+					<div class="m_l_blue">
+						<span class="l m_l20 font_sty">待办工作</span>
+						<a class="r m_r20 checkmore" onclick="waitWork()">查看更多></a>
+					</div>
+					<div class="m_both20" style="position:relative;">
+						<div class="layui-layer layui-layer-loading" id="pagingFa1_custom_loading"
+							type="loading" times="1" showtime="0" contype="string"
+							style="z-index: 19891015; top: 100px; left: 48%;position: absolute;display: none;">
+							<div id="" class="layui-layer-content layui-layer-loading2"></div>
+							<span class="layui-layer-setwin"></span>
+						</div>
+				    	<div class="layui-tab-item layui-show" style="height:390px;overflow-y:auto;margin-top:5px;">
+				    		<table class="layui-table" style="margin:0px;border:none;" lay-skin="line">
+								 <colgroup>
+								    <col width="15%">
+								    <col width="15%">
+								    <col width="30%">
+								    <col width="20%">
+								    <col width="20%">
+								    <col>
+								 </colgroup>
+								 <thead>
+								    <tr>
+								       <th>类型</th>
+								       <th>缓急<img src="../../web/images/upgray.png" class="up" onclick="getWaitWork('','1')"><img src="../../web/images/downgray.png" class="down" onclick="getWaitWork('','0')"></th>
+								       <th>标题</th>
+								       <th>所处环节</th>
+								       <th>收件时间<img src="../../web/images/upgray.png" class="up1" onclick="getWaitWork('1','')"><img src="../../web/images/downgray.png" class="down1" onclick="getWaitWork('0','')"></th>
+								    </tr> 
+								 </thead>
+								 <tbody id="pagingFa1">
+									<script id="paging1" type="text/html">
+									{{each records value index}}
+										<tr onclick="openIsMyTask('{{value.taskId}}','{{value.title}}','{{value.taskDefKey}}','{{value.bpmnId}}','{{value.businessKey}}','{{value.signInTime}}')" style="cursor:pointer">
+										<td title="{{value.formType}}">{{value.formType}}</td>
+										<td title="{{value.urgency}}">{{value.urgency}}</td>
+										<td title="{{value.title}}">{{value.title}}</td>
+										<td title="{{value.link}}">{{value.link}}</td>
+										<td title="{{value.fillingDate}}">{{value.fillingDate}}</td>
+										</tr>
+									{{/each}}
+									</script>
+								</tbody>
+							</table>
+				    	</div>
+					</div>
+				</div>
+				<div class="leftbox" id='dailywork'  drag-id="2">
+					<div class="m_l_blue">
+						<span class="l m_l20 font_sty">在办工作</span>
+						<a class="r m_r20 checkmore daily" onclick="dailyWork()">查看更多></a>
+						<!-- <a class="r m_r20 checkmore entrusted" onclick="entrustedWork()" style="display:none;">查看更多></a> -->
+					</div>
+					<div class="m_both20" style="position:relative;">
+						<div class="layui-layer layui-layer-loading" id="doingWork_tbody_custom_loading"
+							type="loading" times="1" showtime="0" contype="string"
+							style="z-index: 19891015; top: 100px; left: 48%;position: absolute;display: none;">
+							<div id="" class="layui-layer-content layui-layer-loading2"></div>
+							<span class="layui-layer-setwin"></span>
+						</div>
+						<!-- <div class="li_sty"> -->
+							<!-- <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+								<ul class="layui-tab-title" >
+								    <li class="layui-this" onclick="changestatus(1)">在办</li>
+								    <li onclick="changestatus(2)">委托</li>
+							  	</ul> -->
+							    <!-- <div class="layui-tab-content"> -->
+							    	<div class="layui-tab-item layui-show" style="height:390px;overflow-y:auto;margin-top:5px;">
+							    		<table class="layui-table" style="margin:0px;border:none;" lay-skin="line">
+											 <colgroup>
+											     <col width="15%">
+											     <col width="15%">
+											     <col width="30%">
+											     <col width="20%">
+											     <col width="20%">
+											    <col>
+											 </colgroup>
+											 <thead>
+											    <tr>
+											       <th>类型</th>
+											       <th>缓急<img src="../../web/images/upgray.png" class="up2" onclick="getDoingWork('1','')"><img src="../../web/images/downgray.png" class="down2" onclick="getDoingWork('0','')"></th>
+											       <th>标题</th>
+											       <th>所处环节</th>
+											       <th>处理时间<img src="../../web/images/upgray.png" class="up3" onclick="getDoingWork('','1')"><img src="../../web/images/downgray.png" class="down3" onclick="getDoingWork('','0')"></th>
+											    </tr> 
+											 </thead>
+											 <tbody id="doingWork_tbody">
+											 	<script id="doingWork_script" type="text/html">
+													{{each records value index}}
+														<tr  onclick="isOverTask('{{value.processInstanceId}}','{{value.title}}','{{value.businessKey}}')" class="hand" >
+															<td title="{{value.formType}}">{{value.formType}}</td>
+															<td title="{{value.urgency}}">{{value.urgency}}</td>
+															<td title="{{value.title}}">{{value.title}}</td>
+															<td title="{{value.link}}">{{value.link}}</td>
+															<td title="{{value.processingDate}}">{{value.processingDate}}</td>
+														</tr>
+													{{/each}}
+												</script>
+											    
+											 </tbody>
+										</table>
+							    	</div>
+								    <!-- <div class="layui-tab-item">内容2</div> -->
+							    <!-- </div> -->
+							<!-- </div> -->
+						<!-- </div> -->
+					</div>
+				</div>
+				<div class="leftbox"  id='pformation'  drag-id="3">
+					<div class="m_l_blue">
+						<span class="l m_l20 font_sty">公共信息</span>
+						<a class="r m_r20 checkmore" onclick="pubMsg()">查看更多></a>
+					</div>
+					<div class="m_both20" style="margin-top:-8px;">
+						<div id="public" style="position: relative;">
+							<div class="layui-layer layui-layer-loading" id="public_custom_loading"
+								type="loading" times="1" showtime="0" contype="string"
+								style="z-index: 19891015; top: 100px; left: 48%;position: absolute;display: none;">
+								<div id="" class="layui-layer-content layui-layer-loading2"></div>
+								<span class="layui-layer-setwin"></span>
+							</div>
+						</div>
+						<div class="li_sty">
+							<div class="layui-tab admin-nav-card layui-tab-brief" lay-filter="docDemoTabBrief1">
+								<ul class="layui-tab-title"  style="border-left-width:0px;margin-top: 8px">
+								    <li class="layui-this" id="allli">最新信息</li>
+								   
+							  	</ul>
+							    <div class="layui-tab-content">
+							    	<div class="layui-tab-item layui-show" style="height:330px;overflow-y:auto;">
+							    		<table class="layui-table" style="margin:0px;border:none;" lay-skin="line">
+											 <colgroup>
+											    <col width="70%">
+											    <col width="30%">
+											    <col>
+											 </colgroup>
+											 <thead>
+											    <tr>
+											       <th>标题</th>
+											       <th>发布时间</th>
+											    </tr> 
+											 </thead>
+											 <tbody id="pagingPublic">
+											  <script id="pagingPublic-script" type="text/html">
+                                                {{if records.length==0}}
+                      					          <tr>
+											        <td colspan="2" style="text-align:center">
+                                                                                                                                                                              暂无数据
+				                    	             </td>
+						                            </tr>
+                                                {{/if}}
+									            {{each records value index}}
+									               <tr class="reacc" style="cursor:pointer" onclick="publicdetail('{{value.id}}','{{type}}')">
+                                                       <td title="{{value.title}}">{{value.title}}</td>
+                                                       <td>{{value.createDate}}</td>
+                                                   </tr>                                       
+									             {{/each}}
+									          </script>
+											 </tbody>
+										</table>
+							    	</div>
+							    </div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="con_right" id="drag_right">
+				<div class="rightbox" id="meeting" drag-id="1">
+					<div class="rightbox1">
+						<div class="m_l_blue">
+							<span class="l m_l20 font_sty">我的会议</span>
+							<a class="r m_r20 checkmore" onclick="schedule()">查看更多></a>
+						</div>
+						<!-- <span id="testView"></span> -->
+						<div id="test2" style="position: relative;height: 276px;">
+							<div class="layui-layer layui-layer-loading" id="test2_custom_loading"
+								type="loading" times="1" showtime="0" contype="string"
+								style="z-index: 19891015; top: 100px; left: 48%;position: absolute;">
+								<div id="" class="layui-layer-content layui-layer-loading2"></div>
+								<span class="layui-layer-setwin"></span>
+							</div>
+						</div>
+						<div class="rbox_wrap">
+							<div class="rbox_inwrap" id="meeContainer">
+							   <script id="meeContainerDiv" type="text/html">
+                                 {{each records value index}}
+									<div class="rbox" {{if value.bizType=="in"}}style="border-left:2px solid #339bf1;"{{/if}} {{if value.bizType=="out"}}style="border-left:2px solid #169888;"{{/if}}>
+										<div class="rbox1" style="width:100%"> {{ if value.startDate!==null}} {{value.startDate=value.startDate.substr(0,10)}}{{/if}}&nbsp;{{value.startHourMin}}&nbsp;&nbsp;至&nbsp;&nbsp;{{ if value.endDate!==null}} {{value.endDate=value.endDate.substr(0,10)}}{{/if}}&nbsp;{{value.endHourMin}}</div>
+										<div class="rbox2" title="{{value.theme}}" style="width:100%;cursor: pointer;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;" onclick="GooffScheduling('{{value.bizId}}','{{value.bizType}}')">{{if value.bizType=="in"}}<img src="../../web/images/smallInMee.png" style="margin-right:6px"  >{{/if}}{{if value.bizType=="out"}}<img src="../../web/images/smallOutMee.png" style="margin-right:6px" >{{/if}}{{value.theme}}</div>
+                                     </div>
+							     {{/each}}
+							  </script>
+							</div>	
+						</div>						
+					</div>
+				</div>
+				<!-- <span class="open_btn">+++</span> -->
+				<div class="rightbox" id="mailMsg" drag-id="2">
+					<div class="rightbox1">
+						<div class="m_l_blue">
+							<span class="l m_l20 font_sty">邮件通知</span>
+							<a class="r m_r20 checkmore" onclick="lookMail()">查看更多></a>
+						</div>
+						<div class="m_both20">
+							<div id="eamil" style="position: relative;">
+								<div class="layui-layer layui-layer-loading" id="eamil_custom_loading"
+									type="loading" times="1" showtime="0" contype="string"
+									style="z-index: 19891015; top: 100px; left: 48%;position: absolute;">
+									<div id="" class="layui-layer-content layui-layer-loading2"></div>
+									<span class="layui-layer-setwin"></span>
+								</div>
+							</div>
+					    	<div class="layui-tab-item layui-show" style="height:380px;overflow-y:auto;margin-top:5px;">
+					    		<table class="layui-table" style="margin:0px;border:none;" lay-skin="line">
+									 <colgroup>
+									    <col width="120">
+									    <col width="80">
+									    
+									 </colgroup>
+									 <thead>
+									    <tr>
+									       <th>邮件标题</th>
+									       <th>发送时间</th>
+									    </tr> 
+									 </thead>
+									 <tbody id="pagingFa5" class="hand">
+									  <script id="paging5" type="text/html">
+                                      {{if records.length==0}}
+                      					 <tr>
+											<td colspan="2" style="text-align:center">
+                                                                                                                       暂无数据
+				                    	</td>
+						               </tr>
+                                      {{/if}}
+									  {{each records value index}}
+									    <tr  onclick="showView('{{value.id}}','{{value.isImportant}}','{{value.isRead}}')" >
+										    <td title="{{value.subjectText}}" {{if  value.isRead==0}}style="color:#666;"{{/if}}>{{if value.isUrgent==1}}<img class="m_r10" src="../../web/images/redqi.png" />{{/if}}{{value.subjectText}}</td>
+											<td {{if  value.isRead==0}}style="color:#666;"{{/if}}>{{value.sendTime}}</td>
+									    </tr>
+									    {{/each}}
+									    </script>
+									 </tbody>
+								</table>
+					    	</div>
+						</div>
+					</div>
+				</div>
+				<div class="rightbox" id="txls" drag-id="3">
+					<div class="rightbox1">
+						<div class="m_l_blue">
+							<span class="l m_l20 font_sty">通讯录</span>
+							<a class="r m_r20 checkmore" onclick="msgWork()">查看更多></a>
+						</div>
+						<div class="m_both20" style="margin-top:-8px;">
+							<div id="list" style="position: relative;">
+								<div class="layui-layer layui-layer-loading" id="list_custom_loading"
+									type="loading" times="1" showtime="0" contype="string"
+									style="z-index: 19891015; top: 100px; left: 48%;position: absolute;display: none;">
+									<div id="" class="layui-layer-content layui-layer-loading2"></div>
+									<span class="layui-layer-setwin"></span>
+								</div>
+							</div>
+							<div class="li_sty1">
+								<div class="layui-tab layui-tab-brief" lay-filter="txl">
+									<ul class="layui-tab-title" >
+									   <!--  <li class="layui-this">最近</li> -->
+									    <li class="layui-this" id="a1" txl="1" >同部门</li>
+									    <li  id="a2" txl="2">本单位</li>
+									    <li id="a3" txl="3">全局</li>
+								  	</ul>
+								  	<div style="border-bottom: solid 1px #ccc;">
+										<input id="searchKey" class="searchKey" type="text" value="" oninput="onkeyData(this.value)" maxlength="30" placeholder="搜索姓名">
+									</div>
+								    <div class="layui-tab-content">
+								    	<div class="layui-tab-item layui-show" style="height:275px;overflow-y:auto;">
+								    		<table class="layui-table" style="margin:0px;border:none;" lay-skin="nob">
+												 <colgroup>
+												    <col width="25%">
+												    <col width="35%">
+												    <col width="40%">
+												    <col>
+												 </colgroup>	
+												 <tbody id="tbUserPub1">
+												    <script id="UserPub1" type="text/html">
+                                                       {{if records==null}}
+                                                        <tr>
+						                              <td style="color:#666;"></td>
+											          <td style="color:#666;" ></td>
+                                                      <td style="color:#666;"></td>  
+						                             </tr>
+                                                    {{else}}
+									                {{each records value index}}
+									                <tr>
+										            <td style="color:#666;" title="{{value.autUser.fullName}}">{{value.autUser.fullName}}</td>
+											        {{if value.autDepartment!=null}}<td style="color:#666;" title="{{value.autDepartment.deptName}}">{{value.autDepartment.deptName}}</td>{{/if}}
+                                                    {{if value.autDepartment==null}}<td style="color:#666;" ></td>{{/if}}
+                                                    {{if value.autUserPub!=null}}<td style="color:#666;" title="{{value.autUserPub.phoneNumber}}">{{value.autUserPub.phoneNumber}}</td> {{/if}}   
+                                                    {{if value.autUserPub==null}}<td style="color:#666;" ></td> {{/if}}                                      
+									                </tr>
+									                {{/each}}
+                                                    {{/if}}
+									                </script>									                								   											    												    												    										    
+												 </tbody>
+											</table>
+								    	</div>
+									    <div class="layui-tab-item" style="height:275px;overflow-y:auto;">  
+									     <table class="layui-table" style="margin:0px;border:none;" lay-skin="nob">
+												 <colgroup>
+												    <col width="25%">
+												    <col width="35%">
+												    <col width="40%">
+												    <col>
+												 </colgroup>	
+												 <tbody id="tbUserPub2">
+												    <script id="UserPub2" type="text/html">
+                                                    {{if records==null}}
+                                                       <tr>
+						                              <td style="color:#666;"></td>
+											          <td style="color:#666;" ></td>
+                                                      <td style="color:#666;"></td>  
+						                             </tr>
+                                                    {{else}}
+									                {{each records value index}}
+									                <tr>
+										            <td style="color:#666;" title="{{value.autUser.fullName}}">{{value.autUser.fullName}}</td>
+											        {{if value.autDepartment!=null}}<td style="color:#666;" title="{{value.autDepartment.deptName}}">{{value.autDepartment.deptName}}</td>{{/if}}
+                                                    {{if value.autDepartment==null}}<td style="color:#666;" ></td>{{/if}}
+                                                    {{if value.autUserPub!=null}}<td style="color:#666;" title="{{value.autUserPub.phoneNumber}}">{{value.autUserPub.phoneNumber}}</td> {{/if}}   
+                                                    {{if value.autUserPub==null}}<td style="color:#666;" ></td> {{/if}}                           
+									                </tr>
+									                {{/each}}
+                                                    {{/if}}
+									                </script>										   											    												    												    										    
+												 </tbody>
+											</table>
+									    </div>
+									    <div class="layui-tab-item" style="height:275px;overflow-y:auto;">
+									         <table class="layui-table" style="margin:0px;border:none;" lay-skin="nob">
+												 <colgroup>
+												    <col width="25%">
+												    <col width="35%">
+												    <col width="40%">
+												    <col>
+												 </colgroup>	
+												 <tbody id="tbUserPub3">
+												    <script id="UserPub3" type="text/html">
+                                                    {{if records==null}}
+                                                        <tr>
+						                              <td style="color:#666;"></td>
+											          <td style="color:#666;" ></td>
+                                                      <td style="color:#666;"></td>  
+						                             </tr>
+                                                    {{else}}
+									                {{each records value index}}
+									                <tr>
+										             <td style="color:#666;" title="{{value.autUser.fullName}}">{{value.autUser.fullName}}</td>
+											        {{if value.autDepartment!=null}}<td style="color:#666;" title="{{value.autDepartment.deptName}}">{{value.autDepartment.deptName}}</td>{{/if}}
+                                                    {{if value.autDepartment==null}}<td style="color:#666;" ></td>{{/if}}
+                                                    {{if value.autUserPub!=null}}<td style="color:#666;" title="{{value.autUserPub.phoneNumber}}">{{value.autUserPub.phoneNumber}}</td> {{/if}}   
+                                                    {{if value.autUserPub==null}}<td style="color:#666;" ></td> {{/if}}     
+									                </tr>
+									                {{/each}}
+                                                    {{/if}}
+									                </script>										   											    												    												    										    
+												 </tbody>
+											</table>
+                                         </div>
+								    </div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	
+	<!-- 公告信息详情 -->
+		<div class="admin-main" style="display: none; z-index: 19940200;margin-bottom:60px;" id="win-detail-object">
+			<form class="layui-form layui-form-pane" id="detail-object-form">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<!-- <input type="hidden" name="content" id="content" /> -->
+				<input type="hidden" name="id" id="id">
+				<!-- 标题 -->
+				<div class="" style="text-align: center;">
+					 <span id="title" style="font-size:16px;font-weight: bold;word-wrap:break-word"></span>
+				</div>
+              
+				<!-- 发布人 -->
+				<div class="p_t10">
+					<span class="e6ed">发布人：</span>
+					<span id="publishName"></span>
+				</div>
+				<!-- 所属分类 -->
+				<div class="p_t10">
+					<span class="e6ed">所属分类：</span>
+					<span id="categoryId"></span>
+				</div>
+				<!-- 有效期/天: -->
+				<div class="p_t10 cl">
+					<span class="e6ed">有效期/天：</span>
+					<span id="period"></span>
+				</div>
+				<!-- 公告对象 -->
+				<div class="p_t10">
+					<span class="e6ed l">公告对象：</span>
+					<div id="noticeObjName" class="l" style="word-wrap:break-word;width:85%;line-height:26px;"></div>
+				</div>
+				  <!-- 公告内容 -->
+                <div class="outindss" style="clear:both;">
+				  <p id="content" style="word-wrap: break-word;" class="heidf"></p>
+				</div>
+				<div class="p_t10 cl" >
+				<span class="e6ed l">附件：</span>
+				<div >
+					<table class="layui-table" style="width: 50%;margin-top: 0px;border: none;">
+				      <colgroup>
+						    <col width="60%">
+						    <col width="20%">
+						    <col width="20%">
+						  </colgroup>
+				     <tbody id="demoList">
+                            <script   id="artt_detail"  type="text/html">
+                            {{each filelist value index}}
+                        <tr>
+                        <td style="border:none;color:black;">{{value.attachName}}</td>
+                        <td style="border:none;color:black;">{{value.attachSize}}kb</td>
+                        <td style="border:none;">
+                            <a onclick="downloads('{{value.attachPath}}','{{value.attachName}}')" style="color:#339bf1;cursor:pointer">下载</a>
+                            </td>
+                            </tr>
+                        {{/each}}
+						</script>
+						</tbody>
+			    	</table> 
+				</div>
+			</div>
+				
+				<div class="btn_fixed">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+				</div>
+			</form>
+		</div>
+
+	
+		
+	
+	<input type="hidden" id="hiddenPp"  value="0">
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+    <script type="text/javascript" src="../../web/js/Sortable.js"></script>
+    <script type="text/javascript" src="../../web/js/indexOther.js"></script>
+    
+	<script>
+	var el = document.getElementById('drag_left');
+	var sortable = new Sortable(el, {
+		  animation: 500, //动画参数
+		  dataIdAttr: 'drag-id',
+		  onEnd: function(evt){ //拖拽完毕之后发生该事件
+			   var id_arr=''
+	    	   for(var i=0, len=evt.from.children.length; i<len; i++){
+	    	   		id_arr+=','+ evt.from.children[i].getAttribute('drag-id');
+	    	   }
+	    	   id_arr=id_arr.substr(1);
+	    	  // console.log(id_arr)
+	    	   //然后请求后台ajax 这样没有完成拖拽排序
+	    	   var param = new Object();
+	    	   param.module_code=id_arr;
+	    	   param.type="L";
+	   		   param._csrf = $("#_csrf").val();	
+	   	       tool.post("/per/autIndexPageModule/removeUpdate",param,function(data){	
+	   		   },true); 
+		   },
+		
+	})
+	var rl = document.getElementById('drag_right');
+	var sortable2 = new Sortable(rl, {
+		  animation: 500, //动画参数
+		  dataIdAttr: 'drag-id', 
+		  onEnd: function(evt){ //拖拽完毕之后发生该事件
+			   var id_arr=''
+	    	   for(var i=0, len=evt.from.children.length; i<len; i++){
+	    	   		id_arr+=','+ evt.from.children[i].getAttribute('drag-id');
+	    	   }
+	    	   id_arr=id_arr.substr(1);
+	    	   //console.log(id_arr)
+	    	   //然后请求后台ajax 这样没有完成拖拽排序
+	    	   var param = new Object();
+	    	   param.module_code=id_arr;
+	    	   param.type="R";
+	   		   param._csrf = $("#_csrf").val();	
+	   	       tool.post("/per/autIndexPageModule/removeUpdate",param,function(data){	
+	   		   },false);
+		   },
+		
+	})
+	init();
+	function init(){
+		 var param = new Object();  	    
+ 		  param._csrf = $("#_csrf").val();	
+ 	      tool.post("/per/autIndexPageModule/init",param,function(data){	
+ 	    	  if(data.code==0){ 
+ 	    		 if(data.object.length>0){
+ 	    			var strL="";
+ 	    			var strR="";
+ 	    			//isHide
+ 	    			for(var i=0;i<data.object.length;i++){
+ 	    				var str=data.object[i].moduleCode;
+ 		    	   		if(str.indexOf("R&")>=0){
+ 		    	   		  strR=strR+str.substring(2)+",";
+ 		    	   		  if(data.object[i].isHide==1){
+ 		    	   			 if(str.substring(2)==1){	    	   		
+ 	 		    	   			$("#meeting").hide();
+ 	 		    	   			}
+ 	 		    	   		    if(str.substring(2)==2){	    	   		
+ 	 		    	   			$("#mailMsg").hide();
+ 	 		    	   			}
+ 	 		    	   	       if(str.substring(2)==3){	    	   		
+ 			    	   			$("#txls").hide();
+ 			    	   			}
+ 		    	   			 //console.log(str.substring(2));
+ 		    	   			
+ 		    	   			
+ 		    	   		  }
+ 		    	   		}else{
+ 		    	   		  strL=strL+str.substring(2)+",";
+ 		    	   	      if(data.object[i].isHide==1){
+ 		    	   	    	//console.log(str.substring(2));
+ 		    	   	        if(str.substring(2)==1){	    	   		
+ 		    	   			$("#todowork").hide();
+ 		    	   			}
+ 		    	   		    if(str.substring(2)==2){	    	   		
+ 		    	   			$("#dailywork").hide();
+ 		    	   			}
+ 		    	   	       if(str.substring(2)==3){	    	   		
+		    	   			$("#pformation").hide();
+		    	   			}
+		    	   		  }
+ 		    	   		}
+ 		    	    }
+ 	    			strR=strR.substring(0,strR.length-1);
+ 	    			strL=strL.substring(0,strL.length-1);	 	    		   
+ 	    		    sortable.sort(strL.split(","));
+ 	 	 	        sortable2.sort(strR.split(",")); 
+ 	    		 } 	    		
+ 	    	  }	    	  
+ 	    	
+ 		   },true);
+	}	
+	
+
+	//定义layui
+	var pform,laydate,setMark;
+	layui.use(['form','element','laydate'], function() {
+		pform = layui.form;
+		laydate = layui.laydate;
+		var element=layui.element;
+		element.on('tab(docDemoTabBrief1)', function(data){
+			if(data.index==0){
+				//最新信息接口
+				loadDataNew();
+				
+			}else{
+		     var ids=$(data.elem.context).attr("ids");
+		     loadDataPublic(ids);
+			}
+		  });
+		pform.verify({
+			lengthZ : function(value) {
+				if (value.length>200) {
+					return "主题内容过长";
+				}
+			}
+		});
+		element.on('tab(txl)', function(){
+			changeDept(this.getAttribute('txl'));
+		  });
+		 
+	    var  obj=getStart();//获取本月会议标注日期
+		     setMark={
+				       elem: '#test2'
+					  ,position: 'static'
+					  ,showBottom: false
+					  ,mark:obj
+					  ,change: function(value, date,ss,event){ //监听日期被切换
+						 var that=this;
+					     var tdate;
+					     //getEventFix  是定义在laydate.js里面获取事件源用的变量   这里取出来
+					     if($(getEventFix).find("span").attr("class")!=undefined){
+					    	 tdate=$(getEventFix).find("span").attr("class");
+					     }else{
+					    	 tdate=$(getEventFix).attr("class");
+					     }
+						// var  what = $(window.event.srcElement).attr("class");
+					     if(tdate=="layui-this"||tdate=="laydate-day-mark"){
+					    	  getdayEvent(value)//查看标注日期的会议有哪些
+					     }else{
+					    	  getmonthEvent(date,that);//获取一个月的会议标注 
+					     }
+					  },
+					  //加载后回调
+					  ready: function(date){
+						$("#test2_custom_loading").hide();
+					  }
+					}
+		//创建出我的会议标注     
+		laydate.render(setMark);
+		//邮件
+		loadData();
+		//公共信息分类
+	    getCategory();
+		//公共最新信息数据
+		loadDataNew();		
+		//待办
+		getWaitWork();
+		//已办
+		getDoingWork();
+		
+		
+		//通讯录
+		//loadUserPub();
+		changeDept(1);
+		
+	});
+	
+	//在线通知 待办 公告 文件 统计
+	workTotal();
+	function workTotal(){
+		tool.post("/aut/autDataStatistics/indexCount",{_csrf:$("#_csrf").val()},function(data){
+			if(data.object!=null){
+			    var data=data.object;
+			    for(var i=0;i<data.length;i++){
+			    	$(".indexCount").each(function(){
+			    		var id=$(this).attr("id");
+			    		if(id==data[i].objectKey){
+			    			$(this).text(data[i].objectCount)
+			    		}
+			    	})
+			    }
+			}
+		},true);
+	}
+	
+	
+	//requestAnimationFrame兼容设置
+	(function() {
+	    var lastTime = 0;
+	    var vendors = ['webkit', 'moz'];
+	    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+	        window.requestAnimationFrame = window[vendors[x] + 'RequestAnimationFrame'];
+	        window.cancelAnimationFrame = window[vendors[x] + 'CancelAnimationFrame'] ||    // name has changed in Webkit
+	                                      window[vendors[x] + 'CancelRequestAnimationFrame'];
+	    }
+	    if (!window.requestAnimationFrame) {
+	        window.requestAnimationFrame = function(callback, element) {
+	            var currTime = new Date().getTime();
+	            var timeToCall = Math.max(0, 16.7 - (currTime - lastTime));
+	            var id = window.setTimeout(function() {
+	                callback(currTime + timeToCall);
+	            }, timeToCall);
+	            lastTime = currTime + timeToCall;
+	            return id;
+	        };
+	    }
+	    if (!window.cancelAnimationFrame) {
+	        window.cancelAnimationFrame = function(id) {
+	            clearTimeout(id);
+	        };
+	    }
+	}());
+	function animate() { 
+		var Date = tool.getNowDate();
+		$("#timeing1").text(Date[0]);
+		$("#timeing2").text(Date[1])
+		 requestAnimationFrame(animate); 
+	} 
+	requestAnimationFrame(animate);
+ 
+  //本地时间跳动
+/* 	 setInterval("showtime()", 1000);
+	 function showtime() {
+	 var Date = tool.getNowDate();
+	 $("#timeing1").text(Date[0]);
+	 $("#timeing2").text(Date[1])
+	 } */
+	
+ //日程#####################################################################################################
+
+
+	 //初始化日期
+	   function getStart(){
+	 	var current = new Date();
+        showYear=current.getFullYear();
+        showMonth=current.getMonth() + 1;
+        if(showMonth<10){
+        	 showMonth="0"+showMonth;
+        }
+        var nowdatal=showYear+"-"+showMonth;
+        var obj={};
+        tool.post("/off/offScheduling/monthMeet",{_csrf:$("#_csrf").val(),month:nowdatal},function(data){
+        	 for(var i=0;i<data.length;i++){
+        		 obj[data[i]]='';
+        	 }
+        	 
+        },false)
+        return obj;
+	 }
+	 function  getmonthEvent(value,that){
+		  var month=value.year+'-'+value.month;
+		   var param={
+		    		_csrf:$("#_csrf").val(),
+		    		month:month
+		    }
+		    tool.post("/off/offScheduling/monthMeet",param,function(data){
+		    	  //console.log(data);
+		    	  for(var i=0;i<data.length;i++){
+		    		 var date = data[i];
+		    		  that.mark[date]='';
+		    	  }
+		    	  $(".layui-laydate-content").find(".layui-this").trigger("click");
+		    	  pform.render();
+		    },true)
+	 }
+	 
+	 var Date1 = tool.getNowDate(); 
+	 getdayEvent(Date1[1]);
+	 function getdayEvent(value){
+		 var param={
+		    		_csrf:$("#_csrf").val(), 
+		    		meetDay:value
+		    };
+		   tool.post("/off/offScheduling/dateMeet",param,function(data){
+			   //console.log(data)
+			   var data1={records:[]}
+				 for(var i=0;i<data.length;i++){				 
+					data1.records.push(data[i]);			  
+				 }			
+		 	    	$("#meeContainer").html(template("meeContainerDiv", data1));
+			
+		    	
+		    },true);
+	 }
+	 
+	 var indexMee;
+     //会议详情
+     function GooffScheduling(id,type){
+     	var isDraft=0;
+     	var url;
+     	if(type=='out'){
+     		url='/mee/meeOutsideMeeting/meeOutsideManagePageDetail.html?id='+id+'&isDraft='+isDraft
+     	}else{
+     		url='/mee/meeInsideMeeting/meeInsideManagePageDetail.html?id='+id+'&isDraft='+isDraft
+     	}
+     	indexMee=layer.open({
+				  type: 2,
+				  title:'',
+				  closeBtn:0,
+				  shade: 0.8, 
+				  shadeClose: true,
+				  content:url
+				});
+			    pform.render();
+				layer.full(indexMee);
+     }
+	  //跳转到日程详情 
+/* 	  function GooffScheduling(id,type){
+		  var index= layer.open({
+			  type: 2,
+			  title: '',
+			  closeBtn:false,
+			  shade: 0.8, 
+			  content: '/off/offScheduling/offSchedulingDetailPage?id='+id
+			});
+	    		
+		    pform.render();
+			layer.full(index);
+	  } */
+ //日程结束#####################################################################################################	 
+	//通讯录查询
+	function changeDept(str) {
+		$("#searchKey").val("");		
+		var data1={data:[]}
+		if(str==1){
+		$("#tbUserPub1").html(template("UserPub1", data1));
+		}
+		if(str==2){
+		$("#tbUserPub2").html(template("UserPub2", data1));
+		}
+		if(str==3){
+		$("#tbUserPub3").html(template("UserPub3", data1));
+		}
+		onkeyData("");		
+	}
+	//通讯录查询
+	function onkeyData(str) {	   
+		var param = new Object();
+		param.container = "UserPub";
+		param._csrf = $("#_csrf").val();
+		param.queryStr=str;	
+		if($("#a1").is(".layui-this")){		
+			$("#list_custom_loading").show();
+			param.selectType="1";
+			tool.post("/per/autUserPub/searchquery",param,function(data){		
+				 var data1={records:[]}
+				 for(var i=0;i<data.length;i++){				 
+					data1.records.push(data[i]);			  
+				 }
+				 if(data.length>0){
+		 		  $("#tbUserPub1").html(template("UserPub1", data1));
+				 }else{
+					 $("#tbUserPub1").html(template("UserPub1", null)); 
+				}
+				$("#list_custom_loading").hide(300);
+			},true);
+		}
+		if($("#a2").is(".layui-this")){		
+			$("#list_custom_loading").show();
+			param.selectType="2";
+			tool.post("/per/autUserPub/searchquery",param,function(data){		
+				 var data1={records:[]}
+				 for(var i=0;i<data.length;i++){				 
+					data1.records.push(data[i]);			  
+				 }			
+				 if(data.length>0){
+		 	    	$("#tbUserPub2").html(template("UserPub2", data1));
+				 }else{
+				 $("#tbUserPub2").html(template("UserPub2", null)); 
+				 }
+				 $("#list_custom_loading").hide(300);
+			},true);
+		}
+		if($("#a3").is(".layui-this")){	
+			$("#list_custom_loading").show();
+			param.selectType="3";
+			tool.post("/per/autUserPub/searchquery",param,function(data){		
+				 var data1={records:[]}
+				 for(var i=0;i<data.length;i++){				 
+					data1.records.push(data[i]);			  
+				 }
+				 if(data.length>0){
+		 		$("#tbUserPub3").html(template("UserPub3", data1));
+				 }else{
+				 $("#tbUserPub3").html(template("UserPub3", null)); 
+				 }
+				 $("#list_custom_loading").hide(300);
+			},true);
+		}			
+	}	
+	
+//邮件开始#####################################################################################################
+
+	//加载邮件数据
+	function loadData() {
+		$("#eamil_custom_loading").show();
+		var param = new Object();
+		param.container = "paging5";
+		param.pageSize = 20;
+		param.isSearchCount = 0;
+		param._csrf = $("#_csrf").val();
+		param.pageNum = 1;
+		tool.post("/mai/maiReceiveBox/list",param,function(data){
+			 var data1={records:[]}
+			if(data.records.length>0){
+			 for(var i=0;i<data.records.length;i++){
+				  if(data.records[i].isRead==0){
+					  data1.records.push(data.records[i])
+					  if( data1.records.length>=10){
+						  break;
+					  }
+				  }
+			 }
+			}
+			$("#pagingFa5").html(template("paging5", data1));
+			$("#eamil_custom_loading").hide(300);
+		},true);
+	}
+	//详情
+	function showView(id,isImportant,isRead){
+		var index= layer.open({
+			  type: 2,
+			  title: '',
+			  closeBtn:0,
+			  shade: 0.8,
+			  content: '/mai/maiReceiveBox/maiReceiveBoxPageDetailPage.html?id='+id+'&isImportant='+isImportant+'&isRead='+isRead
+			});
+    		
+		    pform.render();
+			layer.full(index);
+			//更新推送消息
+			workTotal();
+  			var onlineVal = $("#onlineMsg").text();
+  			if(onlineVal > 0){
+  				onlineVal = parseInt(onlineVal) - 1;
+  			}
+			newMsg = "当前共<span style='color:red;'>"+onlineVal+"</span>条未读消息";
+			parent.packageMsg(newMsg,1); 
+			//parent.msgCheck(); 
+			
+	}
+//邮件结束#####################################################################################################
+	
+	
+//公共信息开始#####################################################################################################
+	        //分类下拉框数据加载
+	        function getCategory(){
+		            var  param={
+		                _csrf:$("#_csrf").val()
+		            };
+	            tool.post("/pub/pubPublicInfoCategory/allList",param,function(data){
+	            	  $("#allli").nextAll().remove();
+	            	  var  str="";
+	            	  for(var i=0;i<data.length;i++){
+	            		  if(i<=6){
+	            			  
+		            			  str+='<li class="fourtext" ids='+data[i].id+'>'+data[i].name+'</li>'
+	            		  }
+	            	  }
+	            	  $("#allli").after(str);
+	             },true);
+	             //pform.render();
+	        }
+	
+	       function publicmeaagse(data,type){
+	    	   $(".reacc").remove();
+	    	   var data1={records:[],type:type};
+         	  if(data.records.length>0){
+         			 for(var i=0;i<data.records.length;i++){
+         					  data1.records.push(data.records[i])
+         					  if( data1.records.length>=30){
+         						  break;
+         					  }
+         			 }
+         	    }
+         		$("#pagingPublic").html(template("pagingPublic-script", data1));
+	       }
+	   	 //最新信息列表
+		    function loadDataNew() {
+		    	$("#public_custom_loading").show();
+		        var param = new Object();
+		        param._csrf = $("#_csrf").val();
+		        param.pageSize =20;
+	            param.pageNum = 1;
+	            tool.post("/pub/pubPublicInfo/lastList",param,function(data){
+	            	publicmeaagse(data,"1");
+	            	$("#public_custom_loading").hide(300);
+	            },true);
+		    }
+	 //综合信息列表
+        function loadDataPublic(ids) {
+            var param = new Object();
+            param._csrf = $("#_csrf").val();
+            param.pageSize = 20;
+            param.pageNum = 1;
+            param.categoryId =ids;
+            tool.post("/pub/pubPublicInfo/mexList",param,function(data){
+            	publicmeaagse(data,"2")
+            },true);
+      
+        }
+        //公共信息详情
+        function publicdetail(id,type) {
+            var object = tool.getById("/pub/pubPublicInfo/getById", id);
+            for ( var key in object) {
+                $("#detail-object-form").find("#" + key).html(
+                    object[key]);
+                
+             	if(key == 'categoryId'){
+               		$("#categoryId").html(object['categoryName']);
+               	}
+                var fileBack=object.attachmentList;
+                var filelist={filelist:fileBack};
+                $('#demoList').html(template("artt_detail", filelist));
+            }
+             
+            var noticeObjName=object.noticeObjName.replace(/;/g,"；");
+            $("#detail-object-form").find("#noticeObjName").html(noticeObjName);
+            var typeTitle;
+            if(type=="1"){
+            	typeTitle="最新信息详情";
+            }else{
+            	typeTitle="综合信息详情";
+            }
+            var index = layer.open({
+                title : typeTitle,
+                maxmin : false,
+                type : 1,
+                content : $('#win-detail-object')
+            });
+            pform.render();
+            layer.full(index);
+        }
+	
+        //公共信息下载
+        function downloads(path,resourceName){
+            resourceName = encodeURIComponent(encodeURIComponent(resourceName));
+            location.href = "/res/resResource/download?path="+ encodeURIComponent(path)+"&resourceName="+resourceName;
+
+        }
+ //公共信息结束#####################################################################################################
+ 
+ 
+	           //在办和委托查看更多切换
+			   function changestatus(flag){
+					if(flag==1){
+						$('.daily').show();
+						$('.entrusted').hide();
+					}else if(flag==2){
+						$('.daily').hide();
+						$('.entrusted').show();
+					}
+				}
+							        
+				//查看更多
+				function waitWork(){
+					//跳转到协同办公--待办工作
+					 //tool.linkJump3('ioa/ioaWaitWork/ioaWaitWorkPage','/tempMenu/indexPage','fa-caret-square-o-up','待办工作');
+					 parent.everyBodyGotoPageByURL("ioa/ioaWaitWork/ioaWaitWorkPage");
+				}
+				function dailyWork(){
+					//日常工作跳转到协同办公--在办工作
+					 //tool.linkJump3('ioa/ioaDoingWork/ioaDoingWorkPage','/tempMenu/indexPage','fa-caret-square-o-up','已办工作');
+					/*tool.linkJump3('ioa/ioaWaitWork/ioaWaitingWorkPage','/tempMenu/indexPage','fa-caret-square-o-up','在办工作');*/
+					 parent.everyBodyGotoPageByURL("ioa/ioaWaitWork/ioaWaitingWorkPage");
+				}
+				function entrustedWork(){
+					//日常工作跳转到协同办公--委托工作
+					 tool.linkJump3('ioa/ioaEntrustWork/ioaEntrustWorkPage','/tempMenu/indexPage','fa-caret-square-o-up','委托工作');
+				}
+				function pubMsg(){
+					//公告信息跳转到公共信息--综合信息
+					 //tool.linkJump3('/pub/pubPublicInfo/pubNewPage','/tempMenu/indexPage','fa-bar-chart','最新信息');
+					 parent.everyBodyGotoPageByURL("/pub/pubPublicInfo/pubNewPage");
+				 }
+				function schedule(){
+					//日程安排跳转到工作计划--领导查看
+					// tool.linkJump3('/mee/meeInsideMeeting/meeMineManagePage','/tempMenu/indexPage','fa-bar-chart','领导查看');
+					 parent.everyBodyGotoPageByURL("/mee/meeInsideMeeting/meeMineManagePage");
+				 }
+				function lookMail(){
+					//邮件通知跳转到内部邮件--收件件箱
+					//tool.linkJump3('mai/maiReceiveBox/maiReceiveBoxPage','/tempMenu/indexPage','fa-user','发件箱');
+					parent.everyBodyGotoPageByURL("mai/maiReceiveBox/maiReceiveBoxPage");
+				}
+				function msgWork(){
+					//通讯录跳转到个人中心--通讯录
+					//tool.linkJump3('/per/autUserPub/autUserPubVOPage','/tempMenu/indexPage','fa-bell-o','通讯录');
+					parent.everyBodyGotoPageByURL("/per/autUserPub/autUserPubVOPage");
+				 
+				}	
+				function onlinemsg(){
+					//跳转到在线通知
+					tool.linkJump3('/per/autMsgOnline/autMsgOnlinePage','/tempMenu/indexPage');
+				}
+				function toreadlist(){
+					//跳转到待阅文件
+					tool.linkJump3('ioa/ioaReceiveWork/ioaReceiveWorkPage','/tempMenu/indexPage','fa-bell-o','待阅文件');
+				}
+				function  pubnotice(){
+					//跳转到通知公告
+					tool.linkJump3('/pub/pubPublicInfo/pubNewPage','/tempMenu/indexPage','fa-bell-o','最新消息');
+				}
+				function todoList(){
+					//跳转到我的待办
+					tool.linkJump3('ioa/ioaWaitWork/ioaWaitWorkPage','/tempMenu/indexPage','fa-bell-o','我的待办');
+				}
+				
+				//加载流程list 待办
+				function getWaitWork(fillingDateIsAsc,urgencyIsAsc) {
+					$("#pagingFa1_custom_loading").show();
+					var param = new Object();
+					param._csrf = $("#_csrf").val();
+					param.container = "paging1";
+					param.pageSize = 30;
+					param.pageNum = 1;
+					param.isSearchCount = 0;
+                    param.fillingDateIsAsc = fillingDateIsAsc;
+                    param.urgencyIsAsc = urgencyIsAsc;
+					tool.post("../../ioa/ioaWaitWork/selectWaitTask",param,function(data){
+						if(data.records.length>0){
+						 var data1={records:[]}
+						 for(var i=0;i<data.records.length;i++){
+							  data1.records.push(data.records[i])
+							  if( data1.records.length>=30){
+								  break;
+							  }
+						 }
+				 		$("#pagingFa1").html(template("paging1", data1));
+						}
+						$("#pagingFa1_custom_loading").hide(300);
+					},true);
+					if(urgencyIsAsc=="0"||urgencyIsAsc=="1"){
+						param.urgencyIsAsc=urgencyIsAsc;
+						if(urgencyIsAsc=="1"){
+								$(".up").attr("src","../../web/images/uptrue.png");
+								$(".down").attr("src","../../web/images/downgray.png");
+							}else{
+								$(".up").attr("src","../../web/images/upgray.png");
+								$(".down").attr("src","../../web/images/downture.png");
+							}
+						
+					}
+					if(fillingDateIsAsc=="0"||fillingDateIsAsc=="1"){
+						param.fillingDateIsAsc=fillingDateIsAsc;
+						if(fillingDateIsAsc=="1"){
+								$(".up1").attr("src","../../web/images/uptrue.png");
+								$(".down1").attr("src","../../web/images/downgray.png");
+							}else{
+								$(".up1").attr("src","../../web/images/upgray.png");
+								$(".down1").attr("src","../../web/images/downture.png");
+							}
+						
+					}
+				}
+				
+				//已办
+				function getDoingWork(urgencyIsAsc,fillingDateIsAsc) {
+					$("#doingWork_tbody_custom_loading").show();
+					var param = new Object();
+					param._csrf = $("#_csrf").val();
+					param.container = "doingWork_tbody";
+					param.pageSize = 50;
+					param.pageNum = 1;
+					param.isSearchCount = 0;
+                    param.fillingDateIsAsc = fillingDateIsAsc;
+                    param.urgencyIsAsc = urgencyIsAsc;
+                    //$("#doingWork_tbody_div").show();
+                    //已办
+				/* 	tool.post("../../ioa/ioaDoingWork/selectDoTask",param,function(data){ */
+					//在办
+					tool.post("../../ioa/ioaWaitWork/selectWaitingTask",param,function(data){
+						if(data.records.length>0){
+						 var data1={records:[]}
+						 for(var i=0;i<data.records.length;i++){
+							  data1.records.push(data.records[i])
+							  if( data1.records.length>=30){
+								  break;
+							  }
+						 }
+				 		$("#doingWork_tbody").html(template("doingWork_script", data1));
+						}
+						//layer.close(initLoadIndex);
+						$("#doingWork_tbody_custom_loading").hide(300);
+					},true);
+					if(urgencyIsAsc=="0"||urgencyIsAsc=="1"){
+						param.urgencyIsAsc=urgencyIsAsc;
+						if(urgencyIsAsc=="1"){
+								$(".up2").attr("src","../../web/images/uptrue.png");
+								$(".down2").attr("src","../../web/images/downgray.png");
+							}else{
+								$(".up2").attr("src","../../web/images/upgray.png");
+								$(".down2").attr("src","../../web/images/downture.png");
+							}
+						
+					}
+					if(fillingDateIsAsc=="0"||fillingDateIsAsc=="1"){
+						param.fillingDateIsAsc=fillingDateIsAsc;
+						if(fillingDateIsAsc=="1"){
+								$(".up3").attr("src","../../web/images/uptrue.png");
+								$(".down3").attr("src","../../web/images/downgray.png");
+							}else{
+								$(".up3").attr("src","../../web/images/upgray.png");
+								$(".down3").attr("src","../../web/images/downture.png");
+							}
+						
+					}
+				}
+				function openIsMyTask(id,processName,taskDefKey,bpmnId,businessKey,signInTime){
+					var param = new Object()
+					param.taskId = id;		
+					param._csrf = $("#_csrf").val()			
+					tool.post("../../ioa/ioaWaitWork/isMyTask", param, function(data){				
+						if (data.code == 0) {	
+							openForm(id,processName,taskDefKey,bpmnId,businessKey,signInTime);
+						} else {
+							tool.success(data.message);			
+							getWaitWork();
+						}				
+					}, false); 
+				}
+				//详情对象
+				function openForm(id,processName,taskDefKey,bpmnId,businessKey,signInTime) {
+					var index = layer.open({
+						title : processName,
+						maxmin : false,
+						type : 2,
+						content : '../../act/modeler/openForm.html?id='+bpmnId+'&activityId='+id+'&taskId='+taskDefKey+'&businessKey='+businessKey+'&signInTime='+signInTime+'&isWait=1',
+						cancel: function(){ 
+						    //右上角关闭回调
+						    getWaitWork();
+						    //return false 开启该代码可禁止点击该按钮关闭
+						  },
+					    end:function(){ 
+							//待办
+							getWaitWork();
+							//已办
+							getDoingWork();
+						}
+
+					});
+					pform.render();
+					layer.full(index);
+				}
+			function isOverTask(processInstanceId,title,businessKey){
+					var param = new Object()
+					param.pid = processInstanceId;		
+					param._csrf = $("#_csrf").val()			
+					tool.post("../../ioa/ioaWaitWork/isOverTask", param, function(data){				
+					if (data.code == 0) {	
+						    openDoingForm(processInstanceId,title,businessKey);
+					} else {
+							tool.success(data.message);		
+							loadData();
+					}				
+				}, false); 
+			}
+			//详情对象
+			function openDoingForm(processInstanceId,title,businessKey) {
+				var index = layer.open({
+					title : title,
+					maxmin : false,
+					type : 2,
+					content : '../../act/modeler/openForm.html?processInstanceId='+processInstanceId+'&businessKey='+businessKey+'&isWait=0',
+					cancel: function(){
+					    //右上角关闭回调
+					    getDoingWork();					    
+					    //return false 开启该代码可禁止点击该按钮关闭
+					  }
+							
+				});
+				pform.render();
+				layer.full(index);
+			}
+	</script>
+</body>
+</html>

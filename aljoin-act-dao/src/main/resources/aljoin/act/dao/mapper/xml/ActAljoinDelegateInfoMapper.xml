@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.act.dao.mapper.ActAljoinDelegateInfoMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.act.dao.entity.ActAljoinDelegateInfo">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="owner_user_id" property="ownerUserId" />
+		<result column="owner_user_fullname" property="ownerUserFullname" />
+		<result column="last_user_id" property="lastUserId" />
+		<result column="last_user_fullname" property="lastUserFullname" />
+		<result column="assignee_user_id" property="assigneeUserId" />
+		<result column="assignee_user_fullname" property="assigneeUserFullname" />
+		<result column="task_id" property="taskId" />
+		<result column="task_key" property="taskKey" />
+		<result column="task_name" property="taskName" />
+		<result column="process_id" property="processId" />
+		<result column="process_instance_id" property="processInstanceId" />
+		<result column="has_do" property="hasDo" />
+		<result column="is_active" property="isActive" />
+		<result column="delegate_user_names" property="delegateUserNames" />
+		<result column="delegate_user_ids" property="delegateUserIds" />
+		<result column="delegate_ids" property="delegateIds" />
+		<result column="first_delegate_id" property="firstDelegateId" />
+		<result column="last_delegate_id" property="lastDelegateId" />
+		<result column="process_category_name" property="processCategoryName" />
+		<result column="process_category_id" property="processCategoryId" />
+		<result column="urgent_status" property="urgentStatus" />
+		<result column="process_title" property="processTitle" />
+		<result column="handle_time" property="handleTime" />
+		<result column="start_time" property="startTime" />
+		<result column="process_starter_id" property="processStarterId" />
+		<result column="process_starter_full_name" property="processStarterFullName" />
+		<result column="IS_SELF_TASK" property="isSelfTask" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name, owner_user_id, owner_user_fullname, last_user_id, last_user_fullname, assignee_user_id, assignee_user_fullname, task_id, task_key, task_name, process_id, process_instance_id, has_do, is_active, delegate_user_names, delegate_user_ids, delegate_ids, first_delegate_id, last_delegate_id, process_category_name, process_category_id, urgent_status, process_title, handle_time, start_time, process_starter_id, process_starter_full_name
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM act_aljoin_delegate_info WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="ActAljoinDelegateInfo">
+    	INSERT INTO act_aljoin_delegate_info(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{ownerUserId}, #{ownerUserFullname}, #{lastUserId}, #{lastUserFullname}, #{assigneeUserId}, #{assigneeUserFullname}, #{taskId}, #{taskKey}, #{taskName}, #{processId}, #{processInstanceId}, #{hasDo}, #{isActive}, #{delegateUserNames}, #{delegateUserIds}, #{delegateIds}, #{firstDelegateId}, #{lastDelegateId}, #{processCategoryName}, #{processCategoryId}, #{urgentStatus}, #{processTitle}, #{handleTime}, #{startTime}, #{processStarterId}, #{processStarterFullName})
+    </insert>
+
+</mapper>

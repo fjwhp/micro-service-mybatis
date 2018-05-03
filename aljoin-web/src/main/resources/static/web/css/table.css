@@ -1,0 +1,81 @@
+/*table*/
+.site-table tbody tr td {text-align: center;}
+.site-table tbody tr td .layui-btn+.layui-btn{margin-left: 0px;}
+.admin-table-page {position: fixed;z-index: 19940201;bottom: 0;width: 100%;background-color: #eee;border-bottom: 1px solid #ddd;left: 0px;}
+.admin-table-page .page{padding-left:20px;}
+.admin-table-page .page .layui-laypage {margin: 6px 0 0 0;}
+.table-hover tbody tr:hover{ background-color: #EEEEEE; }
+
+.admin-table{
+	
+}
+.admin-table .layui-form-checkbox{
+	margin-top: 0;
+	height: 20px;
+	line-height: 20px;
+}
+th{font-weight:bold;}
+.form-namewrap{
+	width:100%;
+	height:auto;
+	min-height:25px;
+	display: inline-block;
+	margin-top:25px;
+}
+.form-namewrap .fill-in{
+	margin-bottom:15px;
+}
+.form-namewrap .layui-unselect{
+    width: 353px;
+}
+.form-namewrap .fill-in:first-child{
+	margin-right:15px;
+}
+#form-wrap-style #form-type-object{
+	margin-left:15px;
+}
+#form-wrap-style #form-type-object label{
+	float: left;
+    padding-right: 5px;
+    padding-top: 5px;
+}
+#form-type-object .layui-input-inline:nth-child(n+1){
+	clear: both;
+	margin-top:10px;
+    padding-left: 75px;
+}
+#form-type-object .layui-input-inline:first-of-type {
+	clear: none;
+	margin-top:0;
+    padding-left: 0;
+}
+#fileName,
+.po-fixed #test9{
+	width: 330px;
+    height: 26px;
+    line-height: 26px;
+    border: 1px solid #e6e6e6;
+    padding:0px 10px;
+}
+#form-type-object #test9 p{
+	
+}
+.po-fixed{
+	float:left;
+}
+.layui-upload.po-fixed{
+	width:333px;
+	position: relative;
+}
+.layui-upload.po-fixed .layui-btn{
+	position: absolute;
+    top: -5px;
+    right: -100px;
+}
+.po-fixed #test9{
+
+}
+
+
+
+

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.act.dao.mapper.ActAljoinExecutionHisMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.act.dao.entity.ActAljoinExecutionHis">
+		<id column="exec_id" property="execId" />
+		<result column="rev" property="rev" />
+		<result column="proc_inst_id" property="procInstId" />
+		<result column="business_key" property="businessKey" />
+		<result column="parent_id" property="parentId" />
+		<result column="proc_def_id" property="procDefId" />
+		<result column="super_exec" property="superExec" />
+		<result column="act_id" property="actId" />
+		<result column="is_active" property="isActive" />
+		<result column="is_concurrent" property="isConcurrent" />
+		<result column="is_scope" property="isScope" />
+		<result column="is_event_scope" property="isEventScope" />
+		<result column="suspension_state" property="suspensionState" />
+		<result column="cached_ent_state" property="cachedEntState" />
+		<result column="tenant_id" property="tenantId" />
+		<result column="name" property="name" />
+		<result column="lock_time" property="lockTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        exec_id, rev, proc_inst_id, business_key, parent_id, proc_def_id, super_exec, act_id, is_active, is_concurrent, is_scope, is_event_scope, suspension_state, cached_ent_state, tenant_id, name, lock_time
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM act_aljoin_execution_his WHERE exec_id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="ActAljoinExecutionHis">
+    	INSERT INTO act_aljoin_execution_his(<include refid="Base_Column_List"></include>)
+		VALUES(#{execId}, #{rev}, #{procInstId}, #{businessKey}, #{parentId}, #{procDefId}, #{superExec}, #{actId}, #{isActive}, #{isConcurrent}, #{isScope}, #{isEventScope}, #{suspensionState}, #{cachedEntState}, #{tenantId}, #{name}, #{lockTime})
+    </insert>
+
+</mapper>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>收件箱</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" />
+<link rel="stylesheet" href="../../web/css/zhengls.css" />
+<style>
+	.layui-form-pane .label_m{width:90px;}
+	.layui-form-pane .layui-input-block1{margin-left:90px;} 
+	.layui-input-block1 .layui-select-title .layui-input{width:100px;}
+</style>
+</head>
+<body>
+
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main" >
+	<!-- <div style="font-size:16px;font-weight:bold;margin-bottom:5px;color:#339bf1;""><i class="fa fa-envelope-o" aria-hidden="true" data-icon="fa-envelope-o" style="margin-right:6px;"></i>收件箱</div> -->
+	<blockquote class="layui-elem-quote" style="padding: 5px;">
+			<form class="layui-form" action="">
+				<!-- <div class="layui-input-inline " >
+				 <span>主题</span>
+				</div>
+				<div class="layui-input-inline m_r20">
+					<input type="text" name="searchKey" id="searchKey"  autocomplete="off" class="inp_w120px"
+						style="width:180px;">
+				</div>
+				<div class="layui-input-inline">
+				 <span>收件人</span>
+				</div>
+				<div class="layui-input-inline m_r20" style="width:130px" >
+						<input type="text" name="searchKey" id="searchKey2"  autocomplete="off" class="inp_w120px">
+				</div> 
+				<div class="layui-input-inline">
+				 <span>发送时间</span>
+				</div>
+				<div class="layui-input-inline">
+					 <input type="text" class="inp_date" id="startTime" >
+				</div>
+				<div class="layui-input-inline">
+				 <span>至</span>
+				</div>
+				<div class="layui-input-inline">
+					  <input type="text" class="inp_date" id="endTime" >
+				</div> -->
+				<div style="float:right">
+					<div class="layui-input-inline">
+						<input type="text" name="searchKey" id="searchKey"   placeholder="请输入发件人或主题" lay-verify="" maxlength="20" autocomplete="off" class="layui-input"
+							style="height: 30px; line-height: 30px;">
+					</div>
+					<span  lay-submit="" lay-filter="form-search-submit"><@a code="090401" href="javascript:void(0)" class="layui-btn layui-btn-small" id=""  iclass="layui-icon"
+						 icon="&#xe615;" text="查询"/></span>
+					 <span lay-filter="form-search-submit"><@a code="090404" href="javascript:void(0)" class="layui-btn layui-btn-small" onclick="search_h()" id="" text="高级搜索"/></span> 
+				</div>
+				
+				<div class="layui-input-inline">
+				  	<!-- <a class="layui-btn layui-btn-small" onclick="seacrhReact(this)">重置</a> -->
+				  	<span><@a  code="090403" href="javascript:void(0)"  onclick="deleteIds(1,'确定删除吗？')" class="layui-btn layui-btn-small" id=""  
+							 text="删除"/></span>					
+					<span lay-filter="form-search-submit"><@a code="090402" href="javascript:void(0)" class="layui-btn layui-btn-small" onclick="deleteIds(2,'标记为已读吗？')" id="" text="标记为已读"/></span>
+              		
+				</div>
+			   
+			</form>
+	</blockquote>
+	     <form class="layui-form sear" action="" style="display:none;">
+					<div class="m_t10">
+						 <div class="layui-input-inline">
+					 	<span>状态</span>
+					</div>
+					<div class="layui-input-inline m_r20 content_sel" >
+					      <select name="city"  id="isRead" class="layui-input layui-unselect"  >
+					        <option value="">请选择</option>
+					        <option value="0">未读</option>
+					        <option value="1">已读</option>
+	     				  </select>
+					</div>
+					<div class="layui-input-inline">
+					 	<span>是否紧急</span>
+					</div>
+					<div class="layui-input-inline m_r20 content_sel" >
+					      <select name="isUrgent"  id="isUrgent" class="layui-input layui-unselect"  >
+					        <option value="">请选择</option>
+					        <option value="0">否</option>
+					        <option value="1">是</option>
+	     				  </select>
+					</div>
+					<div class="layui-input-inline">
+					 	<span>是否重要</span>
+					</div>
+					<div class="layui-input-inline m_r20 content_sel" >
+					      <select name="isImportant"  id="isImportant" class="layui-input layui-unselect"  >
+					        <option value="">请选择</option>
+					        <option value="0">否</option>
+					        <option value="1">是</option>
+	     				  </select>
+					</div>
+					<div class="layui-input-inline">
+					 <span>发送时间</span>
+					</div>
+					<div class="layui-input-inline">
+						 <input type="text" class="inp_date" id="startTime" readonly>
+					</div>
+					<div class="layui-input-inline">
+					 <span>至</span>
+					</div>
+					<div class="layui-input-inline">
+						  <input type="text" class="inp_date" id="endTime" readonly>
+					</div>
+					<span lay-submit="" ><a class="layui-btn layui-btn-small" id="" onclick="loadData('','','2')" style="float:right;margin-right: 8px;"><i class="layui-icon">&#xe615;</i>查询</a></span>
+				    </div>
+					</form>
+<!-- 		<div class="delimany" style="margin: 20px 0;">
+              <a class="btn_blue_e6e m_r20" onclick="deleteIds(1)">批量删除</a>
+              <a class="btn_blue_e6e" onclick  ="deleteIds(2)">标记为已读</a>
+        </div> -->
+	
+		<!-- <div class="delimany">
+              <a class="btn_blue_e6e m_r20" onclick="deleteIds(1)">批量删除</a>
+              <a class="btn_blue_e6e" onclick="deleteIds(2)">标记为已读</a>
+        </div> -->
+		<div class="layui-field-box  layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table admin-table">
+			      <!--  <colgroup>
+				    <col width="35">
+				    <col width="150">
+				    <col width="400">
+				    <col width="80">
+				    <col width="200">
+				    <col width="130">
+				    <col width="130"> 
+	 			 </colgroup> -->
+				<thead>
+					<tr>
+					    <th style="width: 20px;"><input type="checkbox" lay-skin="primary" id="paging_check-all" lay-filter="paging_check-all"></th>
+						<th style="display: none;">用户ID</th>
+						<th style="width:150px;">发件人</th>
+						<th>主题</th>
+						<th style="width:50px;">状态</th>
+						<th style="width:160px;">发送时间<img src="../../web/images/upgray.png"  class="up" onclick="loadData('1','0')";><img src="../../web/images/downgray.png" class="down" onclick="loadData('2','0')";></th>
+						<th style="width:100px;">大小(KB)<img src="../../web/images/upgray.png"  class="up1" onclick="loadData('0','1')";><img src="../../web/images/downgray.png" class="down1" onclick="loadData('0','2')";> </th>
+						<th style="width:50px;">操作</th>
+					</tr>
+				</thead>
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+                
+					{{each records value index}}
+						<tr  onclick="showView('{{value.id}}','{{value.isImportant}}','{{value.isRead}}')">
+                            <td onclick="defalt_td(event)"><input type="checkbox"  class="check-id  moreInput"  lay-skin="primary"   id="{{value.id}}"></td>
+                            <td style="display: none;">{{value.id}}</td>
+                          {{if value.isRead==1}}
+							<td style="color:#b5b5b5"><img class="m_r10" src="../../web/images/read.png" />{{value.sendFullName}}</td>
+							<td title="{{value.subjectText}}" class="hand table_link">{{if value.isUrgent==1}}<img class="m_r10" src="../../web/images/redqi.png" />{{/if}}{{value.subjectText}}</td>
+                            <td  style="color:#b5b5b5">{{if value.isRead==1}}已读{{/if}}{{if value.isRead==0}}未读{{/if}}</td>
+							<td style="color:#b5b5b5">{{value.sendTime}}</td>
+                            <td style="color:#b5b5b5">{{value.mailSize}}</td>
+                           {{/if}}
+                           {{if value.isRead==0}}
+							<td style="color:black"><img class="m_r10" src="../../web/images/noread.png" />{{value.sendFullName}}</td>
+							<td title="{{value.subjectText}}" class="hand table_link">{{if value.isUrgent==1}}<img class="m_r10" src="../../web/images/redqi.png" />{{/if}}{{value.subjectText}}</td>
+							<td style="color:black">{{if value.isRead==1}}已读{{/if}}{{if value.isRead==0}}未读{{/if}}</td>
+                            <td style="color:black">{{value.sendTime}}</td>
+                            <td style="color:black">{{value.mailSize}}</td>
+                           {{/if}}
+							<td onclick="defalt_td(event)">
+								
+                                 <img class="m_r10"  {{if value.isImportant==0}}src="../../web/images/graystar.png"{{/if}} {{if value.isImportant==1}}src="../../web/images/star.png"{{/if}}  onclick="signimport('{{value.id}}','{{if value.isImportant==1}}0{{/if}}{{if value.isImportant==0}}1{{/if}}')" />
+                             </td>
+						</tr>
+					{{/each}}
+					</script>
+					<!-- <@a code="090302" href="javascript:void(0)" class="layui-btn layui-btn-warm layui-btn-mini m_r10" id="show-view" onclick="showView('{{value.id}}','{{value.isImportant}}')" text="详情"/> -->
+				</tbody>
+			</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	
+
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/ueditor.all.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/lang/zh-cn/zh-cn.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+    
+    
+  
+	<script> 
+
+	var fals=true;
+	//高级搜索
+	function search_h(){
+		 $(".sear").toggle();
+	}
+	tool.dateTime('#startTime','#endTime','',false);
+    var pform;
+	//添加事件
+	layui.use(['form','element'], function() {
+		var element=layui.element;
+		pform = layui.form;
+		pform.verify({
+		
+			length20:function(value){
+				if (value.length>20) {
+					return "长度不能超过20个字符";
+				}
+			},
+			special:function(value){
+				var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]"); 
+				if(pattern.test(value)){
+				     return "不能输入特殊字符";
+				}
+			} 
+		});
+		//查询
+		 pform.on('submit(form-search-submit)',function(data){
+			   loadData("","","1");
+			 return false;
+		 })
+	   
+
+		//初始化出发数据加载
+		 loadData()
+	});
+	
+		//加载数据
+		function loadData(sendTimeSort,maiSizeSort,type) {
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+			param.url = "../maiReceiveBox/list";
+			var subjectText = "maiReceiveBoxSearch.subjectText";
+			var isRead="maiReceiveBoxSearch.isRead";
+			var isUrgent="maiReceiveBoxSearch.isUrgent";
+			var isImportant="maiReceiveBoxSearch.isImportant";
+			param[subjectText] = $("#searchKey").val();
+			if(type=="2"){
+				param.begSendTime=$("#startTime").val();
+				param.endSendTime=$("#endTime").val();
+				param[isRead] = $("#isRead").val();
+				param[isUrgent] = $("#isUrgent").val();
+				param[isImportant] = $("#isImportant").val();
+			}
+		
+			
+			if(sendTimeSort=="1"||sendTimeSort=="2"){
+				param.sendTimeSort=sendTimeSort;
+				if(sendTimeSort=="1"){
+						$(".up").attr("src","../../web/images/uptrue.png");
+						$(".down").attr("src","../../web/images/downgray.png");
+					}else{
+						$(".up").attr("src","../../web/images/upgray.png");
+						$(".down").attr("src","../../web/images/downture.png");
+					}
+				
+			}
+			if(maiSizeSort=="1"||maiSizeSort=="2"){
+				param.maiSizeSort=maiSizeSort;
+				if(maiSizeSort=="1"){
+					$(".up1").attr("src","../../web/images/uptrue.png");
+					$(".down1").attr("src","../../web/images/downgray.png");
+				}else{
+					$(".up1").attr("src","../../web/images/upgray.png");
+					$(".down1").attr("src","../../web/images/downture.png");
+				}
+				
+			}
+			tool.loadpage(param);
+		}
+		 //时间控件
+		 //tool.timeset('#startTime','#endTime');
+		
+		  //批量删除  标记为已读
+		  function deleteIds(type,tips){
+			  if($(".moreInput:checked").length==0){
+					tool.error('至少选中一个');
+			  }else{
+			  var str="",str1="";
+				  $(".moreInput:checked").each(function(index,value){
+					  str+=value.id+";";
+					  str1+=value.id+";";
+				  })
+				  str=str.substr(0,str.length-1)
+				  str1=str1.substr(0,str1.length-1)
+				   //调批量删除接口 最后重新渲染列表 
+				   if(type==1){
+					    //do something
+					   deleANDread("../maiReceiveBox/delete",str,tips);
+					    
+				   }else{
+					   //批量已读
+					   deleANDread("../maiReceiveBox/signRead",str1,tips);
+				   }
+			  }
+		  }
+		  
+		  function deleANDread(url,str,tips){
+		   layer.confirm(tips, {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				var retMsg = tool.deleteByIds(url, str);
+				if (retMsg.code == 0) {
+					$("#paging_check-all").attr("checked",false);
+					 pform.render();
+					tool.success(retMsg.message);
+					loadData("0","0"); 
+				} else {
+					tool.error(retMsg.message);
+				}
+			});
+		  }
+
+		//搜索条件重置
+			function seacrhReact(myself){
+				$(myself).parent().parent().find("input").val("")
+				$(myself).parent().parent().find("select").val("")
+			}
+			function publicDeBa(retMsg){
+				if (retMsg.code == 0) {
+					if($(".layui-laypage-btn").length>0){
+						$(".layui-laypage-btn").trigger("click");
+					}else{
+						loadData();
+					}
+				} else {
+					tool.error(retMsg.message);
+				}
+			}
+			//详情
+			function showView(id,isImportant,isRead){
+	 
+				var index= layer.open({
+					  type: 2,
+					  title: '',
+					  closeBtn:0,
+					  shade: 0.8, 
+					  shadeClose: true,
+					  content: 'maiReceiveBoxPageDetailPage.html?id='+id+'&isImportant='+isImportant+'&isRead='+isRead
+					});
+	 	    		
+				    pform.render();
+					layer.full(index);
+			}
+			
+			
+			//是否重要
+			function signimport(id,isImportant){
+				var param=new Object();
+				param._csrf=$("#_csrf").val();
+				param.isImportant=isImportant;
+				param.id=id;
+				tool.post("../maiReceiveBox/signImport",param,publicDeBa,false);
+			}
+		
+			//删除  撤回并删除
+			function deleteId(type){
+				var id = $("#win-view-object").find("#hiddenId").val();
+				layer.confirm('确定删除 ?', {
+					icon : 3,
+					title : '提示'
+				}, function(index) {
+					if(type==0){
+						var retMsg = tool.deleteByIds("../maiReceiveBox/delete", id);
+						
+					}else{
+						var retMsg = tool.deleteById("../maiReceiveBox/revoke", id);
+					}
+					if (retMsg.code == 0) {
+						
+						tool.success(retMsg.message);
+						layer.closeAll();
+						loadData("0","0"); 
+					} else {
+						tool.error(retMsg.message);
+					}
+				});
+			}
+			
+		
+        //阻止maopao
+	     function defalt_td(event){
+           event.cancelBubble=true;
+       }
+	</script>
+</body>
+
+</html>

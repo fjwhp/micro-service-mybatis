@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>考勤打卡设置</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+</head>
+<body> 
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="layui-tab layui-tab-brief m_t0" lay-filter="docDemoTabBrief">
+		<ul class="layui-tab-title">
+		    <li class="layui-this"><@a code="160601" href="javascript:void(0)" text="考勤打卡设置"/></li>
+		    <li><@a code="16060211" href="javascript:void(0)" text="统计人员"/></li>
+		</ul>
+		<div class="layui-tab-content">
+		  	<div class="layui-tab-item layui-show content_sel">
+		  		<!--考勤打卡设置-->
+				<div class="" id="win-newsms-object">
+					<form class="layui-form" id="add-object-form">
+						<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+						<table class="layui-table admin-table" style="margin: 0px;">
+							<thead>
+								<tr>
+									<th style="display: none;">用户ID</th>
+									<th>周一至周五</th>
+									<th></th>
+									<th>上下班打卡时间</th>
+									<th>开始打卡时间</th>
+									<th>结束打卡时间</th>
+									<th>其他（分）</th>
+									<th>弹框提示时间</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td rowspan="2">上午</td>
+									<td>上班</td>
+									<td><input id="am_work_punch_time"  name="params['am_work_punch_time']" style="width:60px;" value="08:30"></td>
+									<td><input id="am_work_punch_begtime" name="params['am_work_punch_begtime']" style="width:60px;" value="08:00"></td>
+									<td><input id="am_work_punch_endtime"  name="params['am_work_punch_endtime']" style="width:60px;" value="09:00"></td>
+									<td>允许迟到<input type="text" class="empIn" onkeyup="value=value.replace(/[^\d]/g,'')"  lay-verify="number"  id="am_allow_late" name="params['am_allow_late']"  style="width:30px;margin-left:5px;"></td>
+									<td><input id="am_signin_popup_time" name="params['am_signin_popup_time']"   style="width:60px;"></td>
+								</tr>
+								<tr>
+									<td>下班</td>
+									<td><input id="am_offwork_punch_time"  name="params['am_offwork_punch_time']" style="width:60px;" value="12:00"></td>
+									<td><input id="am_offwork_punch_begtime" name="params['am_offwork_punch_begtime']" style="width:60px;" value="11:30"></td>
+									<td><input id="am_offwork_punch_endtime"  name="params['am_offwork_punch_endtime']" style="width:60px;" value="12:30"></td>
+									<td>允许早退<input type="text" class="empIn" onkeyup="value=value.replace(/[^\d]/g,'')"  lay-verify="number" id="am_leave_early" name="params['am_leave_early']" style="width:30px;margin-left:5px;"></td>
+									<td><input id="am_signout_popup_time" name="params['am_signout_popup_time']" style="width:60px;"></td>
+								</tr>
+								<tr>
+									<td rowspan="2">下午</td>
+									<td>上班</td>
+									<td><input id="pm_work_punch_time" name="params['pm_work_punch_time']" style="width:60px;" value="08:30"></td>
+									<td><input id="pm_work_punch_begtime"  name="params['pm_work_punch_begtime']" style="width:60px;" value="08:00"></td>
+									<td><input id="pm_work_punch_endtime" name="params['pm_work_punch_endtime']" style="width:60px;" value="09:00"></td>
+									<td>允许迟到<input type="text" class="empIn" onkeyup="value=value.replace(/[^\d]/g,'')"  lay-verify="number"  id="pm_allow_late" name="params['pm_allow_late']" style="width:30px;margin-left:5px;"></td>
+									<td><input id="pm_signin_popup_time" name="params['pm_signin_popup_time']" style="width:60px;"></td>
+								</tr>
+								<tr>
+									<td>下班</td>
+									<td><input id="pm_offwork_punch_time" name="params['pm_offwork_punch_time']" style="width:60px;" value="12:00"></td>
+									<td><input id="pm_offwork_punch_begtime" name="params['pm_offwork_punch_begtime']	" style="width:60px;" value="11:30"></td>
+									<td><input id="pm_offwork_punch_endtime" name="params['pm_offwork_punch_endtime']" style="width:60px;" value="12:30"></td>
+									<td>允许早退<input type="text" class="empIn" onkeyup="value=value.replace(/[^\d]/g,'')"  lay-verify="number" id="pm_leave_early" name="params['pm_leave_early']" style="width:30px;margin-left:5px;"></td>
+					 				<td><input id="pm_signout_popup_time"  name="params['pm_signout_popup_time']" style="width:60px;"></td>
+								</tr>
+							</tbody>
+							<tbody id="paging-data">
+							<script id="paging-script" type="text/html">
+								{{each records value index}}
+									<tr onclick="detail()"> 
+										<td style="display: none;">{{value.id}}</td>
+										<td>{{value.}}</td>
+										<td>{{value.}}</td>
+										<td>{{value.}}</td>
+										<td>{{value.}}</td>
+										<td>{{value.}}</td>
+										<td>{{value.}}</td>
+										<td>{{value.}}</td>
+									</tr>
+								{{/each}}
+							</script>
+							</tbody>
+						</table>
+						<div class="btn_fixed">
+							<!-- <a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a> -->
+							<div style="float: right;">
+								<button class="layui-btn" lay-submit="" lay-filter="form-update-submit">
+									<i class="fa fa-save"></i> 保存
+								</button>
+							<!-- 	<button type="reset" class="layui-btn layui-btn-primary">
+									<li class="fa fa-eraser"></li> 重置
+								</button> -->
+							</div>
+						</div>
+					</form>
+				</div>
+		  	</div>
+		    <div class="layui-tab-item">
+				<div class="" id="win-newsms-object">
+					<form class="layui-form layui-form-pane" id="set-object-form">
+						<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+						<div class="layui-form-item">
+							<label class="layui-form-label" style="width:160px;">不参与考勤统计人员</label>
+							<div class="layui-input-block">				
+								<div type="text" name="receiverName" id="n_receiverName" class="newgg input_btn reset1"  readonly="readonly"></div>
+								<input type="hidden" name="receiverName" id="hidden_receiverName"  class="reset"/>
+								<a class="btn_blue2" onclick="personlSeclectOpen()" style="float:right;">人员选择</a>
+								<input type="hidden" name="paramValue"  id="paramValue" class="reset">
+							</div>
+						</div>
+						<div class="btn_fixed">
+							<div style="float: right;">
+								<button class="layui-btn" lay-submit="" lay-filter="form-add-submit">
+									<i class="fa fa-save"></i> 保存
+								</button>
+								<!-- <button type="reset" class="layui-btn layui-btn-primary">
+									<li class="fa fa-eraser"></li> 重置
+								</button> -->
+							</div>
+						</div>
+					</form>
+				</div>
+		    </div>
+		</div>
+	</div>  
+	<!-- 人员选择树 -->
+	<div style="display: none;z-index: 19940200;margin-bottom:20px;" id="win-personal-object">
+		<input id="peopelSel" class="tree_search1 reset" type="text" value="" placeholder="搜索">
+		<a class="layui-btn layui-btn-small" id="" onclick="searchNodes()"><i class="layui-icon">&#xe615;</i>搜索</a>
+		<a class="layui-btn layui-btn-small layui-btn-primary" style="margin-left:2px;" type="reset" onclick="reset_tree(treeDemo)"><li class="fa fa-eraser"></li> 重置</a>
+		<ul id="treeDemo" class="ztree treeDemo1" name="treeDemo" style="display:block"></ul>
+	</div>
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.exhide-3.5.min.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script>
+	 $(".layui-table").find("input").attr("readonly","readonly");
+	 $(".empIn").removeAttr("readonly");
+		//定义layui
+		var pform;
+		layui.use(['form','element','laydate'], function() {
+			pform = layui.form;
+			pform.on('submit(form-add-submit)',function(data){
+				var param={
+						_csrf:$("#_csrf").val(),
+						paramValue:$("#paramValue").val()
+				}
+				tool.post("/sma/systemMaintain/attCountPersonSet",param,function(data){
+					 if(data.code==1){
+						 tool.success(data.message)
+						 
+					 }else{
+						 tool.error(data.message);
+					 }
+				},false)
+				return false;
+			})
+			pform.on('submit(form-update-submit)',function(data){
+				tool.post("/sma/systemMaintain/attCardSet",$("#add-object-form").serialize(),function(data){
+					 if(data.code==0){
+						 noattpeplo()
+						 tool.success(data.message)
+					 }else{
+						 tool.error(data.message);
+					 }
+				},false) 
+				return false;
+			})
+			var laydate = layui.laydate;
+			 //上午时间
+		     hourMinute("am_work_punch_time");
+		     hourMinute("am_work_punch_begtime");
+		     hourMinute("am_work_punch_endtime");
+		     hourMinute("am_offwork_punch_time");
+		     hourMinute("am_offwork_punch_begtime");
+		     hourMinute("am_offwork_punch_endtime");
+		     hourMinute("am_signin_popup_time");
+		     hourMinute("am_signout_popup_time");
+		     //下午时间
+		     hourMinute("pm_work_punch_time");
+		     hourMinute("pm_work_punch_begtime");
+		     hourMinute("pm_work_punch_endtime");
+		     hourMinute("pm_offwork_punch_time");
+		     hourMinute("pm_offwork_punch_begtime");
+		     hourMinute("pm_offwork_punch_endtime");
+		     hourMinute("pm_signin_popup_time");
+		     hourMinute("pm_signout_popup_time");
+		     
+			 
+			 //时分
+			 function hourMinute(id){
+				 laydate.render({ 
+					  elem: '#'+id
+					  ,type: 'time'
+					  ,format: 'HH:mm'
+					 
+					});
+				 }
+		
+		});
+	
+	
+		 tool.post("/sma/systemMaintain/attCardSetDetail",{_csrf:$("#_csrf").val()},function(data){
+			  $(".admin-table").find("input").each(function(value,index){
+				  var  that=$(this);
+				  for(var i=0;i<data.length;i++){
+					   if(data[i].paramKey==that.attr("id")){
+						   that.val(data[i].paramValue)
+					   }
+				  }
+			  })
+			 
+		 },false)
+		 
+		 noattpeplo();
+		 //不参与统计人员
+		 function noattpeplo(){
+		 tool.post("/sma/systemMaintain/attCountPersonDetail",{_csrf:$("#_csrf").val()},function(data){
+			 $("#hidden_receiverName").val(data.object.fullNames);
+			 $("#n_receiverName").text(data.object.fullNames);
+			 $("#paramValue").val(data.object.paramValue);
+			 
+		 },false)
+		 }
+		//短信详情
+		function detail() {
+			var index = layer.open({
+				title : '详情',
+				maxmin : false,
+				type : 1,
+				content : $('#win-detail-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		  //人员选择树
+			function personlSeclectOpen(){	  
+				tool.treeDemo("win-personal-object",'treeDemo',"paramValue","hidden_receiverName","n_receiverName")   	
+	      	}
+	        //用按钮查询节点  
+	        function searchNodes(){  
+	            /* var treeObj = $.fn.zTree.getZTreeObj("treeDemo");  */
+	            var keywords=$("#peopelSel").val();  
+	            var nodes = mytree.getNodesByParamFuzzy("name", keywords, null);  
+	            if (nodes.length>0) {  
+	                mytree.selectNode(nodes[0]);  
+	            }  
+	        }  
+			//重置树
+			function reset_tree(){
+				var mytree = $.fn.zTree.getZTreeObj("treeDemo");
+			    //打开弹窗前重置节点以及关闭展开状态，避免叠加
+				$('.reset').val("");
+				$('.reset1').html("");
+				mytree.checkAllNodes(false)
+			    mytree.expandAll(false);
+			}
+      	
+	</script>
+</body>
+</html>

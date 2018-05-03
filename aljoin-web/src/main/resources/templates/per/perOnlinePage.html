@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>在线通知</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+</head>
+<body> 
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main content_sel">
+		<blockquote class="layui-elem-quote" style="padding:5px;">
+			<form class="layui-form" action="">
+				<div class="r">
+					<div class="layui-input-inline m_r10">
+						<span>通知类型</span>
+					</div>
+					<div class="layui-input-inline m_r20">
+			      		<select name="city" lay-verify="required" style="width:150px;height:32px;">
+			      			<option value=""></option>
+					        <option value="0">邮件</option>
+				        	<option value="1">会议</option>
+					        <option value="2">工作计划</option>
+				       		<option value="3">协同办公</option>
+			      		</select>
+		   			</div>
+		   			<div class="layui-input-inline m_r10">
+						<span>状态</span>
+					</div>
+					<div class="layui-input-inline m_r20">
+			      		<select name="city" lay-verify="required" style="width:150px;height:32px;">
+					        <option value=""></option>
+					        <option value="0">已读</option>
+					        <option value="1">未读</option>
+			      		</select>
+				   	</div>
+					<div class="layui-input-inline">
+						<input type="text" name="searchKey" id="searchKey" placeholder="输入账号用户名邮箱关键字" autocomplete="off" class="layui-input"
+							style="height: 30px; line-height: 30px;">
+					</div>
+					<span><@a code="000101" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData()" iclass="layui-icon"
+						 icon="&#xe615;" text="查询"/></span>
+				</div>
+			    <div class="layui-input-inline">
+				  	<span><a class="layui-btn layui-btn-small" onclick="deleteIds()"><i class="layui-icon">&#xe640;</i>删除</a></span>
+				</div> 
+			</form>
+		</blockquote>
+		<div class="layui-form">
+			<table class="layui-table admin-table">
+				<thead>
+					<tr>
+						<th style="width: 20px;"><input type="checkbox" lay-skin="primary" lay-filter="paging_check-all" ></th>
+						<th style="display: none;">用户ID</th>
+						<th>序号</th>
+						<th>通知类型</th>
+						<th>标题</th>
+						<th>时间</th>
+						<th>创建人</th>
+					</tr>
+				</thead>
+		<tbody id="paging-data">
+		<script id="paging-script" type="text/html">
+		{{each records value index}}
+			<tr onclick=" "> 
+				<td><input type="checkbox"   class="check-id  moreInput"  lay-skin="primary"   id="{{value.id}}"></td>
+				<td style="display: none;">{{value.id}}</td>
+				<td>{{index+1}}</td>
+				<td>
+					{{if value.msgType=='mail'}}邮件{{/if}} 
+					{{if value.msgType=='meeting'}}会议{{/if}}
+					{{if value.msgType=='workplan'}}工作计划{{/if}}
+					{{if value.msgType=='togetherwork'}}协同办公{{/if}}
+				</td>
+				<td>{{value.msgContent}}</td>
+				<td>{{value.createTime}}</td>
+				<td>{{value.fromUserFullName}}</td>
+			</tr>
+		{{/each}}
+		</script>
+		</tbody>
+		</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script>
+		//定义layui
+		var pform;
+		layui.use(['form','element'], function() {
+			pform = layui.form;
+			loadData();
+		});
+		
+		function render(){
+	        layui.use('form', function() {
+	            loadData();
+	        })
+	    }
+		
+		// 个人中心-常用意见-分页列表
+		function loadData(){
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+			param.url = "/per/autMsgOnline/list";
+			tool.loadpage(param);
+		}
+		
+		 //个人中心-常用意见-删除
+	    function showDelete(id){
+	        layer.confirm('确定删除 ?', {
+	            icon : 3,
+	            title : '提示'
+	        }, function() {
+	            tool.deleteById("/per/autUsefulOpinion/delete", id);
+	            layer.alert("删除成功", {
+	                title : "操作提示",
+	                icon : 1
+	            }, function(index) {
+	                layer.close(index);
+	                render()
+	            });
+	        })
+	    }
+		 
+	    //批量删除
+		  function deleteIds(){
+			  if($(".moreInput:checked").length==0){
+					tool.error('至少选中一个');
+			  }else{
+			  var str="";
+			  $(".moreInput:checked").each(function(index,value){
+				  str+=value.id+";";
+			  })
+			   //调批量删除接口 最后重新渲染列表 
+			  layer.confirm('确定删除吗 ?', {
+					icon : 3,
+					title : '提示'
+				}, function(index) {
+					//console.log(str);
+					var retMsg = tool.deleteByIds("/per/autMsgOnline/deleteMsgList", str)
+					if (retMsg.code == 0) {
+						tool.success(retMsg.message);
+						layer.closeAll();
+						loadData(); 
+					} else {
+						tool.error(retMsg.message);
+					}
+				});
+			   
+			  }
+		  }
+
+	</script>
+</body>
+</html>

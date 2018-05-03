@@ -1,0 +1,71 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>aljoin-parent</artifactId>
+		<groupId>aljoin-parent</groupId>
+		<version>1.0.1-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>aljoin-off-service</artifactId>
+	<packaging>jar</packaging>
+
+	<name>aljoin-off-service</name>
+	<url>http://maven.apache.org</url>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+		</dependency>
+		<!-- 添加freemarker支持 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-freemarker</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>aljoin-parent</groupId>
+			<artifactId>aljoin-util</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>aljoin-parent</groupId>
+			<artifactId>aljoin-object</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>aljoin-parent</groupId>
+			<artifactId>aljoin-off-iservice</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>aljoin-parent</groupId>
+			<artifactId>aljoin-aut-service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>aljoin-parent</groupId>
+			<artifactId>aljoin-res-service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!-- <dependency> <groupId>aljoin-parent</groupId> <artifactId>aljoin-mee-service</artifactId> 
+			<version>${project.version}</version> </dependency> -->
+		<!-- aljoin-mai-service 注意：服务化改造需要引入接口 <dependency> <groupId>aljoin-parent</groupId> 
+			<artifactId>aljoin-mai-service</artifactId> <version>${project.version}</version> 
+			</dependency> -->
+		<dependency>
+			<groupId>aljoin-parent</groupId>
+			<artifactId>aljoin-act-service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>aljoin-parent</groupId>
+			<artifactId>aljoin-sys-service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+</project>

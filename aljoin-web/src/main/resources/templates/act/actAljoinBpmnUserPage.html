@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>用户授权</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css"
+	media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet"
+	href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<style>
+.span_addUser {
+	padding: 3px 3px;
+	margin-right: 15px;
+	border: 1px solid #ccc
+}
+
+.menuContentAndList {
+	padding: 10px;
+}
+
+.post_list {
+	width: 70%;
+}
+
+.layui-table tr:hover {
+	background: none !important;
+}
+
+.table_btn_gray {
+    color: rgb(51, 155, 241);
+    margin-right: 12px;
+}
+</style>
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}"
+		id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<input type="hidden" name="bpmnId" id="bpmnId" value="${bpmnId}" />
+	<input type="hidden" name="ids" id="ids" value="" />
+	<input type="hidden" name="userNames" id="userNames" value="" />
+	<input type="hidden" name="deptTreeIds" id="deptTreeIds" value="" />
+
+	<!-- tree -->
+	<div class="menuContentAndList">
+		<div id="menuContent" class="tree_left">
+			<div class="left">
+				<input id="citySel" type="text" value="" onkeyup="AutoMatch(this)"
+					class="tree_search" placeholder="搜索" />
+			</div>
+			<ul id="treeDemo" class="ztree"></ul>
+		</div>
+		<div id="post_list" class="tree_right">
+			<div class="layui-field-box layui-form"
+				style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+				<div style="font-weight: bold; margin-bottom: 10px;">流程管理者</div>
+				<div id="mDiv"
+					style="border: 1px solid #ccc; height: 32px; overflow: auto; font-size: 14px; padding: 10px 10px;">
+				</div>
+
+
+				<div
+					style="font-weight: bold; font-weight: bold; float: left; margin-top: 8px;">流程使用者</div>
+				<!-- <div class="r">
+					<input type="checkbox" id="ischeck" class="check-id  moreInput"
+						lay-skin="primary"> <label
+						style="font-weight: bold; position: relative; top: 2px;">全局人员</label>
+				</div> -->
+				<div id="paiDiv" class="cl"
+					style="border: 1px solid #ccc; height: 80px; overflow: auto; font-size: 14px; padding: 10px 10px;">
+				</div>
+
+				<div>
+					<div class="m_t10 l" style="padding_bottom: 10px;">
+						<span><a class="layui-btn layui-btn-small"
+							onclick="userAuthority()">授权</a></span> <span><a
+							class="layui-btn layui-btn-small" onclick="manAuthority()">设为管理员</a></span>
+						<span><a class="layui-btn layui-btn-small"
+							onclick="createUserp();">保存</a></span>
+					</div>
+
+					<div class="m_t10 r">
+						<span><a class="layui-btn layui-btn-small"
+							onclick="createAllUserp();">设置全体使用</a></span> <span><a
+							class="layui-btn layui-btn-small" onclick="clearUser();">清空使用者</a></span>
+					</div>
+
+
+				</div>
+
+				<table class="layui-table admin-table cl" style="margin-top: 50px;">
+					<colgroup>
+						<col width="5%">
+						<col width="20%">
+						<col width="25%">
+						<col width="25%">
+						<col width="20%">
+					</colgroup>
+					<thead>
+						<tr>
+							<th style="width: 20px;"><input type="checkbox" id="isAll"
+								lay-skin="primary" lay-filter="paging_check-all"
+								onclick="notAll()"></th>
+							<th style="display: none;">用户id</th>
+							<th>排序</th>
+							<th>用户账号</th>
+							<th>昵称</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<!-- 	<tbody id="content">
+					<script id="test" type="text/html"> -->
+					<tbody id="paging-data">
+						<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td><input type="checkbox"  class="check-id moreInput"  lay-skin="primary"   id="{{value.autUser.id}}" value="{{value.autUser.fullName}}"></td>
+							<td style="display: none;">{{value.autUser.id}}</td>
+							<td>{{index+1}}</td>
+							<td>{{value.autUser.userName}}</td>
+							<td>{{value.autUser.fullName}}</td>
+							<td>
+								{{if value.userids==0}}<@a code="" href="javascript:void(0)" class="table_btn" id="show-section" onclick="addPai('{{value.autUser.id}}','{{value.autUser.fullName}}')" text="授权"/>{{/if}}
+                                {{if value.userids==1}}<@a code="" href="javascript:void(0)" class="table_btn_gray" id="show-section" onclick="addPai('{{value.autUser.id}}','{{value.autUser.fullName}}')" text="授权"/>{{/if}}
+								{{if value.manids==0}}<@a code="" href="javascript:void(0)" class="table_btn" id="show-section" onclick="addMD('{{value.autUser.id}}','{{value.autUser.fullName}}')" text="设为管理者"/>{{/if}}
+                                {{if value.manids==1}}<@a code="" href="javascript:void(0)" class="table_btn_gray" id="show-section" onclick="addMD('{{value.autUser.id}}','{{value.autUser.fullName}}')" text="设为管理者"/>{{/if}}
+							</td>
+						</tr>
+					{{/each}}
+					</script>
+					</tbody>
+				</table>
+			</div>
+			<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+				<div id="paging-footer" class="page"
+					style="background-color: white; text-align: center;"></div>
+			</div>
+		</div>
+
+
+	</div>
+	<script type="text/javascript" src="../../web/plugins/layui/layui.js"></script>
+	<script type="text/javascript"
+		src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript"
+		src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript"
+		src="../../web/js/jquery.ztree.exhide-3.5.min.js"></script>
+	<script type="text/javascript" src="../../web/js/tool.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+
+	<script>
+		var pform;
+		var bpmnId = $("#bpmnId").val();
+		layui.use('form', function() {
+			pform = layui.form();
+			UserListTrue(bpmnId);
+			ManListTrue(bpmnId);
+		});
+		//生成树
+		var setting = {
+			data : {
+				simpleData : {
+					enable : true
+				}
+			},
+			callback : {
+				beforeClick : beforeClick
+			}
+		};
+		var param = new Object();
+		param._csrf = $("#_csrf").val();
+		redern();
+		function redern() {
+			tool.post("../actAljoinBpmnUser/getDepartmentList", param,
+					postCallBack_newtree);
+		}
+		var obj = [];
+		var zTreeObj;
+		function postCallBack_newtree(data) {
+			for (var i = 0; i < data.length; i++) {
+				obj.push({
+					id : data[i].id,
+					pId : data[i].parentId,
+					name : data[i].deptName,
+					cyId : data[i].deptLevel,
+					obj : {
+						id : data[i].id,
+						isActive : data[i].isActive,
+						parentId : data[i].parentId,
+						name : data[i].deptName,
+					}
+				})
+			}
+			zTreeObj = $.fn.zTree.init($("#treeDemo"), setting, obj);
+		}
+
+		var hiddenNodes = []; //用于存储被隐藏的结点
+		var targetParent = [];
+		function getParentByChild(node) {
+			if (node.parentTId != null) {
+				targetParent.push(node.getParentNode());
+				getParentByChild(node.getParentNode());
+			}
+		}
+
+		//过滤ztree显示数据
+		function AutoMatch() {
+			//显示上次搜索后背隐藏的结点
+			zTreeObj.showNodes(hiddenNodes);
+			//查找不符合条件的叶子节点
+			targetParent = [];
+			function filterFunc(node) {
+				var _keywords = $("#citySel").val();
+				if (node.name.indexOf(_keywords) != -1) {
+					getParentByChild(node)
+					return false;
+				}
+				return true;
+			}
+			;
+			//获取不符合条件的叶子结点
+			hiddenNodes = zTreeObj.getNodesByFilter(filterFunc);
+			//隐藏不符合条件的叶子结点
+			zTreeObj.hideNodes(hiddenNodes);
+			//显示满足条件的根节点
+			zTreeObj.showNodes(targetParent);
+			zTreeObj.expandAll(true);
+		};
+
+		//获取数节点加载流程列表
+		function beforeClick(hh, treeNode) {
+			$("#deptTreeId").val(treeNode.id);
+			$("#deptTreeIds").val(treeNode.id);
+			$("#deptTreeName").val(treeNode.name);
+			//,treeNode.name,treeNode.obj.deptCode,	treeNode.obj.isActive
+			loadData(treeNode.id);
+			pform.render();
+		}
+		//加载流程list
+		function loadData(id) {
+			var param = new Object();
+			var _csrf = $("#_csrf").val();
+			var userId = $("#ids").val();
+			var manId = $("#userNames").val();
+			param.deptId = id;
+			param._csrf = _csrf;
+			param.userids = userId
+			param.manids = manId
+			param.container = "paging";
+			param.pageSize = 10;
+			param.num = 1;
+			param.url = "../actAljoinBpmnUser/getAutDepartmentUserList";
+			tool.loadpage(param);
+		}
+
+		/*  function loadData(id) {
+			var _csrf = $("#_csrf").val();			
+		 	var data = {
+				 deptId:id,	
+				 _csrf:_csrf, 
+			}  	
+		 	tool.post("../actAljoinBpmnUser/getAutDepartmentUserList",data,callBt,false);  	
+		}   */
+
+		/*  	function callBt(data){
+		 		var str={str:data}
+		 	 	var html = template('test', str);
+				document.getElementById('content').innerHTML = html; 
+		 	}  */
+				 
+			function clearUser() {
+				layer.confirm('确定清空所有流程使用者吗 ?', {
+					icon : 3,
+					title : '提示'
+				}, function(index) {
+					var _csrf = $("#_csrf").val();
+					var userId = "";
+					$("#ids").val("");
+					var manId = $("#userNames").val();
+					var isCheck = "";
+					var data = {
+						userId : userId,
+						manId : manId,
+						bpmnId : bpmnId,
+						isCheck : isCheck,
+						_csrf : _csrf,
+					}
+					tool.post("../actAljoinBpmnUser/add", data, function(retMsg) {
+						if (retMsg.code == 0) {
+							tool.success(retMsg.message);
+							UserListTrue(bpmnId);
+							ManListTrue(bpmnId);
+							loadData($("#deptTreeIds").val());
+						} else {
+							tool.error(retMsg.message);
+						}
+					}, false)
+				});
+			}
+		function createUserp() {
+			layer.confirm('确定保存授权吗 ?', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				var _csrf = $("#_csrf").val();
+				var userId = $("#ids").val();
+				var manId = $("#userNames").val();
+				var isCheck = "";
+				/* if ($('#ischeck').is(':checked')) {
+					// do something
+					isCheck = 1;
+				} */
+				var data = {
+					userId : userId,
+					manId : manId,
+					bpmnId : bpmnId,
+					isCheck : isCheck,
+					_csrf : _csrf,
+				}
+				tool.post("../actAljoinBpmnUser/add", data, function(retMsg) {
+					if (retMsg.code == 0) {
+						tool.success(retMsg.message);
+						UserListTrue(bpmnId);
+						ManListTrue(bpmnId);
+						loadData($("#deptTreeIds").val());
+					} else {
+						tool.error(retMsg.message);
+					}
+				}, false)
+			});
+		}
+		 	function createAllUserp() {
+				layer.confirm('确定授权所有人为使用者吗 ?', {
+					icon : 3,
+					title : '提示'
+				}, function(index) {
+					var _csrf = $("#_csrf").val();
+					var userId = $("#ids").val();
+					var manId = $("#userNames").val();
+					var isCheck = "";
+				    isCheck = 1;
+					var data = {
+						userId : userId,
+						manId : manId,
+						bpmnId : bpmnId,
+						isCheck : isCheck,
+						_csrf : _csrf,
+					}
+					tool.post("../actAljoinBpmnUser/add", data, function(retMsg) {
+						if (retMsg.code == 0) {
+							tool.success(retMsg.message);
+							UserListTrue(bpmnId);
+							ManListTrue(bpmnId);
+							loadData($("#deptTreeIds").val());
+						} else {
+							tool.error(retMsg.message);
+						}
+					}, false)
+				});
+			}
+		 	
+		//选中的用户list
+		function UserListTrue(bpmnId) {
+			var _csrf = $("#_csrf").val();
+			var data = {
+				bpmnId : bpmnId,
+				_csrf : _csrf,
+			}
+			tool
+					.post(
+							"../actAljoinBpmnUser/getAllUserByBpmnId",
+							data,
+							function(result) {
+								$("#paiDiv").empty();
+								if (result.length > 0) {
+									//var str =  "";
+									var ids = "";
+									var userNames = "";
+									$
+											.each(
+													result,
+													function(index, value) {
+														var userId = result[index].id;
+														var str = $('<div class="layui-input-inline" style="position: relative;margin-right:16px;margin-bottom:3px;">'
+																+ '<i class="layui-icon" id="l_close'+userId+'" style="cursor: default; font-size:14px; color: darkslategray;position: absolute;right: 0;z-index: 10; ">&#xe640;</i>'
+																+ '<a class="layui-btn" style="cursor: pointer;">'
+																+ value.fullName
+																+ '</a>'
+																+ '</div>');
+														ids += userId + ",";
+														$("#paiDiv")
+																.append(str);
+														$("#l_close" + userId)
+																.click(
+																		function() {
+																			var tmpids = $(
+																					"#ids")
+																					.val();
+																			$(
+																					"#ids")
+																					.val(
+																							tmpids
+																									.replace(
+																											userId
+																													+ ",",
+																											""));
+																			str
+																					.remove();//事先存好了对象就方便删除了                    
+																		});
+													})
+									$("#ids").val(ids);
+
+								}
+							}, false);
+		}
+		function ManListTrue(bpmnId) {
+			var _csrf = $("#_csrf").val();
+			var data = {
+				bpmnId : bpmnId,
+				_csrf : _csrf,
+			}
+			tool
+					.post(
+							"../actAljoinBpmnUser/getAllManByBpmnId",
+							data,
+							function(resultdata) {
+								$("#mDiv").empty();
+								if (resultdata.length > 0) {
+									var userNames = "";
+									$
+											.each(
+													resultdata,
+													function(index, value) {
+														var userId = resultdata[index].id;
+														var mStr = $('<div class="layui-input-inline" style="position: relative;margin-right:16px">'
+																+ '<i class="layui-icon" id="m_close'+userId+'" style="cursor: default; font-size:14px; color: darkslategray;position: absolute;right: 0;z-index: 10; ">&#xe640;</i>'
+																+ '<a class="layui-btn" style="cursor: pointer;">'
+																+ value.fullName
+																+ '</a>'
+																+ '</div>');
+														userNames += userId
+																+ ",";
+														$("#mDiv").append(mStr);
+														$("#m_close" + userId)
+																.click(
+																		function() {
+																			var tmpids = $(
+																					"#userNames")
+																					.val();
+																			$(
+																					"#userNames")
+																					.val(
+																							tmpids
+																									.replace(
+																											userId
+																													+ ",",
+																											""));
+																			mStr
+																					.remove();//事先存好了对象就方便删除了                    
+																		});
+													})
+									$("#userNames").val(userNames);
+								}
+							}, false);
+		}
+
+		//删除排序
+		/* function delete_pai(userId){
+			layer.confirm('确定删除 ?', {
+				icon :  3,
+				title : '提示'
+			}, function(index) {
+				var param=new Object();
+				param.userId=userId;
+				param.bpmnId=bpmnId;
+				param._csrf=$("#_csrf").val();
+				tool.post("../actAljoinBpmnUser/delUser",param,function(retMsg){
+					if (retMsg.code == 0) {
+						tool.success(retMsg.message);
+						UserListTrue(bpmnId);
+					} else {
+						tool.error(retMsg.message);
+					}
+				},false) 
+			});
+		} */
+		//添加至流程使用者
+		function addPai(id, name) {
+			var ids = $("#ids").val();
+			if (ids.indexOf(id) >= 0) {
+
+			} else {
+				var str = $('<div class="layui-input-inline" style="position: relative;margin-right:16px">'
+						+ '<i class="layui-icon" id="l_close'+id+'" style="cursor: default; font-size:14px; color: darkslategray;position: absolute;right: 0;z-index: 10; ">&#xe640;</i>'
+						+ '<a class="layui-btn" style="cursor: pointer;">'
+						+ name + '</a>' + '</div>');
+				$("#ids").val(ids + id + ",");
+				$("#paiDiv").append(str);
+				$("#l_close" + id).click(function() {
+					var tmpids = $("#ids").val();
+					$("#ids").val(tmpids.replace(id + ",", ""));
+					str.remove();//事先存好了对象就方便删除了                    
+				});
+			}
+		}
+		function addMD(id, name) {
+			var ids = $("#userNames").val();
+			if (ids.indexOf(id) >= 0) {
+
+			} else {
+				var str = $('<div class="layui-input-inline" style="position: relative;margin-right:16px">'
+						+ '<i class="layui-icon" id="m_close'+id+'" style="cursor: default; font-size:14px; color: darkslategray;position: absolute;right: 0;z-index: 10; ">&#xe640;</i>'
+						+ '<a class="layui-btn" style="cursor: pointer;">'
+						+ name + '</a>' + '</div>');
+				$("#userNames").val(ids + id + ",");
+				$("#mDiv").append(str);
+				$("#m_close" + id).click(function() {
+					var tmpids = $("#userNames").val();
+					$("#userNames").val(tmpids.replace(id + ",", ""));
+					str.remove();//事先存好了对象就方便删111了                    
+				});
+			}
+		}
+		function userAuthority() {
+			if ($(".moreInput:checked").length == 0) {
+				tool.error('至少选中一个');
+			} else {
+				var str = "";
+				$(".moreInput:checked").each(function(index, value) {
+					addPai(value.id, value.value);
+				})
+			}
+		}
+		function manAuthority() {
+			if ($(".moreInput:checked").length == 0) {
+				tool.error('至少选中一个');
+			} else {
+				var str = "";
+				$(".moreInput:checked").each(function(index, value) {
+					addMD(value.id, value.value);
+				})
+			}
+		}
+	</script>
+
+</body>
+
+</html>

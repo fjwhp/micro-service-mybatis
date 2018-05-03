@@ -1,0 +1,3053 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>领导看图</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css"
+	media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet"
+	href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" />
+<link rel="stylesheet" href="../../web/css/zhengls.css" />
+<style>
+.layui-form-pane .label_m {
+	width: 90px;	
+}
+
+.layui-form-pane .layui-input-block1 {
+	margin-left: 90px;
+}
+
+.layui-input-block1 .layui-select-title .layui-input {
+	width: 100px;
+}
+
+.m_l_blue {
+	border-left: solid 7px #339bf1;
+	height: 42px;
+	line-height: 42px;
+	border-bottom: solid 1px #c9d3d6;
+	border-radius: 8px 0 0 0;
+}
+
+.highcharts-title {
+	display: none;
+}
+
+.highcharts-axis-title {
+	display: none;
+}
+
+.tree_right {
+	margin-bottom: 50px;
+}
+
+.abup {
+	position: absolute;
+	left: 40px;
+	top: 4px;
+}
+
+.abdown {
+	position: absolute;
+	left: 40px;
+	top: 15px;
+}
+
+.abup3 {
+	left: 54px;
+}
+
+.abdown3 {
+	left: 54px;
+}
+.box {
+  display: inline-block;
+  border-radius: 3px;
+  font-size: 30px;
+  padding: 1em;
+  position: absolute;
+  vertical-align: top;
+  -webkit-transition: .3s color, .3s border, .3s transform, .3s opacity;
+  transition: .3s color, .3s border, .3s transform, .3s opacity;
+  left: 43%;
+  top: 200px;
+  z-index:9999999999;
+}
+
+.box:hover {
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.1);
+  font-size: 0;
+  padding: 0;
+  border-width: 3px;
+  line-height: 200px;
+  opacity: 1;
+  -webkit-transform: scale(1.2);
+  transform: scale(1.2);
+  z-index: 2;
+}
+
+.box:hover [class*="loader-"] {
+  font-size: 70px;
+  line-height: 200px;
+}
+
+[class*="loader-"] {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  color: black;
+  opacity:0.6;
+  vertical-align: middle;
+  pointer-events: none;
+}
+.loader-02 {
+  border: .2em solid transparent;
+  border-left-color: currentcolor;
+  border-right-color: currentcolor;
+  border-radius: 50%;
+  -webkit-animation: 1s loader-02 linear infinite;
+  animation: 1s loader-02 linear infinite;
+}
+
+@-webkit-keyframes loader-02 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loader-02 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+</style>
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}"
+		id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<input type="hidden" name="unSubmitSort" id="unSubmitSort" value="" />
+	<input type="hidden" name="submitSort" id="submitSort" value="" />
+	<input type="hidden" name="weeks" id="weeks" value="" />
+	<input type="hidden" name="orderByNoneSignIn" id="orderByNoneSignIn"
+		value="" />
+	<input type="hidden" name="orderByNoneSignOut" id="orderByNoneSignOut"
+		value="" />
+	<input type="hidden" name="orderByLate" id="orderByLate" value="" />
+	<input type="hidden" name="orderByLeaveEarly" id="orderByLeaveEarly"
+		value="" />
+	<input type="hidden" name="orderByPatch" id="orderByPatch" value="" />
+	<input type="hidden" name="isOne" id="isOne" value="" />
+	<input type="hidden" name="oderByNew" id="oderByNew" value="" />
+	<input type="hidden" name="oderByStay" id="oderByStay" value="" />
+	<input type="hidden" name="oderByHandle" id="oderByHandle" value="" />
+	<input type="hidden" name="oderByThings" id="oderByThings" value="" />
+	<input type="hidden" name="oderByDisease" id="oderByDisease" value="" />
+	<input type="hidden" name="oderByYear" id="oderByYear" value="" />
+	<input type="hidden" name="oderByMarriage" id="oderByMarriage" value="" />
+	<input type="hidden" name="oderByMaternity" id="oderByMaternity"
+		value="" />
+	<input type="hidden" name="sendSort" id="sendSort" value="" />
+
+	<input type="hidden" name="oderByAllocated" id="oderByAllocated"
+		value="" />
+	<input type="hidden" name="orderByOther" id="orderByOther" value="" />
+
+	<input type="hidden" name="orderByDie" id="orderByDie" value="" />
+	<input type="hidden" name="orderByNo" id="orderByNo" value="" />
+	<input type="hidden" name="orderBySTH" id="orderBySTH" value="" />
+	<input type="hidden" name="orderByPSTH" id="orderByPSTH" value="" />
+	<input type="hidden" name="orderByTotalTime" id="orderByTotalTime"
+		value="" />
+	<input type="hidden" name="orderByPTotalTime" id="orderByPTotalTime"
+		value="" />
+	<div class="layui-tab layui-tab-brief m_t0"
+		lay-filter="docDemoTabBrief">
+		<ul class="layui-tab-title">
+			<li class="layui-this" id="leader1">领导看图</li>
+			<li class="" id="email2">邮件统计</li>
+			<li class="" id="work3">工作监管</li>
+			<li class="" id="sign4">考勤统计</li>
+			<li class="" id="examine5">审批流程</li>
+			<li class="" id="leave6">请假情况</li>
+			<li class="" id="meet7">会议统计</li>
+			<li class="" id="month8">工作月报</li>
+			<li class="" id="flow9">工作流统计</li>
+		</ul>
+		<div class="layui-tab-content"
+			style="float: left; background: #e6edf4; padding: 0; padding-top: 20px;width:100%;">
+			<div class="layui-tab-item content_sel layui-show" id="leader_show" style="width:100%;position:relative" >
+			     <div class="box  all_box" style="position:absolute">
+			  				<div class="loader-02">
+			  				</div>
+				</div>
+				<div class="lookimg" id="drag">
+					<div id="email" drag-id="1" style="position:relative">
+						<div class="farth" onclick="email2()">
+							<span class="totalM">邮件统计</span> <a class="moreC">查看更多></a>
+						</div>
+						<div id="container" style="min-width: 300px; width: 100%; height: 400px;background:#fff"></div>
+					</div>
+
+					<div id="work" drag-id="2" style="position:relative">
+						<div class="farth" onclick="work3()">
+							<span class="totalM">工作监管</span> <a class="moreC">查看更多></a>
+						</div>
+						<div id="container1"
+							style="min-width: 300px; width: 100%; height: 400px;background:#fff"></div>
+					</div>
+					<div id="sign" drag-id="3" style="position:relative">
+						<div class="farth" onclick="sign4()">
+							<span class="totalM">考勤统计</span> <a class="moreC">查看更多></a>
+						</div>
+						<div id="container2"
+							style="min-width: 300px; width: 100%; height: 400px;background:#fff"></div>
+					</div>
+					<div id="more" drag-id="4" style="position:relative">
+						<div class="farth" onclick="examine5()">
+							<span class="totalM">审批流程</span> <a class="moreC">查看更多></a>
+						</div>
+						<div id="container3"
+							style="min-width: 300px; width: 100%; height: 400px;background:#fff"></div>
+					</div>
+					<div id="leave" drag-id="5" style="position:relative">
+						<div class="farth" onclick="leave6()">
+							<span class="totalM">请假情况</span> <a class="moreC">查看更多></a>
+						</div>
+						<div id="container4"
+							style="min-width: 300px; width: 100%; height: 400px;background:#fff"></div>
+					</div>
+					<div id="meeting" drag-id="6" style="position:relative">
+						<div class="farth" onclick="meet7()">
+							<span class="totalM">会议统计</span> <a class="moreC">查看更多></a>
+						</div>
+						<div id="container5"
+							style="min-width: 300px; width: 100%; height: 400px;background:#fff"></div>
+
+					</div>
+					<div id="mothWork" drag-id="7" style="position:relative">
+						<div class="farth" onclick="month8()">
+							<span class="totalM">工作月报</span> <a class="moreC">查看更多></a>
+						</div>
+						<div id="container6"
+							style="min-width: 300px; width: 100%; height: 400px;background:#fff"></div>
+					</div>
+					<div id="gzltj" drag-id="8">
+						<div class="farth" onclick="flow9()">
+							<span class="totalM">工作流统计</span> <a class="moreC">查看更多></a>
+						</div>
+						<div id="container7"
+							tyle="min-width: 300px; width: 100%; height: 400px;background:#fff"></div>
+					</div>
+				</div>
+			</div>
+			<div class="layui-tab-item content_sel" id="email_show">
+				<div class="tree_left">
+					<div class="left">
+						<input id="citySel" class="tree_search" type="text" value=""
+							onkeyup="AutoMatch(this)" placeholder="搜索" />
+					</div>
+					<ul id="treeDemo1" class="ztree"></ul>
+				</div>
+				<div class="tree_right">
+					<blockquote class="layui-elem-quote" style="padding: 5px;">
+						<form class="layui-form" action="">
+							<input type="hidden" name="deptId" id="deptTreeId" /> <input
+								type="hidden" name="deptName" id="deptTreeName" />
+							<div class="r">
+								<div class="layui-input-inline ">
+									<span>统计时间</span>
+								</div>
+								<div class="layui-input-inline">
+									<input type="text" class="inp_date" name="" id="startTimeMail"
+										readonly="readonly">
+								</div>
+								<div class="layui-input-inline ">
+									<span>至</span>
+								</div>
+								<div class="layui-input-inline ">
+									<input type="text" class="inp_date" name="" id="endTimeMail"
+										readonly="readonly">
+								</div>
+								<div class="layui-input-inline">
+									<input type="text" name="" id="fullnameMail"
+										placeholder="请输入用户名" autocomplete="off" class="layui-input"
+										maxlength="20"
+										style="height: 30px; line-height: 30px; width: 110px">
+								</div>
+								<span><@a href="javascript:void(0)" class="layui-btn
+									layui-btn-small" id="" onclick="loadData()" iclass="layui-icon"
+									icon="&#xe615;" text="查询"/></span>
+							</div>
+							<div class="layui-input-inline">
+								<span><a class="layui-btn layui-btn-small"
+									onclick="updateWeeks(1,'mail')"><i class="layui-icon">&#xe637;</i>本周</a></span>
+								<span><a class="layui-btn layui-btn-small"
+									onclick="updateWeeks(2,'mail')"><i class="layui-icon">&#xe637;</i>本月</a></span>
+								<span><a class="layui-btn layui-btn-small"
+									onclick="exportType('mail')"><i class="layui-icon">&#xe609;</i>导出excel</a></span>
+							</div>
+						</form>
+					</blockquote>
+
+
+					<!-- 	<form class="layui-form" action="" >
+					<input type="hidden" name="deptId" id="deptTreeId"/>
+	            	<input type="hidden" name="deptName" id="deptTreeName"/>
+					<div>
+						<div class="layui-input-inline m_r10">
+						 <span>用户名</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							<input type="text" class="inp_w120px" name="" id="fullnameMail">
+						</div>
+						<div class="layui-input-inline m_r10">
+						 <span>统计时间</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							 <input type="text" class="inp_date" name="" id="startTimeMail">
+						</div>
+						<div class="layui-input-inline m_r10">
+						 <span>至</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							  <input type="text" class="inp_date" name="" id="endTimeMail">
+						</div> 
+						
+						<span><a class="btn_search_blue" id="" onclick="loadData()" style="float:right;">查询</a></span>
+						
+				   </div> 
+					</form>-->
+					<!-- 		<form class="layui-form m_t30" action="">
+						  <a class="btn_blue_e6e m_r20" onclick="loadData(true,'')">本周</a>
+						  <a class="btn_blue_e6e m_r20" onclick="loadData('',true)">本月</a>
+						  <a class="btn_blue_e6e m_r20" onclick="">导出excel</a>
+					</form> -->
+					<div class="layui-form">
+						<table class="layui-table admin-table">
+							<!-- <colgroup>
+								<col width="50">
+								<col width="50">
+								<col width="120">
+								<col width="120">
+								<col width="80">
+								<col width="100">
+								<col width="100">
+							</colgroup> -->
+							<thead>
+								<tr>
+									<th style="width: 20px;"><input type="checkbox"
+										lay-skin="primary" lay-filter="paging_check-all"></th>
+									<th style="width: 60px;">序号</th>
+									<th style="width: 50px;">用户名</th>
+									<th style="width: 180px;">所属岗位</th>
+									<th style="width: 80px;">发件数量<img
+										src="../../web/images/upgray.png" class="up"
+										onclick="SortMail(2,0,0)";><img
+										src="../../web/images/downgray.png" class="down"
+										onclick="SortMail(1,0,0);";></th>
+									<th style="width: 120px;">收件人总数<img
+										src="../../web/images/upgray.png" class="up"
+										onclick="SortMail(0,2,0)";><img
+										src="../../web/images/downgray.png" class="down"
+										onclick="SortMail(0,1,0);";></th>
+									<th style="width: 120px;">总附件大小(M)<img
+										src="../../web/images/upgray.png" class="up"
+										onclick="SortMail(0,0,2)";><img
+										src="../../web/images/downgray.png" class="down"
+										onclick="SortMail(0,0,1);";></th>
+								</tr>
+							</thead>
+							<tbody id="pagingmai-data">
+								<script id="pagingmai-script" type="text/html">
+					            {{each records value index}}
+						         <tr>
+							     <td><input type="checkbox" lay-skin="primary" name="delDraft" class="check-id delDraft" ></td>                          
+                                 <td>{{value.no}}</td>
+                                 <td>{{value.fullName}}</td>
+                                 <td>{{value.positionName}}</td>
+                                 <td>{{value.sendNnumber}}</td>
+                                 <td>{{value.receviceNumber}}</td>      
+                                 <td>{{value.mtotalSize}}</td>     
+						         </tr>
+				         	   {{/each}}
+					     </script>
+							</tbody>
+						</table>
+					</div>
+					<div class="admin-table-page"
+						style="border-width: 0px; z-index: 0;">
+						<div id="pagingmai-footer" class="page"
+							style="background-color: white; text-align: center;"></div>
+					</div>
+				</div>
+			</div>
+			<div class="layui-tab-item content_sel" id="work_show">
+				<div class="tree_left">
+					<div class="left">
+						<input id="citySel" class="tree_search" type="text" value=""
+							onkeyup="AutoMatch(this)" placeholder="搜索" />
+					</div>
+					<ul id="treeDemo2" class="ztree"></ul>
+				</div>
+				<div class="tree_right">
+					<blockquote class="layui-elem-quote" style="padding: 5px;">
+						<form class="layui-form" action="">
+							<input type="hidden" name="deptId" id="deptTreeId" /> <input
+								type="hidden" name="deptName" id="deptTreeName" />
+							<div class="r">
+								<div class="layui-input-inline ">
+									<span>统计时间</span>
+								</div>
+								<div class="layui-input-inline ">
+									<input type="text" class="inp_date" name=""
+										id="startTimeRegulation" readonly="readonly">
+								</div>
+								<div class="layui-input-inline ">
+									<span>至</span>
+								</div>
+								<div class="layui-input-inline ">
+									<input type="text" class="inp_date" name=""
+										id="endTimeRegulation" readonly="readonly">
+								</div>
+								<div class="layui-input-inline">
+									<input type="text" name="" id="fullnameRegulation"
+										placeholder="请输入用户名" autocomplete="off" class="layui-input"
+										maxlength="20"
+										style="height: 30px; line-height: 30px; width: 110px;">
+								</div>
+								<span><@a href="javascript:void(0)" class="layui-btn
+									layui-btn-small" id="" onclick="loadDateRegulation()"
+									iclass="layui-icon" icon="&#xe615;" text="查询"/></span>
+							</div>
+							<div class="layui-input-inline">
+								<span><a class="layui-btn layui-btn-small"
+									onclick="updateWeeks(1,'Regulation')"><i class="layui-icon">&#xe637;</i>本周</a></span>
+								<span><a class="layui-btn layui-btn-small"
+									onclick="updateWeeks(2,'Regulation')"><i class="layui-icon">&#xe637;</i>本月</a></span>
+								<span><a class="layui-btn layui-btn-small"
+									onclick="exportType('Regulation')"><i class="layui-icon">&#xe609;</i>导出excel</a></span>
+							</div>
+						</form>
+					</blockquote>
+					<!-- <form class="layui-form" action="" >
+					<div>
+						<div class="layui-input-inline m_r10">
+						 <span>用户名</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							<input type="text" class="inp_w120px" name="" id="">
+						</div>
+						<div class="layui-input-inline m_r10">
+						 <span>统计时间</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							 <input type="text" class="inp_date" name="" id="startTime1">
+						</div>
+						<div class="layui-input-inline m_r10">
+						 <span>至</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							  <input type="text" class="inp_date" name="" id="endTime1">
+						</div> 
+						
+						<span><a class="btn_search_blue" id="" onclick="" style="float:right;">查询</a></span>
+						
+				   </div>
+					</form>
+					<form class="layui-form m_t30" action="">
+						  <a class="btn_blue_e6e m_r20" onclick="openAddWin()">本周</a>
+						  <a class="btn_blue_e6e m_r20" onclick="">本月</a>
+						  <a class="btn_blue_e6e m_r20" onclick="">导出excel</a>
+					</form> -->
+					<div class="layui-form">
+						<table class="layui-table admin-table">
+							<!-- <colgroup>
+								<col width="50">
+								<col width="60">
+								<col width="110">
+								<col width="110">
+								<col width="120">
+								<col width="160">
+								<col width="170">
+								<col width="160">
+								<col>
+							</colgroup> -->
+							<thead>
+								<tr>
+									<th style="width: 20px;"><input type="checkbox"
+										lay-skin="primary" lay-filter="paging_check-all"></th>
+									<th style="width: 60px;">序号</th>
+									<th style="width: 50px;">用户名</th>
+									<th style="width: 120px;">所属机构</th>
+									<th style="width: 80px;">文件数量<img
+										src="../../web/images/upgray.png" class="up"
+										onclick="SortRegulation(2,0,0,0,0)";><img
+										src="../../web/images/downgray.png" class="down"
+										onclick="SortRegulation(1,0,0,0,0);";></th>
+									<th style="width: 120px;">签收总时间<img
+										src="../../web/images/upgray.png" class="up"
+										onclick="SortRegulation(0,2,0,0,0)";><img
+										src="../../web/images/downgray.png" class="down"
+										onclick="SortRegulation(0,1,0,0,0);";></th>
+									<th style="width: 130px;">平均签收时间<img
+										src="../../web/images/upgray.png" class="up"
+										onclick="SortRegulation(0,0,2,0,0)";><img
+										src="../../web/images/downgray.png" class="down"
+										onclick="SortRegulation(0,0,1,0,0);";></th>
+									<th style="width: 120px;">处理总时间<img
+										src="../../web/images/upgray.png" class="up"
+										onclick="SortRegulation(0,0,0,2,0)";><img
+										src="../../web/images/downgray.png" class="down"
+										onclick="SortRegulation(0,0,0,1,0);";></th>
+									<th style="width: 120px;">平均处理时间<img
+										src="../../web/images/upgray.png" class="up"
+										onclick="SortRegulation(0,0,0,0,2)";><img
+										src="../../web/images/downgray.png" class="down"
+										onclick="SortRegulation(0,0,0,0,1);";></th>
+
+								</tr>
+							</thead>
+							<tbody id="pagingRegulation-data">
+								<script id="pagingRegulation-script" type="text/html">
+					            {{each records value index}}
+						         <tr>
+							     <td><input type="checkbox" lay-skin="primary" name="delDraft" class="check-id delDraft" ></td>                          
+                                 <td>{{value.no}}</td>
+                                 <td>{{value.fullName}}</td>
+                                 <td>{{value.jobsName}}</td>
+                                 <td>{{value.sumNo}}</td>
+                                 <td>{{value.returnsth}}</td>      
+                                 <td>{{value.psth}}</td>      
+                                 <td>{{value.returntotalTime}}</td> 
+                                 <td>{{value.pTotalTime}}</td> 
+						         </tr>
+				         	   {{/each}}
+					     </script>
+							</tbody>
+						</table>
+					</div>
+					<div class="admin-table-page"
+						style="border-width: 0px; z-index: 0;">
+						<div id="pagingRegulation-footer" class="page"
+							style="background-color: white; text-align: center;"></div>
+					</div>
+				</div>
+			</div>
+			<div class="layui-tab-item content_sel" id="sign_show">
+				<div class="tree_left">
+					<div class="left">
+						<input id="citySel" class="tree_search" type="text" value=""
+							onkeyup="AutoMatch(this)" placeholder="搜索" />
+					</div>
+					<ul id="treeDemo3" class="ztree"></ul>
+				</div>
+				<div class="tree_right">
+					<blockquote class="layui-elem-quote" style="padding: 5px;">
+						<form class="layui-form" action="">
+							<input type="hidden" name="deptId" id="deptTreeId" /> <input
+								type="hidden" name="deptName" id="deptTreeName" />
+							<div class="r">
+								<div class="layui-input-inline ">
+									<span>统计时间</span>
+								</div>
+								<div class="layui-input-inline ">
+									<input type="text" class="inp_date" name="" id="startTimeSign"
+										readonly="readonly">
+								</div>
+								<div class="layui-input-inline ">
+									<span>至</span>
+								</div>
+								<div class="layui-input-inline ">
+									<input type="text" class="inp_date" name="" id="endTimeSign"
+										readonly="readonly">
+								</div>
+								<div class="layui-input-inline">
+									<input type="text" name="" id="fullnameSign"
+										placeholder="请输入部门名称" autocomplete="off" class="layui-input"
+										maxlength="20"
+										style="height: 30px; line-height: 30px; width: 110px;">
+								</div>
+								<span><@a href="javascript:void(0)" class="layui-btn
+									layui-btn-small" id="" onclick="loadDateSign()"
+									iclass="layui-icon" icon="&#xe615;" text="查询"/></span>
+							</div>
+							<div class="layui-input-inline">
+								<span><a class="layui-btn layui-btn-small"
+									onclick="updateWeeks(1,'sign');"><i class="layui-icon">&#xe637;</i>本周</a></span>
+								<span><a class="layui-btn layui-btn-small"
+									onclick="updateWeeks(2,'sign');"><i class="layui-icon">&#xe637;</i>本月</a></span>
+								<span><a class="layui-btn layui-btn-small"
+									onclick="exportType('sign')"><i class="layui-icon">&#xe609;</i>导出excel</a></span>
+							</div>
+						</form>
+					</blockquote>
+					<!-- <form class="layui-form" action="" >
+					<div>
+						<div class="layui-input-inline m_r10">
+						 <span>用户名</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							<input type="text" class="inp_w120px" name="" id="">
+						</div>
+						<div class="layui-input-inline m_r10">
+						 <span>统计时间</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							 <input type="text" class="inp_date" name="" id="startTime1">
+						</div>
+						<div class="layui-input-inline m_r10">
+						 <span>至</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							  <input type="text" class="inp_date" name="" id="endTime1">
+						</div> 
+						
+						<span><a class="btn_search_blue" id="" onclick="loadData()" style="float:right;">查询</a></span>
+						
+				   </div>
+					</form>
+					<form class="layui-form m_t30" action="">
+						  <a class="btn_blue_e6e m_r20" onclick="openAddWin()">本周</a>
+						  <a class="btn_blue_e6e m_r20" onclick="">本月</a>
+						  <a class="btn_blue_e6e m_r20" onclick="">导出excel</a>
+					</form> -->
+					<div class="layui-form">
+						<table class="layui-table admin-table">
+							<!-- <colgroup>
+								<col width="30">
+								<col width="60">
+								<col width="180">
+								<col width="100">
+								<col width="100">
+								<col width="100">
+								<col width="100">
+								<col width="100">
+							</colgroup> -->
+							<thead>
+								<tr>
+									<th style="width: 20px;"><input type="checkbox"
+										lay-skin="primary" lay-filter="paging_check-all"></th>
+									<th style="width: 60px;">序号</th>
+									<th>部门</th>
+									<th style="width: 70px;">未签到<img
+										src="../../web/images/upgray.png" class="up"
+										onclick="SortSign(2,0,0,0,0)";><img
+										src="../../web/images/downgray.png" class="down"
+										onclick="SortSign(1,0,0,0,0);";></th>
+									<th style="width: 70px;">未签退<img
+										src="../../web/images/upgray.png" class="up"
+										onclick="SortSign(0,2,0,0,0)";><img
+										src="../../web/images/downgray.png" class="down"
+										onclick="SortSign(0,1,0,0,0);";></th>
+									<th style="width: 70px;">迟到<img
+										src="../../web/images/upgray.png" class="up"
+										onclick="SortSign(0,0,2,0,0)";><img
+										src="../../web/images/downgray.png" class="down"
+										onclick="SortSign(0,0,1,0,0);";></th>
+									<th style="width: 70px;">早退<img
+										src="../../web/images/upgray.png" class="up"
+										onclick="SortSign(0,0,0,2,0)";><img
+										src="../../web/images/downgray.png" class="down"
+										onclick="SortSign(0,0,0,1,0);";></th>
+									<th style="width: 70px;">补签<img
+										src="../../web/images/upgray.png" class="up"
+										onclick="SortSign(0,0,0,0,2)";><img
+										src="../../web/images/downgray.png" class="down"
+										onclick="SortSign(0,0,0,0,1);";></th>
+								</tr>
+							</thead>
+							<tbody id="pagingSign-data">
+								<script id="pagingSign-script" type="text/html">
+                                {{if records.length==0}}
+                                  <tr>
+						      	   <td colspan="8" style="text-align:center">
+                                                                                                                         数据为空
+						           </td>
+					    	    </tr>
+                                {{/if}}
+					            {{each records value index}}
+						         <tr>
+							     <td><input type="checkbox" lay-skin="primary" name="delDraft" class="check-id delDraft" ></td>                          
+                                 <td>{{value.no}}</td>
+                                 <td>{{value.deptName}}</td>
+                                 <td>{{value.noneSignInNums}}</td>
+                                 <td>{{value.noneSignOutNums}}</td>
+                                 <td>{{value.lateNums}}</td>      
+                                 <td>{{value.leaveEarlyNums}}</td>      
+                                 <td>{{value.signPatchNums}}</td> 
+						         </tr>
+				         	   {{/each}}
+					     </script>
+							</tbody>
+						</table>
+					</div>
+					<div class="admin-table-page"
+						style="border-width: 0px; z-index: 0;">
+						<div id="pagingSign-footer" class="page"
+							style="background-color: white; text-align: center;"></div>
+					</div>
+				</div>
+			</div>
+			<div class="layui-tab-item content_sel" id="examine_show">
+				<div class="tree_left">
+					<div class="left">
+						<input id="citySel" class="tree_search" type="text" value=""
+							onkeyup="AutoMatch(this)" placeholder="搜索" />
+					</div>
+					<ul id="treeDemo4" class="ztree"></ul>
+				</div>
+				<div class="tree_right">
+					<blockquote class="layui-elem-quote" style="padding: 5px;">
+						<form class="layui-form" action="">
+							<input type="hidden" name="deptId" id="deptTreeId" /> <input
+								type="hidden" name="deptName" id="deptTreeName" />
+							<div class="r">
+								<div class="layui-input-inline ">
+									<span>统计时间</span>
+								</div>
+								<div class="layui-input-inline ">
+									<input type="text" class="inp_date" name=""
+										id="startTimeApproval" readonly="readonly">
+								</div>
+								<div class="layui-input-inline">
+									<span>至</span>
+								</div>
+								<div class="layui-input-inline">
+									<input type="text" class="inp_date" name=""
+										id="endTimeApproval" readonly="readonly">
+								</div>
+								<!-- <div class="layui-input-inline">
+									<input type="text" name="" id="fullnameMail"
+										placeholder="输入用户名查询" autocomplete="off" class="layui-input"
+										style="height: 30px; line-height: 30px;">
+								</div> -->
+								<span><@a href="javascript:void(0)" class="layui-btn
+									layui-btn-small" id="" onclick="loadDateApproval()"
+									iclass="layui-icon" icon="&#xe615;" text="查询"/></span>
+							</div>
+							<div class="layui-input-inline">
+								<span><a class="layui-btn layui-btn-small"
+									onclick="updateWeeks(1,'approval');"><i class="layui-icon">&#xe637;</i>本周</a></span>
+								<span><a class="layui-btn layui-btn-small"
+									onclick="updateWeeks(2,'approval');"><i class="layui-icon">&#xe637;</i>本月</a></span>
+								<span><a class="layui-btn layui-btn-small"
+									onclick="exportType('approval')"><i class="layui-icon">&#xe609;</i>导出excel</a></span>
+							</div>
+						</form>
+					</blockquote>
+					<!-- <form class="layui-form" action="" >
+					<div>
+						<div class="layui-input-inline m_r10">
+						 <span>用户名</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							<input type="text" class="inp_w120px" name="" id="">
+						</div>
+						<div class="layui-input-inline m_r10">
+						 <span>统计时间</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							 <input type="text" class="inp_date" name="" id="startTime1">
+						</div>
+						<div class="layui-input-inline m_r10">
+						 <span>至</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							  <input type="text" class="inp_date" name="" id="endTime1">
+						</div> 
+						
+						<span><a class="btn_search_blue" id="" onclick="loadData()" style="float:right;">查询</a></span>
+						
+				   </div>
+					</form>
+					<form class="layui-form m_t30" action="">
+						  <a class="btn_blue_e6e m_r20" onclick="openAddWin()">本周</a>
+						  <a class="btn_blue_e6e m_r20" onclick="">本月</a>
+						  <a class="btn_blue_e6e m_r20" onclick="">导出excel</a>
+					</form> -->
+					<div class="layui-form">
+						<table class="layui-table admin-table">
+							<!-- <colgroup>
+								<col width="50">
+								<col width="60">
+								<col width="160">
+								<col width="100">
+								<col width="100">
+								<col width="100">
+								<col width="100">
+							</colgroup> -->
+							<thead>
+								<tr>
+									<th style="width: 20px;"><input type="checkbox"
+										lay-skin="primary" lay-filter="paging_check-all"></th>
+									<th style="width: 60px;">序号</th>
+									<th style="width: 50px;">用户名</th>
+									<th>所属岗位</th>
+									<th style="width: 100px;">新建<img
+										src="../../web/images/upgray.png" class="up"
+										onclick="SortApp(2,0,0,)";><img
+										src="../../web/images/downgray.png" class="down"
+										onclick="SortApp(1,0,0);";></th>
+									<th style="width: 100px;">收到待办<img
+										src="../../web/images/upgray.png" class="up"
+										onclick="SortApp(0,2,0)";><img
+										src="../../web/images/downgray.png" class="down"
+										onclick="SortApp(0,1,0);";></th>
+									<th style="width: 100px;">办理待办<img
+										src="../../web/images/upgray.png" class="up"
+										onclick="SortApp(0,0,2)";><img
+										src="../../web/images/downgray.png" class="down"
+										onclick="SortApp(0,0,1);";></th>
+
+								</tr>
+							</thead>
+							<tbody id="pagingapp-data">
+								<script id="pagingapp-script" type="text/html">
+					            {{each records value index}}
+						         <tr>
+							     <td><input type="checkbox" lay-skin="primary" name="delDraft" class="check-id delDraft"></td>                          
+                                 <td>{{value.no}}</td>
+                                 <td>{{value.userName}}</td>
+                                 <td>{{value.jobsName}}</td>
+                                 <td>{{value.newNums}}</td>
+                                 <td>{{value.stayNums}}</td>      
+                                 <td>{{value.handleNums}}</td>   
+						         </tr>
+				         	   {{/each}}                               
+					         </script>
+							</tbody>
+						</table>
+					</div>
+					<div class="admin-table-page"
+						style="border-width: 0px; z-index: 0;">
+						<div id="pagingapp-footer" class="page"
+							style="background-color: white; text-align: center;"></div>
+					</div>
+				</div>
+			</div>
+			<div class="layui-tab-item content_sel" id="leave_show">
+				<div class="tree_left">
+					<div class="left">
+						<input id="citySel" class="tree_search" type="text" value=""
+							onkeyup="AutoMatch(this)" placeholder="搜索" />
+					</div>
+					<ul id="treeDemo5" class="ztree"></ul>
+				</div>
+				<div class="tree_right">
+					<blockquote class="layui-elem-quote" style="padding: 5px;">
+						<form class="layui-form" action="">
+							<input type="hidden" name="deptId" id="deptTreeId" /> <input
+								type="hidden" name="deptName" id="deptTreeName" />
+							<div class="r">
+								<div class="layui-input-inline ">
+									<span>统计时间</span>
+								</div>
+								<div class="layui-input-inline ">
+									<input type="text" class="inp_date" name="" id="startTimeholi">
+								</div>
+								<div class="layui-input-inline">
+									<span>至</span>
+								</div>
+								<div class="layui-input-inline">
+									<input type="text" class="inp_date" name="" id="endTimeholi">
+								</div>
+								<!-- <div class="layui-input-inline">
+									<input type="text" name="" id="fullnameMail"
+										placeholder="输入用户名查询" autocomplete="off" class="layui-input"
+										style="height: 30px; line-height: 30px;">
+								</div> -->
+								<span><@a href="javascript:void(0)" class="layui-btn
+									layui-btn-small" id="" onclick="loadDateholi()"
+									iclass="layui-icon" icon="&#xe615;" text="查询"/></span>
+							</div>
+							<div class="layui-input-inline">
+								<span><a class="layui-btn layui-btn-small"
+									onclick="updateWeeks(1,'holi')"><i class="layui-icon">&#xe637;</i>本周</a></span>
+								<span><a class="layui-btn layui-btn-small"
+									onclick="updateWeeks(2,'holi')"><i class="layui-icon">&#xe637;</i>本月</a></span>
+								<span><a class="layui-btn layui-btn-small"
+									onclick="exportType('holi')"><i class="layui-icon">&#xe609;</i>导出excel</a></span>
+							</div>
+						</form>
+					</blockquote>
+					<div class="layui-form">
+						<table class="layui-table admin-table">
+							<colgroup>
+								<col width="4%">
+								<col width="6%">
+								<col width="8%">
+								<col width="12%">
+								<col width="8%">
+								<col width="8%">
+								<col width="8%">
+								<col width="8%">
+								<col width="8%">
+								<col width="8%">
+								<col width="8%">
+								<col width="8%">
+							</colgroup>
+							<thead>
+								<tr>
+									<th style="width: 20px;"><input type="checkbox"
+										lay-skin="primary" lay-filter="paging_check-all"></th>
+									<th style="display: none;">用户ID</th>
+									<th style="width: 60px;">序号</th>
+									<th style="width: 50px;">用户名</th>
+									<th>所属岗位</th>
+									<th style="width: 75px;">事假<img
+										src="../../web/images/upgray.png" class="up abup"
+										onclick="Sortholi(2,0,0,0,0,0,0,0)";><img
+										src="../../web/images/downgray.png" class="down abdown"
+										onclick="Sortholi(1,0,0,0,0,0,0,0);";></th>
+									<th style="width: 75px;">病假<img
+										src="../../web/images/upgray.png" class="up abup"
+										onclick="Sortholi(0,2,0,0,0,0,0,0)";><img
+										src="../../web/images/downgray.png" class="down abdown"
+										onclick="Sortholi(0,1,0,0,0,0,0,0);";></th>
+									<th style="width: 75px;">探亲假<img
+										src="../../web/images/upgray.png" class="up abup abup3"
+										onclick="Sortholi(0,0,2,0,0,0,0,0)";><img
+										src="../../web/images/downgray.png"
+										class="down abdown abdown3"
+										onclick="Sortholi(0,0,1,0,0,0,0,0);";></th>
+									<th style="width: 75px;">婚假<img
+										src="../../web/images/upgray.png" class="up abup"
+										onclick="Sortholi(0,0,0,2,0,0,0,0)";><img
+										src="../../web/images/downgray.png" class="down abdown"
+										onclick="Sortholi(0,0,0,1,0,0,0,0);";></th>
+									<th style="width: 75px;">生育假<img
+										src="../../web/images/upgray.png" class="up abup abup3"
+										onclick="Sortholi(0,0,0,0,2,0,0,0)";><img
+										src="../../web/images/downgray.png"
+										class="down abdown abdown3"
+										onclick="Sortholi(0,0,0,0,1,0,0,0);";></th>
+									<th style="width: 75px;">公休假<img
+										src="../../web/images/upgray.png" class="up abup abup3"
+										onclick="Sortholi(0,0,0,0,0,2,0,.)";><img
+										src="../../web/images/downgray.png"
+										class="down abdown abdown3"
+										onclick="Sortholi(0,0,0,0,0,1,0,0);";></th>
+									<th style="width: 75px;">丧假<img
+										src="../../web/images/upgray.png" class="up abup"
+										onclick="Sortholi(0,0,0,0,0,0,2,0)";><img
+										src="../../web/images/downgray.png" class="down abdown"
+										onclick="Sortholi(0,0,0,0,0,0,1,0);";></th>
+									<th style="width: 75px;">其他假<img
+										src="../../web/images/upgray.png" class="up abup abup3"
+										onclick="Sortholi(0,0,0,0,0,0,0,2)";><img
+										src="../../web/images/downgray.png"
+										class="down abdown abdown3"
+										onclick="Sortholi(0,0,0,0,0,0,0,1);";></th>
+
+								</tr>
+							</thead>
+
+							<tbody id="pagingholi-data">
+								<script id="pagingholi-script" type="text/html">                               
+					            {{each records value index}}
+						         <tr>
+							      <td><input type="checkbox" lay-skin="primary" name="delDraft" class="check-id delDraft" ></td> 
+                                 <td>{{value.no}}</td>                                      
+                                 <td>{{value.userName}}</td>
+                                 <td>{{value.jobsName}}</td>
+                                 <td>{{value.thingsLeave}}</td>
+                                 <td>{{value.diseaseLeave}}</td>
+                                 <td>{{value.annualLeave}}</td>
+                                 <td>{{value.marriageLeave}}</td>      
+                                 <td>{{value.maternityLeave}}</td>
+                                 <td>{{value.allocatedLeave}}</td>
+                                 <td>{{value.dieLeave}}</td>     
+                                 <td>{{value.otherLeave}}</td>     
+						         </tr>
+				         	   {{/each}}
+					     </script>
+							</tbody>
+						</table>
+					</div>
+					<div class="admin-table-page"
+						style="border-width: 0px; z-index: 0;">
+						<div id="pagingholi-footer" class="page"
+							style="background-color: white; text-align: center;"></div>
+					</div>
+				</div>
+			</div>
+			<div class="layui-tab-item content_sel" id="meet_show">
+				<div class="tree_left">
+					<div class="left">
+						<input id="citySel" class="tree_search" type="text" value=""
+							onkeyup="AutoMatch(this)" placeholder="搜索" />
+					</div>
+					<ul id="treeDemo6" class="ztree"></ul>
+				</div>
+				<div class="tree_right">
+					<blockquote class="layui-elem-quote" style="padding: 5px;">
+						<form class="layui-form" action="">
+							<input type="hidden" name="deptId" id="deptTreeId" /> <input
+								type="hidden" name="deptName" id="deptTreeName" />
+							<div class="r">
+								<div class="layui-input-inline ">
+									<span>统计时间</span>
+								</div>
+								<div class="layui-input-inline">
+									<input type="text" class="inp_date" name="" id="startTimeMee"
+										readonly="readonly">
+								</div>
+								<div class="layui-input-inline">
+									<span>至</span>
+								</div>
+								<div class="layui-input-inline ">
+									<input type="text" class="inp_date" name="" id="endTimeMee"
+										readonly="readonly">
+								</div>
+								<div class="layui-input-inline">
+									<input type="text" name="" id="fullnameMee"
+										placeholder="请输入用户名" autocomplete="off" class="layui-input"
+										maxlength="20"
+										style="height: 30px; line-height: 30px; width: 110px;">
+								</div>
+								<span><@a href="javascript:void(0)" class="layui-btn
+									layui-btn-small" id="" onclick="loadDateMee()"
+									iclass="layui-icon" icon="&#xe615;" text="查询"/></span>
+							</div>
+							<div class="layui-input-inline">
+								<span><a class="layui-btn layui-btn-small"
+									onclick="updateWeeks(1,'mee')"><i class="layui-icon">&#xe637;</i>本周</a></span>
+								<span><a class="layui-btn layui-btn-small"
+									onclick="updateWeeks(2,'mee')"><i class="layui-icon">&#xe637;</i>本月</a></span>
+								<span><a class="layui-btn layui-btn-small"
+									onclick="exportType('mee')"><i class="layui-icon">&#xe609;</i>导出excel</a></span>
+							</div>
+						</form>
+					</blockquote>
+					<!-- 	<form class="layui-form" action="" >
+					<div>
+						<div class="layui-input-inline m_r10">
+						 <span>用户名</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							<input type="text" class="inp_w120px" name="" id="">
+						</div>
+						<div class="layui-input-inline m_r10">
+						 <span>统计时间</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							 <input type="text" class="inp_date" name="" id="startTime1">
+						</div>
+						<div class="layui-input-inline m_r10">
+						 <span>至</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							  <input type="text" class="inp_date" name="" id="endTime1">
+						</div> 
+						
+						<span><a class="btn_search_blue" id="" onclick="loadData()" style="float:right;">查询</a></span>
+						
+				   </div>
+					</form>
+					<form class="layui-form m_t30" action="">
+						  <a class="btn_blue_e6e m_r20" onclick="openAddWin()">本周</a>
+						  <a class="btn_blue_e6e m_r20" onclick="">本月</a>
+						  <a class="btn_blue_e6e m_r20" onclick="">导出excel</a>
+					</form> -->
+					<div class="layui-form">
+						<table class="layui-table admin-table">
+							<!-- <colgroup>
+								<col width="30">
+								<col width="60">
+								<col width="100">
+								<col width="180">
+								<col width="100">
+								<col width="100">
+							</colgroup> -->
+							<thead>
+								<tr>
+									<th style="width: 20px;"><input type="checkbox"
+										lay-skin="primary" lay-filter="paging_check-all"></th>
+									<th style="display: none;">用户ID</th>
+									<th style="width: 60px;">序号</th>
+									<th style="width: 50px;">用户名</th>
+									<th>岗位</th>
+									<th style="width: 120px;">内部会议<img
+										src="../../web/images/upgray.png" class="up"
+										onclick="SortMee(0,2,'mee')";><img
+										src="../../web/images/downgray.png" class="down"
+										onclick="SortMee(0,1,'mee');";></th>
+									<th style="width: 120px;">外部会议<img
+										src="../../web/images/upgray.png" class="up"
+										onclick="SortMee(2,0,'mee')";><img
+										src="../../web/images/downgray.png" class="down"
+										onclick="SortMee(1,0,'mee')";></th>
+								</tr>
+							</thead>
+							<tbody id="pagingmee-data">
+								<script id="pagingmee-script" type="text/html">
+                              {{if records.length==0}}
+                                  <tr>
+						      	   <td colspan="6" style="text-align:center">
+                                                                                                                         数据为空
+						            	</td>
+					    	    </tr>
+                                {{/if}}
+					            {{each records value index}}
+						         <tr>
+							     <td><input type="checkbox" lay-skin="primary" name="delDraft" class="check-id delDraft" ></td>                          
+                                 <td>{{value.no}}</td>
+                                 <td>{{value.fullName}}</td>
+                                 <td>{{value.positionNames}}</td>
+                                 <td>{{value.inSide}}</td>
+                                 <td>{{value.outSide}}</td>                                     
+						         </tr>
+				         	   {{/each}}
+					     </script>
+							</tbody>
+						</table>
+					</div>
+					<div class="admin-table-page"
+						style="border-width: 0px; z-index: 0;">
+						<div id="pagingmee-footer" class="page"
+							style="background-color: white; text-align: center;"></div>
+					</div>
+				</div>
+			</div>
+			<div class="layui-tab-item content_sel" id="month_show">
+				<div class="tree_left">
+					<div class="left">
+						<input id="citySel" class="tree_search" type="text" value=""
+							onkeyup="AutoMatch(this)" placeholder="搜索" />
+					</div>
+					<ul id="treeDemo7" class="ztree"></ul>
+				</div>
+				<div class="tree_right">
+					<blockquote class="layui-elem-quote" style="padding: 5px;">
+						<form class="layui-form" action="">
+							<input type="hidden" name="deptId" id="deptTreeId" /> <input
+								type="hidden" name="deptName" id="deptTreeName" />
+							<div class="r">
+								<div class="layui-input-inline">
+									<input type="text" name="fullnameOff" id="fullnameOff"
+										placeholder="请输入部门名称" autocomplete="off" maxlength="20"
+										class="layui-input" style="height: 30px; line-height: 30px;">
+								</div>
+								<div class="layui-input-inline m_r10">
+									<span>统计时间</span>
+								</div>
+								<div class="layui-input-inline m_r10">
+									<!--  <input type="text" class="inp_date" name="startMonthly" id="startMonthly"> -->
+									<input type="text" name="monthMR" id="monthMR"
+										placeholder="请选择月份" autocomplete="off" class="layui-input"
+										readonly="readonly" style="height: 30px; line-height: 30px;">
+								</div>
+								<span><@a href="javascript:void(0)" class="layui-btn
+									layui-btn-small" id="" onclick="qMonthly();"
+									iclass="layui-icon" icon="&#xe615;" text="查询"/></span>
+							</div>
+							<div class="layui-input-inline">
+								<span><a class="layui-btn layui-btn-small"
+									onclick="exportType('offMonth');"><i class="layui-icon">&#xe609;</i>导出excel</a></span>
+							</div>
+						</form>
+					</blockquote>
+					<!-- 	<form class="layui-form" action="" >
+					<div>
+					
+						<div class="layui-input-inline m_r10">
+						 <span>统计时间</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							 <input type="text" class="inp_date" name="" id="startTime1">
+						</div>
+						
+						<span>
+						<a class="btn_search_blue " id=""  style="float:right;">导出excel</a>
+						<a class="btn_search_blue m_r20" id="" onclick="loadData()" style="float:right;">查询</a>
+						</span>
+						
+				   </div>
+					</form> -->
+
+					<div class="layui-form">
+						<table class="layui-table admin-table">
+							<!-- <colgroup>
+								<col width="30">
+								<col width="60">
+								<col width="340">
+								<col width="100">
+								<col width="100">
+							</colgroup> -->
+							<thead>
+								<tr>
+									<th style="width: 20px;"><input type="checkbox"
+										lay-skin="primary" lay-filter="paging_check-all"></th>
+									<!-- 	<th style="display: none;">用户ID</th> -->
+									<th style="width: 60px;">序号</th>
+									<th>部门</th>
+									<th style="width: 120px;">已交<img
+										src="../../web/images/upgray.png" class="up"
+										onclick="loadDateMonthly(0,2)";><img
+										src="../../web/images/downgray.png" class="down"
+										onclick="loadDateMonthly(0,1);";></th>
+									<th style="width: 120px;">未交<img
+										src="../../web/images/upgray.png" class="up"
+										onclick="loadDateMonthly(2,0)";><img
+										src="../../web/images/downgray.png" class="down"
+										onclick="loadDateMonthly(1,0);";></th>
+								</tr>
+							</thead>
+							<tbody id="pagingoff-data">
+								<script id="pagingoff-script" type="text/html">
+                      
+					 {{each records value index}}
+						<tr>
+							<td><input type="checkbox" lay-skin="primary" name="delDraft" class="check-id delDraft" ></td>                          
+                            <td>{{index+1}}</td>
+                            <td>{{value.deptName}}</td>
+                            <td>{{value.submitNumber}}</td>
+                            <td>{{value.unSubmitNumber}}</td>                          
+						</tr>
+					{{/each}}
+					</script>
+							</tbody>
+						</table>
+					</div>
+					<div class="admin-table-page"
+						style="border-width: 0px; z-index: 0;">
+						<div id="pagingoff-footer" class="page"
+							style="background-color: white; text-align: center;"></div>
+					</div>
+				</div>
+			</div>
+			<div class="layui-tab-item content_sel" id="flow_show">
+				<div class="tree_left">
+					<div class="left">
+						<input id="citySel" class="tree_search" type="text" value=""
+							onkeyup="AutoMatch(this)" placeholder="搜索" />
+					</div>
+					<ul id="treeDemo8" class="ztree"></ul>
+				</div>
+				<div class="tree_right" style="margin-left: 0">
+					<blockquote class="layui-elem-quote" style="padding: 5px;">
+						<form class="layui-form" action="">
+							<input type="hidden" name="deptId" id="deptTreeId" /> <input
+								type="hidden" name="deptName" id="deptTreeName" />
+							<div class="r">
+								<div class="layui-input-inline">
+									<span>统计时间</span>
+								</div>
+								<div class="layui-input-inline ">
+									<input type="text" class="inp_date" name=""
+										id="startTimeWorking">
+								</div>
+								<div class="layui-input-inline ">
+									<span>至</span>
+								</div>
+								<div class="layui-input-inline ">
+									<input type="text" class="inp_date" name="" id="endTimeWorking">
+								</div>
+								<div class="layui-input-inline">
+									<input type="text" name="" id="bpmnName" placeholder="请输入流程名称"
+										autocomplete="off" class="layui-input" maxlength="20"
+										style="height: 30px; line-height: 30px; width: 110px;">
+								</div>
+								<span><@a href="javascript:void(0)" class="layui-btn
+									layui-btn-small" id="" onclick="qWorking();"
+									iclass="layui-icon" icon="&#xe615;" text="查询"/></span>
+							</div>
+							<div class="layui-input-inline">
+								<span><a class="layui-btn layui-btn-small"
+									onclick="updateWeeks(1,'working')"><i class="layui-icon">&#xe637;</i>本周</a></span>
+								<span><a class="layui-btn layui-btn-small"
+									onclick="updateWeeks(2,'working')"><i class="layui-icon">&#xe637;</i>本月</a></span>
+								<span><a class="layui-btn layui-btn-small"
+									onclick="exportType('working');"><i class="layui-icon">&#xe609;</i>导出excel</a></span>
+							</div>
+						</form>
+					</blockquote>
+					<!-- <form class="layui-form" action="" >
+					<div>
+						<div class="layui-input-inline m_r10">
+						 <span>表单名称</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							<input type="text" class="inp_w120px" name="" id="">
+						</div>
+						<div class="layui-input-inline m_r10">
+						 <span>统计时间</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							 <input type="text" class="inp_date" name="" id="startTime1">
+						</div>
+						<div class="layui-input-inline m_r10">
+						 <span>至</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							  <input type="text" class="inp_date" name="" id="endTime1">
+						</div> 
+						
+						<span><a class="btn_search_blue" id="" onclick="loadData()" style="float:right;">查询</a></span>
+						
+				   </div>
+					</form>
+					<form class="layui-form m_t30" action="">
+						  <a class="btn_blue_e6e m_r20" onclick="openAddWin()">本周</a>
+						  <a class="btn_blue_e6e m_r20" onclick="">本月</a>
+						  <a class="btn_blue_e6e m_r20" onclick="">导出excel</a>
+					</form> -->
+					<div class="layui-form" style="width: 100%;">
+						<div id="container10"
+							style="min-width: 800px; width: 100%; height: 400px;overflow:auto"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<input type="hidden" id="hiddenPp" value="0">
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript"
+		src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script type="text/javascript" charset="utf-8"
+		src="../../aljoin-act/ueditor/ueditor.config.js"></script>
+	<script type="text/javascript" charset="utf-8"
+		src="../../aljoin-act/ueditor/ueditor.all.min.js"></script>
+	<script type="text/javascript" charset="utf-8"
+		src="../../aljoin-act/ueditor/lang/zh-cn/zh-cn.js"></script>
+	<script type="text/javascript"
+		src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript"
+		src="../../web/js/jquery.ztree.exhide-3.5.min.js"></script>
+	<script type="text/javascript" src="../../web/js/highcharts.js"></script>
+	<script type="text/javascript" src="../../web/js/Sortable.js"></script>
+	<script>
+	
+	/* 更多跳转 */
+	function pub_jump(this_id,show_id){
+        $("#leader1").attr("class","");
+        $(this_id).attr("class","layui-this");
+        $("#leader_show").removeClass("layui-show");
+        $(show_id).addClass("layui-show"); 
+	}
+	function email2(){
+		tree("treeDemo1", "1");
+		pub_jump("#email2","#email_show")
+		$(".layui-tab-content").css("background","#fff");
+		    $("#weeks").val("0");
+			$("#fullnameMail").val("");	
+			$("#startTimeMail").val("");
+			$("#endTimeMail").val("");
+			$("#deptTreeId").val("");
+		    $("#unSubmitSort").val("0");
+		    $("#sendSort").val("1");				    
+			$("#submitSort").val("0");
+	}
+	function work3(){
+		pub_jump("#work3","#work_show")
+		$(".layui-tab-content").css("background","#fff");
+		tree("treeDemo2", "2");
+		$("#weeks").val("0");					
+		$("#startTimeRegulation").val("");
+		$("#endTimeRegulation").val("");
+		$("#deptTreeId").val("");
+		$("#fullnameRegulation").val(""); //用户名
+		$("#orderByNo").val("1"); //签到时间
+		$("#orderBySTH").val("0"); //签到时间
+		$("#orderByPSTH").val("0"); //平均签到时间
+		$("#orderByTotalTime").val("0"); //补签
+		$("#orderByPTotalTime").val("0"); 
+	}
+	function sign4(){
+		tree("treeDemo3", "3");
+		pub_jump("#sign4","#sign_show")
+		$(".layui-tab-content").css("background","#fff");
+		$("#weeks").val("0");
+		$("#startTimeSign").val("");
+		$("#endTimeSign").val("");
+		$("#deptTreeId").val("");
+		$("#orderByNoneSignIn").val("1"); //未签到
+		$("#orderByNoneSignOut").val("0"); //未签退
+		$("#orderByLate").val("0"); //迟到
+		$("#orderByPatch").val("0"); //补签
+		$("#orderByLeaveEarly").val("0"); //早退
+	}
+	function examine5(){ 
+		tree("treeDemo4", "4");
+		pub_jump("#examine5","#examine_show")
+		$(".layui-tab-content").css("background","#fff");
+		$("#oderByNew").val("1");
+		$("#oderByStay").val("0");
+		$("#weeks").val("0");
+		$("#oderByHandle").val("0");
+		$("#startTimeApproval").val("");
+		$("#endTimeApproval").val("");
+		$("#deptTreeId").val("");
+	}
+	function leave6(){
+		tree("treeDemo5", "5");
+		pub_jump("#leave6","#leave_show")
+		$(".layui-tab-content").css("background","#fff")
+		$("#weeks").val("0");
+		$("#startTimeholi").val("");
+		$("#endTimeholi").val("");
+		$("#deptTreeId").val("");
+		$("#oderByThings").val("1");
+		$("#oderByDisease").val("0");
+		$("#oderByYear").val("0");
+		$("#oderByMarriage").val("0");
+		$("#oderByMaternity").val("0");
+		$("#oderByAllocated").val("0");
+		$("#orderByDie").val("0");
+		$("#orderByOther").val("0");
+	}
+	function meet7(){
+		tree("treeDemo6", "6");
+		pub_jump("#meet7","#meet_show")
+		$(".layui-tab-content").css("background","#fff")
+		$("#unSubmitSort").val("1");
+		$("#submitSort").val("0");
+		$("#weeks").val("0");
+		$("#fullnameMee").val("");
+		$("#startTimeMee").val("");
+		$("#endTimeMee").val("");
+		$("#deptTreeId").val("");
+	}
+	function month8(){
+		tree("treeDemo7", "7");
+		pub_jump("#month8","#month_show")
+		$(".layui-tab-content").css("background","#fff")
+		$("#fullnameOff").val("");
+		$("#monthMR").val("");
+		$("#deptTreeId").val("");
+		$("#unSubmitSort").val("1");
+		$("#submitSort").val("0");
+	}
+	function flow9(){
+		tree("treeDemo8", "8");
+		pub_jump("#flow9","#flow_show")
+		$(".layui-tab-content").css("background","#fff")
+		$("#bpmnName").val("");
+		$("#isOne").val("1");
+		$("#weeks").val("0");
+		$("#startTimeWorking").val("");
+		$("#endTimeWorking").val("");
+		$("#deptTreeId").val("");
+		loadDateWorking();
+	}
+	
+		var el = document.getElementById('drag');
+		var sortable = new Sortable(el, {
+			animation : 500, //动画参数
+			dataIdAttr : 'drag-id',
+			onEnd : function(evt) { //拖拽完毕之后发生该事件
+				var id_arr = ''
+				for (var i = 0, len = evt.from.children.length; i < len; i++) {
+					id_arr += ','
+							+ evt.from.children[i].getAttribute('drag-id');
+				}
+				id_arr = id_arr.substr(1);
+				//然后请求后台ajax 这样没有完成拖拽排序
+				 var param = new Object();
+		    	   param.module_code=id_arr;		    	 
+		   		   param._csrf = $("#_csrf").val();	
+		   	       tool.post("/lea/leader/removeUpdate",param,function(data){	
+		   		   },false);
+			},   
+
+		}) 
+		/* sortable.sort([1,2,3,4,5,6,7,8]); */
+
+		var flag;
+		function aa() {
+			if (flag) {
+				$('.tree_left').hide();
+				$('.tree_right').css("width", "98%");
+			} else {
+				$('.tree_left').show();
+				$('.tree_right').css("width", "78%");
+			}
+			flag = !flag;
+		}
+		var pform;
+		//添加事件
+		layui.use([ 'form', 'element', 'laydate' ], function() {
+			pform = layui.form;
+			var element = layui.element;
+			element.on('tab(docDemoTabBrief)', function(data) {
+				$(".layui-tab-content").css("background","#fff");
+				if(data.index==0){
+					$(".layui-tab-content").css("background","#e6edf4");
+				}
+				if (data.index == 1) {
+					tree("treeDemo1", "1");
+				    $("#weeks").val("0");
+					$("#fullnameMail").val("");	
+					$("#startTimeMail").val("");
+					$("#endTimeMail").val("");
+					$("#deptTreeId").val("");
+				    $("#unSubmitSort").val("0");
+				    $("#sendSort").val("1");				    
+					$("#submitSort").val("0");
+				} else if (data.index == 2) {					
+					tree("treeDemo2", "2");
+					$("#weeks").val("0");					
+					$("#startTimeRegulation").val("");
+					$("#endTimeRegulation").val("");
+					$("#deptTreeId").val("");
+					$("#fullnameRegulation").val(""); //用户名
+					$("#orderByNo").val("1"); //签到时间
+					$("#orderBySTH").val("0"); //签到时间
+					$("#orderByPSTH").val("0"); //平均签到时间
+					$("#orderByTotalTime").val("0"); //补签
+					$("#orderByPTotalTime").val("0"); 
+				} else if (data.index == 3) {
+					tree("treeDemo3", "3");
+					$("#weeks").val("0");
+					$("#startTimeSign").val("");
+					$("#endTimeSign").val("");
+					$("#deptTreeId").val("");
+					$("#orderByNoneSignIn").val("1"); //未签到
+					$("#orderByNoneSignOut").val("0"); //未签退
+					$("#orderByLate").val("0"); //迟到
+					$("#orderByPatch").val("0"); //补签
+					$("#orderByLeaveEarly").val("0"); //早退	
+				} else if (data.index == 4) {
+					tree("treeDemo4", "4");
+					$("#oderByNew").val("1");
+					$("#oderByStay").val("0");
+					$("#weeks").val("0");
+					$("#oderByHandle").val("0");
+					$("#startTimeApproval").val("");
+					$("#endTimeApproval").val("");
+					$("#deptTreeId").val("");
+				} else if (data.index == 5) {
+					tree("treeDemo5", "5");
+					$("#weeks").val("0");
+					$("#startTimeholi").val("");
+					$("#endTimeholi").val("");
+					$("#deptTreeId").val("");
+					$("#oderByThings").val("1");
+					$("#oderByDisease").val("0");
+					$("#oderByYear").val("0");
+					$("#oderByMarriage").val("0");
+					$("#oderByMaternity").val("0");
+					$("#oderByAllocated").val("0");
+					$("#orderByDie").val("0");
+					$("#orderByOther").val("0");
+					//	loadDateholi();
+				} else if (data.index == 6) {
+					tree("treeDemo6", "6");
+					$("#unSubmitSort").val("1");
+					$("#submitSort").val("0");
+					$("#weeks").val("0");
+					$("#fullnameMee").val("");
+					$("#startTimeMee").val("");
+					$("#endTimeMee").val("");
+					$("#deptTreeId").val("");
+
+				} else if (data.index == 7) {
+					tree("treeDemo7", "7");
+					$("#fullnameOff").val("");
+					$("#monthMR").val("");
+					$("#deptTreeId").val("");
+					$("#unSubmitSort").val("1");
+					$("#submitSort").val("0");
+				} else if (data.index == 8) {
+					tree("treeDemo8", "8");
+					$("#bpmnName").val("");
+					$("#isOne").val("1");
+					$("#weeks").val("0");
+					$("#startTimeWorking").val("");
+					$("#endTimeWorking").val("");
+					$("#deptTreeId").val("");
+					loadDateWorking();
+				}
+			});
+			var laydate = layui.laydate;
+			laydate.render({
+				elem : '#monthMR',
+				type : 'month'
+			});
+
+		})
+		var zTreeObj;
+		var hiddenNodes = []; //用于存储被隐藏的结点
+		var targetParent = [];
+		//生成树
+		function tree(tree, type) {
+			var setting = {
+				data : {
+					simpleData : {
+						enable : true
+					}
+				},
+				callback : {
+					beforeClick : beforeClick
+				}
+			};
+			var param = new Object();
+			param._csrf = $("#_csrf").val();
+			redern();
+			function redern() {
+				if (tree == "treeDemo8") {
+					tool.post("/act/actAljoinCategory/getAllCategoryList",
+							param, postCallBack_newtree8);
+				} else {
+					tool.post("/aut/autDepartment/getDepartmentList", param,
+							postCallBack_newtree);
+				}
+			}
+			var obj = [];
+			function postCallBack_newtree(data) {
+				for (var i = 0; i < data.length; i++) {
+					obj.push({
+						id : data[i].id,
+						pId : data[i].parentId,
+						name : data[i].deptName,
+						obj : {
+							deptCode : data[i].deptCode,
+							deptLevel : data[i].deptLevel,
+							isActive : data[i].isActive,
+							parentId : data[i].parentId,
+							parentCode : data[i].parentCode
+						}
+					})
+				}
+				zTreeObj = $.fn.zTree.init($("#" + tree), setting, obj);
+			}
+			function postCallBack_newtree8(data) {
+				for (var i = 0; i < data.length; i++) {
+					obj.push({
+						id : data[i].id,
+						pId : data[i].parentId,
+						name : data[i].categoryName,
+						obj : {
+							categoryLevel : data[i].categoryLevel,
+							isActive : data[i].isActive,
+							parentId : data[i].parentId,
+							categoryRank : data[i].categoryRank
+						}
+					})
+				}
+				zTreeObj = $.fn.zTree.init($("#" + tree), setting, obj);
+			}
+			//获取数节点加载岗位列表
+			function beforeClick(hh, treeNode) {
+
+				//id和用户名赋值备用
+				$("#deptTreeId").val(treeNode.id);
+				$("#deptTreeName").val(treeNode.name);
+				//loadData("","")					
+				if (type == 1) {
+					loadData();
+				}
+				if (type == 2) {
+					loadDateRegulation();
+				}
+				if (type == 3) {
+					loadDateSign();
+				}
+				if (type == 4) {
+					loadDateApproval();
+				}
+				if (type == 5) {
+					loadDateholi();
+				}
+				if (type == 6) {
+					loadDateMee();
+				}
+				if (type == 7) {
+					//工作月报						
+					loadDateMonthly(1, 0);
+				}
+				if (type == 8) {
+					$("#isOne").val("0");
+					loadDateWorking();
+				}
+			}
+
+		}
+		function qWorking() {
+			$("#isOne").val("0");
+			loadDateWorking();
+		}
+		//过滤ztree显示数据
+		function AutoMatch(myself) {
+			//显示上次搜索后背隐藏的结点
+			zTreeObj.showNodes(hiddenNodes);
+			//查找不符合条件的叶子节点
+			targetParent = [];
+			function filterFunc(node) {
+				var _keywords = $(myself).val();
+				if (node.name.indexOf(_keywords) != -1) {
+					getParentByChild(node)
+					return false;
+				}
+				return true;
+			}
+			;
+			//获取不符合条件的叶子结点
+			hiddenNodes = zTreeObj.getNodesByFilter(filterFunc);
+			//隐藏不符合条件的叶子结点
+			zTreeObj.hideNodes(hiddenNodes);
+			//显示满足条件的根节点
+			zTreeObj.showNodes(targetParent);
+			zTreeObj.expandAll(true);
+		};
+		function getParentByChild(node) {
+			if (node.parentTId != null) {
+				targetParent.push(node.getParentNode());
+				getParentByChild(node.getParentNode());
+			}
+		}
+		tool.timeset("#startTimeRegulation", "#endTimeRegulation");
+		function loadDateRegulation() {
+			if ($("#startTimeRegulation").val() != '') {
+				if ($("#endTimeRegulation").val() != '') {
+				} else {
+					tool.error("请选择结束时间！");
+					return false;
+				}
+			}
+			if ($("#endTimeRegulation").val() != '') {
+				if ($("#startTimeRegulation").val() != '') {
+				} else {
+					tool.error("请选择开始时间！");
+					return false;
+				}
+			}		
+			var param = new Object();
+			param.container = "pagingRegulation";
+			param.pageSize = 10;
+			param._csrf = $("#_csrf").val();
+			param.weeks = $("#weeks").val();
+			param.time1 = $("#startTimeRegulation").val();
+			param.time2 = $("#endTimeRegulation").val();
+			param.deptId = $("#deptTreeId").val();
+			param.fullName = $("#fullnameRegulation").val();
+			param.orderByNo = $("#orderByNo").val();
+			param.orderBySTH = $("#orderBySTH").val();
+			param.orderByPSTH = $("#orderByPSTH").val();
+			param.orderByTotalTime = $("#orderByTotalTime").val();
+			param.orderByPTotalTime = $("#orderByPTotalTime").val();	
+			param.url = "/lea/leader/regulationCountList";
+			tool.loadpage(param);
+			}
+		tool.timeset("#startTimeholi", "#endTimeholi");
+	
+		function loadDateholi() {
+			if ($("#startTimeholi").val() != '') {
+				if ($("#endTimeholi").val() != '') {
+				} else {
+					tool.error("请选择结束时间！");
+					return false;
+				}
+			}
+			if ($("#endTimeholi").val() != '') {
+				if ($("#startTimeholi").val() != '') {
+				} else {
+					tool.error("请选择开始时间！");
+					return false;
+				}
+			}
+			var param = new Object();
+			param.container = "pagingholi";
+			param.pageSize = 10;
+			param._csrf = $("#_csrf").val();
+			param.weeks = $("#weeks").val();
+			param.time1 = $("#startTimeholi").val();
+			param.time2 = $("#endTimeholi").val();
+			param.deptId = $("#deptTreeId").val();
+			param.oderByThings = $("#oderByThings").val();
+			param.oderByDisease = $("#oderByDisease").val();
+			param.oderByYear = $("#oderByYear").val();
+			param.oderByMarriage = $("#oderByMarriage").val();
+			param.oderByMaternity = $("#oderByMaternity").val();
+			param.oderByAllocated = $("#oderByAllocated").val();
+			param.orderByDie = $("#orderByDie").val();
+			param.orderByOther = $("#orderByOther").val();
+			param.url = "/lea/leader/holiCountList";
+			tool.loadpage(param);
+			}
+		tool.timeset("#startTimeWorking", "#endTimeWorking");
+		function loadDateWorking() {
+			if ($("#startTimeWorking").val() != '') {
+				if ($("#endTimeWorking").val() != '') {
+				} else {
+					tool.error("请选择结束时间！");
+					return false;
+				}
+			}
+			if ($("#endTimeWorking").val() != '') {
+				if ($("#startTimeWorking").val() != '') {
+				} else {
+					tool.error("请选择开始时间！");
+					return false;
+				}
+			}
+			var param = new Object();
+			param.container = "pagingWorking";
+			param.bpmnName = $("#bpmnName").val()
+			param._csrf = $("#_csrf").val();
+			param.isOne = $("#isOne").val();
+			param.weeks = $("#weeks").val();
+			param.time1 = $("#startTimeWorking").val();
+			param.time2 = $("#endTimeWorking").val();
+			param.deptId = $("#deptTreeId").val();
+			tool.post("/lea/leader/workingCountList", param, callWork, false);
+			pform.render();
+		}
+
+		tool.timeset("#startTimeSign", "#endTimeSign");
+		function loadDateSign() {
+			//内部会议，外部会议(0代表不排序，1代表倒序，2代表升序)	,1,周，0，月
+			if ($("#startTimeSign").val() != '') {
+				if ($("#endTimeSign").val() != '') {
+				} else {
+					tool.error("请选择结束时间！");
+					return false;
+				}
+			}
+			if ($("#endTimeSign").val() != '') {
+				if ($("#startTimeSign").val() != '') {
+				} else {
+					tool.error("请选择开始时间！");
+					return false;
+				}
+			}
+			var param = new Object();
+			param.container = "pagingSign";
+			param.pageSize = 10;
+			param.deptName = $("#fullnameSign").val()
+			param._csrf = $("#_csrf").val();
+			param.thisWeek = $("#weeks").val();
+			param.time1 = $("#startTimeSign").val();
+			param.time2 = $("#endTimeSign").val();
+			param.deptId = $("#deptTreeId").val();
+			param.orderByNoneSignIn = $("#orderByNoneSignIn").val(); //未签到
+			param.orderByNoneSignOut = $("#orderByNoneSignOut").val(); //未签退
+			param.orderByLate = $("#orderByLate").val(); //迟到
+			param.orderByLeaveEarly = $("#orderByLeaveEarly").val(); //早退		
+			param.orderByPatch = $("#orderByPatch").val();//补签排序
+			param.url = "/lea/leader/attSignInCountList";
+			tool.loadpage(param);
+		}
+		
+		function SortMail(qd, qt, cd) {
+			$("#unSubmitSort").val(qt);//收件人
+		    $("#sendSort").val(qd);	//发件人   
+			$("#submitSort").val(cd)//附件大小
+			loadData();
+			
+		}
+		function SortApp(qd, qt, cd) {
+			$("#oderByNew").val(qd); //新建
+			$("#oderByStay").val(qt); //待办
+			$("#oderByHandle").val(cd); //办理
+			loadDateApproval();
+		}
+		function SortSign(qd, qt, cd, zt, bq) {
+			$("#orderByNoneSignIn").val(qd); //未签到
+			$("#orderByNoneSignOut").val(qt); //未签退
+			$("#orderByLate").val(cd); //迟到
+			$("#orderByPatch").val(bq); //补签
+			$("#orderByLeaveEarly").val(zt); //早退	
+			loadDateSign();
+		}
+		function SortRegulation(qd, qt, cd, zt, bq) {
+			$("#orderByNo").val(qd); //文件数量
+			$("#orderBySTH").val(qt); //签到总时间
+			$("#orderByPSTH").val(cd); //签到平均时间
+			$("#orderByTotalTime").val(bq); //办理总时间
+			$("#orderByPTotalTime").val(zt); //办理平均时间			
+			loadDateRegulation();
+		}
+		tool.timeset("#startTimeMee", "#endTimeMee")
+		function SortMee(unSubmitSort, submitSort, type) {
+			$("#unSubmitSort").val(unSubmitSort);
+			$("#submitSort").val(submitSort);
+			if (type == 'mee') {
+				loadDateMee();
+			}
+		}
+		function updateWeeks(weeks, type) {
+			$("#weeks").val(weeks);
+			if (type == 'mail') {
+				$("#startTimeMail").val("");
+				$("#endTimeMail").val("");
+				loadData();
+			}
+			if (type == 'mee') {
+				$("#startTimeMee").val("");
+				$("#endTimeMee").val("");
+				loadDateMee();
+			}
+			if (type == 'sign') {
+				$("#startTimeSign").val("");
+				$("#endTimeSign").val("");
+				loadDateSign();
+			}
+			if (type == 'working') {
+				$("#startTimeWorking").val("");
+				$("#endTimeWorking").val("");
+				$("#isOne").val("0");
+				loadDateWorking();
+			}
+			if (type=='holi') {		
+				$("#startTimeholi").val("");
+				$("#endTimeholi").val("");
+				loadDateholi();
+			}
+			if (type == "approval") {	
+				$("#startTimeApproval").val("");
+				$("#endTimeApproval").val("");
+				loadDateApproval();
+			}
+			if(type=='Regulation'){
+				$("#startTimeRegulation").val("");
+				$("#endTimeRegulation").val("");
+				loadDateRegulation();
+			}
+		}
+		function loadDateMee() {
+			//内部会议，外部会议(0代表不排序，1代表倒序，2代表升序)	,1,周，0，月
+			if ($("#startTimeMee").val() != '') {
+				if ($("#endTimeMee").val() != '') {
+				} else {
+					tool.error("请选择结束时间！");
+					return false;
+				}
+			}
+			if ($("#endTimeMee").val() != '') {
+				if ($("#startTimeMee").val() != '') {
+				} else {
+					tool.error("请选择开始时间！");
+					return false;
+				}
+			}
+			var param = new Object();
+			param.container = "pagingmee";
+			param.pageSize = 10;
+			param.weeks = $("#weeks").val();
+			param.fullName = $("#fullnameMee").val()
+			param._csrf = $("#_csrf").val();
+			param.begTime = $("#startTimeMee").val();
+			param.endTime = $("#endTimeMee").val();
+			param.deptId = $("#deptTreeId").val();
+			param.outSort = $("#unSubmitSort").val();
+			param.inSort = $("#submitSort").val();
+			param.url = "/lea/leader/meetingCountList";
+			tool.loadpage(param);
+		}
+		//邮件时间范围
+		tool.timeset("#startTimeMail", "#endTimeMail")
+		function loadData() {			
+			if ($("#startTimeMail").val() != '') {
+				if ($("#endTimeMail").val() != '') {
+				} else {
+					tool.error("请选择结束时间！");
+					return false;
+				}
+			}
+			if ($("#endTimeMail").val() != '') {
+				if ($("#startTimeMail").val() != '') {
+				} else {
+					tool.error("请选择开始时间！");
+					return false;
+				}
+			}
+			var param = new Object();
+			param.container = "pagingmai";
+			param.pageSize = 10;
+			param.thisWeek = $("#weeks").val();
+			param.fullName = $("#fullnameMail").val()
+			param._csrf = $("#_csrf").val();
+			param.begTime = $("#startTimeMail").val();
+			param.endTime = $("#endTimeMail").val();
+			param.deptId = $("#deptTreeId").val();
+			param.recevieSort = $("#unSubmitSort").val();
+			param.sendSort = $("#sendSort").val();			
+			param.attachmentSort = $("#submitSort").val();
+			param.url = "/lea/leader/maiCountList";
+			tool.loadpage(param);
+		}
+
+		tool.timeset("#startTimeApproval", "#endTimeApproval")
+		function loadDateApproval() {			
+			if ($("#startTimeApproval").val() != '') {
+				if ($("#endTimeApproval").val() != '') {
+				} else {
+					tool.error("请选择结束时间！");
+					return false;
+				}
+			}
+			if ($("#endTimeApproval").val() != '') {
+				if ($("#startTimeApproval").val() != '') {
+				} else {
+					tool.error("请选择开始时间！");
+					return false;
+				}
+			}
+			var param = new Object();
+			param.container = "pagingapp";
+			param.pageSize = 10;
+			param.weeks = $("#weeks").val();
+			param._csrf = $("#_csrf").val();
+			param.time1 = $("#startTimeApproval").val();
+			param.time2 = $("#endTimeApproval").val();
+			param.deptId = $("#deptTreeId").val();
+			param.oderByNew = $("#oderByNew").val(); //新建
+			param.oderByStay = $("#oderByStay").val(); //待办
+			param.oderByHandle = $("#oderByHandle").val(); //办理
+			param.url = "/lea/leader/approvalCountList";
+			tool.loadpage(param);
+			pform.render();
+		}
+		function Sortholi(things,disease,year,marriage,maternity,allocated,die,other){
+			$("#oderByThings").val(things);
+			$("#oderByDisease").val(disease);
+			$("#oderByYear").val(year);
+			$("#oderByMarriage").val(marriage);
+			$("#oderByMaternity").val(maternity);
+			$("#oderByAllocated").val(allocated);
+			$("#orderByDie").val(die);
+			$("#orderByOther").val(other);
+			loadDateholi();
+		}
+		function exportType(choose) {
+			var param = new Object();
+			//工作
+			if (choose == 'offMonth') {				
+				location.href = "/lea/leader/reportCountExport?fullName="
+						+ $("#fullnameOff").val() + "&begTime="
+						+ $("#monthMR").val() + "&deptId="
+						+ $("#deptTreeId").val() + "&unSubmitSort="
+						+ $("#unSubmitSort").val() + "&submitSort="
+						+ $("#submitSort").val() + "&_csrf ="
+						+ $("#_csrf").val();
+			}
+			if (choose == 'mee') {
+				if ($("#startTimeMee").val() != '') {
+					if ($("#endTimeMee").val() != '') {
+					} else {
+						tool.error("请选择结束时间！");
+						return false;
+					}
+				}
+				if ($("#endTimeMee").val() != '') {
+					if ($("#startTimeMee").val() != '') {
+					} else {
+						tool.error("请选择开始时间！");
+						return false;
+					}
+				}
+				location.href = "/lea/leader/meetingCountListExport?fullName="
+						+ $("#fullnameMee").val() + "&weets="
+						+ $("#weeks").val() + "&begTime="
+						+ $("#startTimeMee").val() + "&endTime="
+						+ $("#endTimeMee").val() + "&deptId="
+						+ $("#deptTreeId").val() + "&outSort="
+						+ $("#unSubmitSort").val() + "&inSort="
+						+ $("#submitSort").val() + "&_csrf ="
+						+ $("#_csrf").val();
+
+			}
+
+			if (choose == 'sign') {
+				if ($("#startTimeSign").val() != '') {
+					if ($("#endTimeSign").val() != '') {
+					} else {
+						tool.error("请选择结束时间！");
+						return false;
+					}
+				}
+				if ($("#endTimeSign").val() != '') {
+					if ($("#startTimeSign").val() != '') {
+					} else {
+						tool.error("请选择开始时间！");
+						return false;
+					}
+				}
+				location.href = "/lea/leader/attSignInCountExport?deptName="
+						+ $("#fullnameSign").val() + "&thisWeek="
+						+ $("#weeks").val() + "&time1="
+						+ $("#startTimeSign").val() + "&time2="
+						+ $("#endTimeSign").val() + "&deptId="
+						+ $("#deptTreeId").val() + "&orderByNoneSignIn="
+						+ $("#orderByNoneSignIn").val()
+						+ "&orderByNoneSignOut="
+						+ $("#orderByNoneSignOut").val() + "&orderByLate="
+						+ $("#orderByLate").val() + "&orderByLeaveEarly="
+						+ $("#orderByLeaveEarly").val() + "&orderByPatch="
+						+ $("#orderByPatch").val() + "&_csrf ="
+						+ $("#_csrf").val();
+
+			}
+			if (choose == 'working') {
+				if ($("#startTimeWorking").val() != '') {
+					if ($("#endTimeWorking").val() != '') {
+					} else {
+						tool.error("请选择结束时间！");
+						return false;
+					}
+				}
+				if ($("#endTimeWorking").val() != '') {
+					if ($("#startTimeWorking").val() != '') {
+					} else {
+						tool.error("请选择开始时间！");
+						return false;
+					}
+				}
+				location.href = "/lea/leader/workingCountExport?weeks="
+						+ $("#weeks").val() + "&time1="
+						+ $("#startTimeWorking").val() + "&time2="
+						+ $("#endTimeWorking").val() + "&deptId="
+						+ $("#deptTreeId").val() + "&isOne="
+						+ $("#isOne").val() + "&bpmnName="
+						+ $("#bpmnName").val() + "&_csrf =" + $("#_csrf").val();
+
+			}
+			if (choose == 'approval') {
+				if ($("#startTimeApproval").val() != '') {
+					if ($("#endTimeApproval").val() != '') {
+					} else {
+						tool.error("请选择结束时间！");
+						return false;
+					}
+				}
+				if ($("#endTimeApproval").val() != '') {
+					if ($("#startTimeApproval").val() != '') {
+					} else {
+						tool.error("请选择开始时间！");
+						return false;
+					}
+				}
+				location.href = "/lea/leader/approvalCountExport?weeks="
+						+ $("#weeks").val() + "&time1="
+						+ $("#startTimeWorking").val() + "&time2="
+						+ $("#endTimeWorking").val() + "&deptId="
+						+ $("#deptTreeId").val() + "&oderByNew="
+						+ $("#oderByNew").val() + "&oderByStay="
+						+ $("#oderByStay").val() + "&oderByHandle="
+						+ $("#oderByHandle").val() + "&_csrf ="
+						+ $("#_csrf").val();
+
+			}
+			if (choose == 'holi') {
+				if ($("#startTimeholi").val() != '') {
+					if ($("#endTimeholi").val() != '') {
+					} else {
+						tool.error("请选择结束时间！");
+						return false;
+					}
+				}
+				if ($("#endTimeholi").val() != '') {
+					if ($("#startTimeholi").val() != '') {
+					} else {
+						tool.error("请选择开始时间！");
+						return false;
+					}
+				}
+				location.href = "/lea/leader/holiCountExport?weeks="
+						+ $("#weeks").val() + "&time1="
+						+ $("#startTimeholi").val() + "&time2="
+						+ $("#endTimeholi").val() + "&deptId="
+						+ $("#deptTreeId").val() + "&oderByThings="
+						+ $("#oderByThings").val() + "&oderByYear="
+						+ $("#oderByYear").val() + "&oderByDisease="
+						+ $("#oderByDisease").val()+ "&oderByMarriage="
+						+ $("#oderByMarriage").val()+ "&oderByMaternity="
+						+ $("#oderByMaternity").val()+ "&oderByAllocated="
+						+ $("#oderByAllocated").val()+ "&orderByDie="
+						+ $("#orderByDie").val()+ "&orderByOther="
+						+ $("#orderByOther").val()+ "&_csrf ="+ $("#_csrf").val();
+			}
+			if (choose == 'mail') {
+				if ($("#startTimeMail").val() != '') {
+					if ($("#endTimeMail").val() != '') {
+					} else {
+						tool.error("请选择结束时间！");
+						return false;
+					}
+				}
+				if ($("#endTimeMail").val() != '') {
+					if ($("#startTimeMail").val() != '') {
+					} else {
+						tool.error("请选择开始时间！");
+						return false;
+					}
+				}
+				location.href = "/lea/leader/maiCountExport?thisWeek="
+					+ $("#weeks").val() + "&begTime="
+					+ $("#startTimeMail").val() + "&endTime="
+					+ $("#endTimeMail").val() + "&deptId="
+					+ $("#deptTreeId").val()  + "&fullName="
+					+ $("#fullnameMail").val()+ "&recevieSort="
+					+ $("#unSubmitSort").val() + "&sendSort="
+					+ $("#sendSort").val() + "&attachmentSort="
+					+ $("#submitSort").val()+ "&_csrf ="+ $("#_csrf").val();				
+			}
+			if (choose == 'Regulation') {
+				
+				if ($("#startTimeholi").val() != '') {
+					if ($("#endTimeholi").val() != '') {
+					} else {
+						tool.error("请选择结束时间！");
+						return false;
+					}
+				}
+				if ($("#endTimeholi").val() != '') {
+					if ($("#startTimeholi").val() != '') {
+					} else {
+						tool.error("请选择开始时间！");
+						return false;
+					}
+				}						
+				location.href = "/lea/leader/regulationCountExport?weeks="
+						+ $("#weeks").val() + "&time1="
+						+ $("#startTimeRegulation").val() + "&time2="
+						+ $("#endTimeRegulation").val() + "&deptId="
+						+ $("#deptTreeId").val()  + "&fullName="
+						+ $("#fullnameRegulation").val()+ "&orderByNo="
+						+ $("#orderByNo").val() + "&orderBySTH="
+						+ $("#orderBySTH").val() + "&orderByPSTH="
+						+ $("#orderByPSTH").val()+ "&orderByTotalTime="
+						+ $("#orderByTotalTime").val()+ "&orderByPTotalTime="
+						+ $("#orderByPTotalTime").val()+ "&_csrf ="+ $("#_csrf").val();
+			}
+		}
+		function exportCall(data) {
+
+		}
+		function loadDateMonthly(unSubmitSort, submitSort) {
+			//统计时间，部门,未提交,提交(0代表不排序，1代表倒序，2代表升序)		
+			$("#unSubmitSort").val(unSubmitSort);
+			$("#submitSort").val(submitSort);
+			var param = new Object();
+			param.container = "pagingoff";
+			param.pageSize = 10;
+			param.fullName = $("#fullnameOff").val()
+			param._csrf = $("#_csrf").val();
+			param.begTime = $("#monthMR").val();
+			param.deptId = $("#deptTreeId").val();
+			param.unSubmitSort = unSubmitSort;
+			param.submitSort = submitSort;
+			param.url = "/lea/leader/reportCountList";
+			tool.loadpage(param);
+			//pform.render();
+		}
+		function qMonthly() {
+			var unSubmitSort = $("#unSubmitSort").val();
+			var submitSort = $("#submitSort").val();
+			loadDateMonthly(unSubmitSort, submitSort);
+		}
+		//收件人总数升降序
+		var flag = true;
+		function up_down() {
+			if (flag) {
+				$('.up_down').text("降序")
+				var _csrf = $("#_csrf").val();
+				var data = {
+					deptId : $("#deptTreeId").val(),
+					_csrf : _csrf,
+					recevieSort : 1,
+				}
+				tool.post("/lea/leader/maiCountList", data, calbac, false);
+				flag = false;
+			} else {
+				$('.up_down').text("升序")
+				var _csrf = $("#_csrf").val();
+				var data = {
+					deptId : $("#deptTreeId").val(),
+					_csrf : _csrf,
+					recevieSort : 2,
+				}
+				tool.post("/lea/leader/maiCountList", data, calbac, false);
+				flag = true;
+			}
+		};
+		//附件大小排序
+		var flagf = true;
+		function up_downFu() {
+			if (flagf) {
+				$('.up_downFu').text("降序")
+				var _csrf = $("#_csrf").val();
+				var data = {
+					deptId : $("#deptTreeId").val(),
+					_csrf : _csrf,
+					attachmentSort : 1,
+				}
+				tool.post("/lea/leader/maiCountList", data, calbac, false);
+				flagf = false;
+			} else {
+				$('.up_downFu').text("升序")
+				var _csrf = $("#_csrf").val();
+				var data = {
+					deptId : $("#deptTreeId").val(),
+					_csrf : _csrf,
+					attachmentSort : 2,
+				}
+				tool.post("/lea/leader/maiCountList", data, calbac, false);
+				flagf = true;
+			}
+		}
+		//回调
+		function calbac(data) {
+			var records2 = {
+				records2 : data
+			};
+			$("#pagingFa2").html(template("paging2", records2));
+		}
+		var isHideModle="";
+		//构建图形
+		$(function() {
+			
+			initLoadPage();
+			if(isHideModle.indexOf("email") >= 0){				
+			}else{
+				MailTotal();
+			}
+			if(isHideModle.indexOf("mothWork") >= 0){				
+			}else{
+				OffTotal();
+			}
+			if(isHideModle.indexOf("meeting") >= 0){				
+			}else{
+				MeeTotal();
+			}
+			if(isHideModle.indexOf("sign") >= 0){				
+			}else{
+				signTotal();
+			}
+			if(isHideModle.indexOf("gzltj") >= 0){				
+			}else{
+				loadDateWork();
+			}
+			if(isHideModle.indexOf("leave") >= 0){				
+			}else{
+				holiTotal();
+			}
+			if(isHideModle.indexOf("more") >= 0){				
+			}else{
+				appTotal(); 
+			}
+			if(isHideModle.indexOf("work") >= 0){				
+			}else{
+				loadRegulation();
+			}	
+			$(".all_box").hide();
+			//邮件监管	
+			function MailTotal() {
+				var sendmMailData = [], receivemMailData = [], totalSize = [];
+				var categories = [];
+				var subtitle="";
+				tool.post("/lea/leader/maiChartList", {
+					_csrf : $("#_csrf").val()
+				}, function(data) {
+					//console.log(data)
+					for (var i = 0; i < data.length; i++) {
+						sendmMailData.push(data[i].sendNnumber);
+						receivemMailData.push(data[i].receviceNumber)
+						totalSize.push(data[i].mtotalSize)
+						categories.push(data[i].deptName)
+						subtitle=data[i].showDate
+					}
+				}, false)
+				$('#container')
+						.highcharts(
+								{
+									chart : {
+										type : 'column'
+									},
+									title : {
+										text : '邮件统计',
+										align : 'left'
+									},
+                                    subtitle:{
+                                    	text : subtitle,
+                                    	align:'right'
+                                    },
+									credits : {
+										enabled : false
+									},
+									exporting : {
+										allowHTML : true
+									},
+									xAxis : {
+										categories : categories,
+										crosshair : true
+									},
+									yAxis : {
+										min : 0
+									/*     title: {
+									        text: '数量'
+									    }, */
+									},
+									tooltip : {
+										headerFormat : '<span style="font-size:10px">{point.key}</span><table>',
+										pointFormat : '<tr><td style="color:{series.color};padding:0">{series.name}: </td>'
+												+ '<td style="padding:0"><b>{point.y:.2f} </b></td></tr>',
+										footerFormat : '</table>',
+										shared : true,
+										useHTML : true
+									},
+									plotOptions : {
+										column : {
+											dataLabels : {
+												enabled : true
+											// dataLabels设为true
+											}
+										}
+									},
+									series : [ {
+										name : '发件数量(件)',
+										color : '#fec132',
+										data : sendmMailData
+									}, {
+										name : '收件人总数(人)',
+										color : '#3edccd',
+										data : receivemMailData
+									}, {
+										name : '附件大小(M)',
+										color : '#14b4fe',
+										data : totalSize
+									} ]
+								});
+
+			}
+
+			function loadRegulation() {
+				var regulationDept = [];
+				var regulationPwait = [];
+				var regulationhald = [];
+				var subtitle="";
+				tool.post("../lea/leader/regulationCount", {
+					_csrf : $("#_csrf").val()
+				}, function(data) {					
+					for (var i = 0; i < data.length; i++) {		
+						regulationDept.push(data[i].fullName)
+						regulationPwait.push(data[i].psth)
+						regulationhald.push(data[i].pTotalTime)	
+						subtitle=data[i].showDate
+					}
+				}, false);
+		    	$('#container1')
+					.highcharts(
+							{
+								chart : {
+									type : 'column'
+								},
+								title : {
+									text : '工作监管',
+									align : 'left'
+								},
+								subtitle:{
+                                	text : subtitle,
+                                	align:'right'
+                                },
+								credits : {
+									enabled : false
+								},
+								exporting : {
+									allowHTML : true
+								},
+								xAxis : {
+									categories : regulationDept,
+									crosshair : true
+								},
+								yAxis : {
+									min : 0
+								/*     title: {
+								        text: '数量'
+								    }, */
+								},
+								tooltip : {
+									headerFormat : '<span style="font-size:10px">{point.key}</span><table>',
+									pointFormat : '<tr><td style="color:{series.color};padding:0">{series.name}: </td>'
+											+ '<td style="padding:0"><b>{point.y:.2f} </b></td></tr>',
+									footerFormat : '</table>',
+									shared : true,
+									useHTML : true
+								},
+								plotOptions : {
+									column : {
+										dataLabels : {
+											enabled : true
+										// dataLabels设为true
+										}
+									}
+								},
+								series : [ {
+									name : '平均签收时间(分)',
+									color : '#40a9d9',
+									data : regulationPwait
+								}, {
+									name : '平均处理时间(分)',
+									color : '#5cdcff',
+									data : regulationhald
+								} ]
+							});
+		    	}
+
+			function signTotal() {
+				var inSign = [], outSign = [], lateSign = [], leaSign = [], patSign = [];
+				var deptNameSign = [];
+				var subtitle="";
+				tool.post("../lea/leader/attSignInCount", {
+					_csrf : $("#_csrf").val()
+				}, function(data) {
+					for (var i = 0; i < data.length; i++) {
+						subtitle=data[i].showDate
+						// (data[i].noneSignInNums == 0) {
+						//	inSign.push(null);
+						//} else {
+							inSign.push(data[i].noneSignInNums);
+						//}
+						//if (data[i].lateNums == 0) {
+						//	outSign.push(null)
+						//} else {
+							outSign.push(data[i].noneSignOutNums);
+						//}
+						//if (data[i].lateNums == 0) {
+						//	lateSign.push(null);
+						//} else {
+							lateSign.push(data[i].lateNums);
+						//}
+						////if (data[i].leaveEarlyNums == 0) {
+						//	leaSign.push(null);
+						//} else {
+							leaSign.push(data[i].leaveEarlyNums);
+						//}
+						//if (data[i].signPatchNums == 0) {
+						//	patSign.push(null);
+						//} else {
+							patSign.push(data[i].signPatchNums);
+						//}
+						deptNameSign.push(data[i].deptName);
+											}
+				}, false);
+				//考勤
+				$('#container2').highcharts(
+						{
+							chart : {
+								type : 'column'
+							},
+							title : {
+								text : '考勤统计',
+								align : 'left'
+							},
+							subtitle:{
+                            	text : subtitle,
+                            	align:'right'
+                            },
+							credits : {
+								enabled : false
+							},
+							xAxis : {
+								categories : deptNameSign
+							},
+							tooltip : {
+								formatter : function() {
+									return '<b>' + this.x + '</b><br/>'
+											+ this.series.name + ': ' + this.y
+											+ '<br/>' + '总数: '
+											+ this.point.stackTotal;
+								}
+							},
+							plotOptions : {
+								column : {
+									stacking : 'normal',
+									dataLabels : {
+										enabled : true,
+										color : 'black'
+									}
+								}
+							},
+							series : [ {
+								name : '未签到',
+								color : '#ee657f',
+								data : inSign
+							}, {
+								color : '#f79556',
+								name : '未签退',
+								data : outSign
+							}, {
+								color : '#f6b734',
+								name : '迟到',
+								data : lateSign
+							}, {
+								color : '#14b4fe',
+								name : '早退',
+								data : leaSign
+							}, {
+								color : '#14f4fe',
+								name : '补签',
+								data : patSign
+							} ]
+						});
+			}
+			//流程设计
+			function appTotal() {
+				var appdept = [], appnew = [], apph = [], apps = [];
+				var subtitle="";
+				tool.post("/lea/leader/approvalCount", {
+					_csrf : $("#_csrf").val()
+				}, function(data) {
+					for (var i = 0; i < data.length; i++) {
+						appdept.push(data[i].userName);
+						appnew.push(data[i].newNums);
+						apps.push(data[i].stayNums);
+						apph.push(data[i].handleNums);
+						subtitle=data[i].showDate
+					}
+				}, false)
+				$('#container3')
+						.highcharts(
+								{
+									chart : {
+										type : 'column'
+									},
+									title : {
+										text : '流程设计',
+										align : 'left'
+									},
+									subtitle:{
+		                            	text : subtitle,
+		                            	align:'right'
+		                            },
+									credits : {
+										enabled : false
+									},
+									exporting : {
+										allowHTML : true
+									},
+									xAxis : {
+										categories : appdept,
+										crosshair : true
+									},
+									yAxis : {
+										min : 0
+
+									},
+									tooltip : {
+										headerFormat : '<span style="font-size:10px">{point.key}</span><table>',
+										pointFormat : '<tr><td style="color:{series.color};padding:0">{series.name}: </td>'
+												+ '<td style="padding:0"><b>{point.y:.2f} </b></td></tr>',
+										footerFormat : '</table>',
+										shared : true,
+										useHTML : true
+									},
+									plotOptions : {
+										column : {
+											dataLabels : {
+												enabled : true
+											// dataLabels设为true
+											}
+										}
+									},
+									series : [ {
+										name : '新建(件)',
+										color : '#fec132',
+										data : appnew
+									}, {
+										name : '收到待办(件)',
+										color : '#3edccd',
+										data : apps
+									}, {
+										name : '办理待办(件)',
+										color : '#14b4fe',
+										data : apph
+									} ]
+								});
+			}
+			function holiTotal() {
+				var holi=[],holiname=[];
+				var subtitle="";
+				tool.post("../lea/leader/holiCount", {
+					_csrf : $("#_csrf").val()
+				}, function(data) {					
+					for (var i = 0; i < data.length; i++) {
+						holiname.push(data[i].userName);						
+						holi.push(data[i].otherLeave);
+						subtitle=data[i].showDate
+					}						
+				}, false);
+			//请假情况
+			$('#container4')
+					.highcharts(
+							{
+								chart : {
+									type : 'column'
+								},
+								title : {
+									text : '请假情况',
+									align : 'left'
+								},
+								subtitle:{
+	                            	text : subtitle,
+	                            	align:'right'
+	                            },
+								credits : {
+									enabled : false
+								},
+								xAxis : {
+									categories :holiname,
+									crosshair : true
+								},
+								tooltip : {
+									headerFormat : '<span style="font-size:10px">{point.key}</span><table>',
+									pointFormat : '<tr><td style="color:{series.color};padding:0">{series.name}: </td>'
+											+ '<td style="padding:0"><b>{point.y:.2f} </b></td></tr>',
+									footerFormat : '</table>',
+									shared : true,
+									useHTML : true
+								},
+								plotOptions : {
+									column : {
+										dataLabels : {
+											enabled : true
+										// dataLabels设为true
+										}
+									}
+								},
+								series : [ {
+									name : '单位(天)',
+									color : '#40a9d9',
+									data :holi
+								} ]
+							});
+			}
+
+			function MeeTotal() {
+				var submitSort,subtitle;
+				tool.post("../lea/leader/meetingCount", {
+					_csrf : $("#_csrf").val()
+				}, function(data) {
+					submitSort = data.fullName;
+					subtitle = data.showDate;
+				}, false);
+
+				//会议统计
+				$('#container5')
+						.highcharts(
+								{
+									chart : {
+										plotBackgroundColor : null,
+										plotBorderWidth : null,
+										plotShadow : false
+									},
+									title : {
+										text : '会议统计',
+										align : 'left'
+									},
+									subtitle:{
+		                            	text : subtitle,
+		                            	align:'right'
+		                            },
+									credits : {
+										enabled : false
+									},
+									plotOptions : {
+										pie : {
+											allowPointSelect : true,
+											cursor : 'pointer',
+											dataLabels : {
+												enabled : true,
+												format : '<b>{point.name}</b>: {point.percentage:.1f} %',
+												style : {
+													color : (Highcharts.theme && Highcharts.theme.contrastTextColor)
+															|| 'black'
+												}
+											},
+											showInLegend : true
+										}
+									},
+									tooltip : {
+										headerFormat : '{series.name}<br>',
+										pointFormat : '{point.name}: <b>{point.percentage:.1f}%</b>'
+									},
+									series : [ {
+										type : 'pie',
+										name : '会议占比',
+										data : [ {
+											name : '内部会议',
+											y : 100 - submitSort,
+											color : '#40a9d9'
+										}, {
+											name : '外部会议',
+											y : submitSort - 0,
+											color : '#3edccd'
+										} ]
+									} ]
+								});
+
+			}
+
+			function OffTotal() {
+				var unSubmitSort,subtitle;
+				//var categories=[];
+				tool.post("/lea/leader/reportCount", {
+					_csrf : $("#_csrf").val()
+				}, function(data) {
+					
+					unSubmitSort = data.fullName;
+					subtitle = data.showDate;
+				}, false);
+				//工作月报
+				$('#container6')
+						.highcharts(
+								{
+									chart : {
+										plotBackgroundColor : null,
+										plotBorderWidth : null,
+										plotShadow : false
+									},
+									title : {
+										text : '工作月报',
+										align : 'left'
+									},
+									subtitle:{
+		                            	text : subtitle,
+		                            	align:'right'
+		                            },
+									credits : {
+										enabled : false
+									},
+									tooltip : {
+										pointFormat : '{series.name}: <b>{point.percentage:.1f}%</b>'
+									},
+									plotOptions : {
+										pie : {
+											allowPointSelect : true,
+											cursor : 'pointer',
+											dataLabels : {
+												enabled : true,
+												format : '<b>{point.name}</b>: {point.percentage:.1f} %',
+												style : {
+													color : (Highcharts.theme && Highcharts.theme.contrastTextColor)
+															|| 'black'
+												}
+											},
+											point : {
+												events : {
+													mouseOver : function(e) { // 鼠标滑过时动态更新标题
+														chart.setTitle({
+														/*  text: e.target.name+ '\t'+ e.target.y + ' %' */
+														});
+													}
+
+												}
+											},
+										}
+									},
+
+									series : [ {
+										type : 'pie',
+										innerSize : '80%',
+										data : [ {
+											name : '已提交',
+											y : unSubmitSort + 0 - 0,
+											color : '#339bf2'
+										}, {
+											name : '未提交',
+											y : 100 - unSubmitSort + 0,
+											color : '#69daf8'
+										} ]
+									} ]
+								},
+								function(c) {
+									// 环形图圆心
+									var centerY = c.series[0].center[1], titleHeight = parseInt(c.title.styles.fontSize);
+									c.setTitle({
+									//  y:centerY + titleHeight/2
+									});
+									chart = c;
+								});
+			}
+			function loadDateWork() {
+				var workingNmae = [], workingNums = [];
+				var subtitle="";
+				var param = new Object();
+				param._csrf = $("#_csrf").val();
+				param.weeks = "0";
+				tool.post("/lea/leader/workingCount", param, function(data) {
+					for (var i = 0; i < data.length; i++) {
+						workingNmae.push(data[i].bpmnName);
+						workingNums.push(data[i].bpmnNums);
+						subtitle = data[i].showDate
+					}
+				}, false);
+				//工作流统计
+				$('#container7')
+						.highcharts(
+								{
+									chart : {
+										type : 'column'
+									},
+									title : {
+										text : '工作流统计',
+										align : 'left'
+									},
+									subtitle:{
+		                            	text : subtitle,
+		                            	align:'right'
+		                            },
+									credits : {
+										enabled : false
+									},
+									xAxis : {
+										categories : workingNmae,
+										crosshair : true
+									},
+									tooltip : {
+										headerFormat : '<span style="font-size:10px">{point.key}</span><table>',
+										pointFormat : '<tr><td style="color:{series.color};padding:0">{series.name}: </td>'
+												+ '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+										footerFormat : '</table>',
+										shared : true,
+										useHTML : true
+									},
+									plotOptions : {
+										column : {
+											dataLabels : {
+												enabled : true
+											// dataLabels设为true
+											}
+										}
+									},
+									series : [ {
+										name : '单位(次)',
+										color : '#40a9d9',
+										data : workingNums
+									} ]
+								});
+			}
+		});
+
+		//回调
+		function callWork(data) {
+			var wDeptNames = [], wNums = [];
+			var maxNo=0;
+			var subtitle;
+			for (var i = 0; i < data.length; i++) {
+				wDeptNames.push(data[i].bpmnName);
+				if(i==0){	
+					if(data[i].bpmnNums>0){
+					maxNo=data[i].bpmnNums*1.2;
+					}
+				}
+				wNums.push(data[i].bpmnNums);
+				subtitle = data[i].showDate;
+			}
+			
+			//工作流程统计
+			$('#container10').highcharts({			
+				chart: {
+		            type: 'bar',
+		            marginLeft: 150
+		        },
+		        xAxis: {
+		            type: 'category',
+		            title: {
+		                text: null
+		            },
+		            categories : wDeptNames,
+		            min: 0,
+		            max: 19,
+		            scrollbar: {
+		                enabled: true
+		            }
+		        },
+		        yAxis: {
+		            min: 0,
+		            max: maxNo
+		        },
+		        legend: {
+		            enabled: false
+		        },
+		        credits: {
+		            enabled: false
+		        },
+		        series: [{
+		            name: '工作流程',
+		            data: wNums
+		        }]
+			});
+		}
+		
+		
+		/*领导页面显示*/				
+		function initLoadPage() {	
+				var param = new Object();
+				param._csrf = $("#_csrf").val();
+				tool.post("/lea/leader/init", param, function(data) {
+					console.log(data)
+					  if(data.code==0){ 
+			 	    	if(data.object.length>0){ 			 		  
+			 	    	     var strR="";			 	    	 
+					         for (var i = 0; i < data.object.length; i++) {
+					        	 var str=data.object[i].moduleCode;					        	
+					        	 strR=strR+str+",";
+					        	 if(data.object[i].isHide==1){
+			 		    	   		if(str==1){	    	   		
+			 	 		    	   	$("#email").hide();
+			 	 		    	   	isHideModle=isHideModle+"email"+",";
+			 	 		    	   	}
+			 	 		    	    if(str==2){	    	   		
+			 	 		    	   	$("#work").hide();
+			 	 		    	    isHideModle=isHideModle+"work"+",";
+			 	 		    	   	}
+			 	 		    	   	if(str==3){	    	   		
+			 			    	   	$("#sign").hide();
+			 			    	   	isHideModle=isHideModle+"sign"+",";
+			 			    	   	}
+			 	 		    	    if(str==4){	    	   		
+		 			    	   	    $("#more").hide();
+		 			    	   		isHideModle=isHideModle+"more"+",";
+		 			    	   	    }
+			 	 		    	    if(str==5){	    	   		
+		 			    	   	    $("#leave").hide();
+		 			    	   		isHideModle=isHideModle+"leave"+",";
+		 			    	   	    }
+			 	 		    	    if(str==6){	    	   		
+	 			    	   	        $("#meeting").hide();
+	 			    	   	 		isHideModle=isHideModle+"meeting"+",";
+	 			    	   	        }
+			 	 		    	    if(str==7){	    	   		
+		 			    	   	    $("#mothWork").hide();
+		 			    	   		isHideModle=isHideModle+"mothWork"+",";
+		 			    	   	    }
+			 	 		    	    if(str==8){	    	   		
+	 			    	   	 		$("#gzltj").hide();
+	 			    	   	 		isHideModle=isHideModle+"gzltj"+",";
+	 			    	   	        }
+			 		    	   	}
+					         }					       
+					         strR=strR.substring(0,strR.length-1);
+			 	    		 sortable.sort(strR.split(","));
+			 	        }
+					  }
+				}, false);
+		}
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>数据字典</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<style>
+	.layui-form-pane .label_m{width:90px;}
+	.layui-form-pane .layui-input-block1{margin-left:90px;}
+	.layui-input-block1 .layui-select-title .layui-input{width:98px;}
+</style>
+<link rel="stylesheet" href="../../web/css/table.css" />
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main" style="margin: 10px;">
+		<blockquote class="layui-elem-quote" style="padding: 5px;">
+			<form class="layui-form" action="">
+				<div class="r">
+					<div class="layui-input-inline">
+						<input type="text" name="searchKey" id="searchKey" placeholder="请输入字典编码或名称" autocomplete="off" class="layui-input"
+							style="height: 30px; line-height: 30px;" maxlength="20">
+					</div> 
+					<span><@a code="010101" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData()" iclass="layui-icon"
+					icon="&#xe615;" text="搜索"/></span>
+				</div>
+				<div>
+					<span><@a code="010102" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="openAddWin()" iclass="layui-icon"
+						icon="&#xe608;" text="新增"/></span>
+				</div>
+			</form>
+		</blockquote>
+		<div class="layui-field-box layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table admin-table">
+				<thead>
+					<tr>
+						<th style="width: 20px;"><input type="checkbox" lay-skin="primary" lay-filter="paging_check-all"></th>
+						<th>字典编码</th>
+						<th>字典名称</th>
+						<!-- <th>字典排序</th> -->
+						<th>字典类型</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td><input type="checkbox" lay-skin="primary" class="check-id" id="{{value.id}}"></td>
+							<td>{{value.dictCode}}</td>
+							<td>{{value.dictName}}</td>
+                           <!-- <td>{{value.dictRank}}</td>-->
+							<td>{{if value.dictType == 0}}<font color="red">系统数据</font>{{/if}}{{if value.dictType == 1}}<font color="green">业务数据</font>{{/if}}</td>
+							<td style="width:130px;">
+								<@a code="010103" href="javascript:void(0)" class="table_btn table_link" id="show-edit" onclick="showEdit('{{value.dictCode}}','{{value.dictRank}}','{{value.dictType}}')" text="编辑"/>
+								<@a code="010104" href="javascript:void(0)" class="table_btn table_link" id="show-view" onclick="showView('{{value.dictCode}}','{{value.dictRank}}','{{value.dictType}}')" text="详情"/>
+								<!--
+								<@a code="" href="javascript:void(0)" class="table_btn" id="show-active" onclick="showActive()" text="激活"/>
+								<@a code="" href="javascript:void(0)" class="table_btn" id="show-disactive" onclick="showActive()" text="冻结"/>
+								-->
+								<@a code="010105" href="javascript:void(0)" class="table_btn  table_link" id="show-delete" onclick="showDelete('{{value.dictCode}}','{{value.dictType}}')" text="删除"/>
+							</td>
+						</tr>
+					{{/each}}
+					</script>
+				</tbody>
+			</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	<!-- 新增对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 10px; z-index: 19940200;" id="win-add-object">
+		<form class="layui-form layui-form-pane" id="add-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">字典编码</label>
+				<div class="layui-input-block">
+					<input type="text" name="dictCode" id="dictCode" lay-verify="required" maxlength="50" autocomplete="off" placeholder="字典编码" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">字典名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="dictName" id="dictName" lay-verify="required|special" maxlength="50" autocomplete="off" placeholder="字典名称" class="layui-input">
+				</div>
+			</div>
+			<!-- <div class="layui-form-item">
+				<label class="layui-form-label">字典排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="dictRank" id="dictRank" lay-verify="required|number" autocomplete="off" placeholder="字典排序" class="layui-input">
+				</div>
+			</div> -->
+			<div class="layui-form-item">
+				<label class="layui-form-label">字典类型</label>
+				<div class="layui-input-block">
+					<select id="dictType_user" name="dictType">
+						<option value="0">系统数据</option>
+						<option value="1">业务数据</option>
+					</select>
+				</div>
+			</div>
+			<fieldset class="layui-elem-field" style="padding: 10px;" id="add-fieldset">
+				<legend>字典值</legend>
+				<div class="add-dict-key-value">
+					<div class="layui-form-item layui-input-inline">
+						<label class="layui-form-label label_m">字典键值</label>
+						<div class="layui-input-block1">
+							<input type="text" name="dictKey1" id="dictKey1" lay-verify="required" maxlength="50" autocomplete="off" placeholder="字典键值" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item layui-input-inline">
+						<label class="layui-form-label label_m">字典内容</label>
+						<div class="layui-input-block1">
+							<input type="text" name="dictValue1" id="dictValue1" lay-verify="required"  maxlength="100" autocomplete="off" placeholder="字典内容" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item layui-input-inline">
+						<label class="layui-form-label label_m">字典排序</label>
+						<div class="layui-input-block1">
+							<input type="text" name="dictRank1" id="dictRank1" lay-verify="required|number"  onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="5"   autocomplete="off" placeholder="字典排序" class="layui-input">
+						</div>
+					</div>
+					<div class="layui-form-item layui-input-inline">
+						<label class="layui-form-label label_m">是否激活</label>
+						<div class="layui-input-block1">
+							<select name="isActive1" lay-verify="required" id="isActive1">
+								<option value="">请选择</option>
+								<option value="1">激活</option>
+								<option value="0">冻结</option>
+							</select>
+						</div>
+					</div>
+					<div class="layui-form-item layui-input-inline">
+						<span><@a code="" href="javascript:void(0)" class="layui-btn layui-btn-primary" id="" onclick="operate(1,this)" text="删除"/></span> <span><@a
+							code="" href="javascript:void(0)" class="layui-btn layui-btn-primary" id="" onclick="operate(2,this)" text="新增"/></span>
+					</div>
+				</div>
+			</fieldset>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+
+		</form>
+	</div>
+	<!-- 编辑对象窗口 -->
+	<div class="update-dict-key-value" style="display: none;">
+		<input type="hidden" name="id1" id="id1">
+		<div class="layui-form-item layui-input-inline">
+			<label class="layui-form-label label_m">字典键值</label>
+			<div class="layui-input-block1">
+				<input type="text" name="dictKey1" id="dictKey1" lay-verify="required" autocomplete="off" placeholder="字典键值" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item layui-input-inline">
+			<label class="layui-form-label label_m">字典内容</label>
+			<div class="layui-input-block1">
+				<input type="text" name="dictValue1" id="dictValue1" lay-verify="required" autocomplete="off" placeholder="字典内容" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item layui-input-inline">
+			<label class="layui-form-label label_m">字典排序</label>
+			<div class="layui-input-block1">
+				<input type="text" name="dictRank1" id="dictRank1" maxlength="5" onkeyup="value=value.replace(/[^\d]/g,'')" lay-verify="required|number" autocomplete="off" placeholder="字典排序" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item layui-input-inline">
+			<label class="layui-form-label label_m">是否激活</label>
+			<div class="layui-input-block1">
+				<select name="isActive1"  lay-verify="required" id="isActive1">
+					<option value="">请选择</option>
+					<option value="1">激活</option>
+					<option value="0">冻结</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item layui-input-inline">
+			<span><@a code="" href="javascript:void(0)" class="layui-btn layui-btn-primary" id="" onclick="operate2(1,this)" text="删除"/></span> <span><@a
+				code="" href="javascript:void(0)" class="layui-btn layui-btn-primary" id="" onclick="operate2(2,this)" text="新增"/></span>
+		</div>
+	</div>
+	<div style="padding: 10px; display: none; padding-right: 10px;" id="win-update-object">
+		<form class="layui-form layui-form-pane" id="update-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">字典编码</label>
+				<div class="layui-input-block">
+					<input disabled="disabled" type="text" name="dictCode2" id="dictCode2" lay-verify="required" autocomplete="off" placeholder="字典编码"
+						class="layui-input">
+					<input type="hidden" name="dictCode" id="dictCode">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">字典名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="dictName" id="dictName" lay-verify="required" autocomplete="off" placeholder="字典名称" class="layui-input">
+				</div>
+			</div>
+		<!-- 	<div class="layui-form-item">
+				<label class="layui-form-label">字典排序4</label>
+				<div class="layui-input-block">
+					<input type="text" name="dictRank" id="dictRank" lay-verify="required|number" autocomplete="off" placeholder="字典排序" class="layui-input">
+				</div>
+			</div> -->
+			<div class="layui-form-item">
+				<label class="layui-form-label">字典类型</label>
+				<div class="layui-input-block">
+					<select id="dictType_edit"  lay-verify="required" name="dictType">
+						<option value="0">系统数据</option>
+						<option value="1">业务数据</option>
+					</select>
+				</div>
+			</div>
+			<fieldset class="layui-elem-field" style="padding: 10px; margin-bottom:100px;" id="update-fieldset">
+				<legend>字典值</legend>
+			</fieldset>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-update-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 详情对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 10px;" id="win-view-object">
+		<form class="layui-form layui-form-pane" id="view-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">字典编码</label>
+				<div class="layui-input-block">
+					<input disabled="disabled" type="text" name="dictCode2" id="dictCode2" lay-verify="required" autocomplete="off" placeholder="字典编码"
+						class="layui-input">
+					<input type="hidden" name="dictCode" id="dictCode">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">字典名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="dictName" id="dictName" lay-verify="required" autocomplete="off" placeholder="字典名称" class="layui-input">
+				</div>
+			</div>
+		<!-- 	<div class="layui-form-item">
+				<label class="layui-form-label">字典排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="dictRank" id="dictRank" lay-verify="required" autocomplete="off" placeholder="字典名称" class="layui-input">
+				</div>
+			</div> -->
+			<div class="layui-form-item">
+				<label class="layui-form-label">字典类型</label>
+				<div class="layui-input-block">
+					<input type="text" name="dictType" id="dictType_detail" autocomplete="off" placeholder="字典类型" class="layui-input">
+				</div>
+			</div>
+			<fieldset class="layui-elem-field" style="padding: 10px;" id="view-fieldset">
+				<legend>字典值</legend>
+			</fieldset>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+			</div>
+		</form>
+	</div>
+	<script type="text/javascript" src="../../web/plugins/layui/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool.js"></script>
+	<script>
+		var pform;
+		//添加事件
+		layui.use('form', function() {
+			pform = layui.form();
+			pform.on('select(isActive)', function(data) {
+				//alert(data.value);
+				//form.render('checkbox');
+			});
+			//自定义表单校验
+			pform.verify();
+			//监听新增提交
+			pform.on('submit(form-add-submit)', function(data) {
+				tool.post("../sysDataDict/add", $("#add-object-form").serialize(), postCallBack, false);
+				return false;
+			});
+			//监听编辑提交
+			pform.on('submit(form-update-submit)', function(data) {
+				tool.post("../sysDataDict/update", $("#update-object-form").serialize(), postCallBack_edit, false);
+				return false;
+			});
+			//初始化出发数据加载
+			loadData();
+		});
+		//加载数据
+		function loadData() {
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+			param.url = "../sysDataDict/list";
+			param.dictCode = $("#searchKey").val();
+			tool.loadpage(param);
+		}
+		//获取勾选数据id
+		function getCheckItmes() {
+			$(".check-id:checked").each(function() {
+				//console.log($(this).attr("id"));
+				;
+			});
+		}
+		//打开新增对象窗口
+		function openAddWin() {
+			var index = layer.open({
+				title : '新增',
+				maxmin : false,
+				type : 1,
+				content : $('#win-add-object')
+			});
+			layer.full(index);
+		}
+		//新增对象回调
+		function postCallBack(retMsg) {
+			if (retMsg.code == 0) {
+				layer.alert(retMsg.message, {
+                    title : "操作提示",
+                    icon : 1,
+                    closeBtn:0
+                }, function(index) {
+                	$("button[type='reset']").trigger("click");
+    				loadData();
+    				layer.closeAll();
+                });
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+		//新增对象回调
+		function postCallBack_edit(retMsg) {
+			if (retMsg.code == 0) {
+				layer.alert(retMsg.message, {
+                    title : "操作提示",
+                    icon : 1,
+                    closeBtn:0
+                }, function(index) {
+                	if($(".layui-laypage-btn").length>0){
+                		$(".layui-laypage-btn").trigger("click");
+                	}else{
+                		loadData();
+                	}
+    				layer.closeAll();
+                });
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+		//编辑对象
+		function showEdit(code,dictRank,dictType) {
+			if(dictType==0){
+				layer.alert('系统数据不能编辑', {
+				icon : 2,
+				closeBtn:0,
+				title : '提示'
+			})
+			}else{
+				var object = getListByCode(code);
+				$("#update-object-form").find("#dictCode").val(object[0].dictCode);
+				$("#update-object-form").find("#dictCode2").val(object[0].dictCode);
+				$("#update-object-form").find("#dictName").val(object[0].dictName);
+				/* $("#update-object-form").find("#dictRank").val(dictRank); */
+				$("#update-object-form").find("#dictType_edit").val(dictType);
+				$("#update-object-form").find(".update-dict-key-value-dyna").remove();
+
+				for (var i = 0; i < object.length; i++) {
+					var keyValueDiv = $(".update-dict-key-value").clone();
+					keyValueDiv.attr("class", "update-dict-key-value-dyna").show();
+					keyValueDiv.appendTo("#update-fieldset");
+					//赋值
+					keyValueDiv.find("#dictKey1").val(object[i].dictKey);
+					keyValueDiv.find("#dictValue1").val(object[i].dictValue);
+					keyValueDiv.find("#isActive1").val(object[i].isActive);
+					keyValueDiv.find("#dictRank1").val(object[i].dictRank);
+					keyValueDiv.find("#id1").val(object[i].id);
+				}
+				var index = layer.open({
+					title : '编辑',
+					maxmin : false,
+					type : 1,
+					content : $('#win-update-object')
+				});
+				pform.render();
+				layer.full(index);
+			}
+		}
+		//详情对象
+		function showView(code,dictRank,dictType) {
+			var object = getListByCode(code);
+			$("#view-object-form").find("#dictCode").val(object[0].dictCode);
+			$("#view-object-form").find("#dictCode2").val(object[0].dictCode);
+			$("#view-object-form").find("#dictName").val(object[0].dictName);
+			/* $("#view-object-form").find("#dictRank").val(dictRank); */
+			if (dictType == 0) {
+				$('#dictType_detail').val('系统数据');
+			} else {
+				$('#dictType_detail').val('业务数据');
+			}
+			
+			$("#view-object-form").find(".update-dict-key-value-dyna").remove();
+
+			for (var i = 0; i < object.length; i++) {
+				var keyValueDiv = $(".update-dict-key-value").clone();
+				keyValueDiv.attr("class", "update-dict-key-value-dyna").show();
+				keyValueDiv.appendTo("#view-fieldset");
+				//赋值
+				keyValueDiv.find("#dictKey1").val(object[i].dictKey);
+				keyValueDiv.find("#dictValue1").val(object[i].dictValue);
+				keyValueDiv.find("#isActive1").val(object[i].isActive);
+				keyValueDiv.find("#dictRank1").val(object[i].dictRank);
+				keyValueDiv.find("#id1").val(object[i].id);
+			}
+			$('#view-object-form :input').attr("disabled", "disabled");
+			//$('#view-object-form').find("a").removeAttr('onclick');
+			var index = layer.open({
+				title : '详情',
+				maxmin : false,
+				type : 1,
+				content : $('#win-view-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		//删除对象
+		function showDelete(code,dictType) {
+			if(dictType==0){
+				layer.alert('系统数据不能删除', {
+				icon : 2,
+				closeBtn:0,
+				title : '提示'
+			})
+			}else{
+				layer.confirm('确定删除 ?', {
+					icon : 3,
+					title : '提示'
+				}, function(index) {
+					//var retMsg = tool.deleteById("../sysDataDict/delete", id)
+					var retMsg = deleteByCode("../sysDataDict/deleteByCode", code)
+					if (retMsg.code == 0) {
+						if($(".layui-laypage-btn").length>0){
+	                		$(".layui-laypage-btn").trigger("click");
+	                	}else{
+	                		loadData();
+	                	}
+						tool.success(retMsg.message);
+					} else {
+						tool.error(retMsg.message);
+					}
+				});
+			}
+		}
+		function operate(flag, obj) {
+			if (flag == 1) {
+				if ($(".add-dict-key-value").length == 1) {
+					tool.error("至少要有一条字典值");
+					return;
+				}
+				//删除
+				$(obj).parent().parent().parent().remove();
+			} else {
+				//新增
+				var keyValueDiv = $(obj).parent().parent().parent().clone();
+				keyValueDiv.find(":input").val("");
+				keyValueDiv.appendTo("#add-fieldset");
+			}
+			//重新渲染
+			pform.render();
+		}
+		function operate2(flag, obj) {
+			if (flag == 1) {
+				if ($(".update-dict-key-value-dyna").length == 1) {
+					tool.error("至少要有一个key-value值");
+					return;
+				}
+				var delObjIs = $("#view-object-form :input").prop("disabled");
+				if(delObjIs != true){
+					//删除
+					$(obj).parent().parent().parent().remove();
+				}
+			} else {
+				//新增
+				var keyValueDiv = $(obj).parent().parent().parent().clone();
+				keyValueDiv.find(":input").val("");
+				keyValueDiv.appendTo("#update-fieldset");
+			}
+			//重新渲染
+			pform.render();
+		}
+		function getListByCode(code) {
+			var obj;
+			var param = new Object();
+			param._csrf = $("#_csrf").val();
+			param.dictCode = code;
+			tool.post("../sysDataDict/getListByCode", param, function(o) {
+				obj = o;
+			}, false);
+			return obj;
+		}
+		function deleteByCode(url, code) {
+			var obj;
+			var param = new Object();
+			param._csrf = $("#_csrf").val();
+			param.dictCode = code;
+			tool.post(url, param, function(o) {
+				obj = o;
+			}, false);
+			return obj;
+		}
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>表单权限</title>
+	<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" media="all" />
+	<link rel="stylesheet"
+		  href="../../aljoin-act/form-design/css/bootstrap.min.css">
+	<link rel="stylesheet"
+		  href="../../aljoin-act/form-design/css/font-awesome.min.css" />
+	<link rel="stylesheet"
+		  href="../../aljoin-act/form-design/dist/gridstack.css" />
+	<link rel="stylesheet" type="text/css"
+		  href="../../aljoin-act/form-design/css/default.css">
+	<link rel="stylesheet" type="text/css"
+		  href="../../aljoin-act/form-design/css/bootstrap-datetimepicker.css">
+	<style type="text/css">
+		/* 表单类型 下拉*/
+		.form_plus_hide .layui-unselect {
+			display:none;
+		}
+		#form-content-div-form{
+			padding:20px 0px;
+		}
+		/* 显示 */
+		.all_style{
+			width:100%;
+			height:20px;
+			text-align:left;
+			box-sizing:border-box;
+			padding-left:5px;
+			position: absolute;
+			top:-18px;
+			left: 0px;
+			z-index:9999;
+		}
+		.all_style label{
+			cursor:pointer;
+			margin-right:5px;
+		}
+		.all_style input{
+			display:none;
+		}
+		/* 显示 */
+		.delete_widget_1 {
+		}
+		.show_check{
+		}
+		/* 编辑 */
+		.delete_widget_2 {
+		}
+		/* 不为空 */
+		.delete_widget_3 {
+		}
+		/* 意见域 */
+		.delete_widget_4 {
+		}
+		.edit_check{
+
+		}
+		.nuls_check{
+
+		}
+		.commen_check{
+
+		}
+		.posi-storage-fixed{
+			width: 100%;
+			height: 35px;
+			line-height: 35px;
+			padding: 0px 15px;
+			box-sizing: border-box;
+			background-color: #ffffff;
+			border-top:1px solid rgb(179, 214, 245);
+			position: fixed;
+			bottom: 0px;
+			left: 0px;
+			z-index: 99999;
+		}
+		.posi-storage-fixed .layui-btn-small{
+			font-size: 14px;
+			padding: 0px 15px;
+			border-radius: 2px;
+			float: right;
+			margin-top:2px;
+		}
+		.posi-storage-fixed p{
+			float:left;
+			margin-right:25px;
+			cursor: pointer;
+		}
+		.posi-storage-fixed p span{
+			margin-left:5px;
+		}
+	</style>
+	<!--[if IE]>
+	<script src="../../aljoin-act/form-design/js/html5shiv.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+<input type="hidden" id="orgnl_id" name="orgnl_id" value="${orgnl_id?c}">
+<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+<div class="form-top-container" style="padding-bottom:25px;">
+	<div>
+		<div class="container-fluid"
+			 style="padding-left: 0px; padding-right: 0px;">
+			<div>
+				<div class="container-fluid" id="form-content-div"
+					 style="padding-left: 0px; padding-right: 0px; max-height: 100%;margin-left: 0px;">
+					<form class="" id="form-content-div-form">
+						<div class="grid-stack"></div>
+					</form>
+				</div>
+				<div class="bottom_setting_panel" style="display: none;">
+					<div id="form_panel_title_div"
+						 style=" text-align: left; border-left-width: 0px; font-size: 15px; padding-left: 10px; border-top-width: 0px;">
+						<span id="form_panel_title_txt"></span>
+					</div>
+					<div style="padding: 10px;" id="widget-setting-form-div">
+						<form id="widget-setting-form" class="form-inline">
+
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="posi-storage-fixed" id="widgetPowerAll">
+	<button onclick="test()" class="layui-btn layui-btn-small">保存</button>
+	<p id="form-showhe-all" name="form-showhe"><img alt="可显示" title="可显示" src="../../web/images/form_showhe2.png"><span>可显示(全局)</span></p>
+	<p id="form-edityn-all" name="form-edityn"><img alt="可编辑" title="可编辑" src="../../web/images/form_edityn2.png"><span>可编辑(全局)</span></p>
+	<p id="form-nullyn-all" name="form-nullyn"><img alt="不可为空" title="不可为空" src="../../web/images/form_nullyn2.png"><span>不可为空(全局)</span></p>
+	<p id="form-opinion-all" name="form-opinion"><img alt="意见域" title="意见域" src="../../web/images/form_opinion2.png"><span>意见域(全局)</span></p>
+</div>
+</body>
+<script src="../../aljoin-act/form-design/js/jquery.min.js"></script>
+<script src="../../aljoin-act/form-design/js/jquery-ui.min.js"></script>
+<script src="../../aljoin-act/form-design/js/bootstrap.min.js"></script>
+<script src="../../aljoin-act/form-design/js/lodash.min.js"></script>
+<script src="../../aljoin-act/form-design/dist/gridstack.js"></script>
+<script src="../../aljoin-act/js/uuid.js"></script>
+<script src="../../aljoin-act/form-design/js/bootstrap-datetimepicker.js"></script>
+<script src="../../aljoin-act/form-design/datetimepicker-locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="../../aljoin-act/layer/layer.js"></script>
+<script src="../../aljoin-act/js/jquery.base64-2.js"></script>
+<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+<script type="text/javascript" src="../../web/js/tool_formtype.js"></script>
+
+
+
+<script type="text/javascript">
+
+    var pform;
+    layui.use('form', function() {
+        pform=layui.form;
+        loadData();
+    });
+    //权限全局设置
+    $(function(){
+        $("#widgetPowerAll").children("p").each(function(){
+            var IsLog=0;
+            $(this).click(function(){
+                var isPower = $(this).attr("name");
+                if(IsLog == 0){
+                    funcPowerAll(isPower,1);
+                    IsLog = 1;
+                }else{
+                    funcPowerAll(isPower,2);
+                    IsLog = 0;
+                }
+            });
+        });
+    })
+    //全局操作权限  方法
+    function funcPowerAll(isPower,Num){
+        var imgParenObj="";
+        if(isPower == "form-showhe"){
+            //可显示;
+            imgParenObj = $(".show_check");
+            if(Num == 1){
+                $(".all_style").find("input[name='show_check']").prop("checked", true);
+            }else{
+                $(".all_style").find("input[name='show_check']").prop("checked", false);
+            }
+        }else if(isPower == "form-edityn"){
+            //可编辑;
+            imgParenObj = $(".edit_check");
+            if(Num == 1){
+                $(".all_style").find("input[name='edit_check']").prop("checked", true);
+            }else{
+                $(".all_style").find("input[name='edit_check']").prop("checked", false);
+            }
+        }else if(isPower == "form-nullyn"){
+            //不为空;
+            imgParenObj = $(".nuls_check");
+            if(Num == 1){
+                $(".all_style").find("input[name='nuls_check']").prop("checked", true);
+            }else{
+                $(".all_style").find("input[name='nuls_check']").prop("checked", false);
+            }
+        }else if(isPower == "form-opinion"){
+            //意见域;
+            imgParenObj = $(".commen_check");
+            if(Num == 1){
+                $(".all_style").find("input[name='commen_check']").prop("checked", true);
+            }else{
+                $(".all_style").find("input[name='commen_check']").prop("checked", false);
+            }
+        }
+        var thisChilImg = imgParenObj.children("img");
+        var thisImgSrc = thisChilImg.attr('src');
+        thisImgSrc = thisImgSrc.substring(0,thisImgSrc.lastIndexOf('.')-1);
+        imgParenObj.children("img").attr("src",thisImgSrc+Num+".png");
+    }
+    function loadData(){
+        var orgnlid = $("#orgnl_id").val();
+        var _csrf = $("#_csrf").val();
+        var param = new Object();
+        param.id = orgnlid;
+        param._csrf = _csrf;
+        tool.post("../actAljoinForm/getAllById", param,function(retMsg) {
+            //重新渲染表单
+            pform.render();
+            //控件
+            var widgetList =retMsg.af;
+            var htmlCode = $.base64.decode(widgetList.htmlCode);	 		//base64编码
+            doAfterLoad(htmlCode);    //重新构建控件属性
+            //可显示再次点击弹窗勾选
+            var show_plus = parent.show.split(",");
+            $('.delete_widget_1').each(function(index,value){
+                var that=$(this);
+                var id = $(this).attr("id");
+                var ids = id.substring(0,id.length - 5);
+                $.each(show_plus,function(index,value){
+                    if( ids == value){
+                        that.attr('checked', true);
+                        var thisName =that.attr("name");
+                        var labelObj = that.siblings("label[name="+thisName+"]");
+                        $(labelObj).children("img").attr("src","../../web/images/form_showhe1.png");
+                    }
+                })
+            })
+            //可编辑再次点击弹窗勾选
+            var edit_plus = parent.edit.split(",");
+            $('.delete_widget_2').each(function(index,value){
+                var that=$(this);
+                var id = $(this).attr("id");
+                var ids = id.substring(0,id.length - 5);
+                $.each(edit_plus,function(index,value){
+                    if( ids == value){
+                        that.attr('checked', true);
+                        var thisName =that.attr("name");
+                        var labelObj = that.siblings("label[name="+thisName+"]");
+                        $(labelObj).children("img").attr("src","../../web/images/form_edityn1.png");
+                    }
+                })
+            })
+            //不可为空再次点击弹窗勾选
+            var nuls_plus = parent.nuls.split(",");
+            $('.delete_widget_3').each(function(index,value){
+                var that=$(this);
+                var id = $(this).attr("id");
+                var showIcon = $(this).attr("show-icon");  //区分是否为空和是否新建
+                var iconSrc = "../../web/images/form_nullyn1.png";
+                if(showIcon == "newbuild"){
+                    iconSrc = "../../web/images/form_newbuild1.png";
+                }
+                var ids = id.substring(0,id.length - 5);
+                $.each(nuls_plus,function(index,value){
+                    if( ids == value){
+                        that.attr('checked', true);
+                        var thisName =that.attr("name");
+                        var labelObj = that.siblings("label[name="+thisName+"]");
+                        $(labelObj).children("img").attr("src",iconSrc);
+                    }
+                })
+            })
+            //意见域再次点击弹窗勾选
+            var commen_plus = parent.commen.split(",");
+            $('.delete_widget_4').each(function(index,value){
+                var that=$(this);
+                var id = $(this).attr("id");
+                var ids = id.substring(0,id.length - 7);
+                $.each(commen_plus,function(index,value){
+                    if( ids == value){
+                        that.attr('checked', true);
+                        var thisName =that.attr("name");
+                        var labelObj = that.siblings("label[name="+thisName+"]");
+                        $(labelObj).children("img").attr("src","../../web/images/form_opinion1.png");
+                    }
+                })
+            })
+            //红头文件再次点击弹窗勾选
+            var redhead_plus = parent.redhead.split(",");
+            $('.delete_widget_5').each(function(index,value){
+                var that=$(this);
+                var id = $(this).attr("id");
+                var ids = id.substring(0,id.length - 8);
+                $.each(redhead_plus,function(index,value){
+                    if( ids == value){
+                        that.attr('checked', true);
+                        var thisName =that.attr("name");
+                        var labelObj = that.siblings("label[name="+thisName+"]");
+                        $(labelObj).children("img").attr("src","../../web/images/form_redhead1.png");
+                    }
+                })
+            })
+            //保留痕迹再次点击弹窗勾选
+            var savemark_plus = parent.savemark.split(",");
+            $('.delete_widget_6').each(function(index,value){
+                var that=$(this);
+                var id = $(this).attr("id");
+                var ids = id.substring(0,id.length - 9);
+                $.each(savemark_plus,function(index,value){
+                    if( ids == value){
+                        that.attr('checked', true);
+                        var thisName =that.attr("name");
+                        var labelObj = that.siblings("label[name="+thisName+"]");
+                        $(labelObj).children("img").attr("src","../../web/images/form_savemark1.png");
+                    }
+                })
+            })
+            //加签再次点击弹窗勾选
+            /* if(parent.addsign!=null&&parent.savemark!=""){ */
+            var addsign_plus = parent.addsign.split(",");
+            $('.delete_widget_7').each(function(index,value){
+                var that=$(this);
+                var id = $(this).attr("id");
+                var ids = id.substring(0,id.length - 8);
+                $.each(addsign_plus,function(index,value){
+                    if( ids == value){
+                        that.attr('checked', true);
+                        var thisName =that.attr("name");
+                        var labelObj = that.siblings("label[name="+thisName+"]");
+                        $(labelObj).children("img").attr("src","../../web/images/form_addsign1.png");
+                    }
+                })
+            })
+            /*    } */
+        }, true);
+    };
+
+
+    function doAfterLoad(htmlCode){
+        $(function() {
+            var options = {float : true,cell_height : 50,vertical_margin : 0,resizable:true};
+            $('.grid-stack').gridstack(options);
+            new function() {
+                this.items = [ {x : 0,y : 0,width : 2,height : 2} ];
+                this.grid = $('.grid-stack').data('gridstack');
+                var thisGrid = this.grid;
+                //后台数据从新构建控件属性html
+                $(htmlCode).find(".grid-stack-item").each(function(){
+                    var widgetStr = $(this).children().children("div").prop("outerHTML");
+                    var widgeType = $(this).children(".grid-stack-item-content").attr("type");
+                    var dataX =  $(this).attr("data-gs-x");
+                    var dataY = $(this).attr("data-gs-y");
+                    var dataWidth = $(this).attr("data-gs-width");
+                    var dataHeight = $(this).attr("data-gs-height");
+                    var dataPosition =  $(this).attr("data-gs-auto-position");
+                    var node = {x : dataX,y : dataY,width : dataWidth,height : dataHeight,auto_position : false};
+                    var check_allow_edit_id = "";
+                    var check_allow_show_id = "";
+                    if(widgeType == "text"){
+                        var w_id = $(this).find("input[id^=aljoin_form_text_]").attr("id");
+                    }else if(widgeType == "area_text"){
+                        var w_id = $(this).find("textarea[id^=aljoin_form_area_text_]").attr("id");
+                    }else if(widgeType == "radio"){
+                        var w_id = $(this).find("#radio_flag").val();
+                    }else if(widgeType == "checkbox"){
+                        var w_id = $(this).find("#checkbox_flag").val();
+                    }else if(widgeType == "select"){
+                        var w_id = $(this).find("select").attr("id");
+                    }else if(widgeType == "contact_select"){
+                        var w_id = $(this).find("#contact_select_flag").val();
+                    }else if(widgeType == "contact_select_three"){
+                        var w_id = $(this).find("#contact_select_three_flag").val();
+                    }else if(widgeType == "contact_select_four"){
+                        var w_id = $(this).find("#contact_select_four_flag").val();
+                    }else if(widgeType == "contact_select_five"){
+                        var w_id = $(this).find("#contact_select_five_flag").val();
+                    }else if(widgeType == "number"){
+                        var w_id = $(this).find("input[id^=aljoin_form_number_]").attr("id");
+                    }else if(widgeType == "decimal"){
+                        var w_id = $(this).find("input[id^=aljoin_form_decimal_]").attr("id");
+                    }else if(widgeType == "email"){
+                        var w_id = $(this).find("input[id^=aljoin_form_email_]").attr("id");
+                    }else if(widgeType == "telephone"){
+                        var w_id = $(this).find("input[id^=aljoin_form_telephone_]").attr("id");
+                    }else if(widgeType == "mobilephone"){
+                        var w_id = $(this).find("input[id^=aljoin_form_mobilephone_]").attr("id");
+                    }else if(widgeType == "date"){
+                        var w_id = $(this).find("input[id^=aljoin_form_date_]").attr("id");
+                    }else if(widgeType == "date_period"){
+                        var w_id = $(this).find("#date_period_flag").val();
+                    }else if(widgeType == "time"){
+                        var w_id = $(this).find("input[id^=aljoin_form_time_]").attr("id");
+                    }else if(widgeType == "datetime"){
+                        var w_id = $(this).find("input[id^=aljoin_form_datetime_]").attr("id");
+                    }else if(widgeType == "datetime_period"){
+                        var w_id = $(this).find("#datetime_period_flag").val();
+                    }else if(widgeType == "image"){
+                        var w_id = $(this).find("input[id^=aljoin_form_image_]").attr("id");
+                    }else if(widgeType == "attach"){
+                        var w_id = $(this).find("input[id^=aljoin_form_attach_]").attr("id");
+                    }else if(widgeType == "datagrid"){
+                        var w_id = $(this).find("table").attr("id");
+                    }else if(widgeType == "editor"){
+                        var w_id = $(this).find("input[id^=aljoin_form_editor_]").attr("id");
+                    }else if(widgeType == "href"){
+                        var w_id = $(this).find("input[id^=aljoin_form_href_]").attr("id");
+                    }else if(widgeType == "label"){
+                        var w_id = $(this).find("input[id^=aljoin_form_label_]").attr("id");
+                    }else if(widgeType == "biz_title"){
+                        var w_id = $(this).find("input[id^=aljoin_form_biz_title_]").attr("id");
+                    }else if(widgeType == "biz_finish_time"){
+                        var w_id = $(this).find("input[id^=aljoin_form_biz_finish_time_]").attr("id");
+                    }else if(widgeType == "biz_text_office"){
+                        var w_id = $(this).find("input[id^=aljoin_form_biz_text_office_]").attr("id");
+                    }else if(widgeType == "multiselect"){
+                        var w_id = $(this).find("input[id^=aljoin_form_multiselect_]").attr("id");
+                    }else if(widgeType == "multiselect_edit"){
+                        var w_id = $(this).find("input[id^=aljoin_form_multiselect_edit_]").attr("id");
+                    }else if(widgeType == "writing"){
+                        var w_id = $(this).find("input[id^=aljoin_form_writing_]").attr("id");
+                    }else if(widgeType == "waternum"){
+                        var w_id = $(this).find("input[id^=aljoin_form_waternum_]").attr("id");
+                    }else if(widgeType == "in_date"){
+                        var w_id = $(this).find("input[id^=aljoin_form_in_date_]").attr("id");
+                    }else if(widgeType == "dispatch_date"){
+                        var w_id = $(this).find("input[id^=aljoin_form_dispatch_date_]").attr("id");
+                    }else if(widgeType == "size_number"){
+                        var w_id = $(this).find("input[id^=aljoin_form_size_number_]").attr("id");
+                    }else if(widgeType == "opinion_text"){
+                        var w_id = $(this).find("textarea[id^=aljoin_form_opinion_text_]").attr("id");
+                    }else if(widgeType == "come_text"){
+                        var w_id = $(this).find("input[id^=aljoin_form_come_text_]").attr("id");
+                    }else if(widgeType == "company"){
+                        var w_id = $(this).find("input[id^=aljoin_form_company_]").attr("id");
+                    }else if(widgeType == "select_file_type"){
+                        var w_id = $(this).find("select[id^=aljoin_form_select_file_type_]").attr("id");
+                    }else if(widgeType == "select_rank"){
+                        var w_id = $(this).find("select[id^=aljoin_form_select_rank_]").attr("id");
+                    }else if(widgeType == "select_urgency"){
+                        var w_id = $(this).find("select[id^=aljoin_form_select_urgency_]").attr("id");
+                    }else if(widgeType == "circulate_text"){
+                        var w_id = $(this).find("textarea[id^=aljoin_form_circulate_text_]").attr("id");
+                    }
+
+                    check_allow_edit_id = w_id+"_edit";
+                    check_allow_show_id = w_id+"_show";
+                    check_allow_null_id = w_id+"_null";
+                    check_allow_commen_id = w_id+"_commen";
+                    check_allow_redhead_id = w_id+"_redhead";
+                    check_allow_savemark_id = w_id+"_savemark";
+                    check_allow_addsign_id = w_id+"_addsign";
+                    //权限图标
+                    var nullYNLabelText = "不为空";
+                    var nullYNLabelIcon ="../../web/images/form_nullyn2.png";
+                    if(widgeType=="biz_text_office"){
+                        nullYNLabelText = "可新建";
+                        nullYNLabelIcon = "../../web/images/form_newbuild2.png";
+                    }
+                    var showHideLabel="<label class=\"show_check\" name=\"show_check\" onclick=\"showHideFunc(this)\" title=\"可显示\"><img src=\"../../web/images/form_showhe2.png\"></label>";
+                    var editYNLabel="<label class=\"edit_check\" name=\"edit_check\" onclick=\"showHideFunc(this)\" title=\"可编辑\"><img src=\"../../web/images/form_edityn2.png\"></label>";
+                    var nullYNLabel="<label class=\"nuls_check\" name=\"nuls_check\" onclick=\"showHideFunc(this)\" title="+nullYNLabelText+"><img src="+nullYNLabelIcon+"></label>";
+                    var commenYNLabel="<label class=\"commen_check\" name=\"commen_check\" onclick=\"showHideFunc(this)\" title=\"意见域\"><img src=\"../../web/images/form_opinion2.png\"></label>";
+                    var redHead="<label class=\"redHead_check\" name=\"redhead_check\" onclick=\"showHideFunc(this)\" title=\"红头文件\"><img src=\"../../web/images/form_redhead2.png\"></label>";
+                    var saveMark="<label class=\"saveMark_check\" name=\"savemark_check\" onclick=\"showHideFunc(this)\" title=\"保留痕迹\"><img src=\"../../web/images/form_savemark2.png\"></label>";
+                    var addSign="<label class=\"addSign_check\" name=\"addSign_check\" onclick=\"showHideFunc(this)\" title=\"加签意见域\"><img src=\"../../web/images/form_addsign2.png\"></label>";
+                    if(widgeType=="area_text"){
+                        thisGrid.add_widget($('<div class="grid-stack-item" data-gs-no-resize><div class="all_style">'+showHideLabel+editYNLabel+nullYNLabel+commenYNLabel+addSign+
+                            '<input type="checkbox" name="show_check" class="delete_widget_1 check-id" lay-skin="primary" id="'
+                            +check_allow_show_id+'" /><input type="checkbox" name="edit_check" id="'
+                            +check_allow_edit_id+'" class="delete_widget_2"/><input type="checkbox" name="nuls_check" id="'
+                            +check_allow_null_id+'" class="delete_widget_3"/><input type="checkbox" name="commen_check" id="'
+                            +check_allow_commen_id+'" class="delete_widget_4 "><input type="checkbox" name="addSign_check" id="'
+                            +check_allow_addsign_id+'" class="delete_widget_7 "></div>'
+                            + widgetStr + '</div>'), node.x,node.y, node.width, node.height,node.auto_position);
+                    }else if(widgeType=="label"){
+                        thisGrid.add_widget($('<div class="grid-stack-item" data-gs-no-resize><div class="all_style">'+showHideLabel+
+                            '<input type="checkbox" name="show_check" class="delete_widget_1 check-id" lay-skin="primary" id="'
+                            +check_allow_show_id+'" /><input type="checkbox" name="edit_check" id="'
+                            +check_allow_edit_id+'" class="delete_widget_2"/><input type="checkbox" name="nuls_check" id="'
+                            +check_allow_null_id+'" class="delete_widget_3"/></div>'
+                            + widgetStr + '</div>'), node.x,node.y, node.width, node.height,node.auto_position);
+                    }else if(widgeType=="biz_text_office"){
+                        thisGrid.add_widget($('<div class="grid-stack-item" data-gs-no-resize><div class="all_style">'+showHideLabel+editYNLabel+nullYNLabel+redHead+saveMark+
+                            '<input type="checkbox" name="show_check" class="delete_widget_1 check-id" lay-skin="primary" id="'
+                            +check_allow_show_id+'" /><input type="checkbox" name="edit_check" id="'
+                            +check_allow_edit_id+'" class="delete_widget_2"/><input type="checkbox" name="nuls_check" id="'
+                            +check_allow_null_id+'" class="delete_widget_3" show-icon = "newbuild" /><input type="checkbox" name="redhead_check" id="'
+                            +check_allow_redhead_id+'" class="delete_widget_5 "><input type="checkbox" name="savemark_check" id="'
+                            +check_allow_savemark_id+'" class="delete_widget_6 "></div>'
+                            + widgetStr + '</div>'), node.x,node.y, node.width, node.height,node.auto_position);
+                    }else{
+                        thisGrid.add_widget($('<div class="grid-stack-item" data-gs-no-resize><div class="all_style">'+showHideLabel+editYNLabel+nullYNLabel+
+                            '<input type="checkbox" name="show_check" class="delete_widget_1 check-id" lay-skin="primary" id="'
+                            +check_allow_show_id+'" /><input type="checkbox" name="edit_check" id="'
+                            +check_allow_edit_id+'" class="delete_widget_2"/><input type="checkbox" name="nuls_check" id="'
+                            +check_allow_null_id+'" class="delete_widget_3"/></div>'
+                            + widgetStr + '</div>'), node.x,node.y, node.width, node.height,node.auto_position);
+                    }
+
+                });
+                //删除标签
+                $(".right-widget-flag").remove();
+                //删除改变控件大小的标签
+                $(".ui-icon-gripsmall-diagonal-se").remove();
+            };
+            //表单内容不可编辑
+            $("div[id*='-template_']").each(function(index){
+                $(this).find("input").attr("disabled","disabled");
+                $(this).find("textarea").attr("disabled","disabled");
+                $(this).find("select").attr("disabled","disabled");
+            });
+        });
+    }
+    function test(){
+        //获取可编辑的id
+        obj1 = $(".delete_widget_1");
+        var check1_id = [];
+        for(j in obj1){
+            if(obj1[j].checked){
+                var a = $(obj1[j]).attr("id");
+                var b = a.substring(0,a.length-5);
+                check1_id.push(b);
+            }
+        }
+        //获取可显示input的id
+        obj2 = $(".delete_widget_2");
+        var check2_id = [];
+        for(j in obj2){
+            if(obj2[j].checked){
+                var a = $(obj2[j]).attr("id");
+                var b = a.substring(0,a.length-5);
+                check2_id.push(b);
+            }
+        }
+        /* console.log("2 :"+check2_id)  */
+        //获取可显示input的id
+        obj3 = $(".delete_widget_3");
+        var check3_id = [];
+        for(j in obj3){
+            if(obj3[j].checked){
+                var a = $(obj3[j]).attr("id");
+                var b = a.substring(0,a.length-5);
+                check3_id.push(b);
+            }
+        }
+        /*  console.log("3 :"+check3_id)  */
+        //获取可显示input的id
+        obj4 = $(".delete_widget_4");
+        var check4_id = [];
+        for(j in obj4){
+            if(obj4[j].checked){
+                var a = $(obj4[j]).attr("id");
+                var b = a.substring(0,a.length-7);
+                check4_id.push(b);
+            }
+        }
+        /* console.log("4 :"+check4_id)  */
+        //获取红头文件input的id
+        obj5 = $(".delete_widget_5");
+        var check5_id = [];
+        for(j in obj5){
+            if(obj5[j].checked){
+                var a = $(obj5[j]).attr("id");
+                var b = a.substring(0,a.length-8);
+                check5_id.push(b);
+            }
+        }
+        /* console.log("5 :"+check5_id) */
+        //获取保留痕迹input的id
+        obj6 = $(".delete_widget_6");
+        var check6_id = [];
+        for(j in obj6){
+            if(obj6[j].checked){
+                var a = $(obj6[j]).attr("id");
+                var b = a.substring(0,a.length-9);
+                check6_id.push(b);
+            }
+        }
+        /* console.log("6 :"+check6_id)  */
+        //获取加签input的id
+        obj7 = $(".delete_widget_7");
+        console.log(obj7)
+        var check7_id = [];
+        for(j in obj7){
+            if(obj7[j].checked){
+                var a = $(obj7[j]).attr("id");
+                var b = a.substring(0,a.length-8);
+                check7_id.push(b);
+            }
+        }
+        console.log("7 :"+check7_id)
+        //赋值给父页面
+        layer.alert('保存成功！', {
+            icon : 1,
+            title : '提示',
+            clsoeBtn:0
+        }, function(index) {
+            parent.setCheckWidgets(check1_id,check2_id,check3_id,check4_id,check5_id,check6_id,check7_id);
+            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+            parent.layer.close(index);
+        });
+    }
+    //权限图标
+    function showHideFunc(thisObj){
+        var thisName = $(thisObj).attr("name");
+        var inputObj = $(thisObj).siblings("input[name="+thisName+"]");
+        inputObj.trigger("click");
+        var chooseChec = inputObj.is(":checked");
+        var thisChilImg = $(thisObj).children("img");
+        var thisImgSrc = thisChilImg.attr('src');
+        thisImgSrc = thisImgSrc.substring(0,thisImgSrc.lastIndexOf('.')-1);
+        if(chooseChec == true){
+            $(thisObj).children("img").attr("src",thisImgSrc+"1.png");
+        }else{
+            $(thisObj).children("img").attr("src",thisImgSrc+"2.png");
+        }
+    }
+
+</script>
+</html>

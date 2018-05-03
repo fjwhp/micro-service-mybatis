@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.sms.dao.mapper.SmsShortMessageSummaryMapper">
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.sms.dao.entity.SmsShortMessageSummary">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="is_active" property="isActive" />
+		<result column="theme" property="theme" />
+		<result column="content" property="content" />
+		<result column="receiver_id" property="receiverId" />
+		<result column="receiver_name" property="receiverName" />
+		<result column="send_number" property="sendNumber" />
+		<result column="send_time" property="sendTime" />
+		<result column="send_status" property="sendStatus" />
+		<result column="remark" property="remark" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name, is_active, theme, content, receiver_id, receiver_name, send_number, send_time, send_status, remark
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM sms_short_message_summary WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="SmsShortMessageSummary">
+    	INSERT INTO sms_short_message_summary(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{isActive}, #{theme}, #{content}, #{receiverId}, #{receiverName}, #{sendNumber}, #{sendTime}, #{sendStatus}, #{remark})
+    </insert>
+
+</mapper>

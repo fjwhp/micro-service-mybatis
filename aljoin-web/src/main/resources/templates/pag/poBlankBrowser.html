@@ -1,0 +1,318 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>pageoffice</title>
+<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+<meta http-equiv="description" content="this is my page">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<!-- PageOffice.js文件和jquery.min.js一定要引用 -->
+<script type="text/javascript" src="../../pageoffice/js/jquery.min.js"></script>
+<script type="text/javascript" src="../../pageoffice.js" id="po_js_main"></script>
+</head>
+
+<body>
+	<script type="text/javascript">
+		var urlPath = '/pag/pageOffice/openWord?';
+		$(document).ready(function() {
+			//先判断 是否新文档，编辑模式
+			var isNewWord = $("#isNewWord").val();
+			var pagePrint = $("#pagePrint").val();
+			//先判断是否是打印模式，在判断文档是否新建
+			if (pagePrint != '' && pagePrint != undefined && pagePrint == '1') {
+				pagePrint_func();
+
+			} else {
+				if (isNewWord == '2') {
+					//新建空白文档
+					openNewWord();
+				} else {
+					OpenDocument(urlPath + packParams());
+				}
+			}
+			css_controller();
+
+		})
+		//样式控制
+		function css_controller() {
+			var pageType = $("#pageTypeStr").val();
+			if (pageType == 'page_print') {
+				//编辑套打
+				$("#Div_Comments").css("display", "block");
+				$("#div_doc").css("width", "1050px");
+				//显示域名列表，提供复制
+				var fields = $("#fields").val();
+				var array;
+				if (fieldValues != '') {
+					try {
+						var fieldArr = fields.split(",");
+						var div_html = "";
+
+						fieldArr
+								.forEach(function(value) {
+									//执行某些操作
+									var div_str = "<div><div>"
+											+ value
+											+ "<input type='button' value='复制' onclick=copy_fun('"
+											+ value + "') /></div></div>"
+									div_html = div_html + div_str;
+								})
+
+					} catch (e) {
+						alert("错误信息:" + e + ";数据格式错误：" + fieldValues);
+					}
+
+				}
+				$("#div_left").html(div_html);
+			} else {
+				$("#Div_Comments").css("display", "none");
+				$("#div_doc").css("width", "1250px");
+			}
+		}
+		//执行浏览器复制命令
+		function copy_fun(copy_value) {
+			window.clipboardData.clearData();
+			clipboardData.setData("Text", "PO_" + copy_value);
+		}
+		//封装请求参数
+		function packParams() {
+			var str = "_csrf=" + $("#_csrf").val() + "&openModeType="
+					+ $("#openModeType").val() + "&resourceId="
+					+ $("#resourceId").val() + "&attachId="
+					+ $("#attachId").val() + "&redTitle="
+					+ $("#redTitle").val() + "&handSign="
+					+ $("#handSign").val() + "&fileNameDesc="
+					+ encodeURIComponent($("#fileNameDesc").val())
+					+ "&isNewWord=" + $("#isNewWord").val() + "&pageType="
+					+ $("#pageType").val() + "&formId=" + $("#formId").val()
+					+ "&pagePrint=" + $("#pagePrint").val() + "&fieldValues="
+					+ encodeURIComponent($("#fieldValues").val());
+
+			return str;
+		}
+		//自定义保存按钮
+		function Save() {
+			if (!document.getElementById("PageOfficeCtrl1").IsDirty) {
+				alert("文档未修改，不需要保存");
+				return;
+			}
+
+			document.getElementById("PageOfficeCtrl1").SaveFilePage = "/pag/pageOffice/saveBlankFile?"
+					+ packParams();
+			document.getElementById("PageOfficeCtrl1").WebSave();
+			var result = document.getElementById("PageOfficeCtrl1").CustomSaveResult
+			var status = result.split("|")[0];
+			if (status == 'ok') {
+				var attachId = result.split("|")[1];
+				POBrowser.callParentJs("setPageModelId('" + attachId + "')"); //回调父窗口传值
+			} else {
+				alert('保存失败');
+			}
+
+		}
+		//自定义痕迹保留按钮 
+		function showRevisions() {
+			if (document.getElementById("PageOfficeCtrl1").ShowRevisions == false) {
+				document.getElementById("PageOfficeCtrl1").ShowRevisions = true;
+			} else {
+				document.getElementById("PageOfficeCtrl1").ShowRevisions = false;
+			}
+		}
+		//文档加载完成触发函数
+		function AfterDocumentOpened() {
+			//文档打开后shij
+
+			document.getElementById("PageOfficeCtrl1").SetEnableFileCommand(3,
+					false); // 禁止保存
+			//showDataRegions();
+
+		}
+		//迭代文档中的所有书签
+		function showDataRegions() {
+			var dataRegionList = document.getElementById("PageOfficeCtrl1").DataRegionList;
+			for (var i = 0; i < dataRegionList.Count; i++) {
+				alert(dataRegionList.Item(i).Name);
+			}
+		}
+		//保存前触发事件
+		function BeforeDocumentClosed() {
+			if (document.getElementById("PageOfficeCtrl1").IsDirty) {
+				if (confirm("提示：文档已被修改，是否继续关闭放弃保存 ？")) {
+					return true;
+
+				} else {
+
+					return false;
+				}
+
+			}
+		}
+
+		//加载文档
+		function OpenDocument(strUrl) {
+			/* $.ajax({
+				  type: 'POST',
+				  url: strUrl,
+				  success: function(data){
+					  $("#divDocView").html(data);
+				  },error:function(err){
+					  alert(JSON.stringify(err));
+				  },
+				  dataType: 'json'
+				}); */
+
+			$.post(strUrl, {}, function(data) {
+				$("#divDocView").html(data);
+			});
+		}
+		//全屏按钮
+		function SetFullScreen() {
+			document.getElementById("PageOfficeCtrl1").FullScreen = !document
+					.getElementById("PageOfficeCtrl1").FullScreen;
+		}
+		//关闭按钮
+		function Close() {
+			POBrowser.closeWindow();
+		}
+		//导入数据
+		function importData() {
+			document.getElementById("PageOfficeCtrl1").WordImportDialog();
+			$("#isFileExist").val(1);
+		}
+		function BeforeBrowserClosed() {
+			if (document.getElementById("PageOfficeCtrl1").IsDirty) {
+				if (confirm("提示：文档已被修改，是否继续关闭放弃保存 ？")) {
+					return true;
+
+				} else {
+
+					return false;
+				}
+
+			}
+
+		}
+		//导入数据提交
+		function submitData() {
+			var exist = eval($("#isFileExist").val());
+			if (exist != 1 && $("#attachId").val() == "") {
+				document.getElementById("PageOfficeCtrl1").Alert("请先Word导入文档");
+				//	alert("请先导入文档");
+				/* var index = layer.open({
+					title: '友情提醒',
+					area:['100px','200px'],
+					maxmin : false,
+					type : 1,
+					content : "#tipStr"
+				}); */
+				return;
+			}
+			document.getElementById("PageOfficeCtrl1").SaveFilePage = "/pag/pageOffice/submitData?"
+					+ packParams();
+			//alert(document.getElementById("PageOfficeCtrl1").SaveFilePage );
+			document.getElementById("PageOfficeCtrl1").WebSave();
+			//防止js 传整型数字 会偏差  在传值后续加 _Str 转字符串
+			var result = document.getElementById("PageOfficeCtrl1").CustomSaveResult
+
+			var returnAttachId = result.split("|")[0] + "_Str";
+			var returnAttachName = result.split("|")[1];
+			returnAttachName = encodeURIComponent(encodeURIComponent(returnAttachName));
+			POBrowser.callParentJs("setAttachId('" + returnAttachId + "','"
+					+ returnAttachName + "')"); //回调父窗口传值
+			Close();
+
+		}
+		//打开新建word页面
+		function openNewWord() {
+			var strUrl = "/pag/pageOffice/openBlankWord?" + packParams();
+			/* $.post(strUrl, {}, function(data) {
+				$("#divDocView").html(data);
+			}); */
+			var jqxhr = $.post(strUrl, {}, function(data) {
+				$("#divDocView").html(data);
+
+			}).error(
+					function(obj) {
+						if (obj.status == 500) {
+							alert("错误代码：" + obj.responseJSON.status
+									+ "===错误信息：" + obj.responseJSON.message)
+						}
+						//	alert("处理异常:" + JSON.stringify(obj)); //所有错误信息
+					});
+		}
+
+		//套红按钮开发
+		function redTitleSetting() {
+			//先调用 layer 选择 模板 （下来选择）TODO
+
+			var strUrl = "/pag/pageOffice/redTitleSetting?" + packParams()
+					+ "&modelId=" + $("#modelSelectId").val();
+			//alert(strUrl);
+			$.post(strUrl, {}, function(data) {
+				$("#divDocView").html(data);
+			});
+		}
+		//套打按钮开发
+		function pagePrint_func() {
+			var strUrl = "/pag/pageOffice/pagePrintContrl?" + packParams()
+					+ "&modelId=" + $("#modelSelectId").val();
+			$.post(strUrl, {}, function(data) {
+				$("#divDocView").html(data);
+			});
+		}
+
+		/* setInterval("WebSave1()", 1000 * 60);//假设每分钟保存一次
+		function WebSave1() {
+			document.getElementById("PageOfficeCtrl1").AutoWebSave();
+		} */
+	</script>
+	<form action="" id=""></form>
+	<input type="hidden" id="${_csrf.parameterName}"
+		name="${_csrf.parameterName}" value="${_csrf.token}" />
+	<input type="hidden" id="openModeType" name="openModeType"
+		value="${pageOfficePermissionBean.openModeType}" />
+	<input type="hidden" id="isNewWord" name="isNewWord"
+		value="${pageOfficePermissionBean.isNewWord}" />
+	<input type="hidden" id="resourceId" name="resourceId"
+		value="${pageOfficePermissionBean.resourceId}" />
+	<input type="hidden" id="redTitle" name="redTitle"
+		value="${pageOfficePermissionBean.redTitle}" />
+	<input type="hidden" id="attachId" name="attachId"
+		value="${pageOfficePermissionBean.attachId}" />
+	<input type="hidden" id="fileNameDesc" name="fileNameDesc"
+		value="${pageOfficePermissionBean.fileNameDesc}" />
+	<input type="hidden" id="pageTypeStr" name="pageTypeStr"
+		value="${pageOfficePermissionBean.pageType}" />
+	<input type="hidden" id="formId" name="formId"
+		value="${pageOfficePermissionBean.formId}" />
+	<input type="hidden" id="pagePrint" name="pagePrint"
+		value="${pageOfficePermissionBean.pagePrint}" />
+	<input type="hidden" id="fieldValues" name="fieldValues"
+		value="${pageOfficePermissionBean.fieldValues}" />
+	<input type="hidden" id="fields" name="fields"
+		value="${pageOfficePermissionBean.fields}" />
+
+
+	<input type="hidden" id="isFileExist" name="isFileExist" value="0">
+	<input type="hidden" id="fields" name="fields" value="">
+	<select id="modelSelectId" style="display: none">
+		<option value="">--请选择模块--</option>
+	</select>
+	<!-- 文件主题名称 -->
+	<div id="div_fileNameDesc">
+		<div id=""></div>
+	</div>
+
+
+
+	<!-- jQuery -->
+
+	<div style="width: 1300px; height: 700px;">
+		<div id="Div_Comments"
+			style="float: left; width: 200px; height: 700px; border: solid 1px red; display: none">
+			<div id="div_left">左边模块，存在表单所有域名称，和复制功能</div>
+		</div>
+		<div style="width: 1200px; height: 700px; float: right;" id="div_doc">
+			<div style="width: auto; height: 100%;" id="divDocView"></div>
+		</div>
+</body>
+</html>

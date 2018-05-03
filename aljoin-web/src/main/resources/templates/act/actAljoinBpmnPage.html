@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>流程设计</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<style> 
+/* table的操作样式 */
+.table_btn{color:#339bf1;margin-right: 12px;}
+.table_btn1{color:#333;margin-right: 12px;}
+/* 手型 */
+.hand{cursor:pointer;}
+.nav_child{background: #fff;border: solid 1px #ccc;padding: 3px;}
+.nav_child li:hover {background:#ccc;}
+.l{float:left;}
+/* 下拉框样式 */
+.content_sel input.layui-input.layui-unselect{width:105px;height:27px;}
+/* 页签  */
+.title_tab{font-size:14px;padding: 6px 6px 6px 10px;color:#444a54;border-bottom:solid 1px #9ec8ea;font-weight:bold;}
+.title_tab i{color: #54abf2;font-size:16px;} 
+.font_icon{margin-right:6px;}
+
+.layui-select-tips{
+color:#999;
+}
+</style>
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<input type="hidden" name="typeId"  id="typeId"/>
+	<form class="layui-form" action="../actAljoinBpmn/exportHtml" method="get" id="action_bpmn">
+	   <input type="hidden" name="ids" id="id_bpmn">
+	</form>
+	<div class="admin-main" style="margin: 10px;padding-bottom:115px;">
+		<blockquote class="layui-elem-quote" style="padding: 5px;">
+			<form class="layui-form" action="" id="win-add-object">
+				<span><@a code="050302" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="openAddWin()" iclass="layui-icon"
+						icon="&#xe608;" text="新增"/></span>
+				<span><@a code="" href="javascript:void(0)" class="layui-btn layui-btn-small " id="" onclick="importFile()" iclass="layui-icon"
+						icon="&#xe608;" text="导入文件"/></span>
+				<span><@a code="" href="javascript:void(0)" class="layui-btn layui-btn-small " id="" onclick="exportHtmlBatch()" iclass="layui-icon"
+						icon="&#xe608;" text="批量导出"/></span>
+			   	
+				<div style="float: right;">
+					<div class="layui-input-inline m_r10">
+				 		<span>流程分类</span>
+					</div>
+					<div class="layui-input-inline m_r20 content_sel">
+		      		<@selectLink table="act_aljoin_category" layVerify="required"  id="id"  name="id" class="layui-input-inline" def="" key="id" text="category_name" level="1" levelName="category_level" rankName="category_rank" where=" AND is_active=1"/>
+					</div>
+					<div class="layui-input-inline">
+						<input type="text" name="searchKey" id="searchKey" placeholder="请输入流程名称或描述" autocomplete="off" class="layui-input"
+							style="height: 30px; line-height: 30px;">
+					</div>
+					<span><@a code="050301" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData()" iclass="layui-icon"
+						icon="&#xe615;" text="搜索"/></span>
+				</div>
+			</form>
+		</blockquote>
+		<div class="layui-field-box layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table admin-table">
+				<thead>
+					<tr>
+						<th style="width: 20px;"><input type="checkbox" lay-skin="primary" lay-filter="paging_check-all"></th>
+						<th>流程名称</th>
+						<th>流程分类</th>
+						<th>自由流程</th>
+						<th>固定表单</th>
+						<th>流程状态</th>
+						<th>是否部署</th>
+						<th>表单状态</th>
+						<th>上次部署时间</th>
+						<th style="width: 140px;">操作</th>
+					</tr>
+				</thead>
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td><input type="checkbox" lay-skin="primary" class="check-id" id="{{value.id}}"></td>
+							<td>{{value.processName}}</td>
+							<td>{{value.categoryName}}</td>
+							<td>{{if value.isFree == 1}}是{{/if}}{{if value.isFree == 0}}否{{/if}}</td>
+							<td>{{if value.isFixed == 1}}是{{/if}}{{if value.isFixed == 0}}否{{/if}}</td>
+							<td>{{if value.isActive == 0}}{{if value.isDeployAfterEdit == 1}}<font color="DimGray">修改后已部署</font>{{/if}}{{if value.isDeployAfterEdit == 0}}<font color=DimGray">修改后未部署</font>{{/if}}{{/if}}{{if value.isActive == 1}}{{if value.isDeployAfterEdit == 1}}<font color="green">修改后已部署</font>{{/if}}{{if value.isDeployAfterEdit == 0}}<font color="red">修改后未部署</font>{{/if}}{{/if}}</td>
+							<td>{{if value.isActive == 0}}{{if value.isDeploy == 1}}<font color="DimGray">已部署</font>{{/if}}{{if value.isDeploy == 0}}<font color="DimGray">未部署</font>{{/if}}{{/if}}{{if value.isActive == 1}}{{if value.isDeploy == 1}}<font color="green">已部署</font>{{/if}}{{if value.isDeploy == 0}}<font color="red">未部署</font>{{/if}}{{/if}}</td>
+							<td>{{if value.isActive == 0}}{{if value.isFormEdit == 0}}<font color="DimGray">正常</font>{{/if}}{{if value.isFormEdit == 1}}<font color="DimGray">已变更</font>{{/if}}{{/if}}{{if value.isActive == 1}}{{if value.isFormEdit == 0}}<font color="green">正常</font>{{/if}}{{if value.isFormEdit == 1}}<font color="red">已变更</font>{{/if}}{{/if}}</td>						
+							<td>{{value.lastDeployTime}}</td>
+							<td>
+								<@a code="050303" href="javascript:void(0)" class="table_btn l table_link" id="show-edit" onclick="showEdit('{{value.id}}')" text="编辑"/>
+								<@a code="050305" href="javascript:void(0)" class="table_btn l table_link" id="show-active" onclick="deploy('{{value.id}}','{{value.isActive}}')" text="部署"/>
+								<ul class="l">  
+            						<li class="parent"><span  onmouseover="click_li(this)"  class="hand table_btn more table_link">更多<img src="../../web/images/downgray.png" class="up" onclick="changepic()" ;=""></span>
+										<ul class="nav_child" onmouseleave="click_liout(this)"  style="display: none;position:absolute;">
+											<li><@a code="050306" href="javascript:void(0)" class="table_btn1 table_link" id="show-view" onclick="showImg('{{value.processId}}','{{value.isDeploy}}')" text="流程图"/></li>
+											<li><@a code="" href="javascript:void(0)" class="table_btn1 table_link"  id="show-copy" onclick="showCopy('{{value.id}}')" text="复制"/></li>
+											<li>{{if value.isActive == 1}}
+													<@a code="050309" href="javascript:void(0)" class="table_btn1 table_link" id="show-view" onclick="setActive('{{value.id}}',0)" text="冻结"/>
+												{{/if}}
+												{{if value.isActive == 0}}
+													<@a code="050307" href="javascript:void(0)" class="table_btn1 table_link" id="show-active" onclick="setActive('{{value.id}}',1)" text="激活"/>
+												{{/if}}
+											</li>
+											
+											<li><@a code="050308" href="javascript:void(0)" class="table_btn1 table_link" id="show-delete" onclick="showDelete('{{value.id}}')" text="删除"/></li>
+											<!--<li><@a code="050310" href="../modeler/exportXmlCodeFromDb?id={{value.id}}" class="table_btn1" id="show-export" onclick="exportXml('{{value.id}}')" text="导出"/></li>-->
+											<li><@a code="" href="javascript:void(0)" class="table_btn1 table_link" id="show-export-html" onclick="exportHtml('{{value.id}}')" text="导出"/></li>
+											<li><@a code="050311" href="javascript:void(0)" class="table_btn1 table_link" id="show-view" onclick="setUserAuth('{{value.id}}','{{value.isDeploy}}')" text="用户授权"/></li>
+										</ul>
+           							</li>  
+        						</ul>  
+							</td>
+						</tr>
+					{{/each}}
+					</script>
+				</tbody>
+			</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	<!-- 新增对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 40px; z-index: 19940200;" id="win-add-object">
+		<form class="layui-form layui-form-pane" id="add-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">一级菜单</label>
+				<div class="layui-input-block">
+					<select name="parentMenuCode" id="parentMenuCode" lay-filter="parentMenuCode" lay-verify="required">
+						<option value="">请选择</option>
+					</select>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">二级菜单</label>
+				<div class="layui-input-block">
+					<select name="menuCode" id="menuCode" lay-filter="menuCode">
+						<option value="">请选择</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">控件名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="widgetName" id="widgetName" lay-verify="required" autocomplete="off" placeholder="控件名称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<@select dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive" class="layui-input-block" def=""/>
+			</div>
+			<div class="layui-input-block" style="margin-top: 15px;">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+
+		</form>
+	</div>
+	<!-- 编辑对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 40px;" id="win-update-object">
+		<form class="layui-form layui-form-pane" id="update-object-form">
+			<input type="hidden" name="id" id="id">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">一级菜单</label>
+				<div class="layui-input-block">
+					<select disabled="disabled" name="parentMenuCode" id="parentMenuCode" lay-filter="parentMenuCode4Edit" lay-verify="required">
+						<option value="">请选择</option>
+					</select>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">二级菜单</label>
+				<div class="layui-input-block">
+					<select disabled="disabled" name="menuCode" id="menuCode" lay-filter="menuCode">
+						<option value="">请选择</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">控件名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="widgetName" id="widgetName" lay-verify="required" autocomplete="off" placeholder="控件名称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<@select dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive" class="layui-input-block" def=""/>
+			</div>
+			<div class="layui-input-block" style="margin-top: 15px;">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-update-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 详情对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 40px;" id="win-view-object">
+		<form class="layui-form layui-form-pane" id="view-object-form">
+			<input type="hidden" name="id" id="id">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">一级菜单</label>
+				<div class="layui-input-block">
+					<select disabled="disabled" name="parentMenuCode" id="parentMenuCode" lay-filter="parentMenuCode4Edit" lay-verify="required">
+						<option value="">请选择</option>
+					</select>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">二级菜单</label>
+				<div class="layui-input-block">
+					<select disabled="disabled" name="menuCode" id="menuCode" lay-filter="menuCode">
+						<option value="">请选择</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">控件名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="widgetName" id="widgetName" lay-verify="required" autocomplete="off" placeholder="控件名称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<@select dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive" class="layui-input-block" def=""/>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">版本号</label>
+				<div class="layui-input-block">
+					<input type="text" name="version" id="version" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">创建时间</label>
+				<div class="layui-input-block">
+					<input type="text" name="createTime" id="createTime" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">创建者</label>
+				<div class="layui-input-block">
+					<input type="text" name="createUserName" id="createUserName" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">修改时间</label>
+				<div class="layui-input-block">
+					<input type="text" name="lastUpdateTime" id="lastUpdateTime" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">修改者</label>
+				<div class="layui-input-block">
+					<input type="text" name="lastUpdateUserName" id="lastUpdateUserName" lay-verify="required" autocomplete="off" placeholder="昵称"
+						class="layui-input">
+				</div>
+			</div>
+			<div class="layui-input-block" style="margin-top: 15px;">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+			</div>
+		</form>
+	</div>
+	<div class="layui-form-item1" style="display:none;padding:25px;">
+		<form class="form-inline layui-form layui-form-pane" id="form_Submit">
+	        <input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	        <input type="hidden" name="path" id="filePath" value="" />
+	        <input type="hidden" name="categoryId" id="categoryId" value="" />
+			<div class="form-namewrap">
+				<div class="form-group fill-in">
+					<label>流程名称：</label>
+					<input type="text" class="form-control input-sm" lay-verify="required" name="processName" id="fileName" onkeyup="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g,'')"/>
+				</div>
+				<div class="form-group fill-in" id="form-type-object">
+					<label style="float: left;padding-right:5px;padding-top: 5px;">流程分类：</label>
+					<@selectLink table="act_aljoin_category" layVerify="required"  id="category_id" class="layui-input-inline" def="" key="id" text="category_name" level="1" levelName="category_level" rankName="category_rank" where=" AND is_active=1"/>
+				</div>
+				<div style="position: absolute;bottom: 25px;right: 15px;">
+				   <a class="layui-btn btns" lay-submit="" lay-filter="form-sub-submit" style="width: 150px; height: 35px;line-height: 35px;"><i class="fa fa-save"></i> 提交</a>
+				</div>
+			</div>							          
+			<div class="layui-input-block" style="margin-left:0px;margin-top:35px;">
+			    <label class="po-fixed">导入流程文件：</label>
+				<div class="layui-upload po-fixed">
+				    <div class="layui-upload-drag" id="test9" style="padding:5px;width:100%;box-sizing: border-box;">
+				        <p></p>
+				    </div>
+	                <a class="layui-btn" id="fileImportId">
+					 	<i class="layui-icon">&#xe62f;</i> 添加
+				    </a>
+					
+				</div>
+			</div>
+			<div class="layui-upload-list">
+					    <table class="layui-table">
+						    <colgroup>
+							    <col width="180">
+							    <col width="60">
+							    <col width="60">
+							    <col width="40">
+							</colgroup>
+					      	<tbody id="fileList"></tbody>
+					    </table>
+					</div>
+		</form> 
+	</div>
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script>
+
+/* 	 function click_li(myself){  
+		$(".nav_child").hide();
+        $(myself).parent().find(".nav_child").show();
+	 }   
+	 function click_liout(myself){  
+	    $(myself).hide();
+	}   */
+	 
+		var pform;
+		//添加事件
+		layui.use(['form','element'], function() {
+			pform = layui.form;
+			var element = layui.element;
+			//表单联动
+		     layui.use('form', function() {
+					pform = layui.form;
+					pform.on('select(category_id)', function(data) {
+						$("#categoryId").val(data.value)
+						//参数 1：当前元素id，参数2：顶级元素id（用来锁定唯一元素）
+						tool.selectLinkTagByPid("category_id","form-type-object",data);
+					});
+		     }); 		
+			pform.on('select(isActive)', function(data) {
+				//alert(data.value);
+				//form.render('checkbox');
+			});
+			//自定义表单校验
+			pform.verify();
+			//现在一级菜单联动二级菜单
+			pform.on('select(parentMenuCode)', function(data) {
+				setMenuList("add-object-form", "menuLevel=2&parentCode=" + data.value, "menuCode", 2, null);
+			});
+			pform.on('select(parentMenuCode4Edit)', function(data) {
+				setMenuList("update-object-form", "menuLevel=2&parentCode=" + data.value, "menuCode", 2, null);
+			});
+			//监听新增提交
+			pform.on('submit(form-add-submit)', function(data) {
+				tool.post("../autWidget/add", $("#add-object-form").serialize(), postCallBack, false);
+				return false;
+			});
+			//监听新增提交
+			pform.on('submit(form-update-submit)', function(data) {
+				tool.post("../autWidget/update", $("#update-object-form").serialize(), postCallBack, false);
+				return false;
+			});
+			//监听导入表单提交
+	        pform.on('submit(form-sub-submit)', function(data) {
+	            layer.confirm('确定提交吗 ?', {
+	                icon: 3,
+	                title: '提示'
+	            }, function (index) {
+	                tool.post("../actAljoinBpmn/fileSubmit", $("#form_Submit").serialize(),postCallBackFile, false);
+	                 layer.close(index)
+	            });
+	            return false;
+	        });		
+			//初始化出发数据加载
+			loadData();
+			
+			pform.on('select(id)', function(data) {
+	            //参数 1：当前元素id，参数2：顶级元素id（用来锁定唯一元素）
+	            if(data.value.length>0){
+					$("#typeId").val(data.value);
+				}else{
+					var emel=$(data.elem).parent().prev();
+					if(emel.find('select').length>0){
+						$("#typeId").val(emel.find('select option:selected').val())
+					}else{
+						$("#typeId").val("");
+					}
+				}
+	            //console.log($("#typeId").val());
+	            tool.selectLinkTagByPid("id","win-add-object",data);
+	    	});
+		});
+		//加载数据
+		function loadData() {
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+			param.processName = $("#searchKey").val();
+			param.categoryName=$('#typeId').val();
+			param.url = "../actAljoinBpmn/list";
+			tool.loadpage(param);
+		}
+		//获取勾选数据id
+		function getCheckItmes() {
+			$(".check-id:checked").each(function() {
+				//console.log($(this).attr("id"));
+				;
+			});
+		}
+		function setMenuList(formId, param, pid, level, defaultValue) {
+			param = param + "&_csrf=" + $("#_csrf").val()
+			tool.post("../autMenu/getMenuList", param, function(retList) {
+				var optionStr = "<option value=\"\">请选择</option>";
+				for (var i = 0; i < retList.length; i++) {
+					if (defaultValue != null && retList[i].menuCode == defaultValue) {
+						optionStr += "<option value=\""+retList[i].menuCode+"\" selected=\"selected\">" + retList[i].menuName + "</option>";
+					} else {
+						optionStr += "<option value=\""+retList[i].menuCode+"\">" + retList[i].menuName + "</option>";
+					}
+				}
+				$("#" + formId + " #" + pid).empty();
+				$(optionStr).appendTo("#" + formId + " #" + pid);
+				//如果二级菜单有数据，则必选，如果没有则不必选  
+				if (level == 2) {
+					if (retList.length > 0) {
+						$("#" + formId + " #" + pid).attr("lay-verify", "required");
+					} else {
+						$("#" + formId + " #" + pid).removeAttr("lay-verify");
+						$("#" + formId + " #" + pid).removeClass("layui-form-danger");
+					}
+				}
+				pform.render();
+			}, false);
+		}
+		//打开新增对象窗口
+		function openAddWin() {
+			var index = layer.open({
+				title : '流程设计',
+				maxmin : false,
+				type : 2,
+				content : '../modeler/modelerPage2.html'
+			});
+			layer.full(index);
+			pform.render();
+		}
+		//文件上传回调
+		function postCallBackFile(retMsg) {
+			if (retMsg.code == 0) {
+				layer.close(fileImportIndex);
+				showEdit(retMsg.object);
+				loadData();
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+		//新增对象回调
+		function postCallBack(retMsg) {
+			if (retMsg.code == 0) {
+				tool.success(retMsg.message);
+				loadData();
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+		//编辑对象
+		function showEdit(id) {
+			var index = layer.open({
+				title : '流程编辑',
+				maxmin : false,
+				type : 2,
+				content : '../modeler/modelerPage3.html?id='+id
+			});
+			layer.full(index);
+			pform.render();
+		}
+		//复制流程
+		function copyById(url, id) {
+			var obj;
+			var param = new Object();
+			param._csrf = $("#_csrf").val();
+			param.id = id;
+			tool.post(url, param, function(o) {
+				obj = o;
+			}, false);
+			return obj;
+		}
+		function showCopy(id) {
+			layer.confirm('确定复制 ?', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				var retMsg = copyById("../actAljoinBpmn/copy", id)
+				if (retMsg.code == 0) {
+					tool.success(retMsg.message);
+					loadData();
+				} else {
+					tool.error(retMsg.message);
+				}
+			});
+		}
+		//详情对象
+		function showView(id,isDeploy,processName) {
+			if(isDeploy == 0){
+				tool.error("已部署的流程才能进行发起");
+				return;
+			}
+			var index = layer.open({
+				title : processName,
+				maxmin : false,
+				type : 2,
+				content : '../modeler/openForm.html?id='+id
+			});
+			pform.render();
+			layer.full(index);
+		}
+		//删除对象
+		function showDelete(id) {
+			layer.confirm('确定删除 ?', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				var retMsg = tool.deleteById("../actAljoinBpmn/delete", id)
+				if (retMsg.code == 0) {
+					tool.success(retMsg.message);
+					loadData();
+				} else {
+					tool.error(retMsg.message);
+				}
+			});
+		}
+		//部署
+		function deploy(id,isActive){
+			if(isActive == 0){
+				tool.error("冻结状态不能部署");
+				return;
+			}
+			layer.confirm('确定部署?', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				layer.load(2);
+				var param = "_csrf="+$("#_csrf").val()+"&id="+id
+				tool.post("../actAljoinBpmn/deploy", param, postCallBack2, true);
+			});
+		}
+		//表单导出
+		function exportHtml(id){
+			$("#id_bpmn").val(id+";");
+			$("#action_bpmn").submit();
+	    }   
+		//批量导出
+        function exportHtmlBatch() {
+            if ($(".check-id:checked").length == 0) {
+                tool.error('没有导出的数据');
+            } else {
+                var str = "";
+                $(".check-id:checked").each(function (index, value) {
+                    str += value.id + ";";
+                })
+                $("#id_bpmn").val(str);
+    			$("#action_bpmn").submit();
+            }
+        }
+		//激活冻结
+		function setActive(id,flag) {
+			var tip = "";
+			if(flag == 1){
+				tip = "激活";
+			}else{
+				tip = "冻结";
+			}
+			layer.confirm('确定'+tip+'?', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				var param = "_csrf="+$("#_csrf").val()+"&id="+id+"&isActive="+flag;
+				tool.post("../actAljoinBpmn/setActive", param, postCallBack, false);
+			});
+		}
+		function postCallBack2(retMsg) {
+			if (retMsg.code == 0) {
+				tool.success(retMsg.message);
+				loadData();
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+		//详情对象
+		function showImg(processId,isDeploy) {
+			if(isDeploy == 0){
+				tool.error("部署后才能查看流程图");
+				return;
+			}
+			var index = layer.open({
+				title : '流程图',
+				maxmin : false,
+				type : 1,                                     
+				content : '<img src="../actAljoinBpmn/showImg?processId='+processId+'" />'
+			});
+			pform.render();
+			layer.full(index);
+		}
+		function exportXml(id){
+			return false;
+		}
+		function setUserAuth(bpmnId,isDeploy){
+			if(isDeploy == 0){
+				tool.error("部署后才能用户授权");
+				return;
+			}
+			var index = layer.open({
+				title : '用户授权',
+				maxmin : false,
+				type : 2,
+				content : '../modeler/actAljoinBpmnUserPage.html?bpmnId='+bpmnId
+			});
+			layer.full(index);
+			pform.render();
+		}
+		//上传本地文件
+		var fileImportIndex;
+		function importFile(){
+			//再次进入清空数据
+			$("#fileName").val(""); 
+			$("#categoryId").val(); //清空已经保存到隐藏域里面的值
+			$("#form-type-object").children(".layui-input-inline:gt(0)").remove();
+			$("#form-type-object").find("select").val("");
+			$("#form-type-object").find("input").val("");
+			var logicNum = $("#fileList").children().length; //是否已有附件未上传
+			if(logicNum > 0){
+				 $("#fileList").find(".demo-delete").trigger("click");
+			}
+			//页面层
+			  fileImportIndex = layer.open({
+			  title : '上传流程文件',
+			  type: 1,
+			  area: ["666px", "520px"], //宽高
+			  content: $('.layui-form-item1')
+			});
+		}
+		tool.fileUploadForm("fileList","test9","../actAljoinBpmn/fileImport","fileImportId");
+	</script>
+</body>
+
+</html>

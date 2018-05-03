@@ -1,0 +1,55 @@
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+	<!-- 控制台 -->
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>
+				%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] aljoin_%-5level class[%logger] method[%M] line[%L] - %msg %n
+			</pattern>
+		</encoder>
+	</appender>
+	<!-- 日志文件_ERROR -->
+	<appender name="LOG_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>
+				logback/errors/error_%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>
+				%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] aljoin_%-5level class[%logger] method[%M] line[%L] - %msg %n
+			</pattern>
+		</encoder>
+	</appender>
+	<!-- 日志文件 -->
+	<appender name="LOGS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>logback/logs/log_%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>
+				%date{yyyy-MM-dd HH:mm:ss.SSS} [%thread] aljoin_%-5level class[%logger] method[%M] line[%L] - %msg %n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<root level="INFO">
+		<appender-ref ref="CONSOLE" />
+	</root>
+	<!-- ERROR级别以上的日志 -->
+	<logger name="aljoin" level="ERROR" additivity="true">
+		<appender-ref ref="LOG_ERROR" />
+	</logger>
+	<!-- INFO级别以上的日志 -->
+	<logger name="aljoin" level="INFO" additivity="true">
+		<appender-ref ref="LOGS" />
+	</logger>
+
+</configuration>

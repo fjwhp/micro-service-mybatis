@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>草稿箱</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" />
+<link rel="stylesheet" href="../../web/css/zhengls.css" />
+<style>
+	.layui-form-pane .label_m{width:90px;}
+	.layui-form-pane .layui-input-block1{margin-left:90px;} 
+	.layui-input-block1 .layui-select-title .layui-input{width:100px;}
+</style>
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main">
+		<!-- <div style="font-size:16px;font-weight:bold;margin-bottom:5px;color:#339bf1;"><i class="fa fa-envelope-o" aria-hidden="true" data-icon="fa-envelope-o" style="margin-right:6px;"></i>草稿箱</div> -->
+		<blockquote class="layui-elem-quote" style="padding: 5px;">
+				<form class="layui-form" action="">
+					<div style="float:right">
+					    <div class="layui-input-inline">
+						 <span>发送时间</span>
+						</div>
+						<div class="layui-input-inline">
+							 <input type="text" class="inp_date" id="startTime" readonly>
+						</div>
+						<div class="layui-input-inline">
+						 <span>至</span>
+						</div>
+						<div class="layui-input-inline">
+							  <input type="text" class="inp_date" id="endTime" readonly>
+						</div>
+						<div class="layui-input-inline">
+							<input type="text" name="searchKey" id="searchKey" placeholder="请输入收件人或主题" lay-verify="" maxlength="20" autocomplete="off" class="layui-input"
+								style="height: 30px; line-height: 30px;">
+						</div>
+						<span  lay-submit="" lay-filter="form-search-submit"><@a code="090101" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" iclass="layui-icon"
+							 icon="&#xe615;" text="查询"/></span>
+					</div>
+					<div class="layui-input-inline">
+					  	<span><@a  code="090102" href="javascript:void(0)" onclick="showDeletes()" class="layui-btn layui-btn-small" id=""  
+							 text="删除"/></span>
+					</div>
+						
+				</form>
+		</blockquote>
+<!-- 			<form class="layui-form" action="">
+				<div class="layui-input-inline" >
+				 <span>主题</span>
+				</div>
+				<div class="layui-input-inline m_r20">
+					<input type="text" name="searchKey" id="searchKey"  autocomplete="off" class="inp_w120px"
+						width:180px;">
+				</div>
+				<div class="layui-input-inline">
+				 <span>收件人</span>
+				</div>
+				<div class="layui-input-inline m_r20" >
+						<input type="text" name="searchKey" id="searchKey2"  autocomplete="off" class="inp_w120px"
+						>
+				</div>
+				<div class="layui-input-inline">
+				 <span>发送时间</span>
+				</div>
+				<div class="layui-input-inline">
+					 <input type="text" class="inp_date" id="startTime" >
+				</div>
+				<div class="layui-input-inline">
+				 <span>至</span>
+				</div>
+				<div class="layui-input-inline">
+					  <input type="text" class="inp_date" id="endTime" >
+				</div>
+				<div class="layui-input-inline" style="float:right">
+				<span><@a code="000101" href="javascript:void(0)" class="btn_blue xiangdui" id="" onclick="loadData()"  text="查询"/></span>
+				      <a class="btn_blue xiangdui" onclick="seacrhReact(this)">重置</a>
+			    </div>	
+			</form>
+	    <div class="delimany">
+              <a class="btn_blue_e6e" onclick="showDeletes()">删除</a>
+        </div> -->
+		<div class="layui-field-box  layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table admin-table">
+			<!--     <colgroup>
+				    <col width="35">
+				    <col width="150">
+				    <col width="400">
+				    <col width="130">
+				    <col width="100">
+				    <col width="100">
+				 </colgroup> -->
+				<thead>
+					<tr>
+						<th style="width:20px;"><input type="checkbox" lay-skin="primary" id="paging_check-all" lay-filter="paging_check-all"></th>
+						<th style="display: none;">用户ID</th>
+						<th style="width:150px;">收件人</th>
+						<th>主题</th>
+						<th style="width:160px;">创建时间<img src="../../web/images/upgray.png"  class="up" onclick="loadData('1','0')";><img src="../../web/images/downgray.png" class="down" onclick="loadData('2','0')";></th>
+						<th style="width:100px;">大小(KB)<img src="../../web/images/upgray.png"  class="up1" onclick="loadData('0','1')";><img src="../../web/images/downgray.png" class="down1" onclick="loadData('0','2')";> </th>
+						<th style="width:100px;">操作</th>
+					</tr>
+				</thead>
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+                
+					{{each records value index}}
+						<tr>
+							<td><input type="checkbox"  class="check-id"  lay-skin="primary"   id="{{value.id}}"></td>
+							<td style="display: none;">{{value.id}}</td>
+							<td>{{value.receiveFullNames.substr(0,value.receiveFullNames.length-1)}}</td>
+							<td title="{{value.subjectText}}">{{value.subjectText}}</td>
+							<td>{{value.lastUpdateTime}}</td>
+							<td>{{value.mailSize}}</td>
+							<td>
+								<@a code="090103" href="javascript:void(0)" class="color339 table_link" id="show-edit" onclick="edit('{{value.id}}','{{value.sendUserId}}','{{value.sendUserName}}','{{value.sendFullName}}')" text="编辑"/>
+								<@a code="090104" href="javascript:void(0)" class="color339 table_link" id="show-delete" onclick="showDelete('{{value.id}}',this)" text="删除"/>
+							</td>
+						</tr>
+					{{/each}}
+					</script>
+				</tbody>
+			</table>
+		</div>
+		
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+		<!-- 删除list隐藏域 -->
+		<form id="add-scrap-form">
+				<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+		</form>	
+		<form id="add-scrap-form2">
+				<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+		</form>	
+		
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main" style="margin: 10px;">
+	
+	
+	</div>
+	
+	
+	
+	<input type="hidden" id="hiddenPp"  value="0">
+
+	
+	
+	
+	
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/ueditor.all.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/lang/zh-cn/zh-cn.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+	
+	
+	<script>
+	     tool.dateTime('#startTime','#endTime','',false);
+		//时间控件
+	 	/* tool.timeset('#startTime','#endTime'); */
+	 	//构建出百度文本编辑器
+
+		var pform;
+		//添加事件
+		layui.use('form', function() {
+			pform = layui.form;
+			pform.verify({
+				length50 : function(value) {
+					if (value.length>50) {
+						return "长度不能超过50个字符";
+					}
+				},
+				length20:function(value){
+					if (value.length>20) {
+						return "长度不能超过20个字符";
+					}
+				},
+				special:function(value){
+					var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]"); 
+					if(pattern.test(value)){
+					     return "不能输入特殊字符";
+					}
+				} 
+			});
+			
+			//查询
+			 pform.on('submit(form-search-submit)',function(data){
+				   loadData();
+				 return false;
+			 })
+		
+			//初始化出发数据加载
+			loadData();
+		});
+		//加载数据
+		function loadData(orderByTime,mailSize) {
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+			param.pageNum = 1;
+			param.url = "../maiDraftBox/list";
+			param.time1=$("#startTime").val();
+			param.time2=$("#endTime").val();
+	     	param.subjectText = $("#searchKey").val();
+	     	if(mailSize==1||mailSize==2){
+	     		param.mailSize=mailSize;
+	     		if(mailSize==1){
+					$(".up1").attr("src","../../web/images/uptrue.png");
+					$(".down1").attr("src","../../web/images/downgray.png");
+				}else{
+					$(".up1").attr("src","../../web/images/upgray.png");
+					$(".down1").attr("src","../../web/images/downture.png");
+				}
+	     		
+	     	}
+	     	if(orderByTime==1||orderByTime==2){
+	     		param.orderByTime=orderByTime;
+	     		if(orderByTime==1){
+					$(".up").attr("src","../../web/images/uptrue.png");
+					$(".down").attr("src","../../web/images/downgray.png");
+				}else{
+					$(".up").attr("src","../../web/images/upgray.png");
+					$(".down").attr("src","../../web/images/downture.png");
+				}
+	     	}
+			tool.loadpage(param); 
+		}
+		//批量删除对象
+		function showDeletes(id) {
+			obj = $(".check-id");
+		    check_val = [];
+		    for(k in obj){
+		        if(obj[k].checked)check_val.push(obj[k].id);
+		    }
+		    if(check_val==""){
+		    	tool.error('至少选中一个');
+		    }else{
+				layer.confirm('确定删除 ?', {
+					icon : 3,
+					title : '提示'
+				}, function(index) {
+				    var str="";
+				    $("#add-scrap-form").empty();
+					str += '<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />';
+					$.each(check_val,function(index,value){
+						str += '<input type="hidden" name="draftBoxList['+index+'].id" value="'+value+'" />';
+					})
+			        $("#add-scrap-form").append(str);
+					$("#paging_check-all").attr("checked",false);
+					pform.render();
+					var retMsg = tool.post("../maiDraftBox/delete",$("#add-scrap-form").serialize(),decallback,false); 
+				 /* 	if (retMsg.code == 0) {
+						tool.success(retMsg.message);
+						loadData();
+					} else {
+						tool.error(retMsg.message);
+					}  */
+				});
+		    }
+		}
+		function decallback(data){
+			layer.alert("删除成功");
+			//layer.closeAll();
+			loadData();
+		}
+		//单个删除对象
+		function showDelete(id,thisobj) {
+			layer.confirm('确定删除 ?', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				$("#add-scrap-form2").empty(); 
+				var str = '<input type="hidden" name="draftBoxList[0].id" value="'+id+'" />';
+				str += '<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />';
+		        $("#add-scrap-form2").append(str);
+				var retMsg = tool.post("../maiDraftBox/delete",$("#add-scrap-form2").serialize(),decallback,false); 
+			});
+		}
+		function decallback(data){
+			layer.alert("删除成功");
+			//layer.closeAll();
+			loadData();
+		}
+	
+
+		//编辑
+		function edit(id,sendUserId,sendUserName,sendFullName){
+			var index= layer.open({
+				  type: 2,
+				  title: '草稿箱编辑',
+				  closeBtn:0,
+				  shade: 0.8, 
+				  shadeClose: true,
+		 content: 'maiDraftBoxPageEdit.html?id='+id+'&sendUserId='+sendUserId+'&sendUserName='+sendUserName+'&sendFullName='+encodeURI(sendFullName)
+				});
+	    		
+			    pform.render();
+				layer.full(index);
+		}
+		
+		
+	</script>
+</body>
+</html>

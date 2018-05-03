@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.mee.dao.mapper.MeeOutsideMeetingMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.mee.dao.entity.MeeOutsideMeeting">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="meeting_title" property="meetingTitle" />
+		<result column="meeting_host" property="meetingHost" />
+		<result column="contacts" property="contacts" />
+		<result column="party_memebers_id" property="partyMemebersId" />
+		<result column="party_memeber_names" property="partyMemeberNames" />
+		<result column="attendances" property="attendances" />
+		<result column="begin_time" property="beginTime" />
+		<result column="end_time" property="endTime" />
+		<result column="meeting_content" property="meetingContent" />
+		<result column="is_warn_msg" property="isWarnMsg" />
+		<result column="is_warn_mail" property="isWarnMail" />
+		<result column="is_warn_online" property="isWarnOnline" />
+		<result column="meeting_situation" property="meetingSituation" />
+		<result column="audit_status" property="auditStatus" />
+		<result column="audit_time" property="auditTime" />
+		<result column="audit_reason" property="auditReason" />
+		<result column="process_id" property="processId" />
+		<result column="address" property="address" />
+		<result column="new_member" property="newMember" />
+		<result column="del_member" property="delMember" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name,  meeting_title, meeting_host, contacts, party_memebers_id, party_memeber_names, attendances, begin_time, end_time, meeting_content, is_warn_msg,is_warn_mail,is_warn_online, meeting_situation, audit_status, audit_time, audit_reason, process_id,address,new_member,del_member
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM mee_outside_meeting WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="MeeOutsideMeeting">
+    	INSERT INTO mee_outside_meeting(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{isActive}, #{meetingTitle}, #{meetingHost}, #{contacts}, #{partyMemebersId}, #{partyMemeberNames}, #{attendances}, #{beginTime}, #{endTime}, #{meetingContent}, #{reminderMode}, #{meetingSituation}, #{auditStatus}, #{auditTime}, #{auditReason}, #{processId},#{newMember},#{delMember})
+    </insert>
+
+</mapper>

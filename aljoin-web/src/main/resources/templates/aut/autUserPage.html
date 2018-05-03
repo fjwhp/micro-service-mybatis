@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>用户管理</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<!-- <link rel="stylesheet" href="../../web/css/public.css" /> 
+ --> <style>
+.layui-form-pane .label_m{width:90px;}
+.layui-form-pane .layui-input-block1{margin-left:90px;}
+.layui-input-block1 .layui-select-title .layui-input{width:100px;}
+/* table的操作样式 */
+.table_btn{color:#339bf1;margin-right: 12px;}
+.table_btn1{color:#333;margin-right: 12px;}
+/* 手型 */
+.hand{cursor:pointer;}
+.nav_child{background: #fff;border: solid 1px #ccc;padding: 3px;}
+.nav_child li:hover {background:#ccc;}
+.l{float:left;}
+.r{float:right;}
+/* 左边树样式 */
+.tree_left{width:20%;float:left;border-right: 1px solid #c9d3d6;overflow:auto;height:600px;}
+/* 树右边样式 */
+.tree_right{width:78%;float:left;margin-left:10px;}
+/* 按钮浮动 */
+.layui-table { table-layout: fixed;}
+.layui-table td { white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
+/* tree超过一定的宽度出现省略号 */
+#treeDemo1 a{width:160px;height:20px;overflow:hidden;text-overflow : ellipsis }
+</style>
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief" style="margin-top:0">
+		  	<ul class="layui-tab-title">
+			    <li class="layui-this">用户管理</li>
+			    <li>排序管理</li>
+		  	</ul>
+	  		<div class="layui-tab-content" style="padding:0">
+	  			 <div class="layui-tab-item layui-show">
+	  			       <div class="admin-main" style="margin: 10px;padding-bottom:65px;">
+							<blockquote class="layui-elem-quote" style="padding: 5px;">
+								<form class="layui-form" action=""> 
+									<div style="float: right;">
+										<div class="layui-input-inline">
+											<input type="text" name="searchKey" id="searchKey" placeholder="请输入账号或用户名" autocomplete="off" class="layui-input"
+												style="height: 30px; line-height: 30px;" maxlength="20">
+										</div>
+										<span><@a code="160702" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData()" iclass="layui-icon"
+											icon="&#xe615;" text="搜索"/></span>
+									</div>	
+									<div>
+										<span><@a code="160701" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="openAddWin()" iclass="layui-icon"
+											icon="&#xe608;" text="新增"/></span>
+									</div>
+								</form>
+							</blockquote>
+							<div class="layui-field-box  layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+								<table class="layui-table admin-table">
+									<thead>
+										<tr>
+											<th style="width: 20px;"><input type="checkbox" lay-skin="primary" lay-filter="paging_check-all"></th>
+											<th style="display: none;">用户ID</th>
+											<th style="width: 60px;">序号</th>
+											<th>用户账号</th>
+											<th>用户名</th>
+											<th>部门</th>
+											<th>岗位</th>
+											<th style="width: 80px;">是否激活</th>
+										<!-- 	<th>是否过期</th>
+											<th>是否被锁</th>
+											<th>证书状态</th> -->
+											<th>手机号</th>
+											<th>操作</th>
+										</tr>
+									</thead>
+									<tbody id="paging-data">
+										<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td><input type="checkbox"  class="check-id userid_detail"  lay-skin="primary"   id="{{value.autUser.id}}"></td>
+							<td style="display: none;">{{if value.autUser!=null}}{{value.autUser.id}}{{/if}}</td>
+							<td>{{(current-1)*size+index+1}}</td>
+							<td {{if value.autUser!=null}}title="{{value.autUser.userName}}"{{/if}}>{{if value.autUser!=null}}{{value.autUser.userName}}{{/if}}</td>
+							<td {{if value.autUser!=null}}title="{{value.autUser.fullName}}"{{/if}}>{{if value.autUser!=null}}{{value.autUser.fullName}}{{/if}}</td>
+                            <td {{if value.autDepartment!=null}}title="{{value.autDepartment.deptName}}"{{/if}}>{{if value.autDepartment!=null}}{{value.autDepartment.deptName}}{{/if}}</td>
+                            <td {{if value.autPosition!=null}}title="{{value.autPosition.positionName}}" {{/if}}>{{if value.autPosition!=null}}{{value.autPosition.positionName}}{{/if}}</td>
+		 					<td>{{if value.autUser.isActive == 1}}<font color="green">激活</font>{{/if}}{{if value.autUser.isActive == 0}}<font color="red">冻结</font>{{/if}}</td>
+							<td>{{value.phone}}</td>
+							<td>
+								<@a code="160707" href="javascript:void(0)" class="table_btn l table_link" id="show-edit" onclick="showEdit('{{value.autUser.id}}',this)" text="编辑"/>
+								<@a code="160708" href="javascript:void(0)" class="table_btn l table_link" id="show-view" onclick="showView('{{value.autUser.id}}')" text="详情"/>
+								<!--
+								<@a code="" href="javascript:void(0)" class="layui-btn layui-btn-normal layui-btn-mini" id="show-active" onclick="showActive()" text="激活"/>
+								<@a code="" href="javascript:void(0)" class="layui-btn layui-btn-normal layui-btn-mini" id="show-disactive" onclick="showActive()" text="冻结"/>
+								-->
+								<ul class="l">  
+            						<li class="parent"><span  onmouseover="click_li(this)"  class="hand table_btn more  table_link">更多<img src="../../web/images/downgray.png" class="up" onclick="changepic()"></span>
+										<ul class="nav_child" onmouseleave="click_liout(this)"  style="display: none;position:absolute; z-index:20000000">	
+											<li><@a code="160703" href="javascript:void(0)" class="table_btn1  table_link" id="show-delete" onclick="showDelete('{{value.autUser.id}}',this)" text="删除"/></li> 
+											<li><@a code="160704" href="javascript:void(0)" class="table_btn1  table_link" id="show-active" onclick="showAuth('{{value.autUser.id}}','{{value.autUser.userName}}')" text="分配角色"/></li> 
+                                			<li><@a code="160705" href="javascript:void(0)" class="table_btn1  table_link" id="show-section" onclick="createSeciton('{{value.autUser.id}}','{{value.autUser.userName}}')" text="添加部门"/></li> 
+										</ul>
+           							</li>  
+        						</ul>  
+							</td>
+						</tr>
+					{{/each}}
+					</script>
+									<!-- 	<td>{{if value.autUser.isAccountExpired == 1}}<font color="red">过期</font>{{/if}}{{if value.autUser.isAccountExpired == 0}}<font color="green">正常</font>{{/if}}</td>
+										<td>{{if value.autUser.isAccountLocked == 1}}<font color="red">锁定</font>{{/if}}{{if value.autUser.isAccountLocked == 0}}<font color="green">正常</font>{{/if}}</td>
+										<td>{{if value.autUser.isCredentialsExpired == 1}}<font color="red">过期</font>{{/if}}{{if value.autUser.isCredentialsExpired == 0}}<font color="green">正常</font>{{/if}}</td>
+									 --></tbody>
+								</table>
+							</div>
+							<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+								<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+							</div>
+						</div>
+	  			 </div>
+   				 <div class="layui-tab-item">
+   				     <div class="admin-main" style="margin: 10px;">
+							<blockquote class="layui-elem-quote" style="padding: 5px;">
+								<form class="layui-form" action=""> 
+									<div style="float: right;">
+										<div class="layui-input-inline">
+											<input type="text" name="searchKey" id="searchKey_rank" placeholder="请输入账号或用户名" autocomplete="off" class="layui-input"
+												style="height: 30px; line-height: 30px;" maxlength="20">
+										</div>
+										<span><@a code="160702" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData_rank()" iclass="layui-icon"
+											icon="&#xe615;" text="搜索"/></span>
+									</div>	
+								</form>
+							</blockquote>
+													<div class="layui-field-box  layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+								<table class="layui-table admin-table">
+									<thead>
+										<tr>
+											<th style="width: 20px;"><input type="checkbox" lay-skin="primary" lay-filter="paging_check-all"></th>
+											<th style="display: none;">用户ID</th>
+											<th style="width: 60px;">序号</th>
+											<th>用户账号</th>
+											<th>用户名</th>
+											<th>部门</th>
+											<th>岗位</th>
+											<th>排序</th>
+											<th>操作</th>
+										</tr>
+									</thead>
+									<tbody id="pagingRank-data">
+										<script id="pagingRank-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td><input type="checkbox"  class="check-id userid_detail"  lay-skin="primary"   id="{{value.autUser.id}}"></td>
+							<td style="display: none;">{{value.autUser.id}}</td>
+							<td>{{(current-1)*size+index+1}}</td>
+							<td title="{{value.autUser.userName}}">{{value.autUser.userName}}</td>
+							<td title="{{value.autUser.fullName}}">{{value.autUser.fullName}}</td>
+                            <td {{if value.autDepartment!=null}}title="{{value.autDepartment.deptName}}"{{/if}}>{{if value.autDepartment!=null}}{{value.autDepartment.deptName}}{{/if}}</td>
+                            <td {{if value.autPosition!=null}}title="{{value.autPosition.positionName}}" {{/if}}>{{if value.autPosition!=null}}{{value.autPosition.positionName}}{{/if}}</td>
+		 					<td>{{if value.userRank!=null}}{{value.userRank}}{{/if}}</td>
+							<td>
+								<@a code="160706" href="javascript:void(0)" class="table_btn l" id="show-edit" onclick="rankEdit('{{value.autUser.id}}','{{value.autUser.fullName}}','{{value.userRank}}',this)" text="排序编辑"/>
+							</td>
+						</tr>
+					{{/each}}
+					</script>
+									<!-- 	<td>{{if value.autUser.isAccountExpired == 1}}<font color="red">过期</font>{{/if}}{{if value.autUser.isAccountExpired == 0}}<font color="green">正常</font>{{/if}}</td>
+										<td>{{if value.autUser.isAccountLocked == 1}}<font color="red">锁定</font>{{/if}}{{if value.autUser.isAccountLocked == 0}}<font color="green">正常</font>{{/if}}</td>
+										<td>{{if value.autUser.isCredentialsExpired == 1}}<font color="red">过期</font>{{/if}}{{if value.autUser.isCredentialsExpired == 0}}<font color="green">正常</font>{{/if}}</td>
+									 --></tbody>
+								</table>
+							</div>
+							<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+								<div id="pagingRank-footer" class="page" style="background-color: white; text-align: center;"></div>
+							</div>
+					</div>
+   				 
+   				 </div>
+	  		</div>
+	</div>  
+	
+	<!-- 新增对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 40px; z-index: 19940200;" id="win-add-object">
+		<form class="layui-form layui-form-pane" id="add-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item" id="userNameed">
+				<label class="layui-form-label">账号</label>
+				<div class="layui-input-block">
+					<input type="text" name="userName" id="userName_add" lay-verify="required|spactily|length50" maxlength="50" autocomplete="off" placeholder="账号" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item" id="fullNameed">
+				<label class="layui-form-label">用户名</label>
+				<div class="layui-input-block">
+					<input type="text" name="fullName" id="fullName_add" lay-verify="required|spactily|length50" maxlength="50" autocomplete="off" placeholder="姓名" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item" id="userPwded">
+				<label class="layui-form-label">密码</label>
+				<div class="layui-input-block">
+                  <input type="text" class="layui-input" id="userPwd_add" name="userPwd"  lay-verify="required|pass" maxlength="50" placeholder="请输入密码" autocomplete="off"> 
+				</div>
+			</div>
+		<!-- 	<div class="layui-form-item">
+				<label class="layui-form-label">密码确认</label>
+				<div class="layui-input-block">
+					<input type="password" name="userPwd2" id="userPwd2" lay-verify="required|checkRepwd" autocomplete="off" placeholder="新密码确认" class="layui-input">
+				</div>
+			</div> -->
+			<div class="layui-form-item">
+				<label class="layui-form-label">手机号</label>
+				<div class="layui-input-block">
+					<input type="text" oninput="if(value.length>11)value=value.slice(0,11)" name="phoneNumber" id="phoneNumber_add" lay-verify="required|phone" autocomplete="off" placeholder="手机号" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">办公电话</label>
+				<div class="layui-input-block">
+					<input type="text" name="telNumber" id="telNumber_add"  maxlength="30"  onkeyup="value=value.replace(/[^\d\-\,]/g,'')" lay-verify="" autocomplete="off" placeholder="办公电话" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">邮箱</label>
+				<div class="layui-input-block">
+					<input type="text" name="userEmail" id="userEmail_add"   maxlength="30"  autocomplete="off" placeholder="邮箱" class="layui-input userEmail">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">传真</label>
+				<div class="layui-input-block">
+					<input type="text" name="faxNumber" id="faxNumber_add" maxlength="30" lay-verify="" autocomplete="off" placeholder="传真" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">胸牌号</label>
+				<div class="layui-input-block">
+					<input type="text" name="chestCardNumber" maxlength="30" id="chestCardNumber_add" lay-verify="" autocomplete="off" placeholder="胸牌号" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">执法证号</label>
+				<div class="layui-input-block">
+					<input type="text" name="lawNumber" id="lawNumber_add" maxlength="15" lay-verify="" autocomplete="off" placeholder="执法证号" class="layui-input">
+				</div>
+			</div>
+			
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<@select dict="IS_ACTIVE" layVerify="required" id="isActive_add" name="isActive" class="layui-input-block" def="1 "/>
+			</div>
+			<!-- <div class="layui-form-item">
+				<label class="layui-form-label">账号状态</label>
+				<@select dict="IS_EXPIRED" layVerify="required" id="isAccountExpired" name="isAccountExpired" class="layui-input-block" def=""/>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否锁定</label>
+				<@select dict="IS_LOCKED" layVerify="required" id="isAccountLocked" name="isAccountLocked" class="layui-input-block" def=""/>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">证书状态</label>
+				<@select dict="IS_EXPIRED" layVerify="required" id="isCredentialsExpired" name="isCredentialsExpired" class="layui-input-block" def=""/>
+			</div> -->
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+
+		</form>
+	</div>
+	<!-- 编辑对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 40px;" id="win-update-object">
+		<form class="layui-form layui-form-pane" id="update-object-form">
+			<input type="hidden" name="id" id="id">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item" id="userName_edit">
+				<label class="layui-form-label" >账号</label>
+				<div class="layui-input-block">
+					<input disabled type="text" name="userName" id="userName" lay-verify="required" autocomplete="off" placeholder="账号" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item" id="fullName_edit">
+				<label class="layui-form-label">用户名</label>
+				<div class="layui-input-block">
+					<input type="text" name="fullName" id="fullName" lay-verify="required|spactily|length50" maxlength="50"  autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item" id="userPwd_edit">
+				<label class="layui-form-label">密码</label>
+				<div class="layui-input-block">
+				    <input type="password" class="layui-input" id="userPwd" name="userPwd"  lay-verify="required|pass" maxlength="50" placeholder="请输入密码" autocomplete="off" onfocus="this.type='password'"> 
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">邮箱</label>
+				<div class="layui-input-block">
+					<input type="text" name="userEmail" id="userEmail"  autocomplete="off" placeholder="邮箱" class="layui-input userEmail">
+				</div>
+			</div>
+			<!-- <div class="layui-form-item">
+				<label class="layui-form-label">密码确认</label>
+				<div class="layui-input-block">
+					<input type="text" name="userPwd2" id="userPwd2" lay-verify="required|checkRepwd2" autocomplete="off" onfocus="this.type='password'" placeholder="密码确认" class="layui-input">
+				</div>
+			</div> -->
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<@select dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive" class="layui-input-block" def=""/>
+			</div>
+			
+			<div class="layui-form-item">
+				<label class="layui-form-label">手机号码</label>
+				<div class="layui-input-block">
+					<input type="text" name="phoneNumber" id="phoneNumber" lay-verify="required|phone" autocomplete="off" placeholder="" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">办公电话</label>
+				<div class="layui-input-block">
+					<input type="text" name="telNumber" id="telNumber" lay-verify="" onkeyup="value=value.replace(/[^\d\-\,]/g,'')" autocomplete="off" placeholder="" class="layui-input">
+				</div>
+			</div>
+		<!-- 	<div class="layui-form-item">
+				<label class="layui-form-label">账号状态</label>
+				<@select dict="IS_EXPIRED" layVerify="required" id="isAccountExpired" name="isAccountExpired" class="layui-input-block" def=""/>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否锁定</label>
+				<@select dict="IS_LOCKED" layVerify="required" id="isAccountLocked" name="isAccountLocked" class="layui-input-block" def=""/>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">证书状态</label>
+				<@select dict="IS_EXPIRED" layVerify="required" id="isCredentialsExpired" name="isCredentialsExpired" class="layui-input-block" def=""/>
+			</div> -->
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-update-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<!-- <button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button> -->
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 详情对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 40px;margin-bottom:60px;" id="win-view-object">
+		<form class="layui-form layui-form-pane" id="view-object-formDetal">
+		<div class="inp_dis">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" name="userId" id="userIdDetail">
+			<div class="layui-form-item">
+				<label class="layui-form-label">账号</label>
+				<div class="layui-input-block">
+					<input type="text" name="userName" id="userName_detail" lay-verify="required" autocomplete="off" placeholder="账号" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">用户名</label>
+				<div class="layui-input-block">
+					<input type="text" name="fullName" id="fullName_detail" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">邮箱</label>
+				<div class="layui-input-block">
+					<input type="text" name="userEmail" id="userEmail_detail" autocomplete="off" placeholder="邮箱" class="layui-input userEmail">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<@select dict="IS_ACTIVE" layVerify="required" id="isActive_detail" name="isActive" class="layui-input-block" def=""/>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">创建时间</label>
+				<div class="layui-input-block">
+					<input type="text" name="createTime" id="createTime_detail" lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">修改时间</label>
+				<div class="layui-input-block">
+					<input type="text" name="lastUpdateTime" id="lastUpdateTime_detail" lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">手机号码</label>
+				<div class="layui-input-block">
+					<input type="text" name="phoneNumber" id="phoneNumber_detail" lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">办公电话</label>
+				<div class="layui-input-block">
+					<input type="text" name="telNumber" id="telNumber_detail" lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">部门</label>
+				<div class="layui-input-block">
+					<input type="text" name="deptName" id="deptName_detail" lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">岗位</label>
+				<div class="layui-input-block">
+					<input type="text" name="positionName" id="positionName_detail" lay-verify="required" autocomplete="off" placeholder="" class="layui-input">
+				</div>
+			</div>
+			 <!-- <div class="layui-form-item">
+				<label class="layui-form-label">账号状态</label>
+				<@select dict="IS_EXPIRED" layVerify="required" id="isAccountExpired" name="isAccountExpired" class="layui-input-block" def=""/>
+			</div> 
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否锁定</label>
+				<@select dict="IS_LOCKED" layVerify="required" id="isAccountLocked" name="isAccountLocked" class="layui-input-block" def=""/>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">证书状态</label>
+				<@select dict="IS_EXPIRED" layVerify="required" id="isCredentialsExpired" name="isCredentialsExpired" class="layui-input-block" def=""/>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">版本号</label>
+				<div class="layui-input-block">
+					<input type="text" name="version" id="version" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">创建时间</label>
+				<div class="layui-input-block">
+					<input type="text" name="createTime" id="createTime" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">创建者</label>
+				<div class="layui-input-block">
+					<input type="text" name="createUserName" id="createUserName" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">修改时间</label>
+				<div class="layui-input-block">
+					<input type="text" name="lastUpdateTime" id="lastUpdateTime" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">修改者</label>
+				<div class="layui-input-block">
+					<input type="text" name="lastUpdateUserName" id="lastUpdateUserName" lay-verify="required" autocomplete="off" placeholder="昵称"
+						class="layui-input">
+				</div>
+			</div>-->
+		</div>
+		<!-- <fieldset class="layui-elem-field" style="padding: 10px;" id="add-fieldset">
+			<legend>用户详情</legend>
+			<div class="wrap"></div> 
+		</fieldset> --> 
+		
+			<div class="btn_fixed">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>			
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+			</div>
+		</form>
+	</div>
+	<!-- 分配角色 -->
+	<div id="auth-div" style="display: none; padding-left: 10px; padding-right: 10px;">
+		<input type="hidden" name="userId" id="userId">
+		<div class="layui-field-box layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table">
+				<tbody id="paging2-data">
+					<script id="paging2-script" type="text/html">
+					<tr>
+						<td style="width:100%;white-space: normal;">
+					    {{each records value index}}
+							<input {{if value.isCheck == 1}}checked{{/if}} type="checkbox" lay-filter="checknodes" value="{{value.autRole.id}}" name="" title="{{value.autRole.roleName}}" style="height:40px;">
+                          {{/each}}
+						</td>
+					</tr>
+					</script>
+				</tbody>
+			</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging2-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	<!-- 添加部门 -->
+	<div id="create-div" class="layui-layer-wrap" style="display:none; padding-left: 10px; padding-right: 10px;margin-bottom:60px;">
+		<form id="add-user-form" ></form>	
+		<div class="layui-field-box" style="padding: 0 0 22px 0;">
+			<ul id="treeDemo1" class="ztree treeDemo1 tree_left" name="treeDemo1" style="margin-bottom:60px;"></ul>
+		    <!-- 岗位 -->
+			<div id="post_list" class="tree_right" style="margin-bottom:60px;">
+				<div class="layui-form" style="padding: 0 0 10px 0; margin-left: 10px;">
+					<div id="PositonDiv" style="height:100px; overflow-y:auto">
+					</div>
+					<table class="layui-table admin-table">
+						<thead>
+							<tr>
+								<th style="width: 20px;display:none;"><input type="checkbox"
+									lay-skin="primary" lay-filter="paging_check-all"></th>
+								<th style="display: none;">用户ID</th>
+								<th>岗位名称</th>
+								<th>是否激活</th>
+								<th>操作</th>		
+							</tr>
+						</thead>
+						<tbody id="paging3-data">
+							<script id="paging3-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td style="display:none;"><input type="checkbox" lay-skin="primary" class="check-id" name="autPositionId" id="{{value.autPosition.id}}"></td>
+							<td>{{if value.autPosition.positionName!=null}}{{value.autPosition.positionName}}{{/if}}</td>
+							<td>{{if value.autPosition!=null}}{{if value.autPosition.isActive == 1}}<font color="green">激活</font>{{/if}}{{if value.autPosition.isActive == 0}}<font color="red">冻结</font>{{/if}}{{/if}}</td>
+						    <td>
+                             {{if value.autPosition!=null}}
+                             <@a code="160709" href="javascript:void(0)" class="table_btn" id="show-delete" onclick="cteatePositon('{{value.autPosition.id}}','{{value.autPosition.isActive}}')" text="添加岗位"/>
+                             <@a code="160710" href="javascript:void(0)" class="table_btn" id="show-delete" onclick="deletePositon('{{value.autPosition.id}}')" text="删除岗位"/>
+                             {{/if}}
+                             </td>	
+
+						</tr>
+					{{/each}}
+					</script>
+						</tbody>
+					</table>
+				</div>
+				
+				  <div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+					    <div id="paging3-footer" class="page"style="background-color: white; text-align: center;"></div>
+				   </div>
+			</div>
+				
+		  <!--  <div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="react();"><i class="fa fa-backward"></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit2" id="btnc" onclick="createBu(this)">
+						<i class="fa fa-save"></i> 保存
+					</button>
+			
+				</div>
+			</div> -->
+		</div>
+	</div>
+	
+	<!-- 新增用户排序 -->
+    <div style="padding: 10px; display: none; padding-right: 10px; z-index: 19940200;"
+		id="newuserpai">
+		<form class="layui-form layui-form-pane" id="newuserpai-form">
+			<input type="hidden" name="${_csrf.parameterName}"
+				value="${_csrf.token}" /> 
+			<div class="layui-form-item">
+				<label class="layui-form-label">用户名</label>
+				<div class="layui-input-block">
+					<input type="text" name="" id="positionName_postDet"
+						autocomplete="off" readonly class="layui-input" lay-verify="" min="0" maxlength="5" >
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序号</label>
+				<div class="layui-input-block">
+					<input type="text" name="userRank" id="positionName_rank"
+						autocomplete="off" class="layui-input" lay-verify="" min="0" maxlength="10"onkeyup="clearNoNum(this)"  >
+				</div>
+			</div>
+		</form>
+	</div>
+	<input  type="hidden" id="yinC" />
+		
+     <!--  添加部门弹窗id隐藏域	 -->		
+	<input  type="hidden" id="btncYin" />
+	<script type="text/javascript" src="../../web/plugins/layui/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript" src="../../web/js/tool.js"></script>
+	<script>
+	   
+		var pform,initLoadIndex;
+		//添加事件
+		layui.use(['form','element'], function() {
+			var element = layui.element;
+			pform = layui.form();
+			pform.on('select(isActive)', function(data) {
+				//alert(data.value);
+				//form.render('checkbox');
+			});
+			//自定义表单校验
+			pform.verify({
+				checkRepwd : function(value) {
+					if (value != $("#add-object-form").find("#userPwd").val()) {
+						return "两次输入的密码不一致";
+					}
+				},
+				checkRepwd2 : function(value) {
+					if (value != $("#update-object-form").find("#userPwd").val()) {
+						return "两次输入的密码不一致";
+					}
+				},
+				pwdLength : function(value){
+					if(value.length < 8) {
+						return '密码长度至少8位';
+					}
+				},
+		/* 		E_word : function(value){
+					if(!new RegExp("^[a-zA-Z0-9_\s·]+$").test(value)) {
+						return '请填写英文或数字';
+					}
+				}, */
+				//限制特殊字符
+				spactily : function(value){
+					if (new RegExp("[':;' \"\",\\[\\]——|‘；：”“']").test(value)){
+						return '不能输入;\'\"'
+					}
+					
+				},
+				special:function(value){
+					var pattern = new RegExp("[`~!@#$^&*()=|{}':',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，？]"); 
+					if(pattern.test(value)){
+					     return "不能输入特殊字符";
+					} 
+				},
+				  //限制输入的长度为200
+                textLength200 : function(value) {
+                    if (value.length>200) {
+                        return "长度不能超过200个字符";
+                    }
+                },
+                //限制输入的长度为100
+                textLength100 : function(value) {
+                    if (value.length>100) {
+                        return "长度不能超过100个字符";
+                    }
+                },
+                //限制输入的长度为10
+                textLength10 : function(value) {
+                    if (value.length>10) {
+                        return "长度不能超过10个字符";
+                    }
+                },
+                //限制输入的长度为10
+                numberLength10 : function(value) {
+                    if (value.length>10) {
+                        return "数字不能超过10位";
+                    }
+                },
+                length20:function(value){
+                	if(value.length>20){
+                		return "长度不能超过20个字符"
+                	}
+                },
+                length50:function(value){
+                	if(value.length>50){
+                		return "长度不能超过50个字符"
+                	}
+                },
+                pass: [
+   				    /^[\S]{6,18}$/
+   				    ,'密码必须6到18位，且不能出现空格'
+   				  ]
+			});
+			//监听新增提交
+			pform.on('submit(form-add-submit)', function(data) {
+				var a= jy('add-object-form');
+				if(a==false){
+					return false;
+				};
+				layer.confirm('确定提交吗 ?', {
+                    icon: 3,
+                    title: '提示'
+                },function(index){
+                 layer.close(index);
+                 initLoadIndex = layer.load(2, {});
+				tool.post("../autUser/add", $("#add-object-form").serialize(), postCallBack, true);
+                });
+				return false;
+			});
+			//监听编辑提交
+			pform.on('submit(form-update-submit)', function(data) {
+				
+				 var a=jy('update-object-form');
+				if(a==false){
+					return false;
+				};
+				tool.post("../autUser/update", $("#update-object-form").serialize(), postCallBack_edit, false); 
+				return false;
+			});
+			//监听详情中的新增编辑提交
+			pform.on('submit(form-detail-submit)', function(data) {
+				isexist();
+				tool.post("../autUserInfo/addOrUpdateBatch", $("#view-object-formDetal").serialize(), postCallBack, false);
+				return false;
+			});
+			//勾选监听
+			  pform.on('checkbox(checknodes)', function(data) {
+				var isCheck = data.elem.checked ? 1 : 0;
+				var id = data.value;
+				var userId = $("#auth-div #userId").val();
+				var _csrf = $("#_csrf").val();
+				var param = "_csrf=" + _csrf + "&isCheck=" + isCheck + "&id=" + id + "&userId=" + userId;
+				tool.post("../autUser/setAuth", param, function(retMsg) {
+					if(retMsg.code==0){
+						tool.success(retMsg.message);						
+					}else{
+						tool.error(retMsg.message);
+					}
+				}, true);
+				 return false;
+			});  
+			//监听添加部门
+			pform.on('submilt(form-seciton-submit)',function(data){
+				
+			})
+			//初始化出发数据加载
+			loadData();
+			loadData_rank();
+		});
+		//加载数据
+		function loadData() {
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+			param.url = "../autUser/voList";
+			param.userName = $("#searchKey").val();
+			tool.loadpage(param);
+		}
+		//排序列表
+		function loadData_rank() {
+			var param = new Object();
+			param.container = "pagingRank";
+			param.pageSize = 10;
+			param.url = "../autUser/rankList";
+			param.userName = $("#searchKey_rank").val();
+			tool.loadpage(param);
+		}
+		//编辑排序
+		function rankEdit(id,userName,rank,myself){
+			pageBtn=myself;
+			$("#positionName_postDet").val(userName);
+			$("#positionName_rank").val(rank);
+			layer.open({
+			    title : '人员排序编辑',
+				maxmin : false,
+				type : 1,
+				area: ['300px', '300px'],
+				content : $('#newuserpai'),
+				btn:['保存','取消'],
+				yes:function(index, layero){
+				var value=$("#positionName_rank").val();
+					if(value==""||value==null){
+						tool.error("排序后不能为空")
+					}else{
+					
+						var paramObj={};
+						paramObj.id = id;
+						paramObj._csrf = $("#_csrf").val();
+						paramObj.userRank = value;
+						tool.post("../autUserRank/updateRank", paramObj, postCallBack_editRank, false); 
+					}
+					
+			
+				},
+				btn2:function(index, layero){
+				}
+			});
+			pform.render();
+		}
+		
+		function clearNoNum(obj){ 
+/* if(!/^[1-9]{1,1}\d{0,4}(\.\d{1,2})?$/.test(obj.value)){
+				
+			} */
+		    obj.value = obj.value.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+		    obj.value = obj.value.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的  
+		    obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$","."); 
+		    obj.value = obj.value.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');//只能输入两个小数  
+		    if(obj.value.indexOf(".")< 0 && obj.value !=""){//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额 
+		        obj.value= parseFloat(obj.value); 
+		    } 
+		    if(/\d{6,}/g.test(obj.value)){
+		    	 obj.value="";
+		    }
+		} 
+		function postCallBack_editRank(retMsg){
+			if (retMsg.code == 0) {
+				 layer.alert(retMsg.message, { 
+	                    title : "操作提示",
+	                    icon : 1,
+	                    closeBtn:0
+	                }, function(index) {
+	                	var laypageBtn=$(pageBtn).parents(".admin-table").parent().next().find(".layui-laypage-btn");
+	                	if(laypageBtn.length>0){
+	                		laypageBtn.trigger("click");
+	                	}else{
+	                		loadData_rank();
+	                	}
+	   				    layer.closeAll();
+	                });
+			} else {
+				tool.error(retMsg.message);
+			}
+			
+		}
+		function jy(father){
+			    var str="";
+			    if(father=="add-object-form"){
+			    	str="_add";
+			    }else{
+			    	str="";
+			    }
+			   /* 办公电话不必填--填则校验 */
+			 	var telNumber=$("#"+father).find('#telNumber'+str).val();
+			 	if(telNumber!=""&&telNumber!=undefined){ 
+			 	  var telNumbers=telNumber.split(",")
+			      for(var i=0;i<telNumbers.length;i++){
+			    	        var telNumber=telNumbers[i];
+							if(!/^(\(\d{3,4}\)|\d{3,4}-|\s)?\d{7,14}$/.test(telNumber)){
+							   tool.error("填写正确的办公电话！");
+						       return false;
+							}
+			       }
+			 	} 
+				/* 邮箱不必填--填则校验 */
+				var userMail =$("#"+father).find('#userEmail'+str).val();
+				var userMailReg =/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/; 
+				if(userMail!=""&&userMail!=undefined){
+					 if (!userMailReg.test(userMail)) {
+				          tool.error("请填写正确的邮箱地址！");
+				          return false;
+				        }
+				}
+				/* 传真不必填--填则校验 */
+			 	var companyFax =$('#faxNumber'+str).val();
+				var companyFaxReg =/^[+]{0,1}(\d){1,3}[ ]?([-]?((\d)|[ ]){1,12})+$/;
+				if(companyFax!=""&&companyFax!=undefined){
+					 if (!companyFaxReg.test(companyFax)) {
+				          tool.error("请填写正确的传真！");
+				          return false;
+				        }
+				} 
+		}
+		//获取勾选数据id
+		function getCheckItmes() {
+			$(".check-id:checked").each(function() {
+				
+			});
+		}
+		//打开新增对象窗口
+		function openAddWin() {
+			  $(".nav_child").css("display","none");
+			$("#userPwded").remove();
+			$("#fullNameed").remove();
+		 	$("#userNameed").after(
+		 			'<div class="layui-form-item" id="fullNameed">'+
+					'<label class="layui-form-label">用户名</label>'+
+					'<div class="layui-input-block">'+
+						'<input type="" name="fullName" id="fullName_add" lay-verify="required|spactily|length50" maxlength="50" autocomplete="off" placeholder="姓名" class="layui-input">'+
+					'</div>'+
+				    '</div>'+
+					'<div class="layui-form-item" id="userPwded">'+
+					'<label class="layui-form-label">密码</label>'+
+					'<div class="layui-input-block">'+
+	                 '<input type="text" class="layui-input" id="userPwd_add" name="userPwd"  lay-verify="required|pass" maxlength="50" placeholder="请输入密码" autocomplete="off" >'+ 
+					'</div>'+
+				'</div>'
+			)
+			$("#win-add-object").find("#userPwd_add").focus(function(){
+				$(this).attr("type","password")
+			})
+			$("#win-add-object").find("#fullName_add").focus(function(){
+				$(this).attr("type","text")
+			})
+			$("#win-add-object").find("#isActive_add").val("1")
+			var index = layer.open({
+				title : '新增',
+				maxmin : false,
+				type : 1,
+				content : $('#win-add-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		//新增对象回调
+		function postCallBack(retMsg) {
+			layer.close(initLoadIndex);
+			if (retMsg.code == 0) {
+				 layer.alert(retMsg.message, {
+	                    title : "操作提示",
+	                    icon : 1,
+	                    closeBtn:0
+	                }, function(index) {
+	                	$("#paging3-data").empty();
+	                	$("button[type='reset']").trigger("click");
+	                	loadData();
+	   				    layer.closeAll();
+	                });
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+		//编辑分页不变
+		function postCallBack_edit(retMsg) {
+			if (retMsg.code == 0) {
+				 layer.alert(retMsg.message, {
+	                    title : "操作提示",
+	                    icon : 1,
+	                    closeBtn:0
+	                }, function(index) {
+	                	var laypageBtn=$(pageBtn).parents(".admin-table").parent().next().find(".layui-laypage-btn");
+	                	if(laypageBtn.length>0){
+	                		laypageBtn.trigger("click");
+	                	}else{
+	                		loadData();
+	                	}
+	                	$("#paging3-data").empty();
+	                	$("button[type='reset']").trigger("click");
+	   				    layer.closeAll();
+	                });
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+		function postCallBack_hehe(retMsg) {
+			if (retMsg.code == 0) {
+				 layer.alert(retMsg.message, {
+	                    title : "操作提示",
+	                    icon : 1,
+	                    closeBtn:0
+	                }, function(index) {
+	   				    layer.close(index);
+	                });
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+		//编辑对象
+		var pageBtn;
+		function showEdit(id,myself) {
+			   $(".nav_child").css("display","none");
+			   pageBtn=myself;
+			  $("#fullName_edit").remove();
+			  $("#userPwd_edit").remove();
+			  $("#userName_edit").after(
+					  '<div class="layui-form-item" id="fullName_edit">'+
+						'<label class="layui-form-label">用户名</label>'+
+						'<div class="layui-input-block">'+
+							'<input type="" name="fullName" id="fullName" lay-verify="required|spactily|length50" maxlength="50" autocomplete="off" placeholder="昵称" class="layui-input">'+
+						'</div>'+
+					'</div>'+
+					'<div class="layui-form-item" id="userPwd_edit">'+
+						'<label class="layui-form-label">密码</label>'+
+						'<div class="layui-input-block">'+
+						    '<input type="text" class="layui-input" id="userPwd" name="userPwd" lay-verify="" maxlength="50" placeholder="留空表示不修改密码" autocomplete="off" >'+ 
+						'</div>'+
+					'</div>'
+			  )
+			  
+			$("#win-update-object").find("#userPwd").focus(function(){
+				$(this).attr("type","password")
+			})
+			$("#win-update-object").find("#fullName").focus(function(){
+				$(this).attr("type","text")
+			})
+			
+			
+			var object = tool.getById("../autUser/getById", id);
+			for ( var key in object.autUser) {
+				$("#update-object-form").find("#" + key).val(object.autUser[key]);
+			}
+			  $("#update-object-form").find("#phoneNumber").val(object.autUserPub.phoneNumber);
+			  $("#update-object-form").find("#telNumber").val(object.autUserPub.telNumber);
+			//$("#update-object-form").find("#userPwd2").val(object.userPwd);
+			  $("#update-object-form").find("#isActive").val(object.autUser.isActive);
+			  $("#win-update-object").find("#userPwd").val("");
+			var index = layer.open({
+				title : '编辑',
+				maxmin : false,
+				type : 1,
+				content : $('#win-update-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		//详情对象
+		var a ;
+		function showView(id) { 
+			var object = tool.getById("../autUser/getById", id);
+			var newobject =  $.extend(object.autDepartment,object.autUser,object.autUserPub,object.autPosition);
+			for ( var key in newobject) {
+				$("#view-object-formDetal").find("#" + key+"_detail").val(newobject[key]);
+			}
+			 $("#view-object-formDetal").find("#createTim_detaile").val(object.autUser.createTime);
+			 $("#view-object-formDetal").find("#lastUpdateTime_detail").val(object.autUser.lastUpdateTime);
+			 $("#view-object-formDetal").find("#isActive_detail").val(object.autUser.isActive);
+			 
+	/* 		var object2 = tool.getById("../autUserInfo/getListByUserId", id);
+			console.log(object2);
+			$(".wrap").empty();
+			var selectArr=[];
+			var str1 = '';
+			for (var i = 0; i < object2.length; i++) {
+				var id = "'" + object2[i].id + "'";
+				var userId = object2[i].userId;
+				
+				str1 += '<div class="update-dict-key-value">';
+				str1 += '<input type="hidden" name="userInfoList['+i+'].id" class="id_key" value="'+object2[i].id+'">';
+				str1 += '<input type="hidden" name="userInfoList['+i+'].userId" class="userId_key" value="'+object2[i].userId+'">';
+				str1 += '<div class="layui-form-item layui-input-inline">';
+				str1 += '<label class="layui-form-label label_m">属性内容</label>';
+					str1 += '<div class="layui-input-block1">';
+						str1 += '<input type="text" name="userInfoList['+i+'].userValue" value="'+object2[i].userValue+'" class="value_key layui-input" lay-verify="required" autocomplete="off" placeholder="属性内容">';
+					str1 += '</div>';
+				str1 += '</div>';
+				str1 += '<div class="layui-form-item layui-input-inline">';
+				str1 += '<label class="layui-form-label label_m">属性键值</label>';
+					str1 += '<div class="layui-input-block1">';
+						str1 += '<input type="text" name="userInfoList['+i+'].userKey" value="'+object2[i].userKey+'" class="key_key layui-input" lay-verify="required|E_word" autocomplete="off" placeholder="属性键值">';
+					str1 += '</div>';
+				str1 += '</div>';
+				str1 += '<div class="layui-form-item layui-input-inline">';
+					str1 += '<label class="layui-form-label label_m">属性名称</label>';
+					str1 += '<div class="layui-input-block1">';
+						str1 += '<input type="text" name="userInfoList['+i+'].description" value="'+object2[i].description+'" class="description_key layui-input" lay-verify="required" autocomplete="off" placeholder="属性名称">';
+					str1 += '</div>';
+				str1 += '</div>';
+				str1 += '<div class="layui-form-item layui-input-inline">';
+					str1 += '<label class="layui-form-label label_m">是否激活</label>';
+					str1 += '<div class="layui-input-block1">';
+						str1 += '<select name="userInfoList['+i+'].isActive" class="isActive_key ">';
+							str1 += '<option value="">请选择</option>'; 
+							str1 += '<option value="1">激活</option>';
+							str1 += '<option value="0">冻结</option>';
+						str1 += '</select>';
+					str1 += '</div>';
+				str1 += '</div>';
+				str1 += '<div class="layui-form-item layui-input-inline">';
+					str1 += '<span><@a code="" href="javascript:void(0)" class="layui-btn layui-btn-primary" id="" onclick="deletes('+id+')" text="删除"/></span>'; 
+					str1 += '<span><@a code="" href="javascript:void(0)" class="layui-btn layui-btn-primary" id="" onclick="operate2(2,this)" text="新增"/></span>';
+				str1 += '</div>';
+				str1 += '</div>'; 
+				selectArr.push(object2[i].isActive);
+			}
+			$(str1).appendTo(".wrap");
+			
+			$(".isActive_key").each(function(index,value){
+				$(this).val(selectArr[index])
+			})
+			//没有任何一条数据在情况
+		 	var str = '';
+			if ($(".update-dict-key-value").length == 0) {
+				//新增
+				var l = $(".update-dict-key-value").length;
+				str += '<div class="update-dict-key-value">';
+				str += '<input type="hidden" name="userInfoList['+l+'].id" class="id_key" value="">';
+				str += '<input type="hidden" name="userInfoList['+l+'].userId" class="userId_key" value="'+id+'">';
+				str += '<div class="layui-form-item layui-input-inline">';
+				str += '<label class="layui-form-label label_m">属性内容</label>';
+					str += '<div class="layui-input-block layui-input-block1">';
+						str += '<input type="text" name="userInfoList['+l+'].userValue" class="value_key layui-input val_n" lay-verify="required" autocomplete="off" placeholder="属性内容">';
+					str += '</div>';
+				str += '</div>';
+				str += '<div class="layui-form-item layui-input-inline">';
+				str += '<label class="layui-form-label label_m">属性键值</label>';
+					str += '<div class="layui-input-block layui-input-block1">';
+						str += '<input type="text" name="userInfoList['+l+'].userKey" class="key_key layui-input val_n" lay-verify="required|E_word" autocomplete="off" placeholder="属性键值">';
+					str += '</div>';
+				str += '</div>';
+				str += '<div class="layui-form-item layui-input-inline">';
+					str += '<label class="layui-form-label label_m">属性名称</label>';
+					str += '<div class="layui-input-block layui-input-block1">';
+						str += '<input type="text" name="userInfoList['+l+'].description" class="description_key layui-input val_n" lay-verify="required" autocomplete="off" placeholder="属性名称">';
+					str += '</div>';
+				str += '</div>';
+				str += '<div class="layui-form-item layui-input-inline">';
+					str += '<label class="layui-form-label label_m">是否激活</label>';
+					str += '<div class="layui-input-block layui-input-block1">';
+						str += '<select name="userInfoList['+l+'].isActive" class="isActive_key val_n">';
+							str += '<option value="">请选择</option>';
+							str += '<option value="1">激活</option>';
+							str += '<option value="0">冻结</option>';
+						str += '</select>';
+					str += '</div>';
+				str += '</div>';
+				str += '<div class="layui-form-item layui-input-inline">';
+					str += '<span><@a code="" href="javascript:void(0)" class="layui-btn layui-btn-primary" id="" onclick="operate2(1,this)" text="删除"/></span>'; 
+					str += '<span><@a code="" href="javascript:void(0)" class="layui-btn layui-btn-primary" id="" onclick="operate2(2,this)" text="新增"/></span>';
+				str += '</div>';
+				str += '</div>'; 
+			}
+			$(str).appendTo(".wrap");  */
+			$('.inp_dis :input').attr("disabled", "disabled");
+			var index = layer.open({
+				title : '详情',
+				maxmin : false,
+				type : 1,
+				content : $('#win-view-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		//删除部门
+		function deletes(id) {
+			if ($(".update-dict-key-value").length == 1) {
+				tool.error("至少要有一个key-value值");
+				return;
+			}
+			else{
+				layer.confirm('确定删除 ?', {
+					icon : 3,
+					title : '提示'
+				}, function() {
+					tool.deleteById("../autUserInfo/delete", id); 
+					layer.alert("删除成功", {
+						title : "操作提示",
+						icon : 1
+					}, function(index) {
+						layer.closeAll();
+						loadData();
+					});
+				})
+			}	
+		}
+		var userId=$(".userId_key").val();
+		function operate2(flag, obj) {
+			if (flag == 1) {
+				 $(obj).parent().parent().parent().remove(); 
+			} else {	
+				//新增
+				var l = $(".update-dict-key-value").length;
+				var userId=$(".userId_key").val();
+				/* console.log("新增"+userId) */
+				var str = '';
+				str += '<div class="update-dict-key-value">';
+				str += '<input type="hidden" name="userInfoList['+l+'].id" class="id_key" value="">';
+				str += '<input type="hidden" name="userInfoList['+l+'].userId" class="userId_key" value="'+userId+'">';
+				str += '<div class="layui-form-item layui-input-inline">';
+				str += '<label class="layui-form-label label_m">属性内容</label>';
+					str += '<div class="layui-input-block layui-input-block1">';
+						str += '<input type="text" name="userInfoList['+l+'].userValue" class="value_key layui-input val_n" lay-verify="required" autocomplete="off" placeholder="属性内容">';
+					str += '</div>';
+				str += '</div>';
+				str += '<div class="layui-form-item layui-input-inline">';
+				str += '<label class="layui-form-label label_m">属性键值</label>';
+					str += '<div class="layui-input-block layui-input-block1">';
+						str += '<input type="text" name="userInfoList['+l+'].userKey" class="key_key layui-input val_n" lay-verify="required|E_word" autocomplete="off" placeholder="属性键值">';
+					str += '</div>';
+				str += '</div>';
+				str += '<div class="layui-form-item layui-input-inline">';
+					str += '<label class="layui-form-label label_m">属性名称</label>';
+					str += '<div class="layui-input-block layui-input-block1">';
+						str += '<input type="text" name="userInfoList['+l+'].description" class="description_key layui-input val_n" lay-verify="required" autocomplete="off" placeholder="属性名称">';
+					str += '</div>';
+				str += '</div>';
+				str += '<div class="layui-form-item layui-input-inline">';
+					str += '<label class="layui-form-label label_m">是否激活</label>';
+					str += '<div class="layui-input-block layui-input-block1">';
+						str += '<select name="userInfoList['+l+'].isActive" class="isActive_key val_n">';
+							str += '<option value="">请选择</option>';
+							str += '<option value="1">激活</option>';
+							str += '<option value="0">冻结</option>';
+						str += '</select>';
+					str += '</div>';
+				str += '</div>';
+				str += '<div class="layui-form-item layui-input-inline">';
+					str += '<span><@a code="" href="javascript:void(0)" class="layui-btn layui-btn-primary" id="" onclick="operate2(1,this)" text="删除"/></span>'; 
+					str += '<span><@a code="" href="javascript:void(0)" class="layui-btn layui-btn-primary" id="" onclick="operate2(2,this)" text="新增"/></span>';
+				str += '</div>';
+				str += '</div>'; 
+				
+				$(str).appendTo(".wrap");
+			}
+			//重新渲染
+			pform.render();
+		}
+		//检查是否有相同key值
+		function isexist(){
+			var _csrf = $("#_csrf").val();
+			var userId=$(".userId_key").val();
+			var key=$(".key_key").val(); 
+			var data = {
+					userId:userId,
+					key:key,
+					_csrf:_csrf
+				} 
+			checkName();
+			var exist = tool.post("../autUserInfo/validate",data,function(){},false);
+			/* function callBackIsexist(data){
+				if (data.code == 0) {
+					tool.success(data.message);
+					loadData();
+				} else {
+					tool.error(data.message);
+				}   
+			} */
+			pform.render();
+		}
+		//校验页面input值不能一致
+		
+		function checkName(data){
+			var oldvalues=[];
+		    $(".key_key").each(function(i,item){
+		        var value=$(this).val();
+		        oldvalues.push(value);//获取所有的名称 
+		    });
+		    
+		    var nary=oldvalues.sort();
+			for(var i=0;i<oldvalues.length;i++){
+				for(var j = oldvalues.length-1;j>i;j--){
+					if (nary[i]==nary[j]){
+				    	tool.error("键值重复内容："+nary[i]);
+				    	return false;
+			    	}
+				}
+		    }
+		    
+		    
+		    
+		   /*  var newvalues=$(data).val(); //获得当前输入框的值
+		    
+		    for(var i=0; i<oldvalues.length; i++) {//去除当前输入框的值
+		        if(oldvalues[i] == newvalues) {
+		        	oldvalues.splice(i, 1);
+		         	break;
+		        }
+		      }
+
+		    $.each(oldvalues,function(index,value){
+		    	if(newvalues == value){
+		    		layui.error("键值不能重复!")
+		    	}
+		    })   */
+		}
+		//充值详情
+		function reset_detail(){
+			$(".val_n").val("");
+		}
+		//删除对象
+		function showDelete(id,myself) {
+			pageBtn = myself;
+			layer.confirm('确定删除 ?', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				var retMsg = tool.deleteById("../autUser/delete", id)
+				if (retMsg.code == 0) {
+					var laypageBtn=$(pageBtn).parents(".admin-table").parent().next().find(".layui-laypage-btn");
+		        	if(laypageBtn.length>0){
+		        		laypageBtn.trigger("click");
+		        	}else{
+		        		loadData();
+		        	}
+					tool.success(retMsg.message);
+				} else {
+					tool.error(retMsg.message);
+				}
+			});
+		}
+		//分配角色
+		function showAuth(userId, userName) {
+			$("#auth-div #userId").val(userId);
+			var param = new Object();
+			param.container = "paging2";
+			param.pageSize = 200;
+			param.url = "../autUser/roleList";
+			param.userId = userId;
+			tool.loadpage(param);
+			var index = layer.open({
+				title : "【" + userName + "】分配角色",
+				maxmin : false,
+				type : 1,
+				content : $('#auth-div')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		//重置树
+		   function treeReset(){
+			   var treeObj = $.fn.zTree.getZTreeObj("treeDemo1");
+		           treeObj.checkAllNodes(false);
+		   }
+		//添加部门弹窗
+		var indexUser;
+		function createSeciton(userId, userName) {
+			 $("#yinC").val(userId);
+			$("#PositonDiv").empty();
+			var mytree = $.fn.zTree.getZTreeObj("treeDemo1");
+			    //打开弹窗前重置节点以及关闭展开状态，避免叠加
+				mytree.checkAllNodes(false)
+		        mytree.expandAll(false);
+			var idas = tool.getById("../autDepartmentUser/getDeptByUserId",userId);
+			for(var i=0;i<idas.length;i++){
+				 var nodes= mytree.getNodeByParam("id",idas[i]);
+				 if(nodes){
+					 nodes.checked=true;
+					 mytree.updateNode(nodes)
+					 mytree.expandNode(nodes,true);//指定选中ID节点展
+				 }
+			}
+			$("#btncYin").attr("userid",userId);
+			$("#btncYin").attr("userName",userName);
+			 indexUser = layer.open({
+				title : "【" + userName + "】添加部门",
+				maxmin : false,
+				type : 1,
+				content : $('#create-div'),
+				cancel : function(){
+					//右上角关闭事件
+					$("#paging3-data").empty();
+					loadData();
+					 treeZ();
+			    	 layer.closeAll();
+			      }
+			});
+			pform.render();
+			layer.full(indexUser);
+		}
+		treeZ();
+	    function treeZ(){
+	    	var mytree;//树
+	    	var param = new Object();
+		    param._csrf = $("#_csrf").val();
+			param.pageNum = 1;
+			param.pageSize = 10000;
+			tool.post("../autDepartment/listIsActive",param,callback_new,false);
+		}
+	    function callback_new(data){
+			var setting = {  
+					check : {
+						enable : true ,
+						//chkboxType: { "Y": "", "N": "" }
+						},  
+					data : { simpleData : { enable : true }  },
+					callback : {
+						beforeClick : beforeClick,
+						onCheck:onCheck
+						
+					}
+				};
+			setting.check.chkboxType = { "Y" : "s", "N" : "s" };
+			var obj=[];
+			for(var i=0;i<data.records.length;i++){  
+				obj.push({id:data.records[i].id,pId: data.records[i].parentId,name:data.records[i].deptName, obj:{
+					deptCode:data.records[i].deptCode,deptLevel:data.records[i].deptLevel,isActive:data.records[i].isActive,parentId:data.records[i].parentId,parentCode:data.records[i].parentCode
+				} })
+			}
+			mytree= $.fn.zTree.init($("#treeDemo1"), setting, obj);
+	    }
+	    var allPosition=[];
+	    //用户岗位列表
+	    function beforeClick(hh, treeNode){
+	    	var param = new Object();
+			param.deptId = treeNode.id;
+			param.container = "paging3";
+			param.pageSize = 10;
+			param.url = "../autPosition/listIsActive";
+			tool.loadpage(param);
+			
+			var param11 = new Object();
+			param11.deptId=treeNode.id;
+			param11._csrf = $("#_csrf").val();
+			tool.post("../autPosition/getPositionListByDeptId", param11,function(data){
+				allPosition=data;
+				CheckPosition()
+	    	},false);
+				
+	    }
+	 
+	    //查询岗位勾选
+	    function CheckPosition(){
+	    	$("input[name='autPositionId']").prop("checkd",false)
+	    	var param1 = new Object();
+			param1.userId=$("#btncYin").attr("userid");
+			param1._csrf = $("#_csrf").val();
+			tool.post("../autUserPosition/getPositoinByUserId",param1,function(data){
+				  $("#PositonDiv").empty(); 
+				  $.each(allPosition,function(index, value) {
+					   var that=value;
+					 $.each(data,function(index,value){
+						 if (that.id == value.positionId) {
+								$("#PositonDiv").append(
+										'<div class="layui-input-inline" style="position: relative;margin-right:16px;margin-bottom:8px;margin-top:10px;">'+
+								    	 '<a class="layui-btn" style="cursor: pointer;">'+that.positionName+'</a>'+
+								    	 '</div>'
+										)
+							}
+					 }) 
+				 });
+				pform.render(); 
+ 			})
+	    }
+	    //点击选款添加部门
+	    function onCheck(){
+	    	    $("#add-user-form").empty();
+		        $("#add-user-form").append(
+		        		'<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />'+
+		        		'<input type="hidden" name="userId"  id="userId_dep" />'+
+		        		'<input type="hidden" name="userName" id="userName_dep" />'
+		       )
+			var userid =$("#btncYin").attr("userid");
+			var userName=$("#btncYin").attr("userName")
+			$("#userId_dep").val(userid);
+			$("#userName_dep").val(userName);
+			var str="";
+	    	var zTree = $.fn.zTree.getZTreeObj('treeDemo1');
+	    	var nodes = zTree.getChangeCheckedNodes();
+		     $.each(nodes,function(index,value){
+				str += '<input type="hidden" name="autDepartmentList['+index+'].isActive" value="'+value.obj.isActive+'" />';
+				str += '<input type="hidden" name="autDepartmentList['+index+'].deptCode" value="'+value.obj.deptCode+'" />';
+				str += '<input type="hidden" name="autDepartmentList['+index+'].id" value="'+value.id+'" />';
+			})
+	        $("#add-user-form").append(str);
+		 	tool.post("../autDepartmentUser/addUserDepartment",$("#add-user-form").serialize(),postCallBack_hehe,false) 
+	    	
+	    }
+	    //保存数据添加部门
+		function createBu(my){
+	        $("#add-user-form").empty();
+	        $("#add-user-form").append(
+	        		'<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />'+
+	        		'<input type="hidden" name="userId"  id="userId_dep" />'+
+	        		'<input type="hidden" name="userName" id="userName_dep" />'
+	        )
+			var userid =$(my).attr("userid");
+			var userName=$(my).attr("userName")
+			$("#userId_dep").val(userid);
+			$("#userName_dep").val(userName);
+			 var str="";
+			 var mytree = $.fn.zTree.getZTreeObj("treeDemo1");
+			 var nodes = mytree.getCheckedNodes(true); 
+			/* $.each(nodes,function(index,value){
+				str += '<input type="hidden" name="autDepartmentList['+index+'].isActive" value="'+value.obj.isActive+'" />';
+				str += '<input type="hidden" name="autDepartmentList['+index+'].deptCode" value="'+value.obj.deptCode+'" />';
+				str += '<input type="hidden" name="autDepartmentList['+index+'].id" value="'+value.id+'" />';
+			})
+	        $("#add-user-form").append(str);
+			 console.log($("#add-user-form").serialize())
+		 	tool.post("../autDepartmentUser/addUserDepartment",$("#add-user-form").serialize(),postCallBack,false) */ 
+		} 
+		
+	
+		 
+	     //添加岗位
+	     function cteatePositon(positionId,isActive){
+	    	 
+	    	
+	    	 var userId=$("#btncYin").attr("userid");
+	    	 var username=$("#btncYin").attr("username");
+	    	 var _csrf = $("#_csrf").val();
+	    	 var param={
+	    		 positionId:positionId,
+	    		 userId:userId,
+	    		 userName:username,
+	    		 isActive:isActive,
+	    		 _csrf:_csrf
+	    	    };
+	    	  tool.post("../autUserPosition/addUserPosition",param,function(data){
+	    		 
+						 CheckPosition()
+						   var userId=$("#yinC").val();
+				    	   var mytree = $.fn.zTree.getZTreeObj("treeDemo1");
+						var idas = tool.getById("../autDepartmentUser/getDeptByUserId",userId);
+						for(var i=0;i<idas.length;i++){
+							 var nodes= mytree.getNodeByParam("id",idas[i]);
+							 if(nodes){
+								 nodes.checked=true;
+								 mytree.updateNode(nodes)
+								 mytree.expandNode(nodes,true);//指定选中ID节点展
+							 }
+						}
+	           },false)
+	     }
+	     //删除岗位
+	     function deletePositon(positionId){
+	          $("input[name='autPositionId']").attr("checked",false)
+	    	 var param = new Object();
+				 param.userId=$("#btncYin").attr("userid");
+				 param._csrf = $("#_csrf").val();
+				 param.positionId=positionId;
+				 tool.post("../autUserPosition/deleteUserPosition",param,function(data){
+					   CheckPosition()
+				 },false)	 
+	     }
+	     //添加部门 岗位中返回
+	     function react(){
+	    	 loadData();
+	    	 $("#paging3-data").empty();
+	    	 treeZ();
+	    	 layer.closeAll();
+	     }
+	</script>
+</body>
+
+</html>

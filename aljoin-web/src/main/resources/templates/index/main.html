@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>Table</title>
+<link rel="stylesheet" href="../web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../web/css/global.css" media="all">
+<link rel="stylesheet" href="../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../web/css/table.css" />
+</head>
+
+<body>
+	<div class="admin-main" style="margin: 10px;">
+		<form class="layui-form" id="change-userinfo-form">
+			<blockquote class="layui-elem-quote" style="padding: 5px;">
+				<div class="layui-input-inline" style="height: 30px;"></div>
+				<div style="float: right;">
+					<span><@button code="" class="layui-btn layui-btn-small" id="zdy123" iclass="fa fa-save" text="保存" laySubmit="" layFilter="form-submit"/></span>
+				</div>
+			</blockquote>
+
+			<div class="layui-form-item">
+				
+			</div>
+		</form>
+	</div>
+	<script type="text/javascript" src="../web/plugins/layui/layui.js"></script>
+	<script type="text/javascript" src="../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../web/js/tool.js"></script>
+	<script>
+		layui.use([ 'form', 'layer' ], function() {
+			var $ = layui.jquery, layer = layui.layer;
+			var form = layui.form();
+			//表单
+			form.verify();
+			//监听提交
+			form.on('submit(form-submit)', function(data) {
+				tool.post("../index/saveUserInfo", $("#change-userinfo-form").serialize(), postCallBack, false);
+				return false;
+			});
+
+		});
+		function postCallBack(retMsg) {
+			if (retMsg.code == 0) {
+				tool.success(retMsg.message);
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>综合查询</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css"
+	media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet"
+	href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" />
+<link rel="stylesheet" href="../../web/css/zhengls.css" />
+<style>
+.layui-form-pane .label_m {
+	width: 90px;
+}
+
+.layui-form-pane .layui-input-block1 {
+	margin-left: 90px;
+}
+
+.layui-input-block1 .layui-select-title .layui-input {
+	width: 100px;
+}
+</style>
+</head>
+<body>
+
+	<input type="hidden" name="${_csrf.parameterName}"
+		id="${_csrf.parameterName}" value="${_csrf.token}" />
+
+	<input type="hidden" name="typeId" id="typeId" value="" />
+	<div class="admin-main content_sel">
+		<blockquote class="layui-elem-quote"
+			style="padding: 5px; text-align: right;">
+			<form class="layui-form" action="">
+				<div class="layui-input-inline">
+					<input type="text" name="searchKey" id="searchKey"
+						placeholder="请输入标题" autocomplete="off" class="layui-input"
+						style="height: 30px; line-height: 30px;" >
+				</div>
+				<span>
+				<@a code="210101" href="javascript:void(0)"
+					class="layui-btn layui-btn-small" id="" onclick="loadData()"
+					iclass="layui-icon" icon="&#xe615;" text="查询"/>
+				</span>
+					 <span>
+			     	<@a code="210101" href="javascript:void(0)"
+					class="layui-btn layui-btn-small" id="" onclick="search_h()" text="高级搜索"/>					 
+					 </span>
+
+				<!-- 	    <div class="layui-input-inline">
+				  	<span><a class="layui-btn layui-btn-small" onclick="onclick="showDeletes()"><i class="layui-icon">&#xe640;</i>删除</a></span>
+				</div> -->
+			</form>
+		</blockquote>
+
+		<form class="layui-form content_sel sear" style="display: none;">
+			<div class="layui-input-inline">
+				<span>数据选择</span>
+			</div>
+			<div class="layui-input-inline m_r20 " style="text-align: left;">
+				<select name="city" id="dataType" class="layui-input layui-unselect">
+					<option value="1">新系统</option>
+					<option value="0">旧系统</option>
+
+				</select>
+			</div>
+			
+			
+			<div class="layui-input-inline">
+				<span>归档时间</span>
+			</div>
+			<div class="layui-input-inline">
+				<input type="text" class="inp_date" id="startTime">
+			</div>
+			<div class="layui-input-inline">
+				<span>至</span>
+			</div>
+			<div class="layui-input-inline">
+				<input type="text" class="inp_date" id="endTime">
+			</div>
+			<div class="layui-input-inline" style="float: right">
+				<span><@a href="javascript:void(0)" class="layui-btn
+					layui-btn-small" id="" onclick="loadData()" iclass="layui-icon"
+					icon="&#xe615;" text="查询"/></span>
+			</div>
+            <div class="m_t10">
+              <div class="layui-input-inline">
+				<span>流程类型</span>
+			</div>
+		
+			<div class="layui-input-inline m_r20 content_sel"><@selectLink
+				table="act_aljoin_category" layVerify="required" id="id" name="id"
+				class="layui-input-inline" def="" key="id" text="category_name"
+				level="1" levelName="category_level" rankName="category_rank"
+				where=" AND is_active=1"/></div>
+			<div class="layui-input-inline">
+				<span>流程名称</span>
+			</div>
+			<div class="layui-input-inline m_r20 content_sel">
+				<select name="qBpmnId" id="qBpmnId">
+					<option value="">请选择</option>
+				</select>
+			</div>	
+            </div>
+		</form>
+		<div class="layui-form">
+			<table class="layui-table admin-table">
+				<thead>
+					<tr>
+						<th style="width: 20px;"><input type="checkbox"
+							lay-skin="primary" lay-filter="paging_check-all"></th>
+						<th style="display: none;">用户ID</th>
+						<th style="width: 160px;">流程类型</th>
+						<th>标题</th>
+						<th style="width: 60px;">操作人</th>
+						<th style="width: 160px;">归档时间</th>
+						<th style="width: 60px;">创建人</th>
+					</tr>
+				</thead>
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr onclick="openForm('{{value.processInstanceId}}','{{value.title}}','{{value.businessKey}}')" class="hand">
+                            <td><input type="checkbox"  class="check-id  moreInput"  lay-skin="primary"   id="{{value.id}}"></td>
+                            <td style="display: none;">{{value.id}}</td>
+                           	<td title="{{value.formType}}">{{value.formType}}</td>
+                            <td title="{{value.title}}">{{value.title}}</td>
+                            <td>{{value.operator}}</td>
+                            <td>{{value.endTime}}</td>
+                            <td>{{value.founder}}</td>
+						</tr>
+					{{/each}}
+					</script>
+				</tbody>
+			</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page"
+				style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	<!-- 在阅文件详情 -->
+	<div class="admin-main"
+		style="display: none; z-index: 19940200; padding-top: 40px;"
+		id="win-inreaddetail-object">
+		<form class="layui-form" id="inRead-object-form">
+			<div class="data-wrap">
+				<input type="hidden" name="${_csrf.parameterName}"
+					value="${_csrf.token}" /> <input type="hidden" name="id"
+					id="id-inread" value="" />
+				<!-- 来文标题  -->
+				<div class="headtitle-padding">
+					<span id="fileTitle-inread"
+						style="font-size: 16px; font-weight: bold; word-wrap: break-word"></span>
+				</div>
+	            <div class="ext-border">
+					<!-- 文件类型 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">文件类型：</span> <span id="fileTypeName-inread"></span>
+					</div>
+		
+					<!-- 来文单位 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">来文单位：</span> <span id="fromUnitName-inread"></span>
+					</div>
+		
+					<!-- 来文文号 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">来文文号：</span> <span id="fromFileCode-inread"></span>
+					</div>
+		
+					<!-- 收文编号 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">收文编号：</span> <span id="receiveFileCode-inread"></span>
+					</div>
+		
+					<!-- 原文日期 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">原文日期：</span> <span id="orgnlFileTime-inread"></span>
+					</div>
+		
+					<!-- 收文日期 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">收文日期：</span> <span id="receiveFileTime-inread"></span>
+					</div>
+		
+					<!-- 办理时限 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">办理时限：</span> <span id="handleLimitTime-inread"></span>
+					</div>
+		
+					<!-- 缓急 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">缓急：</span> <span id="urgentLevelName-inread"></span>
+					</div>
+				</div>
+				<!-- 办公室拟办意见 -->
+				<div class="office-opinion">
+					<label>办公室拟办意见</label>
+					<div>
+						<div id="officeOpinion-toread" style="height:90px; border: solid 1px #c9d3d6; padding: 5px 10px;">
+						
+						</div>
+					</div>
+				</div>				
+                <div class="office-opinion">
+				  <label>传阅对象</label>
+					<div>
+						<table class="layui-table" style="width: 100%;margin-top: 0px;border: none;">
+							<colgroup>
+								<col width="20%">
+								<col width="80%">
+							</colgroup>
+							<thead>
+							<tr>
+								<th>名称</th>
+								<th>传阅对象</th>
+							</tr>
+							</thead>
+							<tbody id="objList-inread">
+							<script id="obj-script-inread"  type="text/html">
+							{{each objlist value index}}
+                            <tr {{if (value.readUserNames==""|| value.readUserNames==null) && index>2}}style="display:none"{{/if}}>
+								<td>{{value.text}}</td>
+								<td colspan="2">
+									<div style="height:auto;min-height:35px;overflow:auto;font-size:14px;padding:0px 10px;white-space: normal;" 
+
+id="readUserNames-toread{{index}}">{{value.readUserNames}}</div>
+									<input type="hidden" id="readUserIds{{index}}-toread" value="{{value.readUserIds}}">
+									<input type="hidden" id="dictCode{{index}}" value="{{value.dictCode}}">
+									<input type="hidden" id="dictName{{index}}" value="{{value.dictName}}">
+									<input type="hidden" id="dictValue{{index}}-toread" value="{{value.dictValue}}">
+								</td>
+							</tr>
+							{{/each}}
+						</script>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<!-- 附件 -->
+				<div class="office-opinion">
+					<span style="padding-bottom: 10px;color: #666;display: block;">已传附件</span>
+					<div class="table-wrap">
+						<table class="layui-table"
+							style="width: 100%; margin-top: 0px; border: none;">
+							<tbody id="demoList-inread">
+								<script id="artt-inread" type="text/html">
+							{{each filelist value index}}
+							<tr>
+								<td style="border:none;">{{value.attachName}}</td>
+								<td style="border:none;">{{value.attachSize}}kb</td>
+								<td style="border:none;">
+									<a onclick="downLoads('{{value.attachPath}}','{{value.attachName}}')" 
+
+style="color:#339bf1;cursor:pointer">下载</a>
+								</td>
+							</tr>
+							{{/each}}
+						</script>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="btn_fixed_top" id="btns" style="top:33px;">
+			<!-- 	<div class="l">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary"
+						onclick="layer.closeAll()"><i class="fa fa-backward "></i> 返回</a>
+				</div> -->
+				<div>
+			    	<a class="flow_btn" onclick="showImg()"><i class="layui-icon">&#xe60a;</i>流程图</a>
+					<a class="flow_btn" onclick="daily()"><i class="layui-icon">&#xe60a;</i>流转日志</a>
+					<a class="flow_btn" onclick="printAreaObj()"><i class="layui-icon">&#xe621;</i>打印</a>
+					<a class="flow_btn btns"  onclick="batchidea()"><i class="layui-icon">&#xe640;</i>传阅意见</a>
+				</div>
+			</div>			
+		</form>
+	</div>
+	<!-- 传阅情况及意见 -->
+	<div class="admin-main" style="display: none;z-index: 19940200;padding-bottom:60px;" id="win-batchidea-object">
+		<!-- 已阅人员 -->
+		<div class="p_t10">
+			<span class="e6ed l">已阅人员：</span>
+			<div id="inReadUserNames" class="l" style="word-wrap:break-word;width:85%;"></div>
+		</div>
+		<!-- 未阅人员 -->
+		<div class="p_t10 cl">
+			<span class="e6ed l">未阅人员：</span>
+			<div id="toReadUserNames" class="l" style="word-wrap:break-word;width:85%;"></div>
+		</div>
+		<div class="cl" style="padding-top:1px;">
+		<table class="layui-table admin-table">
+			<colgroup>
+				<col width="6%">
+				<col width="8%">
+				<col width="10%">
+				<col width="16%">
+				<col width="60%">
+				<col>
+			</colgroup>
+			<thead>
+				<tr>
+					<th>序号</th>
+					<th>操作人</th>
+					<th>部门</th>
+					<th>时间</th>
+					<th>意见</th>
+				</tr>
+			</thead>
+			<tbody id="paging4-data">
+				<script id="paging4-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td>{{(current-1)*size+index+1}}</td>
+							<td>{{value.operationName}}</td>
+							<td>{{value.deptName}}</td>
+							<td>{{value.readTimeStr}}</td>
+							<td >{{value.readOpinion}}</td>
+						</tr>
+					{{/each}}
+				</script>
+			</tbody>
+	 	</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging4-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	<div class="" id="win-daily-object" style="display: none;">
+				<form class="layui-form layui-form-pane admin-main">
+					<input type="hidden" name="${_csrf.parameterName}"
+						value="${_csrf.token}" />
+					<div class="layui-form">
+						<table class="layui-table admin-table">
+							<colgroup>
+								<col width="10%">
+								<col width="20%">
+								<col width="10%">
+								<col width="15%">
+								<col width="45%">
+								<col>
+							</colgroup>
+							<thead>
+								<tr>
+									<th style="display: none;">用户ID</th>
+									<th>操作人</th>
+									<th>流程方向</th>
+									<th>接收人</th>
+									<th>操作时间</th>
+									<th>审核意见</th>
+								</tr>
+							</thead>
+							<tbody id="paging3-data">
+								<script id="paging3-script" type="text/html">
+						{{each loglist value index}}
+						<tr >
+							<td style="display: none;">{{value.taskId}}</td>
+							<td title="{{value.operationName}}">{{value.operationName}}</td>
+							<td title="{{value.direction}}">{{value.direction}}</td>
+							<td title="{{value.recevieUserName}}">{{value.recevieUserName}}</td>
+							<td>{{value.operationTime}}</td>
+							<td title="{{value.comment}}">{{value.comment}} </td>
+						</tr>
+						{{/each}}
+					</script>
+							</tbody>
+						</table>
+					</div>
+					<div class="admin-table-page"
+						style="border-width: 0px; z-index: 0;">
+						<div id="paging3-footer" class="page"
+							style="background-color: white; text-align: center;"></div>
+					</div>
+				</form>
+			</div>
+	<input type="hidden" name="processInstanceId" id="processInstanceId"
+		value="" />
+
+	<input type="hidden" id="hiddenPp" value="0">
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript"
+		src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../../web/js/readReceipt.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.PrintArea.js"></script>
+	<script>
+	     tool.dateTime('#startTime','#endTime','',false);		
+		var pform;
+		//添加事件
+		layui.use([ 'form', 'layer','element' ], function() {
+			pform = layui.form;
+			var element = layui.element;
+			var $ = layui.jquery, layer = layui.layer;			
+			pform.on('select(isActive)', function(data) {
+				//alert(data.value);
+				//form.render('checkbox');
+			});
+			//自定义表单校验
+			pform.verify();
+			//现在一级菜单联动二级菜单
+			pform.on('select(parentMenuCode)', function(data) {
+				setMenuList("add-object-form", "menuLevel=2&parentCode=" + data.value, "menuCode", 2, null);
+			});
+			pform.on('select(parentMenuCode4Edit)', function(data) {
+				setMenuList("update-object-form", "menuLevel=2&parentCode=" + data.value, "menuCode", 2, null);
+			});
+			
+			loadData();
+			
+			pform.on('select(id)', function(data) {
+	            //参数 1：当前元素id，参数2：顶级元素id（用来锁定唯一元素）
+	            $("#qBpmnId").find("option").remove();
+				$("#qBpmnId").append( "<option value=''>请选择</option>" );		
+	            if(data.value.length>0){
+					$("#typeId").val(data.value);
+				}else{
+					var emel=$(data.elem).parent().prev();
+					if(emel.find('select').length>0){
+						$("#typeId").val(emel.find('select option:selected').val())
+					}else{
+						$("#typeId").val("");
+					}
+				}
+	            if(data.value!=''){						
+					var _csrf = $("#_csrf").val();
+					var pm = {
+						cateGoryId : data.value,
+						_csrf : _csrf
+					};
+					tool.post("/act/actAljoinBpmn/setCategoryBpmn",pm,
+							function(data) {
+						      for (var i = 0; i < data.length; i++) {
+						    	$("#qBpmnId").append( "<option value='"+data[i].id+"'>"+data[i].processName+"</option>" );
+						      }		
+						      pform.render();
+							}, false) 
+							
+				    }
+	            tool.selectLinkTagByPid("id","win-add-object",data);
+	    	});
+		})
+
+		//加载流程list
+		function loadData() {
+			if ($("#dataType").val() == 0) {
+				layer.open({
+					title : '友情提醒',
+					content : '旧系统数据正在建设中...'
+				});
+				return false;
+			}
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+			param.dataType = $('#dataType').val()
+			param.startTime=$('#startTime').val();
+			param.endTime=$('#endTime').val();
+			param.qBpmn= $('#qBpmnId').val();
+			param.formType = $('#typeId').val();
+			param.title = $('#searchKey').val();
+			param.url = "../../ioa/ioaWaitWork/getAllTask";
+			tool.loadpage(param);
+		}
+		/* 高级搜索 */
+		function search_h() {
+			$(".sear").toggle();
+		}
+		/* 高级搜索 */
+		function search_h(){
+			$(".sear").toggle();
+		}
+		function	showImg(){
+			var processInstanceId = $("#processInstanceId").val()
+	        var index = layer.open({
+	            title: '流程图',
+	            maxmin: false,
+	            type: 1,
+	            content: '<img src="/act/actFixedForm/showHisImg?processInstanceId=' + processInstanceId + '" />'
+	        });
+	        pform.render();
+	        layer.full(index);
+			
+		}
+		   //详情对象
+	    function openForm(processInstanceId,title,businessKey) {			   
+			 if(businessKey.indexOf('ioaReceiveFile')>-1){
+				 var strs = new Array(); //定义一数组 
+					strs = businessKey.split(",");
+					for (i = 0; i < strs.length; i++) {
+						processInstanceId = strs[i];
+
+					}
+				$("#processInstanceId").val(processInstanceId);				
+				readReceipt.inReadHisDetail(processInstanceId);
+				return;
+			 }else{
+			    $("#processInstanceId").val('');
+	            var index = layer.open({
+	            title : title,
+	            maxmin : false,
+	            type : 2,
+	            content : '../../act/modeler/openFormData.html?processInstanceId='+processInstanceId+'&businessKey='+businessKey+'&isWait=0'
+	           
+	        });
+		   }
+			 pform.render();
+			 layer.full(index);
+	    }
+		//详情   
+		function detail(){
+			var index = layer.open({
+				title : '委托详情',
+				maxmin : false,
+				type : 1,
+                shade: false,
+				content : $('#win-inreaddetail-object')
+			});
+			layer.full(index);
+		}
+		/* 日志弹窗 */
+		function daily() {
+			var processInstanceId = $("#processInstanceId").val();
+			var _csrf = $("#_csrf").val();
+			var pm = {
+				processInstanceId : processInstanceId,
+				_csrf : _csrf
+			};
+			
+			tool.post("/act/actFixedForm/getLog", pm, function(data) {
+				var loglist = {
+					loglist : data
+				};
+				$('#paging3-data').html(template("paging3-script", loglist));
+				var index = layer.open({
+					title : '日志',
+					maxmin : false,
+					type : 1,
+					content : $('#win-daily-object')
+				});
+				layer.full(index);
+			}, false);
+		}
+		 function downLoads(path,resourceName){
+		        resourceName = encodeURIComponent(encodeURIComponent(resourceName));
+		        location.href = "/res/resResource/download?path="+ encodeURIComponent(path)+"&resourceName="+resourceName;
+		    }
+		 function batchidea(){
+				var processInstanceId = $("#processInstanceId").val()
+		        var pm = {
+		            _csrf:$("#_csrf").val(),
+		            processInstanceId : processInstanceId
+		        };
+		        //console.log(processInstanceId)
+		        tool.post("/ioa/ioaReceiveReadUser/circulation",pm,function(data){
+		            if(null != data){
+		                $("#inReadUserNames").text(data.inReadNames);
+		                $("#toReadUserNames").text(data.toReadNames);
+		            }
+		            var index = layer.open({
+		                title : '传阅情况及意见',
+		                maxmin : false,
+		                type : 1,
+		                shadeClose: true,
+		                content : $('#win-batchidea-object')
+		            });
+		            loadReadUserData();
+		            layer.full(index);
+		        },false);
+			}
+		//传阅情况及意见列表
+		 function loadReadUserData() {
+		    	var processInstanceId = $("#processInstanceId").val()
+		        var param = new Object();
+		        param.container = "paging4";
+		        param.url = "/ioa/ioaReceiveReadUser/list";
+		        param._csrf = $("#_csrf").val();
+		        param.id = processInstanceId;
+		        param.pageSize = 10;
+		        tool.loadpage(param);
+		    }
+		//打印
+		function printAreaObj(){
+			$("#inRead-object-form").find("#btns").css("display","none");
+			$("#inRead-object-form").children(".data-wrap").css("padding","0px");
+			$("#inRead-object-form").printArea();
+			$("#inRead-object-form").find("#btns").css("display","block");
+			$("#inRead-object-form").children(".data-wrap").css("padding","0px 100px");
+		}
+	</script>
+</body>
+
+</html>

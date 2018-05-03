@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>领导查看</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<link rel="stylesheet" href="../../web/css/zhengls.css" media="all">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main"> 
+		<blockquote class="layui-elem-quote" style="padding:5px;">
+			<form class="layui-form" action="">
+				<div class="r">
+				<!-- <div class="layui-input-inline m_r10">
+					<span>类别</span>
+				</div>
+				<div class="layui-input-inline m_r20 content_sel" style="text-align:left;">
+					      		<select name="city" lay-verify="required" id="type" >
+							        <option value=""></option>
+							        <option value="1">共享日程</option>
+							        <option value="2">个人计划</option>
+							        <option value="3">会议通知</option>
+					      		</select>
+				</div>
+				<div class="layui-input-inline">
+				 <span>时间</span>
+				</div>
+				<div class="layui-input-inline">
+					 <input type="text" class="inp_date" id="startTime" >
+				</div>
+				<div class="layui-input-inline">
+				 <span>至</span>
+				</div>
+				<div class="layui-input-inline m_r20">
+					  <input type="text" class="inp_date" id="endTime" >
+				</div>
+				<div class="layui-input-inline">
+				 <span>发布人</span>
+				</div>
+				<div class="layui-input-inline m_r20">
+					<input type="text" name="createFullName" id="createFullName" placeholder="发布人" autocomplete="off" class="layui-input"
+						style="height: 30px; line-height: 30px;">
+				</div>
+				 -->
+				<!-- <div class="layui-input-inline m_r10">
+				 <span>时间</span>
+				</div> -->
+				<div class="layui-input-inline m_r10">
+					 <input type="text" class="inp_date" id="startTime" readonly>
+				</div>
+				<div class="layui-input-inline m_r10">
+				 <span>至</span>
+				</div>
+				<div class="layui-input-inline m_r20">
+					  <input type="text" class="inp_date" id="endTime" readonly>
+				</div>
+				
+				<span><@a code="080302" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData()" iclass="layui-icon"
+					 icon="&#xe615;" text="查询"/></span>				
+				<span><@a code="080303" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="search_h()" text="高级搜索"/></span>				
+				
+			</div>
+	 	   <!--  <div class="layui-input-inline">
+				<span><@a code="080301" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="openAddWin()" iclass="layui-icon"
+					 icon="&#xe608;" text="新增"/></span>				
+			</div>  -->
+			</form>
+		</blockquote>
+			<form class="layui-form sear" action="" style="display: none;">
+				<div class="">
+				<div class="layui-input-inline m_r10">
+					<span>类别</span>
+				</div>
+				<div class="layui-input-inline m_r20 content_sel" style="text-align:left;">
+					      		<select name="city" lay-verify="required" id="type" >
+							        <option value=""></option>
+							        <option value="1">共享日程</option>
+							        <option value="2">个人计划</option>
+							        <option value="3">会议通知</option>
+					      		</select>
+				</div>
+				<div class="layui-input-inline m_r10">
+				 <span>主题</span>
+				</div>
+				<div class="layui-input-inline m_r20">
+					<input type="text" name="theme" id="theme1" placeholder="请输入主题" autocomplete="off" class="layui-input inp_w120px" maxlength="50">
+				</div>
+				<div class="layui-input-inline m_r10">
+				 <span>发布人</span>
+				</div>
+				<div class="layui-input-inline m_r20">
+					<input type="text" name="createFullName" id="createFullName" placeholder="发布人" autocomplete="off" class="layui-input inp_w120px" maxlength="50">
+				</div>
+				<!-- <div class="layui-input-inline m_r10">
+				 <span>主题</span>
+				</div>
+				<div class="layui-input-inline m_r20">
+					<input type="text" name="theme2" id="theme2" placeholder="主题" autocomplete="off" class="layui-input inp_w120px" maxlength="50">
+				</div> -->
+				
+		
+				<span><a class="layui-btn layui-btn-small" id="" onclick="loadData(1)" style="float:right;"><i class="layui-icon"></i>查询</a></span>
+			</div>
+			</form>
+		
+			  <!--  <div class="layui-input-inline">
+			    <button  type="submit" class="layui-btn layui-btn-small">导出表sdds格</button>
+		      </div>  -->
+				<!-- <div style="float: right;">
+					<span><@a code="080101" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="openAddWin()" iclass="layui-icon"
+						icon="&#xe608;" text="新增"/></span>
+				</div> -->
+			</form>
+<!-- 		<form class="layui-form m_t30" action="" style="margin-bottom:20px;">
+				<a class="btn_blue" onclick="openAddWin()">新增</a>
+		</form> -->
+
+		<!------------------------------------- 分页数据start ----------------------------------->
+		<div class="layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table admin-table">
+			   <!--  <colgroup>
+				    <col width="5%">
+				    <col width="46%">
+				    <col width="15%">
+				    <col width="15%">
+				    <col width="10%">
+				    <col width="10%">
+				    <col width="26%">
+				    <col>
+				</colgroup> -->
+				<thead>
+					<tr>
+					    <th style="width: 20px;"><input type="checkbox" lay-skin="primary" id="paging_check-all" lay-filter="paging_check-all"></th>
+						<th style="display: none;">用户ID</th>
+						<th>主题</th>
+						<th style="width: 160px;">开始时间</th>
+						<th style="width: 160px;">结束时间</th>
+						<th style="width: 160px;">类别</th>
+						<th style="width: 60px;">发布人</th>
+						<!-- <th>操作</th>  -->
+					</tr>
+				</thead>
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td onclick="defalt_td(event)"><input type="checkbox" lay-skin="primary" class="check-id" ></td>
+                            <td style="display: none;">{{value.id}}</td>
+                            <td class="hand table_link" onclick="showView('{{value.id}}')" title="{{value.theme}}">{{value.theme}}</td>
+                            <td> {{value.startDateStr}} </td>
+                            <td> {{value.endDateStr}} </td>
+                            <td>{{value.typeStr}}</td>
+                            <td>{{value.createFullName}}</td>
+                            
+						</tr>
+					{{/each}}
+					{{if records.length==0}}
+					<tr>
+						<td colspan="7" style="text-align:center">
+							暂无数据
+						</td>
+					</tr>
+					
+					{{/if}}
+					</script>
+					<!-- <@a code="080103" href="javascript:void(0)" class="layui-btn layui-btn-warm layui-btn-mini" id="show-view" onclick="showView('{{value.id}}')" text="详情"/> -->
+					<!-- <td style="width:130px;" onclick="defalt_td(event)">
+								<@a code="080102" href="javascript:void(0)" class="color339" id="show-edit" onclick="showEdit('{{value.id}}')" text="编辑"/>
+							    <@a code="080104" href="javascript:void(0)" class="color339" id="show-edit" onclick="showDelete('{{value.id}}')" text="删除"/>
+                             </td>  -->
+				</tbody>
+			</table>
+		</div>
+		
+		<!------------------------------------- 分页数据end ----------------------------------->	               
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	
+	<!------------------------------------- 新增对象窗口start ----------------------------------->
+	<div class="admin-main" style="display: none;" id="win-add-object">
+		<form class="layui-form layui-form-pane" id="add-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" name="id" id="hiddenId" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">主题</label>
+				<div class="layui-input-block">
+					<input type="text" name="theme" id="theme_add" lay-verify="required" autocomplete="off" placeholder="主题" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">地点</label>
+				<div class="layui-input-block">
+					<input type="text" name="place" id="place_add"  autocomplete="off" placeholder="地点" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+			   <label class="layui-form-label">开始日期</label>
+				<div class="layui-input-block">
+					  <input type="text" class="layui-input"  name="startDateStr" id="startDate_add" lay-verify="required" readonly >
+				</div>
+				<!-- <label class="layui-form-label">开始时间</label>
+				<div class="layui-input-inline">
+					  <input type="text" class="layui-input"  name="startHourMin" id="startHourMin_add" lay-verify="required" readonly >
+				</div> -->
+			</div>
+			<div class="layui-form-item">
+				 <label class="layui-form-label">结束日期</label>
+				<div class="layui-input-block">
+					  <input type="text" class="layui-input" name="endDateStr" id="endDate_add" lay-verify="required" readonly >
+				</div>
+				<!-- <label class="layui-form-label">结束时间</label>
+				<div class="layui-input-inline">
+					  <input type="text" class="layui-input"  name="endHourMin" id="endHourMin_add" lay-verify="required" readonly >
+				</div> -->
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">类型</label>
+				<div class="layui-input-block">
+				       <select name="type" id="type">
+							<option  value="">请选择</option>
+							<option value="1">共享日程</option>
+							<option value="2">个人计划</option>
+							<option value="3">会议通知</option>
+						</select>	
+				 </div>
+			</div>
+			<div class="layui-form-item layui-form-text">
+				<label class="layui-form-label">内容</label>
+				<div class="layui-input-block">
+					<textarea type="text" name="content" id="content_add" class="layui-input" style="height:120px"></textarea>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">共享给</label>
+				<div class="layui-input-block">
+					<div type="text" name="sharedPersonName" id="shareToId_h_add_div" class="newgg input_btn reset1"  readonly="readonly" style="width:81%;"></div>
+					<input type="hidden" id="shareToId_h_add" name="sharedPersonName" lay-verify="spactily" autocomplete="off" placeholder="" readonly="true" class="layui-input input_btn reset">
+					<input type="hidden" id="shareToId_add"  name="sharedPersonId" autocomplete="off" class="layui-input reset" >
+					<a class="btn_blue2" style="float:right;" onclick="personlSeclectOpen()">人员选择</a>
+					<!-- <input type="hidden" name="noticeObjId" id="noticeObjId"> -->
+				</div>
+			</div>
+			<div class="layui-form-item" id="isWarn_add">
+				<label class="layui-form-label">设置提醒</label>
+				 <div class="layui-input-block">
+				      <input type="checkbox" name="isWarnMsg"  id="isWarnMsg1"title="短信提醒" value="1" lay-skin="primary">
+				      <input type="checkbox" name="isWarnOnline" id="isWarnOnline1" title="短信提醒" value="1" lay-skin="primary">
+				      <input type="checkbox" name="isWarnMail"  id="isWarnMail1"title="邮件提醒" value="1" lay-skin="primary">
+   				 </div>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit">
+						<i class="fa fa-save"></i> 提交
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary" id="reset_add">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!------------------------------------- 新增对象窗口end ----------------------------------->
+	
+	<!------------------------------------- 编辑对象窗口start ----------------------------------->
+	<div class="admin-main" style="display: none;" id="win-edit-object">
+		<form class="layui-form layui-form-pane" id="edit-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" name="id" id="hiddenId" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">主题</label>
+				<div class="layui-input-block">
+					<input type="text" name="theme" id="theme_edit" lay-verify="required" autocomplete="off" placeholder="主题" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">地点</label>
+				<div class="layui-input-block">
+					<input type="text" name="place" id="place_edit"  autocomplete="off" placeholder="地点" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+			   <label class="layui-form-label">开始日期</label>
+				<div class="layui-input-block">
+					  <input type="text" class="layui-input" readonly   name="startDateStr" id="startDateStr_edit" style="width:320px;" lay-verify="required">
+				</div>
+			<!-- 	<label class="layui-form-label">开始时间</label>
+				<div class="layui-input-inline">
+					  <input type="text" class="layui-input" readonly  name="startHourMin" id="startHourMin_edit" lay-verify="required">
+				</div> -->
+			</div>
+			<div class="layui-form-item">
+				 <label class="layui-form-label">结束日期</label>
+				<div class="layui-input-block">
+					  <input type="text" class="layui-input" readonly name="endDateStr" id="endDateStr_edit"  style="width:320px;" lay-verify="required">
+				</div>
+				<!-- <label class="layui-form-label">结束时间</label>
+				<div class="layui-input-inline">
+					  <input type="text" class="layui-input" readonly  name="endHourMin" id="endHourMin_edit" lay-verify="required">
+				</div> -->
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">日程类型</label>
+				<div class="layui-input-block">
+				       <select name="type" id="type_edit">
+							<option  value="">请选择</option>
+							<option value="1">共享日程</option>
+							<option value="2">个人计划</option>
+							<option value="3">会议通知</option>
+						</select>	
+				 </div>
+			</div>
+			<div class="layui-form-item layui-form-text">
+				<label class="layui-form-label">内容</label>
+				<div class="layui-input-block">
+					<textarea type="text" name="content" id="content_edit"  autocomplete="off" placeholder="内容" class="layui-input" style="height:120px"></textarea>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">共享给</label>
+				<div class="layui-input-block">
+					<input type="text" id="shareToId_h_edit" name="sharedPersonName" autocomplete="off" class="layui-input input_btn">
+					<input type="hidden" id="shareToId_edit"  name="sharedPersonId" autocomplete="off" class="layui-input" >
+					<a class="btn_blue2" style="float:right;" onclick="shareToId_chuan('edit')">选择</a>
+					<input type="hidden" name="noticeObjId" id="noticeObjId">
+				</div>
+			</div>
+			<div class="layui-form-item" id="isWarn_edit" style="display:none">
+				<label class="layui-form-label">设置提醒</label>
+				 <div class="layui-input-block">
+				      <input type="checkbox" name="isWarnMsg" id="isWarnMsg_edit" title="短信提醒" value="1" lay-skin="primary">
+				      <input type="checkbox" name="isWarnOnline" id="isWarnOnline_edit" title="消息提醒" value="1" lay-skin="primary">
+				      <input type="checkbox" name="isWarnMail"  id="isWarnMail_edit"title="邮件提醒" value="1" lay-skin="primary">
+   				 </div>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-edit-submit">
+						<i class="fa fa-save"></i> 提交
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!------------------------------------- 编辑对象窗口end ----------------------------------->
+	
+	<!------------------------------------- 详情对象窗口start ----------------------------------->
+	<div class="admin-main" style="display: none;" id="win-view-object">
+		<form class="layui-form layui-form-pane" id="view-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" name="id" id="hiddenId" />
+		<!-- 	<div class="layui-form-item">
+				<label class="layui-form-label">主题</label>
+				<div class="layui-input-block">
+					<input type="text" name="theme" id="theme_view" lay-verify="required" autocomplete="off" placeholder="主题" class="layui-input" disabled>
+				</div>
+			</div> -->
+			<div class="" style="text-align: center;">
+				 <span id="theme_view" style="font-size:16px;font-weight: bold;word-wrap:break-word"></span>
+			</div>
+			
+			<!-- 	<div class="layui-form-item layui-form-text">
+				<label class="layui-form-label">内容</label>
+				<div class="layui-input-block">
+					<textarea type="text" name="content" id="content_view"   class="layui-input" style="height:120px" disabled></textarea>
+				</div>
+			</div> -->
+			<!-- 内容 -->
+			<div class="outindss line_h_26px" style="clear:both;" id="mailContent">
+			    <p id="content_view" style="word-wrap: break-word;" class="heidf"></p>
+			</div>
+			
+			<!-- <div class="layui-form-item">
+				<label class="layui-form-label">地点</label>
+				<div class="layui-input-block">
+					<input type="text" name="place" id="place_view"  autocomplete="off" placeholder="地点" class="layui-input" disabled>
+				</div>
+			</div> -->
+			<!--地点-->
+			<div class="p_t10">
+				<span class="e6ed l">地点：</span>
+				<!-- <span id="place_view"></span> -->
+				<div id="place_view" class="l" style="word-wrap:break-word;width:85%;"></div>
+			</div>
+			
+		<!-- 	<div class="layui-form-item">
+			   <label class="layui-form-label">开始日期</label>
+				<div class="layui-input-inline">
+					  <input type="text" class="layui-input"  name="startDate" id="startDate_view" disabled>
+				</div>
+				<label class="layui-form-label">开始时间</label>
+				<div class="layui-input-inline">
+					  <input type="text" class="layui-input"  name="startHourMin" id="startHourMin_view">
+				</div>
+			</div> -->
+			<!--开始时间-->
+			<div class="p_t10 cl">
+				<span class="e6ed">开始日期：</span>
+				<span id="startDateStr_view"></span>
+			</div>
+			<!-- <div class="p_t10">
+				<span class="e6ed">开始时间：</span>
+				<span id="startHourMin_view"></span>
+			</div> -->
+			
+			
+	<!-- 		<div class="layui-form-item">
+				 <label class="layui-form-label">结束日期</label>
+				<div class="layui-input-inline">
+					  <input type="text" class="layui-input" name="endDate" id="endDate_view" disabled>
+				</div>
+				<label class="layui-form-label">结束时间</label>
+				<div class="layui-input-inline">
+					  <input type="text" class="layui-input"  name="endHourMin" id="endHourMin_view">
+				</div>
+			</div> -->
+			<!--结束时间-->
+			<div class="p_t10">
+				<span class="e6ed">结束日期：</span>
+				<span id="endDateStr_view"></span>
+			</div>
+			<!-- <div class="p_t10">
+				<span class="e6ed">结束时间：</span>
+				<span id="endHourMin_view"></span>
+			</div> -->
+			
+			<!-- <div class="layui-form-item">
+				<label class="layui-form-label">类型</label>
+				<div class="layui-input-block">
+				       <select name="type" id="type_view" disabled>
+							<option  value="">请选择</option>
+							<option value="1">共享日程</option>
+							<option value="2">个人计划</option>
+							<option value="3">会议通知</option>
+						</select>	
+				 </div>
+			</div> -->
+			<!--类型-->
+			<div class="p_t10">
+				<span class="e6ed">类型：</span>
+				<span id="type_view"></span>
+			</div>
+			
+	
+			
+			<!-- <div class="layui-form-item">
+				<label class="layui-form-label">共享给</label>
+				<div class="layui-input-block">
+					<input type="text" id="shareToId_h" lay-verify="required|spactily" autocomplete="off" placeholder="" class="layui-input" disabled>
+					<input type="hidden" id="shareToId"  name="shareToId" autocomplete="off" class="layui-input" >
+					<a class="btn_blue2" style="float:right;" onclick="shareToId_chuan('win-add-object')">选择</a>
+					<input type="hidden" name="noticeObjId" id="noticeObjId">
+				</div>
+			</div> -->
+			<!-- 共享给 -->
+			<div class="p_t10 cl">
+				<span class="e6ed l">共享给：</span>
+				<div id="shareToId_h" class="l" style="word-wrap:break-word;width:85%;"></div>
+			</div>
+			<!-- 共享者 -->
+			<div class="p_t10 cl">
+				<span class="e6ed l">共享者：</span>
+				<div id="createFullName_view" class="l" style="word-wrap:break-word;width:85%;"></div>
+			</div>
+			
+			<!-- <div class="layui-form-item">
+				<label class="layui-form-label">设置提醒</label>
+				 <div class="layui-input-block">
+				      <input type="checkbox" name="isWarnMsg"  id="isWarnMsg_view"title="短信提醒" value="1" lay-skin="primary" disabled>
+				      <input type="checkbox" name="isWarnOnline" id="isWarnOnline_view" title="在线短信提醒" value="1" lay-skin="primary" disabled>
+				      <input type="checkbox" name="isWarnMail"  id="isWarnMail_view"title="邮件提醒" value="1" lay-skin="primary" disabled>
+   				 </div>
+			</div> -->
+			<div class="p_t10 cl">
+				<span class="e6ed">提醒设置：</span>
+				<span id="warn_setting"></span>
+			</div>
+			
+		<!-- 	<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-view-submit">
+						<i class="fa fa-save"></i> 提交
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div> -->
+
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+			</div>
+		</form>
+	</div>
+	<!------------------------------------- 详情对象窗口end ----------------------------------->
+	
+	 <!------------------------------------- 被共享人--------------------------------------->
+	<div id="user_list" style="display:none;" class="adminp-main">
+		<div class="layui-field-box layui-form">
+			<div>
+				<div class="layui-input-inline">
+					<input type="text" name="searchKey" id="searchKey2" placeholder="输入用户名称查询" autocomplete="off" class="layui-input"
+					style="height: 30px; line-height: 30px;">
+				</div>
+				<span style="margin-right: 15px;"> 
+					<@a code="" href="javascript:void(0)" class="layui-btn layui-btn-small" id=""
+					onclick="loadData2()" iclass="layui-icon" icon="&#xe615;" text="搜索"/> 
+				</span> 
+			</div>
+			<table class="layui-table admin-table">
+				<thead>
+					<tr>
+						<th style="display: none;">用户ID</th>
+						<th>用户账号</th>
+						<th>昵称</th>
+						<th>是否激活</th>
+					    <th>添加</th>
+					</tr>
+				</thead>
+				<tbody id="paging2-data">
+					<script id="paging2-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td style="display: none;">{{value.autUser.id}}</td>
+							<td>{{value.autUser.userName}}</td>
+							<td>{{value.autUser.fullName}}</td>
+							<td>{{if value.autUser.isActive == 1}}<font color="green">激活</font>{{/if}}{{if value.autUser.isActive == 0}}<font color="red">冻结</font>{{/if}}</td>
+						    <td><a 	class="layui-btn layui-btn-mini layui-btn-normal" onclick="addUser2Share('{{value.autUser.id}}','{{value.autUser.fullName}}')">添加</a>
+                                <a href="javascript:void(0)" class="layui-btn layui-btn-mini" id="show-role_c" onclick="cancelShare('{{value.autUser.id}}','{{value.autUser.fullName}}')">取消</a>		
+                            </td>
+						</tr>
+					{{/each}}
+					</script>
+				</tbody>
+			</table>
+		</div>
+		<div class="admin-table-page2" style="border-width: 0px; z-index: 0;">
+			<div id="paging2-footer" class="page"
+				style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	<!-- 人员选择树 -->
+	<div style="display: none;z-index: 19940200;" id="win-personal-object">
+		<div class="search_h">
+			<input id="peopelSel" class="tree_search1 reset" type="text" value="" placeholder="搜索">
+			<a class="layui-btn layui-btn-small" id="" onclick="searchNodes()"><i class="layui-icon">&#xe615;</i>搜索</a>
+			<a class="layui-btn layui-btn-small layui-btn-primary" style="margin-left:2px;" type="reset" onclick="reset_tree()"><li class="fa fa-eraser"></li> 重置</a>
+			<label type="text"  id="resultKey" class="form-control">  
+                <div>  
+                    <a id="clickUp" class="tree_up" onclick="clickUp()"><i class="layui-icon">&#xe619;</i></a>  
+                    <a id="clickDown" class="tree_down" onclick="clickDown()"><i class="layui-icon">&#xe61a;</i></a>  
+                </div>  
+                <label id="number" class="tree_number"></label>  
+            </label>  
+        </div>
+        <div class="tree_h">
+        	<ul id="treeDemo" class="ztree treeDemo1" name="treeDemo" style="display:block"></ul>
+        </div>
+        <div class="sure_h">
+		    <a class="layui-btn layui-btn-small sure_s"><li class="fa fa-save"></li> 确定</a>
+		</div>
+	</div>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/upload.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script> 
+	<script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script>
+		var pform,pdate;
+		var index ;//layer-用于指向此刻的弹窗是新增还是更新
+		
+		tool.dateTime('#startDateStr_edit','#endDateStr_edit','YYYY-MM-DD hh:mm',true);
+		tool.dateTime('#startDate_add','#endDate_add','YYYY-MM-DD hh:mm',true);
+		
+		
+		//添加事件
+		layui.use(['form','laydate'], function() {
+			pform = layui.form;
+			pform.on('select(isActive)', function(data) {
+				//alert(data.value);
+				//form.render('checkbox');
+			});
+			
+			var laydate = layui.laydate;
+			//===============开始/结束日期================
+			/* var startDate_edit = laydate.render({ 
+				elem: '#startDate_edit'
+				,trigger: 'click'
+				,done:function(value,date){
+					date.month = date.month-1
+					endDate_edit.config.min = date
+				}
+			});
+			var endDate_edit = laydate.render({ 
+				elem: '#endDate_edit'
+				,trigger: 'click'
+				,done:function(value,date){
+					date.month = date.month-1
+					startDate_edit.config.max = date
+				}
+			});
+			
+			var startDate_add = laydate.render({ 
+				elem: '#startDate_add'
+				,trigger: 'click'
+				,done:function(value,date){
+					date.month = date.month-1
+					endDate_add.config.min = date
+				}
+			});
+			var endDate_add = laydate.render({ 
+				elem: '#endDate_add'
+				,trigger: 'click'
+				,done:function(value,date){
+					date.month = date.month-1
+					startDate_add.config.max = date
+				}
+			}); */
+			//===============开始/结束时间=================
+			laydate.render({ 
+				  elem: '#startHourMin_add'
+				  ,type: 'time'
+				  ,format: 'HH:mm'
+				  ,trigger: 'click'
+				});
+			laydate.render({ 
+				  elem: '#endHourMin_add'
+				  ,type: 'time'
+				  ,format: 'HH:mm'
+				  ,trigger: 'click'
+				});
+			laydate.render({ 
+				  elem: '#startHourMin_edit'
+				  ,type: 'time'
+				  ,format: 'HH:mm'
+				  ,trigger: 'click'
+				});
+			laydate.render({ 
+				  elem: '#endHourMin_edit'
+				  ,type: 'time'
+				  ,format: 'HH:mm'
+				  ,trigger: 'click'
+				});
+			//自定义表单校验
+			pform.verify();
+			//监听新增提交
+			pform.on('submit(form-add-submit)', function(data) {
+				//console.log( $("#add-object-form").serialize())
+				layer.confirm('确定提交吗 ?', {
+                      icon: 3,
+                      title: '提示'
+                },function(index){ 
+			    tool.post("../offScheduling/add", $("#add-object-form").serialize(),postCallBack, false); 
+                })
+				return false;
+			});
+			//监听新增提交
+			pform.on('submit(form-edit-submit)', function(data) {
+				//console.log($("#edit-object-form").serialize())
+				tool.post("../offSchedulingLeader/update", $("#edit-object-form").serialize(), postCallBack, false);
+				return false;
+			});
+			//初始化出发数据加载
+			loadData();
+		});
+		
+		//======================加载页面数据======================
+		function loadData(type) {
+			var param = new Object();
+			if(type != 1){//普通查询
+				param.scheduleStartDate = $("#startTime").val();
+				param.scheduleEndDate = $("#endTime").val();
+			}else{//高级搜索
+				param.scheduleStartDate = $("#startTime").val();
+				param.scheduleEndDate = $("#endTime").val();
+				param.createFullName = $("#createFullName").val();
+				param.type = $("#type").val();
+				param.theme = $("#theme1").val();
+				//param.theme = $("#theme2").val();
+			}
+			
+			param.container = "paging";
+			param.pageSize = 10;
+			console.log(param)
+			param.url = "../offSchedulingLeader/lederList";
+			tool.loadpage(param);
+		}
+		//搜索条件重置
+		function seacrhReact(myself){
+			$(myself).parent().parent().find("input").val("")
+		}
+		//时间控件
+		$("#startTime").val(getBeforeDate(7))
+		tool.dateTime('#startTime','#endTime','',false);
+		
+		//取当前时间的前多少天的日期
+		function getBeforeDate(n) {
+			var n = n;
+			var d = new Date();
+			var year = d.getFullYear();
+			var mon = d.getMonth() + 1;
+			var day = d.getDate();
+			if (day <= n) {
+				if (mon > 1) {
+					mon = mon - 1;
+				} else {
+					year = year - 1;
+					mon = 12;
+				}
+			}
+			d.setDate(d.getDate() - n);
+			year = d.getFullYear();
+			mon = d.getMonth() + 1;
+			day = d.getDate();
+			s = year + "-" + (mon < 10 ? ('0' + mon) : mon) + "-" + (day < 10 ? ('0' + day) : day);
+			return s;
+		}
+		//获取当前时间，格式YYYY-MM-DD
+		function getNowFormatDate() {
+			var date = new Date();
+			var seperator1 = "-";
+			var year = date.getFullYear();
+			var month = date.getMonth() + 1;
+			var strDate = date.getDate();
+			if (month >= 1 && month <= 9) {
+				month = "0" + month;
+			}
+			if (strDate >= 0 && strDate <= 9) {
+				strDate = "0" + strDate;
+			}
+			var currentdate = year + seperator1 + month + seperator1 + strDate;
+			return currentdate;
+		}
+		// tool.timeset('#startTimea','#endTimea');
+		// tool.timeset('#startDate','#endDate');
+		// tool.timeset('#startDate_edit','#endDate_edit');
+
+		//打开新增对象窗口
+		function openAddWin() {
+			$("#reset_add").click()
+			var index = layer.open({
+				title : '新增',
+				maxmin : false,
+				type : 1,
+				content : $('#win-add-object')
+			});
+
+			layer.full(index);
+		}
+		//新增对象回调
+		function postCallBack(retMsg) {
+			if (retMsg.code == 0) {
+				layer.closeAll();
+				loadData();
+				tool.success(retMsg.message);
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+
+		//======================详情===========================
+		function showView(id) {
+			$("#view-object-form").find("#isWarnMail_view").removeAttr(
+					"checked");
+			$("#view-object-form").find("#isWarnMsg_view")
+					.removeAttr("checked");
+			$("#view-object-form").find("#isWarnOnline_view").removeAttr(
+					"checked");
+			$("#view-object-form").find("#hiddenId").val(id)
+			var object = tool.getById("../offSchedulingLeader/getById", id);
+			//console.log(object)
+			//$("#view-object-form").find("#shareToId_h").val(object.shareToName)
+			//	$("#view-object-form").find("#shareToId_h").val(object.sharedPersonName)
+
+			for ( var key in object) {
+				$("#view-object-form").find("#" + key + "_view").html(
+						object[key]);
+			}
+
+			$("#view-object-form").find("#type_view").html(object.typeStr);
+			$("#view-object-form").find("#shareToId_h").html(
+					object.sharedPersonName)
+			$("#view-object-form").find("#shareToId").html(
+					object.sharedPersonId)
+			if (object.startDateStr != "") {
+				$("#startDate_view").html(object.startDateStr)
+			}
+			if (object.endDateStr != "") {
+				$("#endDate_view").html(object.endDateStr)
+			}
+			if (object.sharedPersonName == null) {
+				$("#view-object-form").find("#shareToId_h").val("");
+			} else {
+				var sharedPersonName=object.sharedPersonName.replace(/;/g,"；");
+				$("#view-object-form").find("#shareToId_h").html(sharedPersonName);
+			}
+			var str = ""
+			if (object.isWarnMail == 1) {
+				//				$("#view-object-form").find("#isWarnMail_view").prop("checked","checked")
+				str += "邮件提醒; "
+			}
+			if (object.isWarnMsg == 1) {
+				//				$("#view-object-form").find("#isWarnMsg_view").prop("checked","checked")
+				str += "短信提醒; "
+			}
+			if (object.isWarnOnline == 1) {
+				//				$("#view-object-form").find("#isWarnOnline_view").prop("checked","checked")
+				str += "消息提醒;"
+			}
+			$("#warn_setting").html(str)
+			index = layer.open({
+				title : '领导查看详情',
+				maxmin : false,
+				type : 1,
+				content : $('#win-view-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		//======================编辑对象======================
+		function showEdit(id) {
+			$("#edit-object-form").find("#isWarnMail_edit").removeAttr(
+					"checked");
+			$("#edit-object-form").find("#isWarnMsg_edit")
+					.removeAttr("checked");
+			$("#edit-object-form").find("#isWarnOnline_edit").removeAttr(
+					"checked");
+
+			$("#edit-object-form").find("#hiddenId").val(id)
+			var object = tool.getById("../offSchedulingLeader/getById", id);
+			//$("#edit-object-form").find("#shareToId_h").val(object.shareToName)
+			for ( var key in object) {
+				$("#edit-object-form").find("#" + key + "_edit").val(
+						object[key]);
+			}
+			$("#edit-object-form").find("#shareToId_h_edit").val(
+					object.sharedPersonName)
+			$("#edit-object-form").find("#shareToId_edit").val(
+					object.sharedPersonId)
+			$("#startDate_edit").val(object.startDate)
+			if (object.startDate != null) {
+				object.startDate = object.startDate.substr(0, 10);
+				$("#startDate_edit").val(object.startDate)
+			}
+			if (object.endDate != null) {
+				object.endDate = object.endDate.substr(0, 10);
+				$("#endDate_edit").val(object.endDate)
+			}
+			if (object.shareToName == null) {
+				$("#edit-object-form").find("#shareToId_h").val("");
+				$("#isWarn_edit").hide()
+			} else {
+				$("#isWarn_edit").show()
+			}
+			if (object.isWarnMail == 1) {
+				//动态设置属性 才会重新渲染
+				$("#edit-object-form").find("#isWarnMail_edit").prop("checked",
+						"checked")
+			}
+			if (object.isWarnMsg == 1) {
+				$("#edit-object-form").find("#isWarnMsg_edit").prop("checked",
+						"checked")
+			}
+			if (object.isWarnMsg == 1) {
+				$("#edit-object-form").find("#isWarnOnline_edit").prop(
+						"checked", "checked")
+			}
+			index = layer.open({
+				title : '详情',
+				maxmin : false,
+				type : 1,
+				content : $('#win-edit-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+
+		//======================弹窗候选用户======================
+		function loadData2() {
+			var param = new Object();
+			param.container = "paging2";
+			param.pageSize = 10;
+			param.pageNum = 1;
+			param.isActive = 1;
+			param.userName = $("#searchKey2").val();
+			//param.idList = idList_user.join(","); 
+			param.url = "/pub/public/userList";
+			tool.loadpage(param);
+		}
+
+		var str_father;
+		var winfather;
+		//======================被共享人弹窗======================
+		function shareToId_chuan(father) {
+			str_father = "win-" + father + "-object"
+			winfather = father
+			loadData2();
+			var index = layer.open({
+				title : '被共享人',
+				maxmin : false,
+				type : 1,
+				content : $('#user_list')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		//===================添加被共享人===================
+		function addUser2Share(id, name) {
+			var shared_id = $("#" + str_father).find(
+					"#shareToId" + "_" + winfather).val();
+			var shared_name = $("#" + str_father).find(
+					"#shareToId_h" + "_" + winfather).val();
+			//console.log(shared_name)
+			//console.log(shared_id)
+			if ("" != shared_id && String(shared_id).indexOf(String(id)) > -1) {
+				layer.error("已添加该用户")
+			} else {
+				$("#" + str_father).find("#shareToId" + "_" + winfather).val(
+						shared_id + id + ";")
+				$("#" + str_father).find("#shareToId_h" + "_" + winfather).val(
+						shared_name + name + ";")
+				layer.error("添加成功！")
+			}
+		}
+
+		//===================取消添加===================
+		function cancelShare(id, name) {
+			//console.log(str_father)
+			var shared_id = $("#" + str_father).find(
+					"#shareToId" + "_" + winfather).val();
+			var shared_name = $("#" + str_father).find(
+					"#shareToId_h" + "_" + winfather).val();
+			if (shared_id.indexOf(id) > -1) {
+				shared_id = shared_id.replace(id + ";", "");
+				shared_name = shared_name.replace(name + ";", "");
+				$("#" + str_father).find("#shareToId" + "_" + winfather).val(
+						shared_id)
+				$("#" + str_father).find("#shareToId_h" + "_" + winfather).val(
+						shared_name)
+				layer.error("取消选择该共享用户成功！")
+			} else {
+				layer.error("没有添加该共享人，不需要取消")
+				return false;
+			}
+		}
+
+		//======================删除对象======================
+		function showDelete(id) {
+			layer.confirm('确定删除 ?', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				var retMsg = tool.deleteById("../offSchedulingLeader/delete",
+						id)
+				if (retMsg.code == 0) {
+					tool.success(retMsg.message);
+					loadData();
+				} else {
+					tool.error(retMsg.message);
+				}
+			});
+		}
+
+		//======================阻止maopao======================
+		function defalt_td(event) {
+			event.cancelBubble = true;
+		}
+		/* 高级搜索 */
+		function search_h() {
+			$(".sear").toggle();
+		}
+		//人员选择树
+		function personlSeclectOpen() {
+			tool.treeDemo("win-personal-object", 'treeDemo', "shareToId_add",
+					"shareToId_h_add", "shareToId_h_add_div");
+			$("#number").html("");
+		}
+		//用按钮查询节点  
+		/* function searchNodes() {
+			var keywords = $("#peopelSel").val();
+			var nodes = mytree.getNodesByParamFuzzy("name", keywords, null);
+			if (nodes.length > 0) {
+				mytree.selectNode(nodes[0]);
+			}
+		} */
+		//重置树
+		function reset_tree() {
+			var mytree = $.fn.zTree.getZTreeObj("treeDemo");
+			//打开弹窗前重置节点以及关闭展开状态，避免叠加
+			$("#number").html("");
+			$('.reset').val("");
+			$('.reset1').html("");
+			mytree.checkAllNodes(false)
+			mytree.expandAll(false);
+		}
+	</script>
+</body>
+
+</html>

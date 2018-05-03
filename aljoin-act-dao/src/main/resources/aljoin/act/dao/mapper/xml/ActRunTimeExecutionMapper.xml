@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.act.dao.mapper.ActRunTimeExecutionMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.act.dao.entity.ActRunTimeExecution">
+		<id column="ID_" property="id" />
+		<result column="REV_" property="rev" />
+		<result column="PROC_INST_ID_" property="procInstId" />
+		<result column="BUSINESS_KEY_" property="businessKey" />
+		<result column="PARENT_ID_" property="parentId" />
+		<result column="PROC_DEF_ID_" property="procDefId" />
+		<result column="SUPER_EXEC_" property="superExec" />
+		<result column="ACT_ID_" property="actId" />
+		<result column="IS_ACTIVE_" property="isActive" />
+		<result column="IS_CONCURRENT_" property="isConcurrent" />
+		<result column="IS_SCOPE_" property="isScope" />
+		<result column="IS_EVENT_SCOPE_" property="isEventScope" />
+		<result column="SUSPENSION_STATE_" property="suspensionState" />
+		<result column="CACHED_ENT_STATE_" property="cachedEntState" />
+		<result column="TENANT_ID_" property="tenantId" />
+		<result column="NAME_" property="name" />
+		<result column="LOCK_TIME_" property="lockTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ID_ AS id, REV_ AS rev, PROC_INST_ID_ AS procInstId, BUSINESS_KEY_ AS businessKey, PARENT_ID_ AS parentId, PROC_DEF_ID_ AS procDefId, SUPER_EXEC_ AS superExec, ACT_ID_ AS actId, IS_ACTIVE_ AS isActive, IS_CONCURRENT_ AS isConcurrent, IS_SCOPE_ AS isScope, IS_EVENT_SCOPE_ AS isEventScope, SUSPENSION_STATE_ AS suspensionState, CACHED_ENT_STATE_ AS cachedEntState, TENANT_ID_ AS tenantId, NAME_ AS name, LOCK_TIME_ AS lockTime
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM act_ru_execution WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="ActRunTimeExecution">
+    	INSERT INTO act_ru_execution(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{rev}, #{procInstId}, #{businessKey}, #{parentId}, #{procDefId}, #{superExec}, #{actId}, #{isActive}, #{isConcurrent}, #{isScope}, #{isEventScope}, #{suspensionState}, #{cachedEntState}, #{tenantId}, #{name}, #{lockTime})
+    </insert>
+
+	<!-- 批量新增 -->
+	<insert id="insertExecutionBatch" parameterType="java.util.List">
+		INSERT INTO act_ru_execution(ID_, REV_, PROC_INST_ID_,BUSINESS_KEY_,PROC_DEF_ID_,ACT_ID_,IS_ACTIVE_,IS_CONCURRENT_,IS_SCOPE_,IS_EVENT_SCOPE_,SUSPENSION_STATE_,CACHED_ENT_STATE_)
+		VALUES
+		<foreach collection="list" item="item" separator=",">
+			(#{item.id}, #{item.rev},#{item.procInstId}, #{item.businessKey}, #{item.procDefId}, #{item.actId}, #{item.isActive}, #{item.isConcurrent}, #{item.isScope}, #{item.isEventScope}, #{item.suspensionState}, #{item.cachedEntState})
+		</foreach>
+	</insert>
+
+	<!-- 更新 IS_CONCURRENT_ IS_SCOPE_-->
+	<update id="updateExecution" parameterType="ActRunTimeExecution">
+		update act_ru_execution
+		<set>
+			IS_CONCURRENT_ = 0
+		</set>
+		<where>
+			PROC_INST_ID_ = #{procInstId}
+		</where>
+	</update>
+</mapper>

@@ -1,0 +1,53 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>aljoin-parent</artifactId>
+		<groupId>aljoin-parent</groupId>
+		<version>1.0.1-SNAPSHOT</version>
+	</parent>
+	<name>aljoin-act-iservice</name>
+	<url>http://maven.apache.org</url>
+
+	<artifactId>aljoin-act-iservice</artifactId>
+	<packaging>jar</packaging>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>aljoin-parent</groupId>
+			<artifactId>aljoin-act-dao</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>aljoin-parent</groupId>
+			<artifactId>aljoin-object</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!-- activiti -->
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-engine</artifactId>
+			<exclusions>
+				<!-- 排掉activiti默认使用的mybatis,版本太旧了，使用下面aljoin-dao依赖进来的mybatis版本 -->
+				<exclusion>
+					<groupId>org.mybatis</groupId>
+					<artifactId>mybatis</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-spring</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-bpmn-model</artifactId>
+		</dependency>
+	</dependencies>
+
+</project>

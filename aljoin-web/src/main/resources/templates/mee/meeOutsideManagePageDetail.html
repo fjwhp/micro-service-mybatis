@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>外部会议管理</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<link rel="stylesheet" href="../../web/css/zhengls.css" /> 
+</head>
+<body> 
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	 <input type="hidden" id="t_isDraft" value="${t_isDraft}" />
+	 <input type="hidden" id="t_id" value="${t_id}" />
+	<form class="layui-form" action="/res/file/download" method="get" id="action_form">
+	   <input type="hidden" name="groupName" id="groupName">
+	   <input type="hidden" name="fileName" id="fileName">
+	</form>
+	<!-- 会议详情 -->
+	<div class="admin-main" style="z-index: 19940200;" id="win-detail-object">
+		<div id="win-newsms-object">
+			<form class="layui-form layui-form-pane" id="detail-object-form">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<!-- <div class="mr_top10">
+					<span class="e6ed" style="width:100px;">会议标题：</span>
+					<span id="meetingTitle"></span>
+			    </div> -->
+			    <!-- 标题 -->
+				<div class="" style="text-align: center;">
+					 <span id="meetingTitle" style="font-size:16px;font-weight: bold;word-wrap:break-word"></span>
+				</div>
+				<!-- 会议内容 -->
+               <!--  <div class="outindss" style="clear:both;" id="mailContent">
+				  <p id="meetingContent" style="word-wrap: break-word;" class="heidf"></p>
+				</div> -->
+				
+			    <div class="p_t10">
+					<span class="e6ed" style="width:100px;">主持人：</span>
+					<span id="meetingHost"></span>
+			    </div>
+			     <div class="p_t10">
+					<span class="e6ed" style="width:100px;">联系人：</span>
+					<span id="contacts"></span>
+			    </div>
+			    <!-- <div class="mr_top10">
+					<span class="e6ed" style="width:100px;">会议室：</span>
+					<span id="meetingRoomName"></span>
+			    </div> -->
+				<div class="p_t10">
+					<span class="e6ed l" style="width:100px;">会议地址：</span>
+					<div id="address" class="l" style="word-wrap: break-word; width: 85%;margin-left: 4px;"></div>
+			    </div>
+			    <div class="p_t10 cl">
+					<span class="e6ed l" style="width:100px;">参会人员：</span>
+					<!-- <span id="partyMemeberNames"></span> -->
+					<div id="partyMemeberNames" class="l" style="word-wrap: break-word; width: 85%;margin-left: 4px;line-height:20px;"></div>
+			    </div>
+			     <div class="p_t10 cl">
+					<!-- <span class="e6ed" style="width:160px;">外部出席单位/人员：</span>
+					<span id="attendances"></span> -->
+					<span class="e6ed l" style="width:100px;">外部出席单位&nbsp;/&nbsp;人员：</span>
+					<div id="attendances" class="l" style="word-wrap: break-word; width: 85%;margin-top: 19px;margin-left: 4px;"></div>
+			    </div>
+			     <div class="p_t10 cl">
+					<span class="e6ed" style="width:100px;">会议时间：</span>
+					<span id="beginTime"></span>
+					<span class="e6ed m_r10" style="width:20px;">至</span>
+					<span id="endTime"></span>
+			    </div>
+			   <!--  <div class="p_t10">
+					<span class="e6ed" style="width:100px;">结束时间：</span>
+					<span id="endTime"></span>
+			    </div> -->
+			    <!-- <div class="mr_top10">
+					<span class="e6ed" style="width:100px;">会议内容：</span>
+					<span id="meetingContent"></span>
+			    </div> -->
+			    <!-- 会议内容 -->
+                <div class="outindss" style="clear:both;" id="mailContent">
+				  <p id="meetingContent" style="word-wrap: break-word;" class="heidf line_h_26px"></p>
+				</div>
+				<div class="p_t10">
+				    <span class="e6ed" style="width:100px;">提醒方式：</span>
+				    <span id="isWarnMsg-add" style="display:none;display:inline-block">短信提醒;</span>
+				      <span id="isWarnMail-add" style="display:none;display:inline-block">邮件提醒;</span>
+				      <span id="isWarnOnline-add" style="display:none;display:inline-block">消息提醒;</span>
+				    </span>
+				</div> 
+		    	<div class="p_t10 cl" >
+					<span  class="e6ed l" style="width: 100px;">附件：</span> 
+				<div class="">
+				      <table class="layui-table" style="width: 50%;margin-top: 0px;border: none;">
+				         <colgroup>
+						    <col width="60%">
+						    <col width="20%">
+						    <col width="20%">
+						  </colgroup>
+					      	<tbody id="demoList">
+							<script   id="artt_detail"  type="text/html">
+								{{each filelist value index}}
+                                    <tr>
+                   					   <td style="border:none"><span style="margin-right:20px;">{{value.orgnlFileName}}</span></td>
+                                       <td style="border:none"><span style="margin-right:20px;">{{value.fileSize}}kb</span></td>
+                   					   <td style="border:none"><a onclick="showDownload('{{value.groupName}}','{{value.fileName}}')" style="color:#339bf1;cursor:pointer">下载</a></td>
+                                    </tr>
+	              				 {{/each}}
+							</script>
+							</tbody>
+				       </table>
+				    </div>
+				   </div>
+				   <div class="btn_fixed">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layerClone()"><i class="fa fa-backward"></i> 返回</a>
+				   </div>
+		    	</form>
+			</div>
+		</div>
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script>
+	
+		//定义layui
+		var pform;
+		layui.use(['form','element'], function() {
+			var element=layui.element;
+			pform = layui.form;
+        });
+        //下载详情里面的附件
+        function showDownload(groupName,fileName){
+	    	$("#groupName").val(groupName);
+	    	$("#fileName").val(fileName);
+			$("#action_form").submit();
+    	}
+        $(document).ready(function(){
+			var id=$("#t_id").val();
+			var isDraft=$("#t_isDraft").val();
+			detail(id,isDraft)
+		});
+        //内部会议详情
+        function detail(id,isDraft) {
+            var object = "";
+            if(isDraft == 1){
+                object = tool.getById("/mee/meeOutsideMeetingDraft/getById", id);
+            }else{
+                object = tool.getById("/mee/meeOutsideMeeting/getById", id);
+            }
+         
+            if(object.resResourceList!=null){
+            	   var fileBack=object.resResourceList;
+   		           var filelist={filelist:fileBack};
+   				   /* for(var i=0;i<filelist.filelist.length;i++){
+   					   filelist.filelist[i].attachPath = filelist.filelist[i].attachPath.replace(/\\/g,"\\/")
+   					 } */
+   		            $('#demoList').html(template("artt_detail", filelist));
+   			   }
+            for ( var key in object) {
+                $("#detail-object-form").find("#" + key).text(
+                    object[key]);
+              
+                if(key == 'isWarnMsg'){
+                    var isWarnMsg = $("#detail-object-form").find("#isWarnMsg-add");
+                    if(isWarnMsg.length>0){
+                        if(object[key] == '1'){
+                            $(isWarnMsg).show();
+                        }else{
+                        	$(isWarnMsg).hide();
+                        }
+                    }
+                }
+
+                if(key == 'isWarnMail'){
+                    var isWarnMail = $("#detail-object-form").find("#isWarnMail-add");
+                    if(isWarnMail.length>0){
+                        if(object[key] == '1'){
+                            $(isWarnMail).show();
+                        }else{
+                        	$(isWarnMail).hide();
+                        }
+                    }
+
+                }
+
+                if(key == 'isWarnOnline'){
+                    var isWarnOnline = $("#detail-object-form").find("#isWarnOnline-add");
+                    if(isWarnOnline.length > 0){
+                        if(object[key] == '1'){
+                            $(isWarnOnline).show();
+                        }else{
+                        	$(isWarnOnline).hide();
+                        }
+                    }
+                }
+            }
+              /* 参会人员 */
+              var partyMemeberNamesNew=object.partyMemeberNames.replace(/;/g,"；");
+              if(partyMemeberNamesNew.substr(partyMemeberNamesNew.length-1,1)=="；"){
+              	 partyMemeberNamesNew=partyMemeberNamesNew.substr(0,partyMemeberNamesNew.length-1);
+  			   }
+              $("#partyMemeberNames").text(partyMemeberNamesNew);
+              if(object.attendances!=null){
+              	/* 外部出席单位/人员 */
+                  var attendances=object.attendances.replace(/;/g,"；");
+                  $("#attendances").text(attendances);
+              }
+        }
+        
+        //详情返回
+ 	   function layerClone(){
+ 		   if(parent.isMail=="false"){
+ 			   $(".layui-nav-tree", window.parent.document).find("li").removeClass("layui-nav-itemed");
+ 			   parent.tab.tabAdd({
+ 				  	href :'/tempMenu/indexPage',
+ 				  	icon :'fa-bell-o',
+ 				  	title : '首页'
+ 				});	
+ 			   $("a[data-url='/tempMenu/indexPage']",window.parent.document).parent().addClass("layui-this");
+ 		   }else{
+ 			   parent.layer.close(parent.indexMee);
+ 			  if(parent.$(".layui-laypage-btn").length>0){
+				   parent.$(".layui-laypage-btn").trigger("click");
+			   }else{
+				   parent.loadData();
+			   } 
+ 		   }
+ 		  
+ 	   }
+        
+
+      
+	</script>
+</body>
+</html>

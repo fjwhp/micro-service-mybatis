@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>404</title>
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+	<style>
+		.wrap{
+			margin: auto; 
+			width: 438px;
+			height: 400px; 
+			position: absolute;  
+			top: 0; left: 0; bottom: 0; right: 0;  
+		}
+		.wrong_img{
+			width: 438px;
+			height: 226px;
+			background: url("../../web/images/404.png");
+		}
+		.wrong_content p{
+			font-size: 14px;
+			color: #999;
+			text-align: center;
+		}
+		.wrong_btn{
+			text-align: center;
+			margin-top: 30px;
+		}
+		.wrong_btn .back_btn{
+			background: #339bf1;
+			border-radius: 6px;
+			font-size: 16px;
+			color: #fff;
+			border:none;
+			height: 32px;
+			line-height: 32px;
+			width: 120px;
+			padding: 6px 12px;
+			cursor: pointer;
+		}
+	</style>
+</head>
+  
+  <body>
+  	<div class="wrap">
+		<div class="wrong_img"></div>
+		<div class="wrong_content">
+			<p>啊哦~一不小心闯进了未知领域，请点击下面按钮返回首页...</p>
+			<div class="wrong_btn">
+				<a class="back_btn" onclick='window.top.location.href="/"'>返回首页</a>
+			</div>
+		</div>
+	</div>
+  </body>
+</html>

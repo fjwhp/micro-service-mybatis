@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>工作草稿箱</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<link rel="stylesheet" href="../../web/css/zhengls.css" media="all">
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<input type="hidden" name="typeId"  id="typeId"/>
+	<div class="admin-main"> 
+	<blockquote class="layui-elem-quote" style="padding:5px;">
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+		<form class="layui-form" action="" id="win-add-object">
+			<div class="r">
+				<div class="layui-input-inline m_r10">
+					<span>流程类型</span>
+				</div>
+				<div class="layui-input-inline m_r20 content_sel">
+		      		<@selectLink table="act_aljoin_category" layVerify="required"  id="id"  name="id" class="layui-input-inline" def="" key="id" text="category_name" level="1" levelName="category_level" rankName="category_rank" where=" AND is_active=1"/>
+				</div>
+				<div class="layui-input-inline">
+				 <span>操作时间：</span>
+				</div>
+				<div class="layui-input-inline m_r20">
+					 <input type="text" class="inp_date" id="startTime" readonly="readonly" >
+				</div>
+				<div class="layui-input-inline">
+				 <span>至</span>
+				</div>
+				<div class="layui-input-inline m_r20">
+					 <input type="text" class="inp_date" id="endTime" readonly="readonly" >
+				</div>
+				<div class="layui-input-inline">
+					<input type="text" name="typeName" id="typeName" placeholder="请输入标题" autocomplete="off" class="layui-input"
+						style="height: 30px; line-height: 30px;" maxlength="30">
+				</div>
+				<span><@a code="000101" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData()" iclass="layui-icon"
+					 icon="&#xe615;" text="查询"/></span>
+			</div>
+	 	    <div class="layui-input-inline">
+			  	<span><a class="layui-btn layui-btn-small" onclick="deleteIds();"><i class="layui-icon">&#xe640;</i>删除</a></span>
+			</div> 
+		</form>
+	</blockquote>
+		<div class="layui-field-box layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table admin-table">
+			      <!-- <colgroup>
+							    <col width="30">
+							    <col width="30">
+							    <col width="80">
+							    <col width="50">
+							    <col width="220">
+							    <col width="90">
+							    <col width="60">
+							    <col width="70">
+							  
+				</colgroup> -->
+				<thead>
+					<tr>
+					    <th style="width: 20px;"><input type="checkbox"  lay-skin="primary" lay-filter="paging_check-all"></th>
+						<th style="display: none;">用户ID</th>
+						<th style="width: 60px;">序号</th>
+						<th style="width: 100px;">所属流程</th>
+						<th style="width: 40px;">缓急</th>
+						<th>标题</th>
+						<th style="width: 160px;">操作时间</th>
+						<th style="width: 60px;">创建人</th>
+						<th style="width: 90px;">操作</th> 
+					</tr>
+				</thead>
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+                      {{if records.length==0}}
+                       <tr>
+							<td colspan="8" style="text-align:center">
+                                                                                          数据为空
+							</td>
+						</tr>
+                     {{/if}}
+					 {{each records value index}}
+						<tr>
+							<td><input type="checkbox" lay-skin="primary" name="delDraft" class="check-id delDraft" id="{{value.draftId}}"></td>                          
+                            <td style="display: none;">{{value.draftId}}</td>
+                            <td>{{index+1}}</td>
+                            <td>{{value.formType}}</td>
+                            <td>{{value.urgency}}</td>
+                            <td>{{value.title}}</td>
+                            <td>{{value.outTime}}</td>
+                            <td>{{value.founder}}</td>
+                            <td>
+                                <@a code="080102" href="javascript:void(0)" class="color339" id="show-edit" onclick="openForm('{{value.taskId}}','{{value.title}}','{{value.TaskDefKey}}','{{value.bid}}','{{value.BusinessKey}}','{{value.signInTime}}')" text="编辑"/>
+							    <@a code="080104" href="javascript:void(0)" class="color339" id="show-edit" onclick="deleteId('{{value.draftId}}')" text="删除"/>
+                            </td>
+						</tr>
+					{{/each}}
+					</script>
+				</tbody>
+			</table>
+		</div>
+			               
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+
+	
+	<script type="text/javascript" src="../../web/plugins/layui/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script>
+	tool.timeset('#startTime','#endTime');			
+	var pform,pdate;
+	//添加事件
+	layui.use('form', function() {		
+		pform = layui.form();	
+		loadData();			
+		pform.on('select(id)', function(data) {
+	            //参数 1：当前元素id，参数2：顶级元素id（用来锁定唯一元素）
+	            $("#typeId").val(data.value);
+	            tool.selectLinkTagByPid("id","win-add-object",data);
+	    });			
+	});
+	function loadData( receviceUserSort,maiSizeSort,sendTimeSort) {
+		var param = new Object();
+		param.container = "paging";
+		param.pageSize = 10;
+		param.url = "../ioaDraft/list";	
+		//type
+		if($('#typeId').val()!=null && $('#typeId').val()!=""){
+			param.type=$('#typeId').val();
+		}			
+		//typename
+		if($('#typeName').val()!=null && $('#typeName').val()!=""){
+			param.typeName=$('#typeName').val();
+		}
+		//startTime
+		if($('#startTime').val()!=null && $('#startTime').val()!=""){
+			param.startTime=$('#startTime').val();
+		}
+		//endtime
+		if($('#endTime').val()!=null && $('#endTime').val()!=""){
+			param.endTime=$('#endTime').val();
+		}			
+		tool.loadpage(param);
+	}
+	 //删除单个
+    function deleteId(id){	    	
+    	layer.confirm('确定并删除 ?', {
+			icon : 3,
+			title : '提示'
+		}, function(index) {
+			var retMsg = tool.deleteById("../ioaDraft/delete", id)
+			if (retMsg.code == 0) {
+				tool.success(retMsg.message);
+				layer.closeAll();
+				loadData();
+			} else {
+				tool.error(retMsg.message);
+			}
+		});
+    
+    }
+    //批量删除     
+	function deleteIds(){    	
+		  if($(".delDraft:checked").length==0){
+				tool.error('至少选中一个');
+		  }else{
+		  var str="";
+		  $(".delDraft:checked").each(function(index,value){
+			  str+=value.id+",";
+		  })
+		   //调批量删除接口 最后重新渲染列表 			   
+		  layer.confirm('确定删除吗 ?', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				var retMsg = tool.deleteById("../ioaDraft/delete", str)
+				if (retMsg.code == 0) {
+					tool.success(retMsg.message);
+					layer.closeAll();
+					loadData(); 
+				} else {
+					tool.error(retMsg.message);
+				}
+			});
+		   
+		  }
+	  }
+	  function openForm(id,processName,taskDefKey,bpmnId,businessKey,signInTime) {				
+			var index = layer.open({
+				title : processName,
+				maxmin : false,
+				type : 2,
+				content : '../../act/modeler/openForm.html?id='+bpmnId+'&activityId='+id+'&taskId='+taskDefKey+'&businessKey='+businessKey+'&signInTime='+signInTime
+			});
+			pform.render();
+			layer.full(index);
+	}	
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.act.dao.mapper.ActRunIdentitylinkMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.act.dao.entity.ActRunIdentitylink">
+		<id column="ID_" property="id" />
+		<result column="REV_" property="rev" />
+		<result column="GROUP_ID_" property="groupId" />
+		<result column="TYPE_" property="type" />
+		<result column="USER_ID_" property="userId" />
+		<result column="TASK_ID_" property="taskId" />
+		<result column="PROC_INST_ID_" property="procInstId" />
+		<result column="PROC_DEF_ID_" property="procDefId" />
+	</resultMap>
+
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="deleteByTaskId" parameterType="String">
+    	DELETE FROM act_ru_identitylink WHERE TASK_ID_ = #{taskId}
+    </delete>
+
+</mapper>

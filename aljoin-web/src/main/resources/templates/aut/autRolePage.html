@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>角色管理</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<!-- <link rel="stylesheet" href="../../web/css/public.css" /> -->
+<style>
+.r{float:right;}
+/* table的操作样式 */
+.table_btn{color:#339bf1;margin-right: 12px;}
+.table_btn1{color:#333;margin-right: 12px;}
+/* 手型 */
+.hand{cursor:pointer;}
+.nav_child{background: #fff;border: solid 1px #ccc;padding: 3px;}
+.nav_child li:hover {background:#ccc;}
+.l{float:left;}
+/* 下拉框样式 */
+.content_sel input.layui-input.layui-unselect{width:105px;height:27px;}
+/* 页签  */
+.title_tab{
+	font-size:14px;
+	padding: 6px 6px 6px 10px;
+	color:#444a54;
+	border-bottom:solid 1px #9ec8ea;
+	font-weight:bold;
+}
+.title_tab i{
+	color: #54abf2;
+	font-size:16px;
+} 
+.font_icon{
+	margin-right:6px;
+}
+</style>
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main" style="margin: 10px;padding-bottom:75px;">
+		<blockquote class="layui-elem-quote" style="padding: 5px;">
+			<form class="layui-form" action="">
+				<div class="r">
+					<div class="layui-input-inline">
+						<input type="text" name="searchKey" id="searchKey" placeholder="请输入角色名称或代码" autocomplete="off" class="layui-input"
+							style="height: 30px; line-height: 30px;">
+					</div>
+					<span><@a code="160802" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData()" iclass="layui-icon"
+						icon="&#xe615;" text="搜索"/></span>
+				</div>
+				<div>
+					<span><@a code="160803" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="openAddWin()" iclass="layui-icon"
+						icon="&#xe608;" text="新增"/></span>
+				</div>
+			</form>
+		</blockquote>
+		<div class="layui-field-box layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table admin-table">
+				 <!--  <colgroup>
+				    <col width="5%">
+				    <col width="15%">
+				    <col width="15%">
+				    <col width="15%">
+				    <col width="15%">
+				    <col width="35%">
+				    <col>
+				  </colgroup> -->
+				<thead>
+					<tr>
+						<!-- <th style="width: 20px;"><input type="checkbox" lay-skin="primary" lay-filter="paging_check-all"></th> -->
+						<th style="width: 60px;">序号</th>
+						<th style="display: none;">角色ID</th>
+						<th>角色名称</th>
+						<th>角色代码</th>
+						<th>角色排序</th>
+						<th style="width: 80px;">是否激活</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td style="display: none;">{{value.id}}</td>
+                            <td>{{(current-1)*size+index+1}}</td>
+							<td>{{value.roleName}}</td>
+							<td>{{value.roleCode}}</td>
+                            <td>{{value.roleRank}}</td>
+							<td>{{if value.isActive == 1}}<font color="green">激活</font>{{/if}}{{if value.isActive == 0}}<font color="red">冻结</font>{{/if}}</td>
+							<td style="width:270px;">
+                                <@a code="160906" href="javascript:void(0)" class="table_btn l table_link" id="show-role" onclick="lookRole('{{value.id}}',this)" text="查看用户"/>
+								<@a code="160907" href="javascript:void(0)" class="table_btn l table_link" id="show-edit" onclick="showEdit('{{value.id}}',this)" text="编辑"/>
+								<ul class="l">  
+            						<li class="parent"><span  onmouseover="click_li(this)"  class="hand table_btn more table_link">更多<img src="../../web/images/downgray.png" class="up" onclick="changepic()" ;=""></span>
+										<ul class="nav_child" onmouseleave="click_liout(this)"  style="display: none;position:absolute;">
+											<li><@a code="160903" href="javascript:void(0)" class="table_btn1 table_link" id="show-view" onclick="showView('{{value.id}}')" text="详情"/></li> 
+											<li><@a code="160904" href="javascript:void(0)" class="table_btn1 table_link" id="show-active" onclick="showAuth('{{value.id}}','{{value.roleName}}')" text="授权"/></li> 
+								<!--
+								<@a code="" href="javascript:void(0)" class="layui-btn layui-btn-normal layui-btn-mini" id="show-disactive" onclick="showActive()" text="冻结"/>
+								-->
+											<li><@a code="160905" href="javascript:void(0)" class="table_btn1 table_link" id="show-delete" onclick="showDelete('{{value.id}}',this)" text="删除"/></li> 
+										</ul>
+           							</li>  
+        						</ul>
+							</td>
+						</tr>
+					{{/each}}
+					</script>
+				</tbody>
+			</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	<!-- 新增对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 10px; z-index: 19940200;" id="win-add-object">
+		<form class="layui-form layui-form-pane" id="add-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">角色名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="roleName" id="roleName" lay-verify="required|spactily" autocomplete="off" placeholder="角色名称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">角色代码</label>
+				<div class="layui-input-block">
+					<input type="text" name="roleCode" id="roleCode" lay-verify="required" autocomplete="off" placeholder="角色代码" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">角色排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="roleRank" id="roleRank" maxlength="5" onkeyup="value=value.replace(/[^\d]/g,'')" lay-verify="required|number" autocomplete="off" placeholder="角色排序" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<@select dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive" class="layui-input-block" def=""/>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 查看角色窗口 隐藏域-->
+	<input  text="hidden" id="role-hidden_div" value="" style="display:none" />
+	<form id="win-role-hidden">
+			
+	</form>
+	<!-- 查看角色窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 10px;" id="win-role-object">
+		<form class="" id="update-role-form">
+			<input type="hidden" name="id" id="id">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+		   
+		     <div class="layui-field-box layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table admin-table">
+				<thead>
+					<tr>
+						<th style="display: none;">角色ID</th>
+						<th>序号</th>
+						<th>用户名称</th>
+						<th>用户排序</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="paging3-data">
+					<script id="paging3-script" type="text/html">
+					{{each records value index}}
+					      <tr>
+							<td style="display: none;">{{value.id}}</td>
+                            <td>{{(current-1)*size+index+1}}</td>
+							<td>{{value.userName}}</td>
+							<td>{{value.userRoleRank}}</td>
+							<td style="width:270px;">
+								<@a code="000208" href="javascript:void(0)" class="table_btn" id="show-role" onclick="editRoleRank('{{value.id}}','{{value.userRoleRank}}',this)" text="排序编辑"/>
+							</td>
+						</tr>
+					{{/each}}
+					</script>
+				</tbody>
+			</table>
+		    </div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging3-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+			
+		</form>
+	</div>
+	<!-- 编辑对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 10px;" id="win-update-object">
+		<form class="layui-form layui-form-pane" id="update-object-form">
+			<input type="hidden" name="id" id="id">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">角色名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="roleName" id="roleName" lay-verify="required" autocomplete="off" placeholder="角色名称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">角色代码</label>
+				<div class="layui-input-block">
+					<input type="text" name="roleCode" id="roleCode" lay-verify="required" autocomplete="off" placeholder="角色代码" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">角色排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="roleRank" id="roleRank" maxlength="5" onkeyup="value=value.replace(/[^\d]/g,'')" lay-verify="required|number" autocomplete="off" placeholder="角色排序" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<@select dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive" class="layui-input-block" def=""/>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-update-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 详情对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 10px;" id="win-view-object">
+		<form class="layui-form layui-form-pane" id="view-object-form">
+			<input type="hidden" name="id" id="id">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">角色名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="roleName" id="roleName" lay-verify="required" autocomplete="off" placeholder="角色名称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">角色代码</label>
+				<div class="layui-input-block">
+					<input type="text" name="roleCode" id="roleCode" lay-verify="required" autocomplete="off" placeholder="角色代码" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<@select dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive" class="layui-input-block" def=""/>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">版本号</label>
+				<div class="layui-input-block">
+					<input type="text" name="version" id="version" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">创建时间</label>
+				<div class="layui-input-block">
+					<input type="text" name="createTime" id="createTime" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">创建者</label>
+				<div class="layui-input-block">
+					<input type="text" name="createUserName" id="createUserName" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">修改时间</label>
+				<div class="layui-input-block">
+					<input type="text" name="lastUpdateTime" id="lastUpdateTime" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">修改者</label>
+				<div class="layui-input-block">
+					<input type="text" name="lastUpdateUserName" id="lastUpdateUserName" lay-verify="required" autocomplete="off" placeholder="昵称"
+						class="layui-input">
+				</div>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+			</div>
+		</form>
+	</div>
+	<!-- 授权 -->
+	<div id="auth-div" style="display: none; padding-left: 10px; padding-right: 10px;">
+		<input type="hidden" name="roleId" id="roleId">
+		<div class="layui-field-box layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table">
+				 <colgroup>
+				    <col width="15%">
+				    <col width="15%">
+				    <col width="5%">
+				    <col width="65%">
+				    <col>
+				 </colgroup>
+				<tbody id="paging2-data">
+					<script id="paging2-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							{{if value.autMenu.menuLevel == 1}}<td><input {{if value.isCheck == 1}}checked{{/if}} type="checkbox" flag="1" value="{{value.autMenu.id}}" name="" title="{{value.autMenu.menuName}}" style="height:40px;"></td><td></td>{{/if}}
+							{{if value.autMenu.menuLevel == 2}}<td></td><td><input {{if value.isCheck == 1}}checked{{/if}} type="checkbox" flag="1" value="{{value.autMenu.id}}" name="" title="{{value.autMenu.menuName}}" style="height:40px;"></td>{{/if}}
+							<td style="width:30px;">{{if value.autMenu.isActive == 1}}<font color="green">激活</font>{{/if}}{{if value.autMenu.isActive == 0}}<font color="red">冻结</font>{{/if}}</td>
+							<td>
+								{{each value.widgetList value2}}
+								<input {{if value2.isCheck == 1}}checked{{/if}} type="checkbox" flag="2" value="{{value2.autWidget.id}}" name="" title="{{value2.autWidget.widgetName}}" style="height:40px;">
+								{{/each}}
+							</td>
+						</tr>
+					{{/each}}
+					</script>
+				</tbody>
+			</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging2-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	<!-- 用户排序 -->
+    <div style="padding: 10px; display: none; padding-right: 10px; z-index: 19940200;" id="newuserpai">
+		<form class="layui-form layui-form-pane" id="newuserpai-form">
+			<input type="hidden" name="${_csrf.parameterName}"
+				value="${_csrf.token}" /> 
+			<input type="hidden" name="id" id="id">
+			<div class="layui-form-item">
+				<label class="layui-form-label">用户排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="positionName" maxlength="5" onkeyup="value=value.replace(/[^\d]/g,'')"  id="positionName_postDet"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+		</form>
+	</div>
+	<script type="text/javascript" src="../../web/plugins/layui/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool.js"></script>
+	<script>
+		var pform;
+		//添加事件
+		layui.use('form', function() {
+			pform = layui.form();
+			pform.on('select(isActive)', function(data) {
+				//alert(data.value);
+				//form.render('checkbox');
+			});
+			//自定义表单校验
+			pform.verify({
+				checkRepwd : function(value) {
+					if (value != $("#add-object-form").find("#userPwd").val()) {
+						return "两次输入的密码不一致";
+					}
+				},
+				checkRepwd2 : function(value) {
+					if (value != $("#update-object-form").find("#userPwd").val()) {
+						return "两次输入的密码不一致";
+					}
+				},
+				//限制特殊字符
+				spactily : function(value){
+					if (new RegExp("[':;' \"\",\\[\\]——|‘；：”“']").test(value)){
+						return '不能输入;\'\"'
+					}
+					
+				}
+			});
+			//监听新增提交
+			pform.on('submit(form-add-submit)', function(data) {
+				tool.post("../autRole/add", $("#add-object-form").serialize(), postCallBack, false);
+				return false;
+			});
+			//监听新增提交
+			pform.on('submit(form-update-submit)', function(data) {
+				tool.post("../autRole/update", $("#update-object-form").serialize(), postCallBack_edit, false);
+				return false;
+			});
+			//监听角色排序
+		    pform.on('submit(form-role-submit)', function(data) {
+		    	$("#win-role-hidden").empty();
+		    	$("#win-role-hidden").append('<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />')
+		    	var str="";
+				$("#update-role-form").find("#roleCode").each(function(index,value){
+					var roleid=$(value).attr("roleid"),userRoleRank=$(value).val();     
+					str += '<input type="hidden" name="autUserRoleList['+index+'].id" value="'+roleid+'" />';
+					str += '<input type="hidden" name="autUserRoleList['+index+'].userRoleRank" value="'+userRoleRank+'" />';
+				})
+	            $("#win-role-hidden").append(str);
+				tool.post("../autRole/updateRoleUserRank",$("#win-role-hidden").serialize(),function(retMsg){
+					if (retMsg.code == 0) {
+						tool.success(retMsg.message);
+						var id = $("#role-hidden_div").val()
+						lookRoleData(id)
+					} else {
+						tool.error(retMsg.message);
+					}
+				},false)
+				return false;
+			});
+			//勾选监听
+			pform.on('checkbox', function(data) {
+				//tool.post("../autRole/update", $("#update-object-form").serialize(), postCallBack, false);
+				var isCheck = data.elem.checked ? 1 : 0;
+				var id = data.value;
+				var type = $(data.elem).attr("flag");
+				var roleId = $("#auth-div #roleId").val();
+				var _csrf = $("#_csrf").val();
+				var param = "_csrf=" + _csrf + "&isCheck=" + isCheck + "&id=" + id + "&type=" + type + "&roleId=" + roleId;
+				tool.post("../autRole/setAuth", param, function(retMsg) {
+					if(retMsg.code == 1){
+						layer.alert("无权限操作!", {
+							icon : 0,
+							title : '提示'
+						});
+					$("input[value='940039106940477441']").next("div").addClass("layui-form-checked");
+					}
+				}, true);
+				return false;
+			});
+			//初始化出发数据加载
+			loadData();
+		});
+		//加载数据
+		function loadData() {
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+			param.url = "../autRole/list";
+			param.roleName = $("#searchKey").val();
+			tool.loadpage(param);
+		}
+		//获取勾选数据id
+		function getCheckItmes() {
+			$(".check-id:checked").each(function() {
+				//console.log($(this).attr("id"));
+				;
+			});
+		}
+		//打开新增对象窗口
+		function openAddWin() {
+			var index = layer.open({
+				title : '新增',
+				maxmin : false,
+				type : 1,
+				content : $('#win-add-object')
+			});
+			layer.full(index);
+		}
+		//新增对象回调
+		function postCallBack(retMsg) {
+			if (retMsg.code == 0) {
+				 layer.alert(retMsg.message, {
+	                    title : "操作提示",
+	                    icon : 1,
+	                    closeBtn:0
+	                }, function(index) {
+	                	$("button[type='reset']").trigger("click");
+	    				loadData();
+	   				    layer.closeAll();
+	                });
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+		//编辑保存分页不变
+		function postCallBack_edit(retMsg) {
+			if (retMsg.code == 0) {
+				 layer.alert(retMsg.message, {
+	                    title : "操作提示",
+	                    icon : 1,
+	                    closeBtn:0
+	                }, function(index) {
+	                	var laypageBtn=$(pageBtn).parents(".admin-table").parent().next().find(".layui-laypage-btn");
+	                	if(laypageBtn.length>0){
+	                		laypageBtn.trigger("click");
+	                	}else{
+	                		loadData();
+	                	}
+	   				    layer.closeAll();
+	                });
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+	
+		 //查看角色数据
+			 function lookRoleData(id){
+			 
+				var param = new Object();
+				    param.container = "paging3";
+					param.pageSize = 10;
+					param.id=id;
+					param.url = "../autRole/getUserByRoleId";
+					tool.loadpage(param);
+			 }
+		//查看角色弹窗
+		function lookRole(id,myself){
+			$("#role-hidden_div").val(id)
+			lookRoleData(id)
+			var index = layer.open({
+				title : '查看角色',
+				maxmin : false,
+				type : 1,
+				content : $('#win-role-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		
+		var pageBtn;
+		//编辑对象
+		function showEdit(id,myself) {
+			pageBtn=myself;
+			var object = tool.getById("../autRole/getById", id);
+			for ( var key in object) {
+				$("#update-object-form").find("#" + key).val(object[key]);
+			}
+			$("#update-object-form").find("#userPwd2").val(object.userPwd);
+			var index = layer.open({
+				title : '编辑',
+				maxmin : false,
+				type : 1,
+				content : $('#win-update-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		//详情对象
+		function showView(id) {
+			var object = tool.getById("../autRole/getById", id);
+			for ( var key in object) {
+				$("#view-object-form").find("#" + key).val(object[key]);
+			}
+			$('#view-object-form :input').attr("disabled", "disabled");
+			var index = layer.open({
+				title : '详情',
+				maxmin : false,
+				type : 1,
+				content : $('#win-view-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		//删除对象
+		function showDelete(id,myself) {
+			pageBtn = myself;
+			layer.confirm('确定删除 ?', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				var retMsg = tool.deleteById("../autRole/delete", id)
+				if (retMsg.code == 0) {
+					var laypageBtn=$(pageBtn).parents(".admin-table").parent().next().find(".layui-laypage-btn");
+    	        	if(laypageBtn.length>0){
+    	        		laypageBtn.trigger("click");
+    	        	}else{
+    	        		loadData();
+    	        	}
+					tool.success(retMsg.message);
+				} else {
+					tool.error(retMsg.message);
+				}
+			});
+		}
+		//角色授权
+		function showAuth(roleId, roleName) {
+			$("#auth-div #roleId").val(roleId);
+			var param = new Object();
+			param.container = "paging2";
+			param.pageSize = 1000;
+			param.url = "../autRole/menuWidgetList";
+			param.roleId = roleId;
+			tool.loadpage(param);
+			var index = layer.open({
+				title : "【" + roleName + "】授权",
+				maxmin : false,
+				type : 1,
+				content : $('#auth-div')
+			});
+			pform.render();
+			layer.full(index);
+		}
+	    //角色下用户排序
+		 function editRoleRank(id,userRoleRank,myself){
+			 pageBtn=myself;
+			 $("#newuserpai").find("#positionName_postDet").val(userRoleRank)
+	    	
+			 
+			 layer.open({
+				    title : '用户排序',
+					maxmin : false,
+					type : 1,
+					area: ['300px', '300px'],
+					content : $('#newuserpai'),
+					btn:['保存','取消'],
+					yes:function(index, layero){
+						var numlong=$("#newuserpai").find("#positionName_postDet").val();
+						if(numlong>=0&&numlong<100000){
+						 var param=new Object();
+			    	     param._csrf=$('#_csrf').val();
+			    	     param.id=id;
+			    	     param.userRoleRank=$("#newuserpai").find("#positionName_postDet").val();
+			    	     tool.post("../autRole/updateRoleUserRank",param,function(retMsg){
+					             if (retMsg.code == 0) {
+										tool.success(retMsg.message);
+										var laypageBtn=$(pageBtn).parents(".admin-table").parent().next().find(".layui-laypage-btn");
+					                	if(laypageBtn.length>0){
+					                		laypageBtn.trigger("click");
+					                	}else{
+					                		var id =  $("#role-hidden_div").val()
+								                 lookRoleData(id)
+					                	}
+										layer.close(index)
+									} else {
+										tool.error(retMsg.message);
+									}
+			    	     },false)
+						}else{
+							tool.error('输入有误') 
+						}
+					},
+					btn2:function(index, layero){
+					}
+				});
+		}
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.act.dao.mapper.ActAljoinDelegateMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.act.dao.entity.ActAljoinDelegate">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="owner_user_id" property="ownerUserId" />
+		<result column="owner_user_name" property="ownerUserName" />
+		<result column="owner_user_fullname" property="ownerUserFullname" />
+		<result column="assignee_user_ids" property="assigneeUserIds" />
+		<result column="assignee_user_names" property="assigneeUserNames" />
+		<result column="assignee_user_fullnames" property="assigneeUserFullnames" />
+		<result column="beg_time" property="begTime" />
+		<result column="end_time" property="endTime" />
+		<result column="delegate_desc" property="delegateDesc" />
+		<result column="delegate_bpmn_ids" property="delegateBpmnIds" />
+		<result column="is_wait_delegate" property="isWaitDelegate" />
+		<result column="is_assignee_delegate" property="isAssigneeDelegate" />
+		<result column="delegate_status" property="delegateStatus" />
+		<result column="is_delegate_all" property="isDelegateAll" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name, owner_user_id, owner_user_name, owner_user_fullname, assignee_user_ids, assignee_user_names, assignee_user_fullnames, beg_time, end_time, delegate_desc, delegate_bpmn_ids, is_wait_delegate, is_assignee_delegate, delegate_status, is_delegate_all
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM act_aljoin_delegate WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="ActAljoinDelegate">
+    	INSERT INTO act_aljoin_delegate(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{ownerUserId}, #{ownerUserName}, #{ownerUserFullname}, #{assigneeUserIds}, #{assigneeUserNames}, #{assigneeUserFullnames}, #{begTime}, #{endTime}, #{delegateDesc}, #{delegateBpmnIds}, #{isWaitDelegate}, #{isAssigneeDelegate}, #{delegateStatus}, #{isDelegateAll})
+    </insert>
+    
+	<!-- 批量新增aut_data_detail -->
+	<insert id="insertAutDataBatch" parameterType="java.util.List">
+		INSERT INTO aut_data_detail(id, user_id, data_count, data_type)
+		VALUES
+		<foreach collection="list" item="item" separator=",">
+			(#{item.id}, #{item.userId}, #{item.dataCount}, #{item.dataType})
+		</foreach>
+	</insert>
+</mapper>

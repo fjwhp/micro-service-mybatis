@@ -1,0 +1,53 @@
+package ${package.Service};
+
+import com.baomidou.mybatisplus.plugins.Page;
+import aljoin.object.PageBean;
+import ${package.Entity}.${entity};
+import ${superServiceClassPackage};
+
+/**
+ * 
+ * @描述：${table.comment}(服务类).
+ * 
+ * @作者：${author}
+ * 
+ * @时间: ${date}
+ */
+public interface ${table.serviceName} extends ${superServiceClass}<${entity}> {
+
+  /**
+   * 
+   * @描述：${table.comment}(分页列表).
+   *
+   * @返回：Page<${entity}>
+   *
+   * @作者：${author}
+   *
+   * @时间：${date}
+   */
+	public Page<${entity}> list(PageBean pageBean, ${entity} obj) throws Exception; 	
+	
+  /**
+   * 
+   * @描述：根据ID删除对象(物理删除)
+   *
+   * @返回：void
+   *
+   * @作者：${author}
+   *
+   * @时间：${date}
+   */
+  public void physicsDeleteById(Long id) throws Exception;
+
+  /**
+   * 
+   * @描述：复制对象(需要完整的对象数据，包括所有的公共字段)
+   *
+   * @返回：void
+   *
+   * @作者：${author}
+   *
+   * @时间：${date}
+   */
+  public void copyObject(${entity} obj) throws Exception;
+}

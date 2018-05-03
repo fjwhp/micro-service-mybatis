@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.pub.dao.mapper.PubPublicInfoMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.pub.dao.entity.PubPublicInfo">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="is_active" property="isActive" />
+		<result column="title" property="title" />
+		<result column="publish_name" property="publishName" />
+		<result column="category_id" property="categoryId" />
+		<result column="period" property="period" />
+		<result column="period_begin_time" property="periodBeginTime" />
+		<result column="period_end_time" property="periodEndTime" />
+		<result column="period_status" property="periodStatus" />
+		<result column="notice_obj_id" property="noticeObjId" />
+		<result column="notice_obj_name" property="noticeObjName" />
+		<result column="content" property="content" />
+		<result column="audit_status" property="auditStatus" />
+		<result column="audit_time" property="auditTime" />
+		<result column="audit_reason" property="auditReason" />
+		<result column="process_id" property="processId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name, is_active, title, publish_name, category_id, period, period_begin_time, period_end_time, period_status, notice_obj_id, notice_obj_name, content, audit_status, audit_time, audit_reason, process_id
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM pub_public_info WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="PubPublicInfo">
+    	INSERT INTO pub_public_info(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{isActive}, #{title}, #{publishName}, #{categoryId}, #{period}, #{periodBeginTime}, #{periodEndTime}, #{periodStatus}, #{noticeObjId}, #{noticeObjName}, #{content}, #{auditStatus}, #{auditTime}, #{auditReason}, #{processId})
+    </insert>
+
+</mapper>

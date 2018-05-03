@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.ioa.dao.mapper.IoaReceiveFileMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.ioa.dao.entity.IoaReceiveFile">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="file_title" property="fileTitle" />
+		<result column="file_type" property="fileType" />
+		<result column="file_type_name" property="fileTypeName" />
+		<result column="from_unit" property="fromUnit" />
+		<result column="from_unit_name" property="fromUnitName" />
+		<result column="from_file_code" property="fromFileCode" />
+		<result column="receive_file_code" property="receiveFileCode" />
+		<result column="orgnl_file_time" property="orgnlFileTime" />
+		<result column="receive_file_time" property="receiveFileTime" />
+		<result column="handle_limit_time" property="handleLimitTime" />
+		<result column="urgent_level" property="urgentLevel" />
+		<result column="urgent_level_name" property="urgentLevelName" />
+		<result column="office_opinion" property="officeOpinion" />
+		<result column="process_id" property="processId" />
+		<result column="bpmn_id" property="bpmnId" />
+		<result column="process_instance_id" property="processInstanceId" />
+		<result column="is_close" property="isClose" />
+		<result column="read_user_ids" property="readUserIds" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name, file_title, file_type, file_type_name, from_unit, from_unit_name, from_file_code, receive_file_code, orgnl_file_time, receive_file_time, handle_limit_time, urgent_level, urgent_level_name, office_opinion, process_id, bpmn_id, process_instance_id, is_close, read_user_ids
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM ioa_receive_file WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="IoaReceiveFile">
+    	INSERT INTO ioa_receive_file(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{fileTitle}, #{fileType}, #{fileTypeName}, #{fromUnit}, #{fromUnitName}, #{fromFileCode}, #{receiveFileCode}, #{orgnlFileTime}, #{receiveFileTime}, #{handleLimitTime}, #{urgentLevel}, #{urgentLevelName}, #{officeOpinion}, #{processId}, #{bpmnId}, #{processInstanceId}, #{isClose}, #{readUserIds})
+    </insert>
+
+</mapper>

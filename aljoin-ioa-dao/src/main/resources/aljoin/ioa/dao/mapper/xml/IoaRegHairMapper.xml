@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.ioa.dao.mapper.IoaRegHairMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.ioa.dao.entity.IoaRegHair">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="hair_type" property="hairType" />
+		<result column="title" property="title" />
+		<result column="registration_name" property="registrationName" />
+		<result column="registration_time" property="registrationTime" />
+		<result column="hair_no" property="hairNo" />
+		<result column="hair_unit" property="hairUnit" />
+		<result column="hair_time" property="hairTime" />
+		<result column="secret_level" property="secretLevel" />
+		<result column="level" property="level" />
+		<result column="category" property="category" />
+
+	</resultMap>
+
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+		id, create_time, last_update_time, version, is_delete,
+		last_update_user_id, last_update_user_name, create_user_id,
+		create_user_name,hair_type,title,registration_name,registration_time,hair_no,hair_unit,hair_time,secret_level,level,category
+	</sql>
+
+	<!-- 根据ID删除对象(物理删除) -->
+	<delete id="physicsDeleteById" parameterType="Long">
+		DELETE FROM
+		ioa_reg_hair WHERE id = #{value}
+	</delete>
+
+	<!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+	<insert id="copyObject" parameterType="IoaCircula">
+		INSERT INTO ioa_reg_hair (
+		<include refid="Base_Column_List"></include>
+		)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version},
+		#{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName},
+		#{createUserId},
+		#{createUserName},#{hairType},#{title},#{registrationName},#{registrationTime},#{hairNo},#{hairUnit},#{hairTime},#{secretLevel},#{level},#{category})
+	</insert>
+
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.aut.dao.mapper.AutAppUserLoginMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.aut.dao.entity.AutAppUserLogin">
+		<id column="token" property="token" />
+		<result column="user_id" property="userId" />
+		<result column="user_name" property="userName" />
+		<result column="secret" property="secret" />
+		<result column="last_access_time" property="lastAccessTime" />
+		<result column="last_login_time" property="lastLoginTime" />
+		<result column="aljoin_private_key" property="aljoinPrivateKey" />
+		<result column="other_public_key" property="otherPublicKey" />
+		<result column="login_count" property="loginCount" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        token, user_id, user_name, secret, last_access_time, last_login_time, aljoin_private_key, other_public_key, login_count
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="delete" parameterType="String">
+    	DELETE FROM aut_app_user_login WHERE token = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="add" parameterType="AutAppUserLogin">
+    	INSERT INTO aut_app_user_login(<include refid="Base_Column_List"></include>)
+		VALUES(#{token}, #{userId}, #{userName}, #{secret}, #{lastAccessTime}, #{lastLoginTime}, #{aljoinPrivateKey}, #{otherPublicKey}, #{loginCount})
+    </insert>
+    
+    <select id="getByToken" parameterType="String" resultType="AutAppUserLogin">
+    	SELECT <include refid="Base_Column_List"></include> FROM aut_app_user_login WHERE token = #{value}
+    </select>
+    
+    <select id="update" parameterType="AutAppUserLogin">
+    	UPDATE aut_app_user_login SET
+    	token=#{token}, user_name=#{userName}, secret=#{secret}, last_access_time=#{lastAccessTime}, 
+    	last_login_time=#{lastLoginTime}, aljoin_private_key=#{aljoinPrivateKey}, other_public_key=#{otherPublicKey}, login_count=#{loginCount}
+    	WHERE user_id=#{userId}
+    </select>
+    
+    <select id="getByUserId" parameterType="Long" resultType="AutAppUserLogin">
+    	SELECT <include refid="Base_Column_List"></include> FROM aut_app_user_login WHERE user_id = #{value}
+    </select>
+
+</mapper>

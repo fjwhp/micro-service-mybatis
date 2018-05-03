@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <process id="Process_1sm0sbj" isExecutable="true">
+    <startEvent id="StartEvent_1ammvxg"></startEvent>
+    <userTask id="Task_0m1hdcz" name="填写请假单" activiti:assignee="abc" activiti:candidateUsers="abc,def,ghi" activiti:candidateGroups="g1,g2,g3">
+      <extensionElements>
+        <activiti:formProperty id="1" name="qq">
+          <activiti:value id="1" name="qq"></activiti:value>
+        </activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <exclusiveGateway id="ExclusiveGateway_0qizir2"></exclusiveGateway>
+    <sequenceFlow id="SequenceFlow_0vxr85r" sourceRef="Task_0m1hdcz" targetRef="ExclusiveGateway_0qizir2"></sequenceFlow>
+    <sequenceFlow id="SequenceFlow_17wdweq" sourceRef="ExclusiveGateway_0qizir2" targetRef="Task_1i3152y"></sequenceFlow>
+    <userTask id="Task_1i3152y" name="班长审批"></userTask>
+    <sequenceFlow id="SequenceFlow_0xhjusw" sourceRef="ExclusiveGateway_0qizir2" targetRef="Task_0fqun6f"></sequenceFlow>
+    <userTask id="Task_0fqun6f" name="班主任审批"></userTask>
+    <sequenceFlow id="SequenceFlow_1wqgo3b" sourceRef="Task_1i3152y" targetRef="Task_05qyve9"></sequenceFlow>
+    <userTask id="Task_05qyve9" name="归档"></userTask>
+    <sequenceFlow id="SequenceFlow_0s5dq4r" sourceRef="Task_0fqun6f" targetRef="Task_05qyve9"></sequenceFlow>
+    <endEvent id="EndEvent_1a16my5"></endEvent>
+    <sequenceFlow id="SequenceFlow_02frsmd" sourceRef="Task_05qyve9" targetRef="EndEvent_1a16my5"></sequenceFlow>
+    <sequenceFlow id="flow1" sourceRef="StartEvent_1ammvxg" targetRef="Task_0m1hdcz"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Process_1sm0sbj">
+    <bpmndi:BPMNPlane bpmnElement="Process_1sm0sbj" id="BPMNPlane_Process_1sm0sbj">
+      <bpmndi:BPMNShape bpmnElement="StartEvent_1ammvxg" id="BPMNShape_StartEvent_1ammvxg">
+        <omgdc:Bounds height="36.0" width="36.0" x="166.0" y="182.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Task_0m1hdcz" id="BPMNShape_Task_0m1hdcz">
+        <omgdc:Bounds height="80.0" width="100.0" x="300.0" y="161.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ExclusiveGateway_0qizir2" id="BPMNShape_ExclusiveGateway_0qizir2">
+        <omgdc:Bounds height="40.0" width="40.0" x="483.0" y="185.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Task_1i3152y" id="BPMNShape_Task_1i3152y">
+        <omgdc:Bounds height="80.0" width="100.0" x="622.0" y="105.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Task_0fqun6f" id="BPMNShape_Task_0fqun6f">
+        <omgdc:Bounds height="80.0" width="100.0" x="622.0" y="244.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Task_05qyve9" id="BPMNShape_Task_05qyve9">
+        <omgdc:Bounds height="80.0" width="100.0" x="830.0" y="171.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="EndEvent_1a16my5" id="BPMNShape_EndEvent_1a16my5">
+        <omgdc:Bounds height="36.0" width="36.0" x="1007.0" y="209.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_0vxr85r" id="BPMNEdge_SequenceFlow_0vxr85r">
+        <omgdi:waypoint x="400.0" y="201.0"></omgdi:waypoint>
+        <omgdi:waypoint x="483.0" y="205.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_17wdweq" id="BPMNEdge_SequenceFlow_17wdweq">
+        <omgdi:waypoint x="503.0" y="185.0"></omgdi:waypoint>
+        <omgdi:waypoint x="508.0" y="145.0"></omgdi:waypoint>
+        <omgdi:waypoint x="622.0" y="145.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_0xhjusw" id="BPMNEdge_SequenceFlow_0xhjusw">
+        <omgdi:waypoint x="503.0" y="225.0"></omgdi:waypoint>
+        <omgdi:waypoint x="508.0" y="284.0"></omgdi:waypoint>
+        <omgdi:waypoint x="622.0" y="284.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_1wqgo3b" id="BPMNEdge_SequenceFlow_1wqgo3b">
+        <omgdi:waypoint x="722.0" y="145.0"></omgdi:waypoint>
+        <omgdi:waypoint x="778.0" y="145.0"></omgdi:waypoint>
+        <omgdi:waypoint x="778.0" y="227.0"></omgdi:waypoint>
+        <omgdi:waypoint x="830.0" y="211.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_0s5dq4r" id="BPMNEdge_SequenceFlow_0s5dq4r">
+        <omgdi:waypoint x="722.0" y="284.0"></omgdi:waypoint>
+        <omgdi:waypoint x="778.0" y="284.0"></omgdi:waypoint>
+        <omgdi:waypoint x="778.0" y="227.0"></omgdi:waypoint>
+        <omgdi:waypoint x="830.0" y="211.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_02frsmd" id="BPMNEdge_SequenceFlow_02frsmd">
+        <omgdi:waypoint x="930.0" y="211.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1007.0" y="227.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="202.0" y="200.0"></omgdi:waypoint>
+        <omgdi:waypoint x="300.0" y="201.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

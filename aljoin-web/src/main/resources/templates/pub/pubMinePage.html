@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>我的信息</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" />
+<link rel="stylesheet" href="../../web/css/zhengls.css" />
+
+</head>
+<body> 
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<form class="layui-form" action="/res/file/download" method="get" id="action_form">
+	   <input type="hidden" name="groupName" id="groupName">
+	   <input type="hidden" name="fileName" id="fileName">
+	</form>
+	<div class="layui-tab layui-tab-brief m_t0" lay-filter="docDemoTabBrief">
+		<ul class="layui-tab-title">
+		    <li class="layui-this" id="mine"><@a code="140102" href="javascript:void(0)" text="我的信息"/></li>
+		    <li id="draft"><@a code="140103" href="javascript:void(0)" text="草稿箱"/></li>
+		    <li id="create" style="display:none"><@a code="140104" href="javascript:void(0)" text="新建信息"/></li>
+		</ul>
+		<div class="layui-tab-content">
+		  	<div class="layui-tab-item layui-show content_sel"  id="mineD">
+		  	<blockquote class="layui-elem-quote" style="padding: 5px;">
+				<form class="layui-form" action="">
+					<div style="float:right">
+						<div class="layui-input-inline">
+							<input type="text" name="searchKey" id="searchKey" lay-verify="length20" maxlength="20" placeholder="请输入标题" autocomplete="off" class="layui-input"
+								style="height: 30px; line-height: 30px;" maxlength="50">
+						</div>
+						<span lay-submit="" ><@a code="140101" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData('1')" iclass="layui-icon"
+							 icon="&#xe615;" text="查询"/></span>
+						<span lay-submit="" ><@a code="140105" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="search_h()" text="高级搜索"/></span>							 
+					</div>
+					<!-- <div class="layui-input-inline">
+					  	<span><a class="layui-btn layui-btn-small" onclick="deleteBatch()"><i class="layui-icon">&#xe640;</i>删除</a></span>
+					</div> -->	
+				</form>
+			</blockquote>
+			
+		  		<div class="">
+					<form class="layui-form sear" action="" style="display:none;">
+					<div class="m_t10">
+						<div class="layui-input-inline m_r10">
+						 	<span>类型</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+				      		<select name="categoryId" lay-verify="" style="width:150px;height:32px;" id="category_Id" >
+						        <option value=""></option>
+						        <option value="0">内部新闻</option>
+						        <option value="1">三严三实</option>
+						        <option value="2">每日新闻摘要</option>
+						        <option value="3">管理指端</option>
+						        <option value="4">简报维护</option>
+				      		</select>
+					   	</div>
+						<!-- <div class="layui-input-inline m_r10" >
+						 <span>标题</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							<input type="text" class="inp_w120px" name="title" id="title_" lay-verify="length50"  maxlength="50" style="width:180px;" maxlength="50">
+						</div> -->
+						<div class="layui-input-inline m_r10">
+						 	<span>审核情况</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+				      		<select name="auditStatus" lay-verify="" style="width:150px;height:32px;" id="auditStatus_">
+						        <option value=""></option>
+						        <option value="1">审核中</option>
+						        <option value="2">审核失败</option>
+						        <option value="3">已发布</option>
+				      		</select>
+					   	</div>
+					   	<div class="layui-input-inline m_r10">
+						 	<span>有效期</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+				      		<select name="periodStatus" lay-verify="" style="width:150px;height:32px;" id="periodStatus_" >
+						        <option value=""></option>
+						        <option value="0">有效期限</option>
+						        <option value="1">已失效</option>
+				      		</select>
+					   	</div>
+
+						<div class="layui-input-inline m_r10">
+						 <span>提交日期</span>
+						</div>
+						<div class="layui-input-inline m_r10">
+							 <input type="text" class="inp_date" name="begDate" id="startTime" readonly="readonly">
+						</div>
+						<div class="layui-input-inline m_r10">
+						 <span>至</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							  <input type="text" class="inp_date" name="endDate" id="endTime" readonly="readonly">
+						</div>
+						<span lay-submit="" ><a class="layui-btn layui-btn-small" id="" onclick="loadData('2')" style="float:right;margin-right: 8px;"><i class="layui-icon">&#xe615;</i>查询</a></span>
+				    </div>
+					</form>
+<!-- 					<form class="layui-form m_t30" action="">
+						  <a class="btn_blue m_r20" onclick="" href="#new-object-form">删除</a>
+					</form> --> 
+					<div class="layui-form">
+						<table class="layui-table admin-table">
+							<!-- <colgroup>
+								<col width="4%">
+								<col width="6%">
+								<col width="10%">
+								<col width="40%">
+								<col width="10%">
+								<col width="14%">
+								<col width="8%">
+								<col width="8%">
+								<col>
+							</colgroup> -->
+							<thead>
+								<tr>
+									<th style="width: 20px;"><input type="checkbox" lay-skin="primary"  lay-filter="paging_check-all" ></th>
+									<th style="display: none;">用户ID</th>
+									<th style="width: 60px;">序号</th>
+									<th style="width: 200px;">类型</th>
+									<th>标题</th>
+									<th style="width: 60px;">审核情况</th>
+									<th style="width: 160px;">提交日期</th>
+									<th style="width: 60px;">状态</th>
+									<th style="width: 60px;">发布人</th>
+								</tr>
+							</thead>
+					<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td onclick="defalt_td(event)"><input type="checkbox"  class="check-id moreInput"  lay-skin="primary"   id="{{value.id}}"></td>
+							<td style="display: none;">{{value.id}}</td>
+							<td>{{(current-1)*size+index+1}}</td>
+							<td title="{{value.categoryName}}">{{value.categoryName}}</td>
+							<td class="table_link" onclick="detail('{{value.id}}','0','{{value.auditStatus}}')" style="cursor:pointer;" title="{{value.title}}">{{value.title}}</td>
+							<td>{{value.auditStatus}}</td>
+							<td>{{value.createDate}}</td>
+							<td>{{value.validate}}</td>
+							<td>
+								{{value.publishName}}
+							</td>
+						</tr>
+					{{/each}}
+					</script>
+					</tbody>
+					</table>
+
+					</div>
+					<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+						<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+					</div>
+		  		</div>
+		  	</div>
+		    <div class="layui-tab-item content_sel" id="draft-content">
+		    	<blockquote class="layui-elem-quote" style="padding: 5px;">
+				<form class="layui-form" action="">
+					<div style="float:right">
+						<div class="layui-input-inline">
+							<input type="text" name="searchKey" id="searchKey_" lay-verify="length20" maxlength="20" placeholder="请输入标题或发布人" autocomplete="off" class="layui-input"
+								style="height: 30px; line-height: 30px;" maxlength="50">
+						</div>
+						<span lay-submit=""><@a code="140106" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadDraftData('1')" iclass="layui-icon"
+							 icon="&#xe615;" text="查询"/></span>
+						<span lay-submit=""><@a code="140107" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="search_h1()" text="高级搜索"/></span>							 
+					</div>
+					<div class="layui-input-inline">
+						<span lay-submit=""><@a code="140108" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="deleteBatchDraft()" iclass="layui-icon"
+							 icon="&#xe640;" text="删除"/></span>					
+					</div>	
+				</form>
+				</blockquote>
+				<div class="" >
+    			<form class="layui-form sear1" action="" style="display:none;">
+					<div>
+						<div class="layui-input-inline m_r10">
+						 	<span>类型</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+				      		<select name="categoryId" lay-verify="" style="width:150px;height:32px;" id="categoryId_" >
+						        <option value=""></option>
+						        <option value="0">内部新闻</option>
+						        <option value="1">三严三实</option>
+						        <option value="2">每日新闻摘要</option>
+						        <option value="3">管理指端</option>
+						        <option value="4">简报维护</option>
+				      		</select>
+					   	</div>
+						<!-- <div class="layui-input-inline m_r10" >
+						 <span>标题</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							<input type="text" class="inp_w120px" maxlength="50" name="title" id="_title" style="width:180px;" lay-verify="length50">
+						</div> -->
+					   <!-- 	<div class="layui-input-inline m_r10">
+						 	<span>有效期</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+				      		<select name="periodStatus" lay-verify="" style="width:150px;height:32px;" id="_periodStatus">
+						        <option value=""></option>
+								<option value="0">有效期限</option>
+								<option value="1">已失效</option>
+				      		</select>
+					   	</div> -->
+					   	<div class="layui-input-inline m_r10">
+						 <span>编辑日期</span>
+						</div>
+						<div class="layui-input-inline m_r10">
+							 <input type="text" class="inp_date" name="begDate" id="startTime_" readonly="readonly">
+						</div>
+						<div class="layui-input-inline m_r10">
+						 <span>至</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							  <input type="text" class="inp_date" name="endDate" id="endTime_" readonly="readonly">
+						</div>
+						<span  lay-submit=""><a class="layui-btn layui-btn-small" id="" onclick="loadDraftData('2')" style="float:right;margin-right:8px;"><i class="layui-icon">&#xe615;</i>查询</a></span>
+				    </div>
+				</form>
+		<!-- 		<form class="layui-form m_t30" action="">
+					<a class="btn_blue m_r20" onclick="" href="#new-object-form">删除</a>
+				</form>  -->
+				<div class="layui-form" >
+						<table class="layui-table admin-table">
+							<!-- <colgroup>
+								<col width="4%">
+								<col width="6%">
+								<col width="10%">
+								<col width="51%"> 
+								<col width="10%">
+								<col width="8%">
+								<col width="11%">
+								<col>
+							</colgroup> -->
+							<thead>
+								<tr>
+									<th style="width: 20px;"><input type="checkbox" lay-skin="primary"  id="paging_check-allc" lay-filter="paging_check-all"></th>
+									<th style="display: none;">用户ID</th>
+									<th style="width: 60px;">序号</th>
+									<th style="width: 200px;">类型</th>
+									<th>标题</th>
+									<!-- <th>有效期限</th> -->
+									<th style="width: 160px;">编辑日期</th>
+									<th style="width: 60px;">发布人</th>
+									<th style="width: 80px;">操作</th>
+								</tr>
+							</thead>
+					<tbody id="paging2-data">
+					<script id="paging2-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td onclick="defalt_td(event)"><input type="checkbox"  class="check-id moreInput2"  lay-skin="primary"   id="{{value.id}}"></td>
+							<td style="display: none;">{{value.id}}</td>
+							<td>{{(current-1)*size+index+1}}</td>
+							<td title="{{value.categoryName}}">{{value.categoryName}}</td>
+							<td class="table_link" style="cursor:pointer;" onclick="detail('{{value.id}}','1')" title="{{value.title}}">{{value.title}}</td>
+                            <td>{{value.createDate}}</td>
+							<td>{{value.publishName}}</td>
+							<td onclick="defalt_td(event)">
+								<@a code="" href="javascript:void(0)" class="table_btn" id="show-edit" onclick="edit('{{value.id}}','1',this)" text="编辑"/>
+								<@a code="" href="javascript:void(0)" class="table_btn" id="show-delete" onclick="showDelete('{{value.id}}',this)" text="删除"/>
+							</td>
+						</tr>
+					{{/each}}
+					</script>
+					<!-- <td>{{value.validate}}</td> -->
+					</tbody>
+					</table>
+					</div>
+					<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+						<div id="paging2-footer" class="page" style="background-color: white; text-align: center;"></div>
+					</div>
+		  		</div>
+		    </div >
+		    <div class="layui-tab-item" id="draft-create" >
+				<!-- 新建信息-->
+				<div class="" id="win-add-object" style="margin-bottom:50px;">
+					<form class="layui-form layui-form-pane" id="new-object-form">
+						<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+						<input type="hidden" name="content" id="content_add" />
+						<!-- 附件 -->
+						<div id="filealea">
+		
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">标题</label>
+							<div class="layui-input-block">
+								<input type="text" name="title" id="title_add" lay-verify="required|length50" maxlength="50" autocomplete="off" placeholder="标题" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">发布人</label>
+							<div class="layui-input-block">
+								<input type="text" name="publishName" id="publishName_add" lay-verify="required|spactily|textLength200" autocomplete="off" placeholder="发布人" class="layui-input" readonly="readonly">
+							</div>
+						</div>
+						<div class="layui-form-item" >
+							<label class="layui-form-label">所属分类</label>
+							<div class="layui-input-block" style="z-index:999998;">
+								<select name="categoryId" id="categoryId_add" lay-verify="required">
+									<option value=""></option>
+								</select>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">有效期/天</label>
+							<div class="layui-input-block">
+								<input type="text" name="period" value="7" id="period_add"   maxlength="4"   onkeyup="value=value.replace(/[^\d]/g,'')" lay-verify="required|spactily|number|numberLength10" autocomplete="off" placeholder="有效期/天" class="layui-input">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">公告对象</label>
+							<div class="layui-input-block">
+							    <input type="hidden" name="noticeObjName"  id="noticeObjName_add" class="reset">
+								<div type="text" style="width:81%;float:left;" name="noticeObjName" id="noticeObjName_addDiv" lay-verify="" autocomplete="off" placeholder="公告对象" class="newgg reset1" readonly="readonly"></div>
+								<a class="btn_blue2 btn_blue2one" style="float:right;" >人员选择</a>
+								<input type="hidden" name="noticeObjId"  id="noticeObjId_add" class="reset">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">公告内容</label>
+							<div class="layui-input-block">
+								<!--  <textarea name="" id="" placeholder="请输入内容" onkeyup="countnum(this);" class="layui-textarea"></textarea>	 -->
+								<script id="editor-id" type="text/plain" style="width: 100%; height: 500px;"></script>
+		                    </div>
+		                </div>
+		                <div class="layui-form-item">
+			                <label class="layui-form-label">上传附件</label>
+			                <div class="layui-input-block">
+		                   <div class="layui-upload">
+		                       <div class="layui-upload-drag" id="test10" style="padding:5px;width:99%;">
+		                           <i class="layui-icon"></i>
+		                       	<p>点击上传，或将文件拖拽到此处</p>
+		                       </div>
+		                        <a class="layui-btn" id="testListAction" style="position: absolute;right: 0px;top: 51px;">
+		                           <i class="layui-icon">&#xe62f;</i> 开始上传
+		                       </a> 
+		                       <table class="layui-table">
+		                           <colgroup>
+		                           <col width="200">
+		                           <col width="60">
+		                           <col width="60">
+		                           <col width="60">
+		                           </colgroup>
+		                           <tbody id="demoList_add">
+		                           <script   id="artt1"  type="text/html">
+                            {{each filelist value index}}
+                        <tr>
+                        <td>{{value.orgnlFileName}}</td>
+                        <td>{{value.fileSize}}kb</td>
+                        <td><span style="color: #5FB878;">上传成功</span></td>
+                        <td>
+                        <a style="color:#339bf1;" index="{{index}}" >删除</a>
+                            </td>
+                            </tr>
+                        {{/each}}
+						</script>
+							</tbody>
+							</table>
+						</div>
+					</div>
+					    </div>
+						<div class="btn_fixed">
+							<div style="float: right;">
+							    <a class="layui-btn" lay-submit="" lay-filter="form-auditAdd-submit">
+								   <i class="fa fa-save"></i> 提交
+								</a>
+								<button class="layui-btn layui-btn-primary" type="reset" lay-submit="" lay-filter="form-save-submit">
+									<li class="fa fa-eraser"></li>保存
+								</button>
+								
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+	     </div>
+	  </div> 
+	<!-- 编辑信息-->
+	
+	<!-- 详情 -->
+	<div class="admin-main" style="display: none; z-index: 19940200;margin-bottom:60px;" id="win-detail-object">
+			<form class="layui-form layui-form-pane" id="detail-object-form">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<!-- <input type="hidden" name="content" id="content" /> -->
+				<input type="hidden" name="id" id="id">
+			<!-- 	<div class="layui-form-item">
+					<label class="layui-form-label">标题</label>
+					<div class="layui-input-block">
+						<input type="text" name="title" id="title" lay-verify="required|spactily" autocomplete="off" class="layui-input" disabled="disabled">
+					</div>
+				</div> -->
+				<!-- 标题 -->
+				<div class="" style="text-align: center;">
+					 <span id="title" style="font-size:16px;font-weight: bold;word-wrap:break-word"></span>
+				</div>
+				
+			<!-- 	<div class="layui-form-item">
+					<label class="layui-form-label">发布人</label>
+					<div class="layui-input-block">
+						<input type="text" name="publishName" id="publishName" lay-verify="required|spactily" autocomplete="off" class="layui-input" disabled="disabled">
+					</div>
+				</div> -->
+				<!-- 发布人 -->
+				<div class="p_t10">
+					<span class="e6ed">发布人：</span>
+					<span id="publishName"></span>
+				</div>
+				
+				<!--<div class="layui-form-item">
+					<label class="layui-form-label">发布时间</label>
+					<div class="layui-input-block">
+						<input type="text" name="" id="" lay-verify="required|spactily" autocomplete="off" class="layui-input">
+					</div>
+				</div>-->
+				
+				
+		<!-- 		<div class="layui-form-item" >
+					<label class="layui-form-label">所属分类</label>
+					<div class="layui-input-block" style="z-index:1000;">
+						<select name="categoryId" id="categoryId" lay-verify="required" disabled="disabled">
+							<option value=""></option>
+						</select>
+					</div>
+				</div> -->
+				
+				<!-- 所属分类 -->
+				<div class="p_t10">
+					<span class="e6ed">所属分类：</span>
+					<span id="categoryId"></span>
+				</div>
+				
+	
+			<!-- 	<div class="layui-form-item">
+					<label class="layui-form-label">有效期/天</label>
+					<div class="layui-input-block">
+						<input type="text" name="period" id="period" lay-verify="required|spactily|number|numberLength10" autocomplete="off" placeholder="有效期/天" class="layui-input" disabled="disabled">
+					</div>
+				</div> -->
+				<!-- 有效期/天: -->
+				<div class="p_t10 cl">
+					<span class="e6ed">有效期/天：</span>
+					<span id="period"></span>
+				</div>
+				
+				
+		<!-- 	<div class="layui-form-item">
+					<label class="layui-form-label">公告对象</label>
+					<div class="layui-input-block">
+						<input type="text" name="noticeObjName" id="noticeObjName" lay-verify="spactily" autocomplete="off" placeholder="公告对象" class="layui-input" readonly="readonly">
+						<a class="btn_blue2" style="float:right;" onclick="personlSeclection()" readonly="readonly">人员选择</a>
+						<input type="hidden" name="noticeObjId"  id="noticeObjId">
+					</div>
+				</div> -->
+			
+				<!-- 公告对象 -->
+				<div class="p_t10 cl">
+					<span class="e6ed l">公告对象：</span>
+					<div id="noticeObjName" class="l" style="word-wrap:break-word;width:85%;"></div>
+				</div>
+
+
+				<!-- <div class="layui-form-item">
+					<label class="layui-form-label">公告内容</label>
+					<div class="layui-input-block">
+						<script id="editor-id-detail"  type="text/plain" style="width: 100%; height: 500px;"></script>
+					</div>
+                </div> -->
+                <!-- 公告内容 -->
+                <div class="outindss p_t10 line_h_26px l" style="clear:both;" id="mailContent">
+				  <p id="content" style="word-wrap: break-word;" class="heidf">dfs</p>
+				</div>
+
+			<div class="p_t10 cl" >
+				<span class="e6ed l">附件：</span>
+				<div >
+					<table class="layui-table" style="width: 50%;margin-top: 0px;border: none;">
+				      <colgroup>
+						    <col width="60%">
+						    <col width="20%">
+						    <col width="20%">
+						  </colgroup>
+				      <tbody id="demoList">
+							<script   id="artt_detail"  type="text/html">
+                    			 {{each filelist value index}}
+                                    	<tr>
+                   					   		<td style="border:none;">{{value.orgnlFileName}}</td>
+                   					   		<td style="border:none;">{{value.fileSize}}kb</td>
+                    						<td style="border:none;">
+						                        <a onclick="showDownload('{{value.groupName}}','{{value.fileName}}')" style="color:#339bf1;cursor:pointer">下载</a>
+											</td>
+                                    	</tr>
+	              				 {{/each}}
+                  			</script>
+						</tbody>
+			    	</table> 
+				</div>
+			</div>
+				<div class="btn_fixed">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+				    <div style="float: right;">
+						<!-- <a class="layui-btn" onclick="GoDi(this)" style="display:none;" id="GoDi">
+							<i class="fa fa-save"></i> 流转日志
+						</a> -->
+			        </div>
+				</div>
+			</form>
+		</div>
+	<!-- 人员选择树 -->
+	<div style="display: none;z-index: 19940200;" id="win-personal-object">
+		<div class="search_h">
+			<input id="peopelSel" class="tree_search1 reset" type="text" value="" placeholder="搜索">
+			<a class="layui-btn layui-btn-small" id="" onclick="searchNodes()"><i class="layui-icon">&#xe615;</i>搜索</a>
+			<a class="layui-btn layui-btn-small layui-btn-primary" style="margin-left:2px;" type="reset" onclick="reset_tree()"><li class="fa fa-eraser"></li> 重置</a>
+			<label type="text"  id="resultKey" class="form-control">  
+                <div>  
+                    <a id="clickUp" class="tree_up" onclick="clickUp()"><i class="layui-icon">&#xe619;</i></a>  
+                    <a id="clickDown" class="tree_down" onclick="clickDown()"><i class="layui-icon">&#xe61a;</i></a>  
+                </div>  
+                <label id="number" class="tree_number"></label>  
+            </label>  
+        </div>
+        <div class="tree_h">
+        	<ul id="treeDemo" class="ztree treeDemo1" name="treeDemo" style="display:block"></ul>
+        </div>
+        <div class="sure_h">
+		    <a class="layui-btn layui-btn-small sure_s"><li class="fa fa-save"></li> 确定</a>
+		</div>
+	</div>
+	<!-- 提交 -->
+	<div class="m_10" style="display: none; z-index: 19940200;" id="win-submit-object">
+	<div id="win-newsms-object">
+		<form class="layui-form layui-form-pane" id="audit-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">审批选择</label>
+				<div class="layui-input-block">
+					<input type="radio" name="submit" value="提交" title="提交" checked="checked">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label" title="下一级审批环节">审批环节</label>
+				<div class="layui-input-block">
+					<input type="text" name="" id="" lay-verify="required|spactily" placeholder="下一级审批环节"  autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label" title="下一级审批处理人">审批处理人</label>
+				<div class="layui-input-block">
+					<input type="text" name="" id="" lay-verify="required|spactily" placeholder="下一级审批处理人"  autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item layui-form-text">
+				<label class="layui-form-label">审批意见</label>
+				<div class="layui-input-block">
+					 <textarea name="" id="" onkeyup=""  class="layui-textarea"></textarea>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<a href="#" style="float:right;color:blue;">使用常用意见</a>
+			</div>
+			<div class="layui-input-block">
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-auditAdd-submit">
+						<i class="fa fa-save"></i> 确认
+					</button>
+					<a class="layui-btn layui-btn-primary"  onclick="closeAuditDialog()">
+						<li class="fa fa-eraser"></li> 取消
+					</a>
+				</div>
+			</div>
+
+			</div>
+		</form>
+	</div>
+	
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.exhide-3.5.min.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/ueditor.config.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/ueditor.all.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/lang/zh-cn/zh-cn.js"></script>
+	<script>
+         var isCommitted=false;
+        //文本编辑器
+        var ue = UE.getEditor('editor-id',{initialFrameHeight: 150});
+ 
+        //时间控件
+	 //	tool.timeset('#startTime','#endTime');
+        tool.dateTime('#startTime','#endTime','',false);
+        tool.dateTime('#startTime_','#endTime_','',false);
+	 	/* tool.dateTime('#startTime1','#endTime1');  */
+		//定义layui
+		var pform;
+        var arr=[];//放路径
+        var nameArr=[];//放本地文件名
+		layui.use(['form','element'], function() {
+		    var element=layui.element;
+			pform = layui.form;
+            pform.verify({
+                //限制输入的长度为200
+                textLength200 : function(value) {
+                    if (value.length>200) {
+                        return "长度不能超过200个字符";
+                    }
+                },
+                //限制输入的长度为100
+                textLength100 : function(value) {
+                    if (value.length100) {
+                        return "长度不能超过200个字符";
+                    }
+                },
+                //限制输入的长度为10
+                textLength10 : function(value) {
+                    if (value.length>10) {
+                        return "长度不能超过10个字符";
+                    }
+                },
+                //限制输入的长度为10
+                numberLength10 : function(value) {
+                    if (value.length>4) {
+                        return "数字不能超过4位";
+                    }
+                },
+                //限制不能输入特殊10
+                specailChar:function (value) {
+                    if (new RegExp("[':;' \"\",\\[\\]——|‘；`：”“']").test(value)) {
+                        return '不能输入特殊字符';
+                    }
+                },
+                length50 : function(value) {
+					if (value.length>50) {
+						return "长度不能超过50个字符";
+					}
+				},
+				length20:function(value){
+					if (value.length>20) {
+						return "长度不能超过20个字符";
+					}
+				},
+				special:function(value){
+					var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]"); 
+					if(pattern.test(value)){
+					     return "不能输入特殊字符";
+					}
+				}
+            }); 
+            //监听新增提交
+            pform.on('submit(form-auditAdd-submit)', function(data) {
+            	 var a = jy('new-object-form');
+            	 if(a==false){
+            		 return false;
+            	 }
+               layer.confirm('确定提交吗 ?', {
+                    icon: 3,
+                    title: '提示'
+                }, function (index) {
+                	//layer.close(index)
+                    if(isCommitted == false){
+                	 isCommitted = true;	
+                    $("#filealea").empty();
+                    var str="";
+                    if(arr.length > 0){
+                        for(var i=0;i<arr.length;i++){
+                        	str += '<input type="hidden" name="resResourceList['+i+'].id" value="'+arr[i].res.id+'" />';
+                        }
+                        $("#filealea").append(str);
+                    }
+                    //获取文本编辑器内容
+                    var uevalue = ue.getContent();
+                    $("#content_add").val(uevalue);
+                    tool.post("/pub/pubPublicInfo/add", $("#new-object-form").serialize(),postCallBackPubInfo, false);
+                   }
+                });
+				return false;
+          });
+        
+
+            //监听新增保存
+            pform.on('submit(form-save-submit)', function(data) {
+            	 var a = jy('new-object-form');
+            	 if(a==false){
+            		 return false;
+            	 }
+               if(isCommitted == false){
+                  isCommitted = true;	 
+				$("#filealea").empty();
+				var str="";
+				if(arr.length > 0){
+					for(var i=0;i<arr.length;i++){
+						str += '<input type="hidden" name="resResourceList['+i+'].id" value="'+arr[i].res.id+'" />';
+					}
+					$("#filealea").append(str);
+				}
+
+				//获取文本编辑器内容
+				var uevalue = ue.getContent();
+				$("#content_add").val(uevalue);
+				tool.post("/pub/pubPublicInfoDraft/add", $("#new-object-form").serialize(),postCallBackPubDraftInfo, false);
+				return false;
+               }
+
+            });
+			loadData();
+            loadDraftData();
+		});
+        
+		   //校验
+		function jy(father){
+			 //有效期是否只输入0判断
+		    var value0 = $("#"+father).find("#period_add").val();
+		    var zz0 = /^[1-9]+[0-9]*$/;
+		    if(!zz0.test(value0)){
+		    	   tool.error('有效期不能以0开头');
+				   return false;
+		    }
+			/*公告对象判断 */
+			var userMail =$("#"+father).find(".newgg").text();
+		    if(userMail==""||userMail==undefined){
+		       tool.error('公告对象不能为空');
+			   return false;
+			} 
+		  
+		    /*编辑器字数判断 */
+		    var value=ue.getContentTxt();
+		    if(value.length>1000){
+		    	   tool.error('内容不能超过1000字符');
+				   return false;
+		    }
+	   }
+        getPublisher();
+        //获取发布人
+        function getPublisher(){
+            var  param={
+                _csrf:$("#_csrf").val()
+            };
+            tool.post("/pub/pubPublicInfo/getCurUserInfo",param,function(data){
+                var publishName = data.object.nickName;
+                $("#publishName_add").val(publishName);
+            },false);
+        }
+
+        getCategory();
+        //分类下拉框数据加载
+        function getCategory(){
+            var  param={
+                _csrf:$("#_csrf").val()
+            }
+            tool.post("/pub/pubPublicInfoCategory/allList",param,function(data){
+                $("#categoryId_add").empty();
+                $("#categoryId_add").append('<option value="">请选择</option>');
+
+                $("#categoryId_").empty();
+                $("#categoryId_").append('<option value="">请选择</option>');
+                $("#categoryId").empty();
+                $("#category_Id").empty();
+                $("#category_Id").append('<option value="">请选择</option>');
+                $("#categoryId").empty();
+                $("#categoryId").append('<option value="">请选择</option>');
+
+                $("#categoryId_edit").empty();
+                $("#categoryId_edit").append('<option value="">请选择</option>');
+                var str="";
+                for(var i=0;i<data.length;i++){
+					str+=' <option value="'+data[i].id+'" >'+data[i].name+'</option>';
+                }
+                $("#categoryId_add").append(str);
+                $("#categoryId").append(str);
+                $("#categoryId_edit").append(str);
+                $("#category_Id").append(str);
+                $("#categoryId_").append(str);
+
+              //  pform.render();
+            },false)
+        }
+
+        $(".btn_blue2one").click(function(){
+      	  tool.treeDemo("win-personal-object","treeDemo","noticeObjId_add","noticeObjName_add","noticeObjName_addDiv");
+      	  $("#number").html("");
+        })
+        $(".btn_blue2two").click(function(){                            
+      	  tool.treeDemo("win-personal-object","treeDemo","noticeObjId_edit","noticeObjName_edit","noticeObjName_editDiv");
+      	  $("#number").html("");
+        })
+        //用按钮查询节点  
+       /*  function searchNodes(){  
+            var mytree = $.fn.zTree.getZTreeObj("treeDemo");  
+            var keywords=$("#peopelSel").val();  
+            var nodes = mytree.getNodesByParamFuzzy("name", keywords, null);  
+            if (nodes.length>0) {  
+                mytree.selectNode(nodes[0]);  
+            }  
+        }   */
+      //重置树
+		function reset_tree(){
+			var mytree = $.fn.zTree.getZTreeObj("treeDemo");
+		    //打开弹窗前重置节点以及关闭展开状态，避免叠加
+			$('.reset').val("");
+			$('.reset1').html("");
+			$("#number").html("");
+			mytree.checkAllNodes(false)
+		    mytree.expandAll(false);
+		}
+
+        //提交回调
+        function postCallBackPubInfo(retMsg){
+        isCommitted = false;
+        if(retMsg.object==null||retMsg.object==""){
+        	if (retMsg.code == 0) {
+                //提交后 再情况存放文件的数组 避免重复提交
+                arr=[];
+                nameArr=[];
+                layer.alert(retMsg.message, {
+                    title : "操作提示",
+                    icon : 1,
+                    closeBtn:0
+                }, function(index) {
+                	  $("#create").attr("class","");
+                	  $("#mine").attr("class","layui-this");
+                	  $("#draft-create").removeClass("layui-show");
+                	  $("#mineD").addClass("layui-show");
+                	  layer.closeAll();
+                      clearForm();
+                      loadData();
+                      /* if(retMsg.object!=null){
+                    	  openForm(retMsg)
+                      } */
+                      
+                });
+             
+            } else {
+                tool.error(retMsg.message);
+            }
+        	
+        }else{
+           	  $("#create").attr("class","");
+           	  $("#mine").attr("class","layui-this");
+           	  $("#draft-create").removeClass("layui-show");
+           	  $("#mineD").addClass("layui-show");
+           	  layer.closeAll();
+              clearForm();
+              loadData();
+        	  openForm(retMsg)
+        }	
+            
+        }
+        //跳转到待办
+        function openForm(data1) {
+    		var data = data1.object;
+    		var id = data.id;
+    		var processName = data.processName;
+    		var bpmnId = data.bpmnId;
+    		var taskDefKey = data.taskDefKey;
+    		var businessKey = data.businessKey;
+    		var signInTime = data.signInTime
+    		var index = layer.open({
+    			title : processName,
+    			maxmin : false,
+    			type : 2,
+    			content : '../../act/modeler/openForm.html?id='+bpmnId+'&activityId='+id+'&taskId='+taskDefKey+'&businessKey='+businessKey+'&signInTime='+signInTime+'&isWait=1'+'&isIndexLog=0',
+    			cancel: function(){ 
+    			    //右上角关闭回调
+    			    layer.closeAll();
+    			    //return false 开启该代码可禁止点击该按钮关闭
+    			  },
+    			success: function(layero, index){
+    				//var body = layer.getChildFrame('body', index);
+    				var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
+    				iframeWin.$("#sub").trigger("click")
+    			}
+    		});
+    		pform.render();
+    		layer.full(index);
+    	}
+        function postCallBackPubDraftInfo(retMsg){
+        	isCommitted = false;
+            if (retMsg.code == 0) {
+                //提交后 再清空存放文件的数组 避免重复提交
+                arr=[];
+                nameArr=[];
+                layer.alert(retMsg.message, {
+                    title : "操作提示",
+                    icon : 1,
+                    closeBtn:0
+                }, function(index) {
+                	   layer.closeAll();
+                       clearForm();
+                       $("#mine").attr("class","");
+                       $("#create").attr("class","");
+                       $("#draft").attr("class","layui-this");
+                       $("#draft-create").removeClass("layui-show");
+                       $("#draft-content").addClass("layui-show");
+                       loadDraftData();
+                });
+             
+            } else {
+                tool.error(retMsg.message);
+            }
+        }
+        $("#create").on("click",function(){
+            //if(!$("#create").hasClass("layui-show")){
+                $("#draft").removeClass("layui-show");
+                $("#draft-content").removeClass("layui-show");
+                $("#create").removeClass("layui-show");
+                $("#draft-create").addClass("layui-show");
+            //}
+		});
+  
+
+		//公共信息列表
+		function loadData(type) {
+			var param = new Object();
+            param.container = "paging";
+            param.url = "/pub/pubPublicInfo/list";
+            param._csrf = $("#_csrf").val();
+            param.pageSize = 10;
+            if(type=="1"){
+             param.searchKey = $("#searchKey").val();	
+            }else{
+            	param.searchKey = $("#searchKey").val();
+            	param.categoryId = $("#category_Id").val();
+                param.auditStatus = $("#auditStatus_").val();
+                param.periodStatus = $("#periodStatus_").val();
+                param.begDate = $("#startTime").val();
+                param.endDate = $("#endTime").val();
+            }
+            tool.loadpage(param);
+            $("#create").show();
+            //$("#draft-create").show();
+		}
+
+        //公共信息草稿列表
+        function loadDraftData(type) {
+            var param = new Object();
+            param.container = "paging2";
+            param.url = "/pub/pubPublicInfoDraft/list";
+            param._csrf = $("#_csrf").val();
+            param.pageSize = 10;
+            if(type=="1"){
+            param.searchKey = $("#searchKey_").val();
+            }else if(type=="2"){
+            	 param.searchKey = $("#searchKey_").val();
+            	 param.categoryId = $("#categoryId_").val();
+                 param.periodStatus = $("#_periodStatus").val();
+                 param.begDate = $("#startTime_").val();
+                 param.endDate = $("#endTime_").val();
+            }
+            tool.loadpage(param);
+        }
+
+		//高级搜索
+		function search_h(){
+			 $(".sear").toggle();
+		}
+
+		function search_h1(){
+			 $(".sear1").toggle();
+		}
+
+		//提交弹窗
+		function submit() {
+			var index = layer.open({
+				title : '提交',
+				maxmin : false,
+				type : 1,
+				area: ['500px', '400px'],
+				content : $('#win-submit-object')
+			});
+			pform.render();
+		}
+
+		function closeAuditDialog() {
+			layer.closeAll();
+        }
+        var pageBtn;//锁定编辑后不分页
+        //公共信息编辑
+        function edit(id,isDraft,myself) {
+        	pageBtn=myself;
+        	var index= layer.open({ 
+				  type: 2,
+				  title: '编辑',
+				  closeBtn:0,
+				  shade: 0.8, 
+				  shadeClose: true,
+				  content: 'pubMinePageEdit.html?id='+id+'&isDraft='+isDraft
+				});
+	    		
+			    pform.render();
+				layer.full(index);
+        }
+        //跳转到流转日志
+        function GoDi(myself){
+        	var id=$(myself).attr("goid");
+        	    alert(id);
+        	
+        }
+        //公共信息详情
+        function detail(id,isDraft,auditStatus) {
+        	$("#GoDi").attr("goid",id)
+        	/* if(auditStatus=="已发布"){
+        		$("#GoDi").show();
+        	}else{
+        		$("#GoDi").hide();
+        	} */
+            getCategory();
+            var object = "";
+            if(isDraft == '1'){
+                object = tool.getById("/pub/pubPublicInfoDraft/getById", id);
+			}else{
+                object = tool.getById("/pub/pubPublicInfo/getById", id);
+            }
+            for ( var key in object) {
+                $("#detail-object-form").find("#" + key).html(
+                    object[key]);
+               	if(key == 'categoryId'){
+               		$("#categoryId").html(object['categoryName']);
+               	}
+             
+            }
+           
+            if(object.resResourceList!=null){
+            	   var fileBack=object.resResourceList;
+		           var filelist={filelist:fileBack};
+				   /* for(var i=0;i<filelist.filelist.length;i++){
+					   filelist.filelist[i].attachPath = filelist.filelist[i].attachPath.replace(/\\/g,"\\/")
+					 } */
+		            $('#demoList').html(template("artt_detail", filelist));
+			   }
+            /* 公告对象*/
+            var noticeObjName=object.noticeObjName.replace(/;/g,"；");
+            if(noticeObjName.substr(noticeObjName.length-1,1)=="；"){
+            	noticeObjName=noticeObjName.substr(0,noticeObjName.length-1);
+			}
+            $("#noticeObjName").text(noticeObjName);
+
+            var index = layer.open({
+                title : '我的信息详情',
+                maxmin : false,
+                type : 1,
+                content : $('#win-detail-object')
+            });
+            pform.render();
+            layer.full(index);
+        }
+      //新增上传
+    	tool.fileUpload("demoList_add","test10","/res/file/upload","testListAction","PUB_PUBLIC_INFO_ADD");
+ 
+
+
+        //下载
+        function showDownload(groupName,fileName){
+	    	$("#groupName").val(groupName);
+	    	$("#fileName").val(fileName);
+			$("#action_form").submit();
+    	}
+
+        //删除单个
+        function showDelete(id,myself) {
+        	pageBtn = myself;
+            layer.confirm('确定并删除?', {
+                icon : 3,
+                title : '提示'
+            }, function(index) {
+                var retMsg = tool.deleteByIds("/pub/pubPublicInfoDraft/delete", id)
+                if (retMsg.code == 0) {
+                    var laypageBtn=$(pageBtn).parents(".admin-table").parent().next().find(".layui-laypage-btn");
+    	        	if(laypageBtn.length>0){
+    	        		laypageBtn.trigger("click");
+    	        	}else{
+    	        		loadDraftData();
+    	        	}
+    	        	tool.success(retMsg.message);
+                    layer.closeAll();
+                } else {
+                    tool.error(retMsg.message);
+                }
+            });
+        }
+
+        //批量删除公共信息
+        function deleteBatch(){
+            if($(".moreInput:checked").length==0){
+                tool.error('至少选中一个');
+            }else{
+                var str="";
+                $(".moreInput:checked").each(function(index,value){
+                    str+=value.id+";";
+                })
+                //调批量删除接口 最后重新渲染列表
+
+                layer.confirm('确定删除吗 ?', {
+                    icon : 3,
+                    title : '提示'
+                }, function(index) {
+                    var retMsg = tool.deleteByIds("/pub/pubPublicInfo/delete", str)
+                    if (retMsg.code == 0) {
+                    	$("#paging_check-all").prop("checked",false);
+						pform.render();
+                        tool.success(retMsg.message);
+                        layer.closeAll();
+                        loadData();
+                    } else {
+                        tool.error(retMsg.message);
+                    }
+                });
+
+            }
+        }
+
+        //批量删除公共信息草稿
+        function deleteBatchDraft() {
+            if ($(".moreInput2:checked").length == 0) {
+                tool.error('至少选中一个');
+            } else {
+                var str = "";
+                $(".moreInput2:checked").each(function (index, value) {
+                    str += value.id + ";";
+                })
+                //调批量删除接口 最后重新渲染列表
+
+                layer.confirm('确定删除吗 ?', {
+                    icon: 3,
+                    title: '提示'
+                }, function (index) {
+                    var retMsg = tool.deleteByIds("/pub/pubPublicInfoDraft/delete", str);
+                    if (retMsg.code == 0) {
+						$("#paging_check-allc").attr("checked",false);
+						pform.render();
+                        tool.success(retMsg.message);
+                        layer.closeAll();
+                        loadDraftData();
+                    } else {
+                        tool.error(retMsg.message);
+                    }
+                });
+            }
+        }
+        //阻止maopao
+        function defalt_td(event){
+            event.cancelBubble=true;
+        }
+
+        function clearForm() {
+			$("#title_add").val("");
+            $("#publishName_add").val("");
+            $("#categoryId_add").val("");
+            $("#period_add").val("7");
+            $("#noticeObjName_add").text("");
+            $("#noticeObjId_add").val("");
+            $("#noticeObjId_edit").val("");
+                ue.setContent(" ");
+            $("#demoList_add").empty();
+            getPublisher();
+            $("#noticeObjName_add").val("");
+            $("#noticeObjName_addDiv").text("");
+        }
+	</script>
+</body>
+</html>

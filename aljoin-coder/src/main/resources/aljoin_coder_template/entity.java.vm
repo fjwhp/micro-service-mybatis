@@ -1,0 +1,102 @@
+package ${package.Entity};
+
+#foreach($pkg in ${table.importPackages})
+import ${pkg};
+#end
+#set($longPropCount=0)
+#foreach($field in ${table.fields})
+#if(${field.propertyType.equals("Long")})
+#set($longPropCount=$longPropCount + 1)
+#end
+#end
+#if($longPropCount != 0)
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+#end
+
+/**
+ * 
+ * @描述：${table.comment}(实体类).
+ * 
+ * @作者：${author}
+ * 
+ * @时间: ${date}
+ */
+#if(${table.convert})
+@TableName("${table.name}")
+#end
+#if(${superEntityClass})
+public class ${entity} extends ${superEntityClass}<${entity}> {
+#elseif(${activeRecord})
+public class ${entity} extends Model<${entity}> {
+#else
+public class ${entity} implements Serializable {
+#end
+
+    private static final long serialVersionUID = 1L;
+
+#foreach($field in ${table.fields})
+#if(${field.keyFlag})
+#set($keyPropertyName=${field.propertyName})
+#end
+#if("$!field.comment" != "")
+    /**
+     * ${field.comment}
+     */
+#end
+#if(${field.keyFlag})
+#if(${field.keyIdentityFlag})
+	@TableId(value="${field.name}", type= IdType.AUTO)
+#elseif(${field.convert})
+    @TableId("${field.name}")
+#end
+#elseif(${field.convert})
+	@TableField("${field.name}")
+#end
+#if(${field.propertyType.equals("Long")})
+	@JsonSerialize(using = ToStringSerializer.class)
+#end
+	private ${field.propertyType} ${field.propertyName};
+#end
+
+#foreach($field in ${table.fields})
+#if(${field.propertyType.equals("Boolean")})
+#set($getprefix="is")
+#else
+#set($getprefix="get")
+#end
+
+	public ${field.propertyType} ${getprefix}${field.capitalName}() {
+		return ${field.propertyName};
+	}
+
+#if(${entityBuilderModel})
+	public ${entity} set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
+#else
+	public void set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
+#end
+		this.${field.propertyName} = ${field.propertyName};
+#if(${entityBuilderModel})
+		return this;
+#end
+	}
+#end
+
+#if(${entityColumnConstant})
+#foreach($field in ${table.fields})
+	public static final String ${field.name.toUpperCase()} = "${field.name}";
+
+#end
+#end
+#if(${activeRecord})
+	@Override
+	protected Serializable pkVal() {
+#if(${keyPropertyName})
+		return this.${keyPropertyName};
+#else
+		return this.id;
+#end
+	}
+
+#end
+}

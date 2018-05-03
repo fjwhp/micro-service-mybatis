@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.act.dao.mapper.ActIdMembershipMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.act.dao.entity.ActIdMembership">	
+		<result column="GROUP_ID_" property="groupId" />	
+		<result column="USER_ID_" property="userId" />
+		
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+       GROUP_ID_ AS groupId, USER_ID_ AS userId
+    </sql>
+    
+  
+</mapper>

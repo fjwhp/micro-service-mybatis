@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" />
+<link rel="stylesheet" href="../../web/css/zhengls.css" />
+<style>
+	.layui-form-pane .label_m{width:90px;}
+	.layui-form-pane .layui-input-block1{margin-left:90px;} 
+	.layui-input-block1 .layui-select-title .layui-input{width:100px;}
+</style>
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<input type="hidden" id="t_id" value="${t_id}" />
+	<input type="hidden" id="t_sendUserId" value="${t_sendUserId}" />
+	<input type="hidden" id="t_sendUserName" value="${t_sendUserName}" />
+	<input type="hidden" id="t_sendFullName" value="${t_sendFullName}" />
+
+	<!--编辑文件 -->
+	<div class="m_10"  id="win-update-object" >
+	  <div class="floatLeft"  style="width:75%;float:left;padding-bottom:45px;">
+		<form class="layui-form layui-form-pane" id="update-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+
+   <!--          <input type="hidden" name="maiReceiveBox.sendUserId"   id="sendUserId" />
+            <input type="hidden" name="maiReceiveBox.sendUserName"   id="sendUserName" />
+            <input type="hidden" name="maiReceiveBox.sendFullName"   id="sendFullName" /> -->
+            
+            <!-- 
+            <input type="hidden" name="maiReceiveBox.weekDay"   id="weekDay" />
+			<input type="hidden" name="maiSendBox.receiveUserCount"   id="receiveUserCount" /> -->
+			<input type="hidden" name="maiDraftBox.id"   id="id" />
+			<input type="hidden" name="maiReceiveBox.mailSize"   id="mailSize" value="10" />
+			<input type="hidden" name="maiReceiveBoxSearch.attachmentCount"   id="attachmentCount"  /> 
+            <input type="hidden" name="maiReceiveBox.mailContent"   id="mailContent" />
+            <input type="hidden" name="maiReceiveBoxSearch.sendFullName"   id="sendFullName" />
+            
+            
+            <div id="FileLei1">
+
+	        </div>
+			
+			<div class="layui-form-item"  id="receiveFather">
+				<label class="layui-form-label">收件人</label>
+				<div class="layui-input-inline" style="width:70%">
+				    <div style="width:100%;" class="newgg inputBorCl inputBor" onclick="setValue(0,this)"></div>
+					<input type="hidden"   name="maiReceiveBox.receiveFullNames" id="receiveFullName"   lay-verify="" autocomplete="off" placeholder="账号" class="layui-input " readonly="readonly">
+					<input type="hidden" name="maiReceiveBox.receiveUserNames"   id="receiveUserName"  autocomplete="off" class="layui-input" >
+				    <input type="hidden" name="maiReceiveBox.receiveUserIds"   id="receiveUserId"  autocomplete="off" class="layui-input idszhan" >
+				</div>
+				<div style="float:right;margin-top:-6px;">
+					  <input type="checkbox" name="maiSendBox.isReceiveSmsRemind" id="isReceiveSmsRemind" title="短信提醒" value="1">
+	   			</div> 
+   			</div>
+
+			<div class="layui-form-item" id="sendFather">
+				<label class="layui-form-label">抄送人</label>
+				<div class="layui-input-inline" style="width:70%">
+				    <div style="width:100%;" class="newgg1 inputBorCl" onclick="setValue(1,this)"></div>
+				    <input type="hidden" name="maiReceiveBox.copyFullNames" id="copyFullNames"  autocomplete="off" placeholder="抄送人" class="layui-input" readonly="readonly" >
+				    <input type="hidden" name="maiReceiveBox.copyUserNames" id="copyUserNames" autocomplete="off" class="layui-input" >
+				    <input type="hidden" name="maiReceiveBox.copyUserIds" id="copyUserIds"  autocomplete="off" class="layui-input idszhan" >
+				</div>
+				<div  style="float:right;margin-top:-6px;">
+				      <input type="checkbox" name="maiSendBox.isCopySmsRemind" id="isCopySmsRemind" title="短信提醒" value="1">
+   				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">主题</label>
+				<div class="layui-input-block">
+					<input type="text" name="maiReceiveBoxSearch.subjectText" id="subjectText"  lay-verify="" maxlength="50"  autocomplete="off"  placeholder="主题" class="layui-input">
+				</div>
+			</div>
+	
+	  <div class="layui-form-item">
+			<label class="layui-form-label">上传附件</label>
+				<div class="layui-input-block">
+					<div class="layui-upload">
+	 					<div class="layui-upload-drag" id="test10" style="padding:5px;width:99%;">
+								  <i class="layui-icon"></i>
+								  <p>点击上传，或将文件拖拽到此处</p>
+						  </div>
+						   <a class="layui-btn" id="testListAction" style="position: absolute;right: 0px;top: 51px;">
+							<i class="layui-icon">&#xe62f;</i> 开始上传
+						   </a> 
+					    <table class="layui-table">
+					      <colgroup>
+							    <col width="200">
+							    <col width="60">
+							    <col width="60">
+							    <col width="60">
+							  </colgroup>
+					      <tbody id="demoList">
+							   <script   id="artt1"  type="text/html">
+                    			{{each filelist value index}}
+                                    <tr>
+                   					   <td>{{value.attachName}}</td>
+                   					   <td>{{value.attachSize}}kb</td>
+                   					   <td><span style="color: #5FB878;">上传成功</span></td>
+                   					   <td><a style="color:#339bf1;" index="{{index}}" onclick="aleafile('{{value.id}}',this,{{index}})">删除</a></td>
+                                    </tr>
+	              				 {{/each}}
+                  			 </script>
+					      </tbody>
+					    </table>
+					  </div>
+					</div> 
+				</div>
+	
+			<div class="layui-form-item">
+				<label class="layui-form-label">内容</label>
+				<div class="layui-input-block">
+				  <script id="editor-id"  type="text/plain" style="width: 100%; height: 500px;"></script>
+				</div>
+			</div>
+			<div class="layui-input-inline" style="width:120px;margin-left:100px;">
+	      		<input type="checkbox" name="maiSendBox.isReceipt" id="isReceipt" title="是否回执" value="1">
+			</div> 
+			<div class="layui-input-inline" style="width:120px;margin-left:30px;">
+   				  <input type="checkbox" name="maiReceiveBoxSearch.isUrgent" id="isUrgent" title="是否緊急" value="1">
+		    </div>
+			<div class="btn_fixed" style="display:none">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="parent.layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-update-submit" id="disabled_update">
+					   <i class="fa fa-save"></i>发送
+					</button>
+					 <button class="layui-btn layui-btn-primary" lay-submit="" lay-filter="form-update-draft" id="disabled_draft">
+						<li class="fa fa-eraser"></li>存为草稿
+					</button>  
+				</div>
+			</div>
+
+		 </form>
+		</div>
+		<div class="floatRighr" style="width:24%;float:right;border:1px solid #ccc;" >
+		 <form class="layui-form layui-form-pane" id="add-object10-form" >
+		  <div class="tree_head" style="font-weight:bold;font-size:16px;">
+		          收件人选择
+		  </div>
+		   <div class="srarch">
+				<div class="layui-input-inline" style="margin: 0 2%;width:90%;height: 46px;">
+					<input type="text" name="searchKey" id="peopelSel" placeholder="搜索..." autocomplete="off" class="tree_search1"
+					style="height: 30px; line-height: 30px;text-align:left;cursor:pointer;width: 60%;margin-top: inherit;">
+					<a class="layui-btn layui-btn-small" id="" onclick="searchNodes()"><i class="layui-icon">&#xe615;</i>搜索</a>
+					<label type="text"  id="resultKey" class="form-control">  
+		                <div class="tree_father1">  
+		                    <a id="clickUp" class="tree_up1" onclick="clickUp()"><i class="layui-icon">&#xe619;</i></a>  
+		                    <a id="clickDown" class="tree_down1" onclick="clickDown()"><i class="layui-icon">&#xe61a;</i></a>  
+		                    <label id="number" class="tree_number1"></label> 
+		                </div>  
+		            </label> 
+				</div> 
+			</div>
+			<ul   id="treeDemo" class="ztree treeDemo1" name="treeDemo" style="display:block;height: 405px;overflow: auto;border-top: 1px solid #c9d3d6;"></ul>
+			<div style="display:none"  id="searcgUs">
+			       <div id="paging5-data">
+					<script id="paging5-script" type="text/html">
+                     <div >
+                       <div style="height: 30px; position:relative">
+                       <i class="layui-icon" style="cursor:pointer;font-size: 22px;height: 30px  color: #1E9FFF;position: absolute; right: 0;" onclick="showTree()">&#x1006;</i>
+					   </div>
+                    {{each records value index}}
+			 			    <div class="searchW" style="  padding:1% 1% 1% 5%; border-bottom:1px solid #ccc; cursor: pointer;"  onclick="chooseMe('{{value.autUser.id}}','{{value.autUser.userName}}','{{value.autUser.fullName}}')">
+	                		  {{value.autUser.fullName}}
+			   				 </div>
+               		 {{/each}}  
+                     
+                        {{if records.length==0}}
+                             <div class="searchW1" style="width:80%;  padding:10%;  "  >
+                                                                                             没有查找到
+			   				 </div>
+                             
+                        {{/if}}
+                        </div>
+					</script>
+				</div>     	
+				<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+				  <div id="paging5-footer" class="page" style="background-color: white; text-align: center;"></div>
+		     	</div>
+	     	</div>
+		   </form>
+		</div>
+		
+	</div>
+	
+	
+	<input type="hidden" id="hiddenPp"  value="0">
+
+	
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/ueditor.all.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/lang/zh-cn/zh-cn.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+	
+	
+	<script>
+		//时间控件
+	 	/* tool.timeset('#startTime','#endTime'); */
+	 	//构建出百度文本编辑器
+	    var ue = UE.getEditor('editor-id',{initialFrameHeight: 196});
+		var pform;
+		//添加事件
+		layui.use('form', function() {
+			pform = layui.form;
+			pform.verify({
+				length50 : function(value) {
+					if (value.length>50) {
+						return "长度不能超过50个字符";
+					}
+				},
+				length20:function(value){
+					if (value.length>20) {
+						return "长度不能超过20个字符";
+					}
+				},
+				special:function(value){
+					var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]"); 
+					if(pattern.test(value)){
+					     return "不能输入特殊字符";
+					}
+				} 
+			});
+			
+			//var   initLoadIndex;
+			//监听发送提交
+			pform.on('submit(form-update-submit)', function(data) {
+				  var a=jy();
+				  if(a==false){
+					  return false;
+				  }
+				  layer.confirm('确定发送吗 ?', {
+	                    icon: 3,
+	                    title: '提示'
+	              },function(index){
+	            	   //layer.close(index);
+	            	  // initLoadIndex = layer.load(2, {});  
+			 	  $("#disabled_update").attr("disabled","disabled");
+				  $("#disabled_cao").attr("disabled","disabled");
+				  //赋值附件个数
+				  $("#attachmentCount").val(arr.length)
+				 //源文件名 路径 大小 赋值
+				   $("#FileLei1").empty();
+				    var str="";
+		            for(var i=0;i<arr.length;i++){
+		            	str += '<input type="hidden" name="maiAttachmentList['+i+'].attachName" value="'+nameArr[i].fileName+'" />';
+		            	str += '<input type="hidden" name="maiAttachmentList['+i+'].attachPath" value="'+arr[i].res.groupName+"&"+arr[i].res.fileName+'" />';
+		                str += '<input type="hidden" name="maiAttachmentList['+i+'].attachSize" value="'+nameArr[i].fileSize+'" />';
+		            }
+		            $("#FileLei1").append(str);
+				//获取文本编辑器内容
+				var uevalue = ue.getContent()
+				$("#mailContent").val(uevalue)
+				var whatUrl=$("#hiddenPpADD").val();
+				tool.post("../maiDraftBox/sendDraft", $("#update-object-form").serialize(),postCallBack, false); 
+	            }); 
+				return false;
+			});
+			  //新增对象回调
+			function postCallBack(retMsg) {
+				if (retMsg.code == 0) {
+					 //提交后 再情况存放文件的数组 避免重复提交
+		            arr.splice(0,arr.length);
+		            nameArr.splice(0,nameArr.length);
+		            layer.alert(retMsg.message, {
+		    			title : "操作提示",
+		    			icon : 1,
+		    			closeBtn:0
+		    		},function(index){
+		    			parent.loadData();
+		    			parent.layer.closeAll();
+		    		})
+				} else {
+					$("#disabled_update").removeAttr("disabled");
+					$("#disabled_draft").removeAttr("disabled");
+					tool.error(retMsg.message);
+				}
+			}
+			//监听存为草稿提交
+			pform.on('submit(form-update-draft)', function(data) {
+				 var a=jy();
+				  if(a==false){
+					  return false;
+				  }
+				  $("#disabled_update").attr("disabled","disabled");
+				  $("#disabled_cao").attr("disabled","disabled");
+				  //赋值附件个数
+				   $("#attachmentCount").val(arr.length)
+				 //源文件名 路径 大小 赋值
+				   $("#FileLei1").empty();
+				    var str="";
+		            for(var i=0;i<arr.length;i++){
+		            	str += '<input type="hidden" name="maiAttachmentList['+i+'].attachName" value="'+nameArr[i].fileName+'" />';
+		            	str += '<input type="hidden" name="maiAttachmentList['+i+'].attachPath" value="'+arr[i].res.groupName+"&"+arr[i].res.fileName+'" />';
+		                str += '<input type="hidden" name="maiAttachmentList['+i+'].attachSize" value="'+nameArr[i].fileSize+'" />';
+		            }
+		            $("#FileLei1").append(str);
+				//获取文本编辑器内容
+				var uevalue = ue.getContent()
+				$("#mailContent").val(uevalue)
+				var whatUrl=$("#hiddenPpADD").val();
+				tool.post("../maiDraftBox/update", $("#update-object-form").serialize(),postCallBack, false);  
+		
+				return false;
+			});
+			
+		});
+	     
+		
+		
+       //校验
+		function jy(){
+			/* 收件人必填--填则校验 */
+			var userMail =$(".newgg").text();
+		   if(userMail==""||userMail==undefined){
+			   tool.error('收件人不能为空');
+			   return false;
+			} 
+		   
+		   /* 主题必填--填则校验 */
+			var subjectText =$("#subjectText").val();
+		   if(subjectText==""||subjectText==undefined){
+			   tool.error('主题不能为空');
+			   return false;
+			} 
+		   /*编辑器字数判断 */
+		    var value=ue.getContentTxt();
+		    if(value.length>1000){
+		    	 tool.error('内容不能超过1000字符');
+				   return false;
+		    }
+	   }
+		
+		$(document).ready(function(){
+			var id=$("#t_id").val();
+			var sendUserId=$("#t_sendUserId").val();
+			var sendUserName=$("#t_sendUserName").val();
+			var sendFullName=$("#t_sendFullName").val();
+			edit(id,sendUserId,sendUserName,sendFullName)
+		});
+		//编辑
+		function edit(id,sendUserId,sendUserName,sendFullName){
+			//恢复禁用按钮
+			$("#disabled_update").removeAttr("disabled");
+			$("#disabled_draft").removeAttr("disabled");
+			//复选框赋值未取消选中   如果有值 后面会自动勾上
+			
+			$("#win-update-object").find("#isUrgent").removeAttr("checked");
+			$("#win-update-object").find("#isReceipt").removeAttr("checked");
+			$("#win-update-object").find("#isCopySmsRemind").removeAttr("checked");
+			$("#win-update-object").find("#isReceiveSmsRemind").removeAttr("checked");
+			//点击编辑时 取得需要编辑的id
+			$("#win-update-object").find("#id").val(id);
+			$("#win-update-object").find("#sendUserId").val(sendUserId);
+			$("#win-update-object").find("#sendUserName").val(sendUserName);
+			$("#win-update-object").find("#sendFullName").val(sendFullName);
+			var object = tool.getById("../maiDraftBox/getById",id);
+             if(object!=null){
+			//回填
+			$("#win-update-object").find("#subjectText").val(object.maiDraftBox.subjectText)
+	
+			   ue.ready(function() {
+				 if(object.maiDraftBox.mailContent!=null){
+				 ue.setContent(object.maiDraftBox.mailContent);
+				 }
+			  }); 
+	        //文件信息回填
+			var fileBack=object.maiAttachmentList;
+	        
+	        
+            if(fileBack!=null){
+				 for(var i=0;i<fileBack.length;i++){
+					 var strs= new Array();
+					 strs =fileBack[i].attachPath.split("&");
+					 var map={
+							 groupName:strs[0],
+							 fileName:strs[1]
+						};
+					 arr.push({res:map,index:i})
+					 nameArr.push({fileName:fileBack[i].attachName,index:i,fileSize:fileBack[i].attachSize})
+				 }
+			 }
+			var filelist={filelist:fileBack};
+			$('#demoList').html(template("artt1", filelist));
+			  //收件人id
+			  if(object.maiDraftBox.receiveUserIds!=""&&object.maiDraftBox.receiveUserIds!=null){
+			  var receiveUserIds = object.maiDraftBox.receiveUserIds.substr(0,object.maiDraftBox.receiveUserIds.length-1).split(";");
+			
+			 var mytree = $.fn.zTree.getZTreeObj("treeDemo");
+		 	for(var i=0;i<receiveUserIds.length;i++){
+				 var nodes= mytree.getNodeByParam("userId",receiveUserIds[i]);
+				 if(nodes){
+						/*  mytree.updateNode(nodes)
+						 mytree.expandNode(nodes,true,true);//指定选中ID节点展  */
+						 nodes.checked=true;
+						 mytree.selectNode(nodes,true);//指定选中ID的节点  
+						 mytree.updateNode(nodes)
+						 mytree.expandNode(nodes, true, false);//指定选中ID节点展开 
+					 }
+			    } 
+			  }
+			onCheck();
+			 //抄送人id
+			 if(object.maiDraftBox.copyUserIds == null||object.maiDraftBox.copyUserIds=="" ){
+				 
+			 }else{
+				  var copyUserIds=object.maiDraftBox.copyUserIds.substr(0,object.maiDraftBox.copyUserIds.length-1).split(";");
+				   
+			 }
+			   $("#update-object-form").find("#copyFullNames").val(object.maiDraftBox.copyFullNames);
+			   $("#update-object-form").find("#copyUserNames").val(object.maiDraftBox.copyUserNames);
+			   $("#update-object-form").find("#copyUserIds").val(object.maiDraftBox.copyUserIds);
+			   if(object.maiDraftBox.copyFullNames!=""&&object.maiDraftBox.copyFullNames!=null){
+			   var copyFullNames = object.maiDraftBox.copyFullNames.substr(0,object.maiDraftBox.copyFullNames.length-1).split(";");
+			    var divstr="";
+			 	for(var i=0;i<copyFullNames.length;i++){
+			 		divstr+='<div class="layui-input-inline hoverDiv" style="position: relative;float:none;width:auto;">'+
+	    			 '<i class="layui-icon" onclick="removeElement(this)"   style="cursor: default; font-size:16px; color: #d9d9d9;position: absolute;right: -8px;z-index: 10; ">&#x1007;</i>'+  
+			    	 '<a class="layui-btn" style="cursor: pointer;color: black; background: none;height:26px;line-hieght:26px;padding-left:6px;padding-right:6px" >'+copyFullNames[i]+'</a>'+
+			    	 '</div>'
+				}
+			 	 $("#update-object-form").find(".newgg1").empty();
+			 	 $("#update-object-form").find(".newgg1").append(divstr);
+			   }
+			   if(object.maiDraftBox.isUrgent==1){
+					 //动态设置属性 才会重新渲染
+					$("#update-object-form").find("#isUrgent").prop("checked",true)
+				}else{
+					$("#update-object-form").find("#isUrgent").prop("checked",false)
+				}
+			   if(object.maiDraftBox.isReceipt==1){
+					 //动态设置属性 才会重新渲染
+					$("#update-object-form").find("#isReceipt").prop("checked",true)
+				}else{
+					$("#update-object-form").find("#isReceipt").prop("checked",false);
+				}
+			   if(object.maiDraftBox.isCopySmsRemind==1){
+					 //动态设置属性 才会重新渲染
+					$("#update-object-form").find("#isCopySmsRemind").prop("checked",true)
+				}else{
+					$("#update-object-form").find("#isCopySmsRemind").prop("checked",false)
+				}
+			   if(object.maiDraftBox.isReceiveSmsRemind==1){
+					 //动态设置属性 才会重新渲染
+					$("#update-object-form").find("#isReceiveSmsRemind").prop("checked",true)
+				}else{
+					$("#update-object-form").find("#isReceiveSmsRemind").prop("checked",false)
+				}
+	
+            }
+			 setTimeout(function(){
+					$(".btn_fixed").css("display","block");
+				},600)
+		}
+		
+		//获取当前星期
+		getweekDayFn();
+	  function getweekDayFn(){
+		var d=new Date()
+		var weekday=new Array(7)
+			weekday[0]="星期天"
+			weekday[1]="星期一"
+			weekday[2]="星期二"
+			weekday[3]="星期三"
+			weekday[4]="星期四"
+			weekday[5]="星期五"
+			weekday[6]="星期六"
+		var nowweekDay=	weekday[d.getDay()]
+		$("#win-update-object").find("#weekDay").val(nowweekDay)	
+		}	
+		 var mytree;
+	     //添加联系人弹窗组织机构树
+	     shareToId_tree();
+	     
+	     function shareToId_tree(){
+	    	 tool.post("/pub/public/organList",{_csrf:$("#_csrf").val()},function(data){
+	    		var  departmentList=data.departmentList;//部门
+	    		var  userPositionList=data.departmentUserList;//用户
+	    		var setting = {  
+						check : {
+							enable : true ,
+							},  
+						data : { simpleData : { enable : true }  },
+						callback: {
+							onCheck: onCheck
+						}
+					};
+				var obj=[];
+				for(var i=0;i<departmentList.length;i++){  
+					obj.push({id:departmentList[i].id,pId: departmentList[i].parentId,name:departmentList[i].deptName,necessary:0})
+					for(var j=0;j<userPositionList.length;j++){
+						if(userPositionList[j].deptId==departmentList[i].id){
+							obj.push({id:userPositionList[j].id,pId:departmentList[i].id,name:userPositionList[j].fullName,necessary:1,userId:userPositionList[j].userId,userName:userPositionList[j].userName})
+						}
+					}
+				}
+				mytree= $.fn.zTree.init($("#treeDemo"), setting, obj);
+	    	 },false)
+	     }
+	     
+	     //勾选用户
+		 function onCheck(){
+    		 var  treeArr=[];
+    		 var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+    		 var changeNodes = zTree.getChangeCheckedNodes();
+    		 
+    		 //数组去重
+			 var res = [];
+			 var json = {};
+			 for(var i = 0; i < changeNodes.length; i++){
+			  if(!json[changeNodes[i].userId]){
+			   res.push(changeNodes[i]);
+			   json[changeNodes[i].userId] = 1;
+			  }
+			 }
+             changeNodes=res
+    		 if(changeNodes.length>0){
+    		 $.each(changeNodes,function(index,value){
+    			 if(value.necessary==1){
+    			     treeArr.push({id:value.id,name:value.name,userId:value.userId,userName:value.userName})
+    			 }
+    		 })
+    	   }
+             if(treeArr.length>0){
+ 	    		 var str="",namestr="",fullname="";
+ 	    		 var divs="";
+ 	    		$.each(treeArr,function(index,value){ 
+ 	    			str+=value.userId+";"
+ 	    			namestr+=value.userName+";"
+ 	    			fullname+=value.name+";";
+ 	    			divs+='<div class="layui-input-inline hoverDiv" style="position: relative;float:none;width:auto;">'+
+ 	    			 '<i class="layui-icon" onclick="removeElement(this)" strid="'+value.userId+'" namestr="'+value.userName+'"  fullname="'+value.name+'"   style="cursor: default; font-size:16px; color: #d9d9d9;position: absolute;right: -8px;z-index: 10; ">&#x1007;</i>'+  
+ 			    	 '<a class="layui-btn" style="cursor: pointer;color: black; background: none;height:26px;line-hieght:26px;padding-left:6px;padding-right:6px" >'+value.name+'</a>'+
+ 			    	 '</div>'	    		
+ 	    		})
+ 	    	  }else{
+ 	    		  var str="",namestr="",fullname="";
+ 	    	  }
+ 	    		var choose=$("#hiddenPp").val()
+ 	    		if(choose==0){
+ 	    			
+ 	    		$("#update-object-form").find("#receiveUserId").val(str);
+ 	    		$("#update-object-form").find("#receiveUserName").val(namestr);
+ 	    		$("#update-object-form").find("#receiveFullName").val(fullname);
+ 	    		$("#update-object-form").find(".newgg").empty();
+ 	    		$("#update-object-form").find(".newgg").append(divs);
+ 	    		$("#receiveUserCount").val(treeArr.length)
+ 	
+ 	    		}else{
+ 	    			$("#update-object-form").find("#copyUserIds").val(str);
+ 		    		$("#update-object-form").find("#copyUserNames").val(namestr);
+ 		    		$("#update-object-form").find("#copyFullNames").val(fullname);
+ 		    		$("#update-object-form").find(".newgg1").empty();
+ 		    		$("#update-object-form").find(".newgg1").append(divs);
+ 	    		}
+ 	    		
+ 	    	
+     	 }
+ 	     
+ 	     
+ 		    //移除
+    	     
+    	     function removeElement(tis) {
+ 		       var parent=$(tis).parent().parent().parent();
+                var id=$(tis).attr("strid")+";";
+                var namestr=$(tis).attr("namestr")+";";
+                var fullname=$(tis).attr("fullname")+";";
+                var receiveFullName = parent.find("input").eq(0).val();
+                var fullStr = receiveFullName.replace(fullname,"");
+                      parent.find("input").eq(0).val(fullStr);
+                    
+                 var receiveUserName =  parent.find("input").eq(1).val();
+                 var userStr = receiveUserName.replace(namestr,"");
+                 parent.find("input").eq(1).val(userStr);   
+                  
+                var ids =  parent.find("input").eq(2).val();
+                var pmnIdStr = ids.replace(id,"");
+                parent.find("input").eq(2).val(pmnIdStr);
+                 pmnIdStr=pmnIdStr.substr(0,pmnIdStr.length-1).split(";");
+  
+  	    	 $(tis).parent().remove();
+  
+            }
+	     
+		//点击input
+	     function setValue(value,myself){
+	    	 $(".inputBorCl").removeClass("inputBor");
+		     $(myself).addClass("inputBor");
+		     if(value=="0"){
+		    		$(".tree_head").text('收件人选择');
+		    	}else{
+		    		$(".tree_head").text('抄送人选择');
+		    	}
+	    	 var ids=$(myself).parent().find(".idszhan").val();
+	    	     ids=ids.substr(0,ids.length-1).split(";");
+	    	     $("#hiddenPp").val(value)
+	    	 shareToId_tree()
+	    	var mytree1 = $.fn.zTree.getZTreeObj("treeDemo");
+	    	 for(var i=0;i<ids.length;i++){
+	    		 var nodes= mytree1.getNodeByParam("userId",ids[i]);
+	    	
+	    		 if(nodes){
+					 nodes.checked=true;
+					 mytree.selectNode(nodes,true);//指定选中ID的节点  
+					 mytree.updateNode(nodes)
+					 mytree.expandNode(nodes, true, false);//指定选中ID节点展开 
+				 }
+	    	 }
+	    	 $("#peopelSel").val("");
+	    	  $("#treeDemo").show();
+	    	  $("#searcgUs").hide();
+	    	  searchNodes();
+	    	 onCheck();
+	     }
+
+	     //用按钮查询节点  
+	       /*  function searchNodes(){  
+	            var keywords=$("#peopelSel").val();  
+	            var nodes = mytree.getNodesByParamFuzzy("name", keywords, null);  
+	            if (nodes.length>0) {  
+	                mytree.selectNode(nodes[0]);  
+	            }  
+	        } */ 
+	      //回车
+	     $("#peopelSel").keydown(function(e) {  
+	    	  if (e.keyCode == 13) {  
+	    		  searchNodes(); 
+	    	  } 
+	    	})
+	     //返回tree
+	     function showTree(){
+	    	  $("#searchKey3").val("");
+	    	  $("#treeDemo").show();
+	    	  $("#searcgUs").hide();
+	     }
+	     
+	     tool.fileUpload("demoList","test10","/res/file/upload","testListAction","MAI_SCRAP_BOX_ADD");
+
+		  //删除编辑里面的附件
+			function aleafile(id,myself,index){
+			 	var retMsg = tool.deleteById("../maiAttachment/delete", id);
+				 if (retMsg.code == 0) {
+				 tool.success(retMsg.message);
+			      $(myself).parent().parent().remove();
+			      for(var i=0;i<arr.length;i++){
+           			if(arr[i].index==index){
+           				arr.splice(i,1)
+           			}
+           		}
+			      for(var i=0;i<nameArr.length;i++){
+	           			if(nameArr[i].index==index){
+	           				nameArr.splice(i,1)
+	           			}
+	           		}
+				} else {
+					tool.error(retMsg.message);
+				}  
+			}
+	</script>
+</body>
+</html>

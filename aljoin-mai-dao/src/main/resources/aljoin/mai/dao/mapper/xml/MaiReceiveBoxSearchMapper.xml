@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.mai.dao.mapper.MaiReceiveBoxSearchMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.mai.dao.entity.MaiReceiveBoxSearch">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="subject_text" property="subjectText" />
+		<result column="receive_user_id" property="receiveUserId" />
+		<result column="send_full_name" property="sendFullName" />
+		<result column="is_scrap" property="isScrap" />
+		<result column="send_time" property="sendTime" />
+		<result column="is_read" property="isRead" />
+		<result column="is_urgent" property="isUrgent" />
+		<result column="is_important" property="isImportant" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name, id, subject_text, receive_user_id, send_full_name, is_delete, is_scrap, send_time, is_read, is_urgent, is_important
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM mai_receive_box_search WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="MaiReceiveBoxSearch">
+    	INSERT INTO mai_receive_box_search(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{subjectText}, #{receiveUserId}, #{sendFullName}, #{isDelete}, #{isScrap}, #{sendTime}, #{isRead}, #{isUrgent}, #{isImportant})
+    </insert>
+
+</mapper>

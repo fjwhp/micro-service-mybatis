@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>表单管理</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<style>
+/* table的操作样式 */
+.table_btn{color:#339bf1;margin-right: 12px;}
+/* 页签  */
+.title_tab{font-size:14px;padding: 6px 6px 6px 10px;color:#444a54;border-bottom:solid 1px #9ec8ea;font-weight:bold;}
+.title_tab i{color: #54abf2;font-size:16px;} 
+.font_icon{margin-right:6px;}
+</style>
+</head>
+<body>
+	<form class="layui-form" action="/act/actAljoinForm/export" method="get" id="action_form">
+	   <input type="hidden" name="ids" id="id_form">
+	</form>
+    <input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main" style="margin: 10px;">
+		<blockquote class="layui-elem-quote" style="padding: 5px;">
+			<form class="layui-form" action="">
+				<div style="float: right;">
+					<div class="layui-input-inline">
+						<input type="text" name="searchKey" id="searchKey" placeholder="请输入表单名称" autocomplete="off" class="layui-input"
+							style="height: 30px; line-height: 30px;">
+					</div>
+					<span><@a code="050102" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData()" iclass="layui-icon"
+					icon="&#xe615;" text="搜索"/></span>
+				</div>
+				<span><@a code="050101" href="javascript:void(0)" class="layui-btn layui-btn-small " id="" onclick="openIframe()" iclass="layui-icon"
+						icon="&#xe608;" text="新增"/></span>
+				<span><@a code="050109" href="javascript:void(0)" class="layui-btn layui-btn-small " id="" onclick="importFile()" iclass="layui-icon"
+						icon="&#xe608;" text="导入文件"/></span>
+				<span><@a code="050108" href="javascript:void(0)" class="layui-btn layui-btn-small " id="" onclick="exportBatch()" iclass="layui-icon"
+						icon="&#xe608;" text="批量导出"/></span>
+			</form>
+		</blockquote>
+		<div class="layui-field-box layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table admin-table">
+				<thead>
+					<tr>
+						<th style="width: 20px;"><input type="checkbox" lay-skin="primary" lay-filter="paging_check-all"></th>
+						<th>表单类型</th>
+						<th>表单名称</th>
+						<th>创建者</th>
+						<th>创建时间</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td><input type="checkbox" lay-skin="primary" class="check-id moreInput" id="{{value.form.id}}"></td>
+							<td>{{value.category.categoryName}}</td>
+							<td>{{value.form.formName}}</td>
+                            <td>{{value.form.createUserName}}</td>
+							<td>{{value.form.createTime}}</td>
+							<td style="width:200px;">
+								<@a code="050103" href="javascript:void(0)" class="table_btn table_link" id="show-edit" onclick="showEdit('{{value.form.id}}')" text="预览"/>
+								<@a code="050104" href="javascript:void(0)" class="table_btn table_link" id="show-view" onclick="showView('{{value.form.id}}')" text="编辑"/>
+								<@a code="050105" href="javascript:void(0)" class="table_btn table_link" id="show-delete" onclick="showDelete('{{value.form.id}}')" text="删除"/>
+								<@a code="050106" href="javascript:void(0)" class="table_btn table_link" id="show-copy" onclick="showCopy('{{value.form.id}}')" text="复制"/>
+								<@a code="050107" href="javascript:void(0)" class="table_btn table_link" id="show-export" onclick="showExport('{{value.form.id}}')" text="导出"/>
+							</td>
+						</tr>
+					{{/each}}
+					</script>
+				</tbody>
+			</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+
+	<div style="padding: 10px; display: none; padding-right: 40px;" id="win-update-object">
+		<div id="htmlCode"></div>
+	</div>
+	
+	<div class="layui-form-item" style="display:none;padding:25px;">
+	  <form class="form-inline layui-form layui-form-pane" id="form_Submit">
+          <input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+          <input type="hidden" name="path" id="filePath" value="" />
+          <input type="hidden" name="af.categoryId" id="categoryId" value="" />
+		    <div class="form-namewrap">
+				<div class="form-group fill-in">
+					<label>表单名称：</label>
+					<input type="text" class="form-control input-sm" lay-verify="required" name="af.formName" id="fileName" onkeyup="value=value.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5]/g,'')"/>
+				</div>
+				<div class="form-group fill-in" id="form-type-object">
+				    <label style="float: left;padding-right:5px;padding-top: 5px;">表单分类：</label>
+					<@selectLink table="act_aljoin_form_category" layVerify="required" id="category_id" name="categoryId" class="layui-input-inline" def="" key="id" text="category_name" level="1" levelName="category_level" rankName="category_rank" where=" and is_active=1"/>
+				</div>
+				<div style="position: absolute;bottom: 25px;right: 15px;">
+				   <a class="layui-btn btns" lay-submit="" lay-filter="form-sub-submit" style="width: 150px; height: 35px;line-height: 35px;"><i class="fa fa-save"></i> 提交</a>
+			    </div>
+			</div>							          
+		  <div class="layui-input-block" style="margin-left:0px;margin-top:35px;">
+		    <label class="po-fixed">上传表单文件：</label>
+			<div class="layui-upload po-fixed">
+			      <div class="layui-upload-drag" id="test9" style="padding:5px;width:100%;box-sizing: border-box;">
+			        <p></p>
+			      </div>
+                  <a class="layui-btn" id="fileImportId">
+				 	 <i class="layui-icon">&#xe62f;</i> 添加
+			      </a>
+				  
+			    </div>
+			 </div>
+			 <div class="layui-upload-list">
+				    <table class="layui-table">
+					    <colgroup>
+						    <col width="180">
+						    <col width="60">
+						    <col width="60">
+						    <col width="40">
+						  </colgroup>
+				      <tbody id="fileList"></tbody>
+				    </table>
+				  </div>
+			</form> 
+		</div>
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script src="../../aljoin-act/js/jquery.base64-2.js"></script>
+	<script>
+		var pform;
+		//添加事件
+		layui.use(['form'], function() {
+			pform = layui.form;
+			//初始化出发数据加载
+			loadData();
+	        //监听导入表单提交
+	        pform.on('submit(form-sub-submit)', function(data) {
+	            layer.confirm('确定提交吗 ?', {
+	                icon: 3,
+	                title: '提示'
+	            }, function (index) {
+	                tool.post("../actAljoinForm/fileSubmit", $("#form_Submit").serialize(),postCallBack, false);
+	            });
+	            return false;
+	        });			
+		});
+		//新增对象回调
+		function postCallBack(retMsg) {
+			if(retMsg.code!=0){
+          		tool.error(retMsg.message)
+          	} else {
+          		var formId = retMsg.object;
+          		showView(formId);
+          	}
+		}
+		//加载数据
+		function loadData() {
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+			param.url = "../actAljoinForm/list";
+			param.formName = $("#searchKey").val();
+			tool.loadpage(param);
+		}
+		//表单联动
+	     layui.use('form', function() {
+				pform = layui.form;
+				pform.on('select(category_id)', function(data) {
+					$("#categoryId").val(data.value)
+					//参数 1：当前元素id，参数2：顶级元素id（用来锁定唯一元素）
+					tool.selectLinkTagByPid("category_id","form-type-object",data);
+				});
+	     }); 					
+		//表单预览
+		function showEdit(id) {
+			var index = layer.open({
+				title : '表单预览',
+				maxmin : false,
+				type : 2,
+				content : '../modeler/formParser.html?id='+id,
+			});
+			layer.full(index);
+		}
+		//删除对象
+		function showDelete(id) {
+			layer.confirm('确定删除 ?', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				var retMsg = tool.deleteById("../actAljoinForm/delete", id)
+				if (retMsg.code == 0) {
+					tool.success(retMsg.message);
+					loadData();
+				} else {
+					tool.error(retMsg.message);
+				}
+			});
+		}
+		//复制对象
+		function copyById(url, id) {
+			var obj;
+			var param = new Object();
+			param._csrf = $("#_csrf").val();
+			param.id = id;
+			tool.post(url, param, function(o) {
+				obj = o;
+			}, false);
+			return obj;
+		}
+		function showCopy(id) {
+			layer.confirm('确定复制 ?', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				var retMsg = copyById("../actAljoinForm/copy", id)
+				if (retMsg.code == 0) {
+					tool.success(retMsg.message);
+					loadData();
+				} else {
+					tool.error(retMsg.message);
+				}
+			});
+		}
+		//表单导出
+		function showExport(id){          
+			$("#id_form").val(id+";");
+			$("#action_form").submit();
+	    }   
+		//批量导出
+        function exportBatch() {
+            if ($(".moreInput:checked").length == 0) {
+                tool.error('没有导出的数据');
+            } else {
+                var str = "";
+                $(".moreInput:checked").each(function (index, value) {
+                    str += value.id + ";";
+                })
+                $("#id_form").val(str);
+    			$("#action_form").submit();
+            }
+        }
+		//新增控件 iframe窗
+		function openIframe(){
+ 			var index = parent.layer.open({
+ 				title: false,
+ 				closeBtn: 0,
+				maxmin : false,
+				type : 2,
+				content : 'act/modeler/formDesign.html',
+	            end: function () {
+	                location.reload();
+	            }
+				
+			});
+			parent.layer.full(index);
+		};
+		//表单编辑 iframe窗
+		function showView(id){		
+ 			var index = parent.layer.open({
+ 				title: false,
+ 				closeBtn: 0,
+				maxmin : false,
+				type : 2,
+				content : 'act/actAljoinForm/formModifyPage?id='+id,
+	            end: function () {
+	                location.reload();
+	            }
+			});
+ 			parent.layer.full(index);	 
+		};
+		//上传本地文件
+		function importFile(){
+			//再次进入清空数据
+			$("#fileName").val(""); 
+			$("#categoryId").val(); //清空已经保存到隐藏域里面的值
+			$("#form-type-object").children(".layui-input-inline:gt(0)").remove();
+			$("#form-type-object").find("select").val("");
+			$("#form-type-object").find("input").val("");
+			var logicNum = $("#fileList").children().length; //是否已有附件未上传
+			if(logicNum > 0){
+				 $("#fileList").find(".demo-delete").trigger("click");
+			}
+			//页面层
+			layer.open({
+			  title : '上传表单文件',
+			  type: 1,
+			  area: ["666px", "520px"], //宽高
+			  content: $('.layui-form-item'),
+			  end: function(){  //end 是页面销毁后触发
+                        document.getElementById("form_Submit").reset() //重置为它们的默认值  
+                    }
+			});
+		}
+		tool.fileUploadForm("fileList","test9","../actAljoinForm/fileImport","fileImportId");
+	</script>
+</body>
+
+</html>

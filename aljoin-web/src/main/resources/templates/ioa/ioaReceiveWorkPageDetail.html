@@ -1,0 +1,2036 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>收文阅件</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<link rel="stylesheet" href="../../web/css/zhengls.css" media="all">
+<link rel="stylesheet" href="../../web/css/multsel.css" media="all">
+<style>
+/* 下拉框样式 */
+.content_sel input.layui-input.layui-unselect{width:105px;height:27px;}
+.blue_border{border:solid 1px #339bf1;}	
+.layui-form-item .layui-input-inline {margin-right: 10px;}
+</style>
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<input type="hidden" id="t_bizId" value="${t_bizId}" />
+	<input type="hidden" id="t_linkName" value="${t_linkName}" />
+	<input type="hidden" id="bizId" value="">
+	<input type="hidden" id="processInstanceId" value="">
+	<input type="hidden" id="isEnd" value="">
+	<input type="hidden" id="isShowReadUserName" value="">
+	<form class="layui-form" action="/res/file/download" method="get" id="action_form">
+	   <input type="hidden" name="groupName" id="groupName">
+	   <input type="hidden" name="fileName" id="fileName">
+	</form>
+	<!-- 在线通知模块进去 title -->
+	<input type="hidden" id="titleTx" name="titleTx" value="${titleTx!}">
+	<!-- 判断是否从 在线通知模块进去 -->
+	<input type="hidden" id="isMsgOnline" value="${isMsgOnline!}" />
+	
+	
+	
+		<!-- 日志 -->
+	<div class="" id="win-daily-object" style="display:none;">
+		<form class="layui-form layui-form-pane admin-main">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form">
+				  <table class="layui-table admin-table">
+				  	  <colgroup>
+					      <col width="10%">
+					      <col width="20%">
+					      <col width="10%">
+					      <col width="15%">
+					      <col width="45%">
+					      <col>
+					  </colgroup>
+					<thead>
+						<tr>
+							<th style="display: none;">用户ID</th>
+							<th>操作人</th>
+							<th>流程方向</th>
+							<th>接收人</th>
+							<th>操作时间</th>
+							<th>审核意见</th>
+						</tr>
+					</thead>
+					<tbody id="paging3-data">
+					<script id="paging3-script" type="text/html">
+						{{each loglist value index}}
+						<tr >
+							<td style="display: none;">{{value.taskId}}</td>
+							<td>{{value.operationName}}</td>
+							<td>{{value.direction}}</td>
+							<td title="{{value.recevieUserName}}">{{value.recevieUserName}}</td>
+							<td>{{value.operationTime}}</td>
+							<td style="white-space:normal;word-wrap: break-word;">{{value.comment}} </td>
+						</tr>
+						{{/each}}
+					</script>
+					</tbody>
+					</table>
+			  </div>
+			  <div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+					<div id="paging3-footer" class="page" style="background-color: white; text-align: center;"></div>
+			  </div>
+		</form>
+	</div>
+	<!-- 审批填写意见----提交弹窗 -->
+	<div class="m_10" id="win-submit-object" style="display:none;">
+		<form class="layui-form layui-form-pane" id="">
+			<div class="judge_div">
+				<div class="l" style="width:58%;">
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+					<div class="layui-form-item">
+						<label class="layui-form-label">审批选择</label>
+						<div class="layui-input-block">
+							<a class="layui-btn layui-btn-primary blue_border yes judge_btn" onclick="agree()" style="margin-left:20px;">同意</a>
+							<a class="layui-btn layui-btn-primary no judge_btn" onclick="noagree()" id="no_agree_btn">回退</a>
+						</div>
+					</div>
+					<div class="agree">
+						<div class="layui-form-item">
+							<label class="l" style="margin-left:14px;">下一级审批环节：</label>
+							<!-- <label style="margin-left:14px;">审批</label> -->
+							<div class="layui-input-inline" style="z-index:2001;">
+							   <select name="nextNode" lay-verify="" id="nextNode">
+							    </select>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<!-- option1 -->
+							<div id="audit-orgn">
+								<label class="l">下一级审批处理人：</label>
+								<div class="l" style="width:73%"> 
+									<div id="n_receiverName" class="judge input_btn reset1" style="max-height: 120px;overflow: auto;"></div>
+									<a class="btn_blue2 r m_t10" onclick="personlSeclect()">请选择</a>
+									<input type="hidden" name="receiverId"  id="n_receiverNameid" class="reset">
+		                            <input type="hidden"   id="n_receiverName_" class="reset">
+									<input type="hidden" id="deptId" class="reset">
+									<input type="hidden" id="deptUserId" class="reset">
+								</div>
+							</div>
+							
+							<!-- option2 -->
+							<div class="m_t10" id="audit-member">
+								<div class="multsel l" defval="0">
+									<span class="view">下一级审批处理人：</span>
+									<div class="selist" id="audit-member-list">
+									</div>
+								</div>
+								<div id="testarea" class="judge1 input_btn reset1 l" readonly="readonly"></div>
+							</div>
+						</div>
+					</div>
+					<div class="noagree" style="display:none">
+						<div class="layui-form-item">
+							<label class="l" style="margin-left:27px;">回退到上一级：</label>
+							<!-- <label style="margin-left:14px;">审批</label> -->
+							<div class="layui-input-inline" style="z-index:2001;">
+							   <!--<select name="city" lay-verify="">
+		
+							    </select>-->
+								<span id="pre-nodeName"></span>
+							</div>
+						</div>
+					</div>
+		
+						<label style="font-weight:bold;">意见：</label>
+						<textarea id="draw_sug" style="height:100px;width:97%;margin-top:5px;" onkeyup="countnum(this);" maxlength="95"></textarea>
+						<div class="r hand" onclick="add_sug()"><span class="table_btn"><small  style="color:#333;margin-right:20px;"><span id="count">0</span>/95</small>加入常用意见</span></div>
+				</div>
+				<div class="layui-form l judge_table" style="width:40%;">
+					  <table class="layui-table admin-table">
+					  	  <colgroup>
+						      <col width="30%">
+						      <col width="70%">
+						      <col>
+						  </colgroup>
+						<thead>
+							<tr>
+								<th>序号</th>
+								<th>常用意见</th>
+							</tr>
+						</thead>
+						<tbody id="opinion-data">
+						  <script id="opinion-script" type="text/html">
+							  {{each opinionlist value index}}
+							  <tr >
+								  <td>{{index+1}}</td>
+								  <td title="" class="hand" onclick="click_font(this)"><p class="hand sug" style="white-space: normal;">{{value.content}}</p></td>
+							  </tr>
+							  {{/each}}
+						  </script>
+						  </tbody>
+						</table>
+				  </div>
+			</div>
+			<div class="cl judge_fixed" style="margin:10px 0;">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.close(inder_sub);" style="margin-right:10px;"><i class="fa fa-backward"></i> 返回</a>
+				<div style="float: right;margin-right:15px;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit" id="form-add-submit">
+						<i class="fa fa-save"></i> 确认
+					</button>
+				</div>
+				<div style="float: right;margin-right:15px;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-jump-submit" style="display: none" id="form-jump-submit">
+						<i class="fa fa-save"></i> 确认
+					</button>
+				</div>
+		    </div>
+		</form>
+	</div>
+	<!-- 人员选择树 -->
+	<div style="display: none;z-index: 19940200;" id="win-personal-object">
+		<div class="search_h">
+			<input id="peopelSel" class="tree_search1 reset" type="text" value="" placeholder="搜索">
+			<a class="layui-btn layui-btn-small" id="" onclick="searchNodes()"><i class="layui-icon">&#xe615;</i>搜索</a>
+			<a class="layui-btn layui-btn-small layui-btn-primary" style="margin-left:2px;" type="reset" onclick="reset_tree()"><li class="fa fa-eraser"></li> 重置</a>
+			<label type="text"  id="resultKey" class="form-control">  
+                <div>  
+                    <a id="clickUp" class="tree_up" onclick="clickUp()"><i class="layui-icon">&#xe619;</i></a>  
+                    <a id="clickDown" class="tree_down" onclick="clickDown()"><i class="layui-icon">&#xe61a;</i></a>  
+                </div>  
+                <label id="number" class="tree_number"></label>  
+            </label>  
+        </div>
+        <div class="tree_h">
+        	<ul id="treeDemo" class="ztree treeDemo1" name="treeDemo" style="display:block"></ul>
+        </div>
+        <div class="sure_h">
+		    <a class="layui-btn layui-btn-small sure_s"><li class="fa fa-save"></li> 确定</a>
+		</div>
+	</div>
+	<!-- 待阅文件详情 -->
+	<div class="admin-main" style="display: none;z-index: 19940200;padding-top:40px;" id="win-readdetail-object">
+		<form class="layui-form layui-form-pane" id="read-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" name="id" id="id-read" value="" />
+			<input type="hidden" name="receiveFileId" id="receiveFileId-read" value="" />
+				<!-- 附件 -->
+				<div id="filealea-read">
+
+				</div>
+				<!-- 标题 -->
+				 <div class="layui-form-item">
+					<label class="layui-form-label">来文标题</label>
+					<div class="layui-input-block">
+						<input type="text" name="fileTitle"  id="fileTitle-read" lay-verify="required|contentLength" autocomplete="off" placeholder="主题" class="layui-input" >
+					</div>
+				</div>
+
+				<!-- 文件类型 -->
+				 <div class="layui-form-item">
+					<label class="layui-form-label">文件类型</label>
+					<div class="layui-input-block">
+						<select name="fileType" id="fileType-read" lay-filter="fileType-add">
+						</select>
+						<input type="hidden" value="" id="fileTypeName-read" name="fileTypeName">
+					</div>
+				</div>
+
+			<!-- 来文单位 -->
+				 <div class="layui-form-item">
+					<label class="layui-form-label">来文单位</label>
+					<div class="layui-input-block">
+						<!-- <select name="fromUnit" id="fromUnit-read" lay-filter="fromUnit-add">
+						</select>
+						<input type="hidden" value="" id="fromUnitName-read" name="fromUnitName"> -->
+						<input type="text" value="" id="fromUnit-read" name="fromUnit" autocomplete="off"class="layui-input" lay-verify="required">
+					</div>
+				</div>
+			<!-- 来文文号 -->
+				 <div class="layui-form-item">
+					<label class="layui-form-label">来文文号</label>
+					<div class="layui-input-block">
+						<input type="text" name="fromFileCode"  id="fromFileCode-read" autocomplete="off" class="layui-input" lay-verify="required">
+					</div>
+				</div>
+
+
+			<!-- 收文编号 -->
+				 <div class="layui-form-item">
+					<label class="layui-form-label">收文编号</label>
+					<div class="layui-input-block">
+						<input type="text" name="receiveFileCode" id="receiveFileCode-read" autocomplete="off" class="layui-input" lay-verify="required">
+					</div>
+				</div>
+
+
+			<!-- 原文日期 -->
+				 <div class="layui-form-item">
+					<label class="layui-form-label">原文日期</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input"  name="orgnlFileTime" id="orgnlFileTime-read" readonly lay-verify="required">
+					</div>
+				</div>
+
+			<!-- 收文日期 -->
+			 	<div class="layui-form-item">
+					<label class="layui-form-label">收文日期</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" name="receiveFileTime" id="receiveFileTime-read" readonly lay-verify="required">
+					</div>
+				</div>
+			<!-- 办理时限 -->
+				 <div class="layui-form-item">
+					<label class="layui-form-label">办理时限</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" name="handleLimitTime" id="handleLimitTime-read" readonly lay-verify="required">
+					</div>
+				</div>
+			<!-- 缓急 -->
+				 <div class="layui-form-item">
+					<label class="layui-form-label">缓急</label>
+					<div class="layui-input-block">
+						<select name="urgentLevel" id="urgentLevel-read" lay-filter="urgentLevel-add">
+						</select>
+						<input type="hidden" value="" id="urgentLevelName-read" name="urgentLevelName">
+					</div>
+				</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">上传附件</label>
+				<div class="layui-input-block">
+					<div class="layui-upload">
+						<div class="layui-upload-drag" id="test-read" style="padding:5px;width:99%;">
+							<i class="layui-icon"></i>
+							<p>点击上传，或将文件拖拽到此处</p>
+						</div>
+						  <a class="layui-btn" id="testListAction_read" style="position: absolute;right: 0px;top: 51px;">
+                             <i class="layui-icon">&#xe62f;</i> 开始上传
+                         </a> 
+						<table class="layui-table">
+							<colgroup>
+								<col width="200">
+								<col width="60">
+								<col width="60">
+								<col width="60">
+							</colgroup>
+							<tbody id="demoList-read">
+							<script   id="artt-read"  type="text/html">
+								{{each filelist value index}}
+								<tr>
+									<td>{{value.orgnlFileName}}</td>
+									<td>{{value.fileSize}}kb</td>
+									<td><span style="color: #5FB878;">上传成功</span></td>
+									<td>
+										<a style="color:#339bf1;cursor:pointer;" index="{{index}}" id={{value.id}} onclick='delFilesData(this)'>删除</a>
+									</td>
+								</tr>
+								{{/each}}
+							</script>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+				<div class="btn_fixed_top" id="btns" >
+					<div class="r">
+						<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="parent.layer.closeAll()"><i class="fa fa-backward "></i> 返回</a>
+					</div>
+					<!-- <div class="r"> -->
+					<div>
+						<a class="flow_btn btns" lay-submit="" lay-filter="form-readsub-submit"><i class="fa fa-save"></i> 提交</a>
+						<a class="flow_btn btns" lay-submit="" lay-filter="form-readsave-submit"><i class="fa fa-save"></i> 保存</a>
+						<a class="flow_btn" onclick="readReceipt.print('read-object-form')"><i class="layui-icon">&#xe621;</i>打印</a>
+						<a class="flow_btn btns" id="del"><i class="layui-icon">&#xe640;</i>删除</a>
+						<!--<a class="layui-btn" onclick="daily()"><i class="layui-icon">&#xe60a;</i>流转日志</a>-->
+					</div>
+				</div>
+			</form>
+		</form>
+	</div>
+	<!-- 待阅文件详情 -->
+	<div class="admin-main" style="display: none;z-index: 19940200;padding-top:40px;" id="win-readdetail2-object">
+		<form class="layui-form" id="read-object-form2">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" name="id" id="id-read2" value="" />
+			<input type="hidden" name="receiveFileId" id="receiveFileId-read2" value="" />
+			<!-- 附件 -->
+			<div id="filealea-read2">
+
+			</div>
+			<!-- <div class="layui-form-item">
+                <label class="layui-form-label">来文标题</label>
+                <div class="layui-input-block">
+                    <input type="text" name="fileTitle"  id="fileTitle-read" lay-verify="required|contentLength" autocomplete="off" placeholder="主题" class="layui-input">
+                </div>
+            </div> -->
+			<!-- 标题 -->
+			<div class="" style="text-align: center;">
+				<span id="fileTitle-read2" style="font-size:16px;font-weight: bold;word-wrap:break-word"></span>
+			</div>
+
+			<!-- <div class="layui-form-item">
+                <label class="layui-form-label">文件类型</label>
+                <div class="layui-input-block">
+                    <select name="fileType" id="fileType-read" lay-filter="fileType-add">
+                    </select>
+                    <input type="hidden" value="" id="fileTypeName-read" name="fileTypeName">
+                </div>
+            </div> -->
+			<!-- 文件类型 -->
+			<div class="p_t10">
+				<span class="e6ed">文件类型：</span>
+				<span id="fileTypeName-read2"></span>
+			</div>
+
+			<!-- <div class="layui-form-item">
+                <label class="layui-form-label">来文单位</label>
+                <div class="layui-input-block">
+                    <select name="fromUnit" id="fromUnit-read" lay-filter="fromUnit-add">
+                    </select>
+                    <input type="hidden" value="" id="fromUnitName-read" name="fromUnitName">
+                </div>
+            </div> -->
+			<!-- 来文单位 -->
+			<div class="p_t10">
+				<span class="e6ed">来文单位：</span>
+				<span id="fromUnitName-read2"></span> 
+			</div>
+
+
+			<!-- <div class="layui-form-item">
+                <label class="layui-form-label">来文文号</label>
+                <div class="layui-input-block">
+                    <input type="text" name="fromFileCode"  id="fromFileCode-read" autocomplete="off"class="layui-input">
+                </div>
+            </div> -->
+			<!-- 来文文号 -->
+			<div class="p_t10">
+				<span class="e6ed">来文文号：</span>
+				<span id="fromFileCode-read2"></span>
+			</div>
+
+			<!-- <div class="layui-form-item">
+                <label class="layui-form-label">收文编号</label>
+                <div class="layui-input-block">
+                    <input type="text" name="receiveFileCode" id="receiveFileCode-read" autocomplete="off"class="layui-input">
+                </div>
+            </div> -->
+			<!-- 收文编号 -->
+			<div class="p_t10">
+				<span class="e6ed">收文编号：</span>
+				<span id="receiveFileCode-read2"></span>
+			</div>
+
+			<!-- <div class="layui-form-item">
+                <label class="layui-form-label">原文日期</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input"  name="orgnlFileTime" id="orgnlFileTime-read">
+                </div>
+            </div> -->
+			<!-- 原文日期 -->
+			<div class="p_t10">
+				<span class="e6ed">原文日期：</span>
+				<span id="orgnlFileTime-read2"></span>
+			</div>
+
+			<!-- 	<div class="layui-form-item">
+					<label class="layui-form-label">收文日期</label>
+					<div class="layui-input-block">
+						<input type="text" class="layui-input" name="receiveFileTime" id="receiveFileTime-read" >
+					</div>
+				</div> -->
+			<!-- 收文日期 -->
+			<div class="p_t10">
+				<span class="e6ed">收文日期：</span>
+				<span id="receiveFileTime-read2"></span>
+			</div>
+
+			<!-- <div class="layui-form-item">
+                <label class="layui-form-label">办理时限</label>
+                <div class="layui-input-block">
+                    <input type="text" class="layui-input" name="handleLimitTime" id="handleLimitTime-read" >
+                </div>
+            </div> -->
+			<!-- 办理时限 -->
+			<div class="p_t10">
+				<span class="e6ed">办理时限：</span>
+				<span id="handleLimitTime-read2"></span>
+			</div>
+
+			<!-- <div class="layui-form-item">
+                <label class="layui-form-label">缓急</label>
+                <div class="layui-input-block">
+                    <select name="urgentLevel" id="urgentLevel-read" lay-filter="urgentLevel-add">
+                    </select>
+                    <input type="hidden" value="" id="urgentLevelName-read" name="urgentLevelName">
+                </div>
+            </div> -->
+			<!-- 缓急 -->
+			<div class="p_t10">
+				<span class="e6ed">缓急：</span>
+				<span id="urgentLevelName-read2"></span>
+			</div>
+
+			<div class="p_t10 cl" >
+				<span class="e6ed l">附件：</span>
+				<div >
+					<table class="layui-table" style="width: 50%;margin-top: 0px;border: none;">
+						<colgroup>
+							<col width="200">
+							<col width="60">
+							<col width="60">
+							<col width="60">
+						</colgroup>
+						<tbody id="demoList-read2">
+						<script   id="artt-read2"  type="text/html">
+							{{each filelist value index}}
+							<tr>
+								<td style="border:none;">{{value.orgnlFileName}}</td>
+								<td style="border:none;">{{value.fileSize}}kb</td>
+								<td style="border:none;color:#339bf1;"><span style="color: #5FB878;">上传成功</span></td>
+								<td style="border:none;color:#339bf1;">
+									<a style="color:#339bf1;" index="{{index}}" >删除</a>
+								</td>
+							</tr>
+							{{/each}}
+						</script>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+
+			<div class="btn_fixed_top" id="btns" >
+				<div class="r">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll()"><i class="fa fa-backward "></i> 返回</a>
+				</div>
+				<!-- <div class="r"> -->
+				<div>
+					<a class="flow_btn btns" lay-submit="" lay-filter="form-readsub-submit" ><i class="fa fa-save"></i> 提交</a>
+					<a class="flow_btn btns" lay-submit="" lay-filter="form-readsave-submit"><i class="fa fa-save"></i> 保存</a>
+					<a class="flow_btn" onclick="readReceipt.print()"><i class="layui-icon">&#xe621;</i>打印</a>
+					<a class="flow_btn btns" id="void"><i class="layui-icon">&#xe640;</i>删除</a>
+					<!--<a class="layui-btn" onclick="daily()"><i class="layui-icon">&#xe60a;</i>流转日志</a>-->
+				</div>
+			</div>
+		</form>
+		</form>
+	</div>
+	<!-- 收文登记 -->
+	<div class="admin-main" style="display: none;z-index: 19940200;padding-top:45px;" id="win-register-object">
+		<form class="layui-form layui-form-pane" id="register-object-form">
+			<div class="data-wrap">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<input type="hidden" name="id" id="id-register" value="" />
+				<input type="hidden" name="isDefaultClaim" value="1">
+				<!-- 来文标题  -->
+				<div class="headtitle-padding">
+					 <span id="fileTitle-register" style="font-size:16px;font-weight: bold;word-wrap:break-word"></span>
+				</div>
+				<div class="ext-border">
+		  			<!-- 文件类型 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">文件类型：</span>
+						<span id="fileTypeName-register"></span>
+					</div>
+		   			
+		   			<!-- 来文单位 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">来文单位：</span>
+						<span id="fromUnitName-register"></span>
+						<!-- <span id="fromUnit-register"></span> -->
+					</div>
+					
+					<!-- 来文文号 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">来文文号：</span>
+						<span id="fromFileCode-register"></span>
+					</div>
+					
+					<!-- 收文编号 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">收文编号：</span>
+						<span id="receiveFileCode-register"></span>
+					</div>
+					
+					<!-- 原文日期 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">原文日期：</span>
+						<span id="orgnlFileTime-register"></span>
+					</div>
+					
+					<!-- 收文日期 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">收文日期：</span>
+						<span id="receiveFileTime-register"></span>
+					</div>
+					
+					<!-- 办理时限 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">办理时限：</span>
+						<span id="handleLimitTime-register"></span>
+					</div>
+					
+		   			<!-- 缓急 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">缓急：</span>
+						<span id="urgentLevelName-register"></span>
+					</div>
+				</div>
+	   			<!-- 附件 -->
+					<div class="office-opinion">
+					<span style="padding-bottom: 10px;color: #666;display: block;">已传附件</span>
+					<div class="table-wrap">
+						<table class="layui-table" style="width: 100%;margin-top: 0px;border: none;">
+					      <tbody id="demoList-register">
+								<script id="artt-register" type="text/html">
+                    			 {{each filelist value index}}
+                                    	<tr>
+                   					   		<td style="border:none;">{{value.orgnlFileName}}</td>
+                   					   		<td style="border:none;">{{value.fileSize}}kb</td>
+                    						<td style="border:none;">
+						                        <a onclick="showDownload('{{value.groupName}}','{{value.fileName}}')" style="color:#339bf1;cursor:pointer">下载</a>
+											</td>
+                                    	</tr>
+	              				 {{/each}}
+                  			</script>
+							</tbody>
+				    	</table> 
+					</div>
+				</div>
+			</div>
+			<div class="btn_fixed_top" id="btns" >
+			    <div class="r">
+			        <a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="parent.layer.closeAll()"><i class="fa fa-backward "></i> 返回</a>
+			    </div> 
+				<!-- <div class="r"> -->
+				<div>
+					<a class="flow_btn btns" lay-submit="" lay-filter="form-regsub-submit" id="check-sub"><i class="fa fa-save"></i> 提交</a>
+					<a class="flow_btn" onclick="readReceipt.print('register-object-form')"><i class="layui-icon">&#xe621;</i>打印</a>
+					<a class="flow_btn" onclick="daily()"><i class="layui-icon">&#xe60a;</i>流转日志</a>
+					<a class="flow_btn" onclick="readReceipt.showImg()"><i class="layui-icon">&#xe62c;</i>流程图</a>
+				</div>
+			</div>			
+		</form>
+	</div>
+	<!-- 池主任审批 -->
+	<div class="admin-main" style="display: none;z-index: 19940200;padding-top:40px;" id="win-director-object">
+		<form class="layui-form" id="director-object-form">
+			<div class="data-wrap">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<input type="hidden" name="id" id="receiveFileId-director" value="" />
+				<input type="hidden" name="processInstanceId" id="processInstanceId-director" value="">
+				<!-- 来文标题  -->
+				<div class="headtitle-padding">
+					 <span id="fileTitle-director" style="font-size:16px;font-weight: bold;word-wrap:break-word"></span>
+				</div>
+				<div class="ext-border">
+		  			<!-- 文件类型 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">文件类型：</span>
+						<span id="fileTypeName-director"></span>
+					</div>
+		   			
+		   			<!-- 来文单位 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">来文单位：</span>
+						<!-- <span id="fromUnit-director"></span> -->
+						<span id="fromUnitName-director"></span>
+					</div>
+					
+					<!-- 来文文号 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">来文文号：</span>
+						<span id="fromFileCode-director"></span>
+					</div>
+					
+					<!-- 收文编号 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">收文编号：</span>
+						<span id="receiveFileCode-director"></span>
+					</div>
+					
+					<!-- 原文日期 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">原文日期：</span>
+						<span id="orgnlFileTime-director"></span>
+					</div>
+					
+					<!-- 收文日期 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">收文日期：</span>
+						<span id="receiveFileTime-director"></span>
+					</div>
+					
+					<!-- 办理时限 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">办理时限：</span>
+						<span id="handleLimitTime-director"></span>
+					</div>
+					
+		   			<!-- 缓急 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">缓急：</span>
+						<span id="urgentLevelName-director"></span>
+					</div>
+				</div>
+				<!-- 办公室拟办意见 -->
+				<div class="office-opinion">
+					<label>办公室拟办意见</label>
+					<div>
+						<textarea rows="5" id="officeOpinion-director" name="officeOpinion" disabled>
+						
+						</textarea>
+					</div>
+			    </div>
+	
+				<!-- 传阅对象 -->
+				<div class="p_t10">
+					<!-- <span class="e6ed">传阅对象：</span> -->
+					<div>
+						<table class="layui-table" style="width: 100%;margin-top: 10px;border: none;">
+					      <colgroup>
+							    <col width="20%">
+							    <col width="60%">
+							    <col width="20%">
+						  </colgroup>
+						  <thead>
+							  <tr>
+								   <th>名称</th>
+								   <th>传阅对象</th>
+								   <th>操作</th>
+							  </tr>
+						  </thead>
+					      <tbody id="objList">
+								<script id="obj-script"  type="text/html">
+                    			 {{each objlist value index}}
+                                    	<tr>
+                   					   		<td>{{value.text}}</td>
+                   					   		<td>
+												<div style="height:auto;min-height:35px;overflow:auto;font-size:14px;padding:0px 10px;white-space: normal;" id="readUserNames{{index}}" class="test reset1">
+                                                 {{if value.readUserIds!=""&&value.readUserIds!=null}}
+                                                   <span style="display:none">{{ids=value.readUserIds}} {{names =value.readUserNames }}{{value.readUserIds=value.readUserIds.substr(0,value.readUserIds.length-1).split(";")}} {{value.readUserNames=value.readUserNames.substr(0,value.readUserNames.length-1).split(";")}}</span>
+                                                   {{each   value.readUserIds tag i}}
+                                                           <div class="layui-input-inline" style="position: relative;float:none;width:auto;">
+	     													 <i class="layui-icon" onclick="removeElement(this)" strid="{{tag}}" namestr="{{value.readUserNames[i]}}"  fullname="{{value.readUserNames[i]}}"   style="cursor: default; font-size:16px; color: #d9d9d9;position: absolute;right: -8px;z-index: 10; ">&#x1007;</i> 
+	     	    											 <a class="layui-btn" style="cursor: pointer;color: black; background: none;height:26px;line-hieght:26px;padding-left:6px;padding-right:6px" >{{value.readUserNames[i]}}</a>
+	     	    											</div>
+                                                   {{/each}}      
+                                                
+                                                 {{/if}}
+                                                   {{if value.readUserIds==""||value.readUserIds==null}}
+                                                          {{names = value.readUserNames }}
+                                                           {{ids = value.readUserIds}}
+                                                   {{/if}}
+												</div>
+												<input type="hidden" value="{{if index==1||index==0}}{{names}}{{/if}}">
+												<input type="hidden" value="{{if index>1}}{{names}}{{/if}}" id="orgn-full-name{{index}}">
+												<input type="hidden" id="readUserIds{{index}}" value="{{ids}}" class="reset">
+												<input type="hidden" id="dictCode{{index}}" value="{{value.dictCode}}">
+												<input type="hidden" id="dictName{{index}}" value="{{value.dictName}}">
+												<input type="hidden" id="dictValue{{index}}" value="{{value.dictValue}}">
+												<input type="hidden" id="dictKeyDetail{{index}}" value="{{value.dictKeyDetail}}">
+											</td>
+                    						<td style="text-align:center;">
+												<a class="btn_blue2 m_t10" style="padding: 4px 24px;" onclick="personlSeclectOpen('{{index}}',this,'readUserIds{{index}}','readUserNames{{index}}')">人员选择</a>
+											</td>
+                                    	</tr>
+	              				 {{/each}}
+                  			</script>
+							</tbody>
+				    	</table> 
+					</div>
+				</div>
+				
+				
+	   			<!-- 附件 -->
+					<div class="office-opinion" >
+					<span style="padding-bottom: 10px;color: #666;display: block;">已传附件</span>
+					<div class="table-wrap">
+						<table class="layui-table" style="width: 100%;margin-top: 0px;border: none;">
+					      <tbody id="demoList-director">
+								<script   id="artt-director"  type="text/html">
+                    			 {{each filelist value index}}
+                                    	<tr>
+                   					   		<td style="border:none;">{{value.orgnlFileName}}</td>
+                   					   		<td style="border:none;">{{value.fileSize}}kb</td>
+                    						<td style="border:none;">
+						                        <a onclick="showDownload('{{value.groupName}}','{{value.fileName}}')" style="color:#339bf1;cursor:pointer">下载</a>
+											</td>
+                                    	</tr>
+	              				 {{/each}}
+                  			</script>
+							</tbody>
+				    	</table> 
+					</div>
+				</div>
+				<!-- 传阅对象 -->
+				<div id="readObjDiv">
+	
+				</div>
+		</div>
+		<div class="btn_fixed_top" id="btns" >
+		    <div class="r">
+		        <a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="parent.layer.closeAll()"><i class="fa fa-backward "></i> 返回</a>
+		    </div> 
+			<!-- <div class="r"> -->
+			<div>
+				<a class="flow_btn btns" lay-submit="" lay-filter="form-director-sub" ><i class="fa fa-save"></i> 提交</a>
+				<a class="flow_btn btns" lay-submit="" lay-filter="form-director-save"><i class="fa fa-save"></i> 保存</a>
+				<a class="flow_btn" onclick="readReceipt.print('director-object-form')"><i class="layui-icon">&#xe621;</i>打印</a>
+				<a class="flow_btn" onclick="daily()"><i class="layui-icon">&#xe60a;</i>流转日志</a>
+				<a class="flow_btn" onclick="readReceipt.showImg()"><i class="layui-icon">&#xe62c;</i>流程图</a>
+			</div>
+		</div>		
+		</form>
+	</div>
+	<!-- 传阅待阅文件详情 -->
+	<div class="admin-main" style="display: none;z-index: 19940200;padding-top:40px;" id="win-toreaddetail-object">
+		<form class="layui-form" id="toRead-object-form">
+			<div class="data-wrap">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<input type="hidden" name="id" id="id-toread" value="" />
+				<input type="hidden" name="receiveFileId" id="receiveFileId-toread" value="" />
+				
+				<!-- 来文标题  -->
+				<div class="headtitle-padding">
+					 <span id="fileTitle-toread" style="font-size:16px;font-weight: bold;word-wrap:break-word"></span>
+				</div>
+				<div class="ext-border">
+		  			<!-- 文件类型 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">文件类型：</span>
+						<span id="fileTypeName-toread"></span>
+					</div>
+		   			
+		   			<!-- 来文单位 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">来文单位：</span>
+						<span id="fromUnitName-toread"></span>
+						<!-- <span id="fromUnit-toread"></span> -->
+					</div>
+					
+					<!-- 来文文号 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">来文文号：</span>
+						<span id="fromFileCode-toread"></span>
+					</div>
+					
+					<!-- 收文编号 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">收文编号：</span>
+						<span id="receiveFileCode-toread"></span>
+					</div>
+					
+					<!-- 原文日期 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">原文日期：</span>
+						<span id="orgnlFileTime-toread"></span>
+					</div>
+					
+					<!-- 收文日期 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">收文日期：</span>
+						<span id="receiveFileTime-toread"></span>
+					</div>
+					
+					<!-- 办理时限 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">办理时限：</span>
+						<span id="handleLimitTime-toread"></span>
+					</div>
+					
+		   			<!-- 缓急 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">缓急：</span>
+						<span id="urgentLevelName-toread"></span>
+					</div>
+				</div>
+				<!-- 办公室拟办意见 -->
+				<div class="office-opinion">
+					<label>办公室拟办意见</label>
+					<div>
+						<textarea rows="5" id="officeOpinion-toread" disabled>
+						
+						</textarea>
+					</div>
+				</div>
+	
+				<!-- 传阅对象 -->
+				<!-- <div class="p_t10 cl">
+					<span class="e6ed">传阅对象：</span>
+				</div> -->
+			<div class="office-opinion">
+				<label>传阅对象</label>
+					<div>
+						<table class="layui-table" style="width: 100%;margin-top: 0px;border: none;">
+							<colgroup>
+								<col width="20%">
+								<col width="80%">
+								<!-- <col width="10%"> -->
+							</colgroup>
+							<thead>
+							<tr>
+								<th>名称</th>
+								<th>传阅对象</th>
+								
+							</tr>
+							</thead>
+							<tbody id="objList-toread">
+							<script id="obj-script-toread"  type="text/html">
+							{{each objlist value index}}
+							<tr {{if (value.readUserNames==""|| value.readUserNames==null) && index>2}}style="display:none"{{/if}}>
+								<td>{{value.text}}</td>
+								<td>
+									<div style="height:auto;min-height:35px;overflow:auto;font-size:14px;padding:0px 10px;white-space: normal;" id="readUserNames-toread{{index}}">{{value.readUserNames}}</div>
+									<input type="hidden" id="readUserIds{{index}}-toread" value="{{value.readUserIds}}">
+									<input type="hidden" id="dictCode{{index}}" value="{{value.dictCode}}">
+									<input type="hidden" id="dictName{{index}}" value="{{value.dictName}}">
+									<input type="hidden" id="dictValue{{index}}-toread" value="{{value.dictValue}}">
+								</td>
+							</tr>
+							{{/each}}
+						</script>
+							</tbody>
+						</table>
+					</div>
+				</div>
+	
+	   			<!-- 附件 -->
+			   <div class="office-opinion" >
+				  <span style="padding-bottom: 10px;color: #666;display: block;">已传附件</span>
+					<div class="table-wrap">
+						<table class="layui-table" style="width: 100%;margin-top: 0px;border: none;">
+					      <tbody id="demoList-toread">
+								<script id="artt-toread"  type="text/html">
+                    			 {{each filelist value index}}
+                                    	<tr>
+                   					   		<td style="border:none;">{{value.orgnlFileName}}</td>
+                   					   		<td style="border:none;">{{value.fileSize}}kb</td>
+                    						<td style="border:none;">
+						                        <a onclick="showDownload('{{value.groupName}}','{{value.fileName}}')" style="color:#339bf1;cursor:pointer">下载</a>
+											</td>
+                                    	</tr>
+	              				 {{/each}}
+                  			</script>
+							</tbody>
+				    	</table> 
+					</div>
+				</div>
+			</div>
+			<div class="btn_fixed_top" id="btns" >
+			   <div class="r">
+			        <a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="parent.layer.closeAll()"><i class="fa fa-backward "></i> 返回</a>
+			    </div> 
+				<!-- <div class="r"> -->
+				<div>
+					<a class="flow_btn btns" lay-submit="" lay-filter="form-toread-submit"><i class="fa fa-save"></i> 提交</a>
+					<a class="flow_btn" onclick="readReceipt.print('toRead-object-form')"><i class="layui-icon">&#xe621;</i>打印</a>
+					<a class="flow_btn btns"  onclick="batchidea()"><i class="layui-icon">&#xe640;</i>传阅意见</a>
+					<a class="flow_btn" onclick="daily()"><i class="layui-icon">&#xe60a;</i>流转日志</a>
+					<a class="flow_btn" onclick="readReceipt.showImg()"><i class="layui-icon">&#xe62c;</i>流程图</a>
+				</div>
+			</div>				
+		</form>
+	</div>
+	<!-- 在阅文件详情 -->
+	<div class="admin-main" style="display: none;z-index: 19940200;padding-top:40px;" id="win-inreaddetail-object">
+		<form class="layui-form" id="inRead-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" name="id" id="id-inread" value="" />
+			<!-- 来文标题  -->
+			<div class="" style="text-align: center;">
+				<span id="fileTitle-inread" style="font-size:16px;font-weight: bold;word-wrap:break-word"></span>
+			</div>
+
+			<!-- 文件类型 -->
+			<div class="p_t10">
+				<span class="e6ed">文件类型：</span>
+				<span id="fileTypeName-inread"></span>
+			</div>
+
+			<!-- 来文单位 -->
+			<div class="p_t10">
+				<span class="e6ed">来文单位：</span>
+				<!-- <span id="fromUnitName-inread"></span> -->
+				<span id="fromUnit-inread"></span>
+			</div>
+
+			<!-- 来文文号 -->
+			<div class="p_t10">
+				<span class="e6ed">来文文号：</span>
+				<span id="fromFileCode-inread"></span>
+			</div>
+
+			<!-- 收文编号 -->
+			<div class="p_t10">
+				<span class="e6ed">收文编号：</span>
+				<span id="receiveFileCode-inread"></span>
+			</div>
+
+			<!-- 原文日期 -->
+			<div class="p_t10">
+				<span class="e6ed">原文日期：</span>
+				<span id="orgnlFileTime-inread"></span>
+			</div>
+
+			<!-- 收文日期 -->
+			<div class="p_t10">
+				<span class="e6ed">收文日期：</span>
+				<span id="receiveFileTime-inread"></span>
+			</div>
+
+			<!-- 办理时限 -->
+			<div class="p_t10">
+				<span class="e6ed">办理时限：</span>
+				<span id="handleLimitTime-inread"></span>
+			</div>
+
+			<!-- 缓急 -->
+			<div class="p_t10">
+				<span class="e6ed">缓急：</span>
+				<span id="urgentLevelName-inread"></span>
+			</div>
+			
+			<!-- 传阅对象 -->
+			<!-- <div class="p_t10 cl inread_object">
+				<span class="e6ed">传阅对象：</span>
+			</div> -->
+			<div class="p_t10 inread_object">
+				<!-- <span class="e6ed">传阅对象：</span> -->
+				<div>
+					<table class="layui-table" style="width: 100%;margin-top: 10px;border: none;">
+						<colgroup>
+							<col width="20%">
+							<col width="70%">
+							<col width="10%">
+						</colgroup>
+						<thead>
+						<tr>
+							<th>名称</th>
+							<th>传阅对象</th>
+							<th>操作</th>
+						</tr>
+						</thead>
+						<tbody id="objList-inread">
+						<script id="obj-script-inread"  type="text/html">
+							{{each objlist value index}}
+							<tr>
+								<td>{{value.text}}</td>
+								<td colspan="2">
+									<div style="height:80px;overflow:auto;font-size:14px;padding: 10px 10px;white-space: normal;" id="readUserNames-toread{{index}}">
+                                  {{value.readUserNames}} </div>
+									<input type="hidden" id="readUserIds{{index}}-toread" value="{{value.readUserIds}}">
+									<input type="hidden" id="dictCode{{index}}" value="{{value.dictCode}}">
+									<input type="hidden" id="dictName{{index}}" value="{{value.dictName}}">
+									<input type="hidden" id="dictValue{{index}}-toread" value="{{value.dictValue}}">
+								</td>
+							</tr>
+							{{/each}}
+						</script>
+						</tbody>
+						<tr >
+							<td class="dict-text"></td>
+							<td colspan="2">
+								<div style="height:80px;overflow:auto;font-size:14px;padding: 10px 10px;white-space: normal;" class="test reset1">
+									<input type="checkbox" lay-skin="primary" lay-filter="encrypt"  id="all-detail-inread" disabled/>
+									<span style="top: 4px;left: 15px;position: relative;" class="dict-text">全局人员</span>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<!-- 附件 -->
+			<div class="p_t10 cl" >
+				<span class="e6ed l">已传附件：</span>
+				<div >
+					<table class="layui-table" style="width: 50%;margin-top: 0px;border: none;">
+						<colgroup>
+							<col width="60%">
+							<col width="20%">
+							<col width="20%">
+						</colgroup>
+						<tbody id="demoList-inread">
+						<script   id="artt-inread"  type="text/html">
+							{{each filelist value index}}
+							<tr>
+								<td style="border:none;">{{value.orgnlFileName}}</td>
+								<td style="border:none;">{{value.fileSize}}kb</td>
+								<td style="border:none;">
+									<a onclick="showDownload('{{value.groupName}}','{{value.fileName}}')" style="color:#339bf1;cursor:pointer">下载</a>
+								</td>
+							</tr>
+							{{/each}}
+						</script>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<div class="btn_fixed_top" id="btns" >
+				<div class="r">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="parent.layer.closeAll()"><i class="fa fa-backward "></i> 返回</a>
+				</div>
+				 <!-- <div class="r"> -->
+				<div>
+					<a class="flow_btn" onclick="daily()"><i class="layui-icon">&#xe60a;</i>流转日志</a>
+					<a class="flow_btn" onclick="readReceipt.showImg()"><i class="layui-icon">&#xe62c;</i>流程图</a>
+					<a class="flow_btn" id="revoke-inread" lay-submit="" lay-filter="revoke-inread"><i class="fa fa-save"></i> 撤回</a>
+					<a class="flow_btn btns" onclick="batchidea()" id="read-situation"><i class="layui-icon">&#xe640;</i>传阅意见</a>
+			
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 传阅情况及意见 -->
+	<div class="admin-main" style="display: none;z-index: 19940200;padding-bottom:60px;" id="win-batchidea-object">
+		<!-- 已阅人员 -->
+		<div class="p_t10">
+			<span class="e6ed l">已阅人员：</span>
+			<div id="inReadUserNames" class="l" style="word-wrap:break-word;width:85%;"></div>
+		</div>
+		<!-- 未阅人员 -->
+		<div class="p_t10 cl">
+			<span class="e6ed l">未阅人员：</span>
+			<div id="toReadUserNames" class="l" style="word-wrap:break-word;width:85%;"></div>
+		</div>
+		<div class="cl" style="padding-top:1px;">
+		<table class="layui-table admin-table">
+			<colgroup>
+				<col width="6%">
+				<col width="8%">
+				<col width="10%">
+				<col width="16%">
+				<col width="60%">
+				<col>
+			</colgroup>
+			<thead>
+				<tr>
+					<th>序号</th>
+					<th>操作人</th>
+					<th>部门</th>
+					<th>时间</th>
+					<th>意见</th>
+				</tr>
+			</thead>
+			<tbody id="paging4-data">
+				<script id="paging4-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td>{{(current-1)*size+index+1}}</td>
+							<td>{{value.operationName}}</td>
+							<td>{{value.deptName}}</td>
+							<td>{{value.readTimeStr}}</td>
+							<td >{{value.readOpinion}}</td>
+						</tr>
+					{{/each}}
+				</script>
+			</tbody>
+	 	</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging4-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	<!-- 一级人员弹窗 -->
+	<div class="admin-main" style="display: none;z-index: 19940200;padding-bottom:60px;" id="win-human-object">
+	<div class="layui-form">
+		<!-- <input  class="tree_search1 reset" type="text" value="" placeholder="搜索" style="margin-left:0px;width: 69%;">
+		<a class="layui-btn layui-btn-small" ><i class="layui-icon">&#xe615;</i>搜索</a> -->
+		<table class="layui-table admin-table">
+			<colgroup>
+				<col width="20%">
+				<col width="80%">
+				<col>
+			</colgroup>
+			<thead>
+				<tr>
+					<th style="width: 20px;"><input type="checkbox" lay-skin="primary" lay-filter="human-check-all" id="human-checkall"></th>
+					<th>用户</th>
+				</tr>
+			</thead>
+			<tbody id="paging5-data">
+				<script id="paging5-script" type="text/html">
+					{{each memberlist value index}}
+						<tr>
+							<td>
+								<input type="checkbox" class="human"  lay-skin="primary" lay-filter="human-checksign" uId="{{value.dictKey}}" uName="{{value.dictValue}}">
+							</td>
+							<td>{{value.dictValue}}</td>
+						</tr>
+					{{/each}}
+				</script>
+			</tbody>
+	 	</table>
+
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging5-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	</div>
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.ztree.exhide-3.5.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../../web/js/multsel.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../../web/js/readReceipt_Detail.js"></script>
+	<script>
+	//时间控件
+	tool.timeset1('#orgnlFileTime-read');
+	tool.timeset1('#receiveFileTime-read');
+	tool.timeset1('#handleLimitTime-read');
+	var _csrf = $("#_csrf").val();
+    var bizId = $("#bizId").val();
+	var pform;
+	layui.use(['form','element'], function() {
+		pform = layui.form;
+		 pform.verify({
+	            //限制输入的长度为200
+	            textLength200 : function(value) {
+	                if (value.length>200) {
+	                    return "长度不能超过200个字符";
+	                }
+	            },
+	            //限制输入的长度为100
+	            textLength100 : function(value) {
+	                if (value.length100) {
+	                    return "长度不能超过200个字符";
+	                }
+	            },
+	            //限制输入的长度为10
+	            textLength10 : function(value) {
+	                if (value.length>10) {
+	                    return "长度不能超过10个字符";
+	                }
+	            },
+	            //限制输入的长度为10
+	            numberLength10 : function(value) {
+	                if (value.length>10) {
+	                    return "数字不能超过10位";
+	                }
+	            },
+	            //限制不能输入特殊10
+	            specailChar:function (value) {
+	                if (new RegExp("[':;' \"\",\\[\\]——|‘；`：”“']").test(value)) {
+	                    return '不能输入特殊字符';
+	                }
+	            },
+	            length50 : function(value) {
+	                if (value.length>50) {
+	                    return "长度不能超过50个字符";
+	                }
+	            },
+	            length20:function(value){
+	                if (value.length>20) {
+	                    return "长度不能超过20个字符";
+	                }
+	            },
+	            special:function(value){
+	                var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
+	                if(pattern.test(value)){
+	                    return "不能输入特殊字符";
+	                }
+	            }
+	        });
+		 //监听新增保存
+	        pform.on('submit(form-save-submit)', function(data) {
+				$("#filealea").empty();
+				var str="";
+				if(arr.length > 0){
+					for(var i=0;i<arr.length;i++){
+						str += '<input type="hidden" name="resResourceList['+i+'].id" value="'+arr[i].res.id+'" />';
+					}
+					$("#filealea").append(str);
+				}
+				tool.post("/ioa/ioaReceiveFile/add", $("#add-object-form").serialize(),postCallBackInfo, false);
+				return false;
+	        });
+	        //监听新增提交
+	        pform.on('submit(form-sub-submit)', function(data) {
+	            layer.confirm('确定提交吗 ?', {
+	                icon: 3,
+	                title: '提示'
+	            }, function (index) {
+	                $("#filealea").empty();
+	                var str="";
+	                if(arr.length > 0){
+	                    for(var i=0;i<arr.length;i++){
+	                    	str += '<input type="hidden" name="resResourceList['+i+'].id" value="'+arr[i].res.id+'" />';
+	                    }
+	                    $("#filealea").append(str);
+	                }
+	                tool.post("/ioa/ioaReceiveFile/submit", $("#add-object-form").serialize(),postCallBackSubInfo, false);
+	            });
+	            return false;
+	        });
+
+	        //监听待阅文件保存
+	        pform.on('submit(form-readsave-submit)', function(data) {
+	            $("#filealea-read").empty();
+	            var str="";
+	            if(arr.length > 0){
+	                for(var i=0;i<arr.length;i++){
+	                	str += '<input type="hidden" name="resResourceList['+i+'].id" value="'+arr[i].res.id+'" />';
+	                }
+	                $("#filealea-read").append(str);
+	            }
+	            tool.post("/ioa/ioaReceiveFile/update", $("#read-object-form").serialize(),postCallBackInfo, false);
+	            return false;
+	        });
+
+	        //监听待阅文件修改 提交
+	        pform.on('submit(form-readsub-submit)', function(data) {
+	            layer.confirm('确定提交吗 ?', {
+	                icon: 3,
+	                title: '提示'
+	            }, function (index) {
+	                $("#filealea-read").empty();
+	                var str="";
+	                if(arr.length > 0){
+	                    for(var i=0;i<arr.length;i++){
+	                    	str += '<input type="hidden" name="resResourceList['+i+'].id" value="'+arr[i].res.id+'" />';
+	                    }
+	                    $("#filealea-read").append(str);
+	                }
+	                tool.post('/ioa/ioaReceiveFile/submit', $("#read-object-form").serialize(),postCallBackSubInfo, false);
+	            });
+	            return false;
+	        });
+
+			//----监听下拉事件 获取选中文本值--------------------------------------------
+	       /*  pform.on('select(fromUnit-add)', function(data) {
+	            var fromUnitName = $("#fromUnit-add").find("option:selected").text();
+	            $("#fromUnitName-add").val(fromUnitName);
+	        }); */
+
+	        pform.on('select(fileType-add)', function(data) {
+	            var fileTypeName = $("#fileType-add").find("option:selected").text();
+	            $("#fileTypeName-add").val(fileTypeName);
+	        });
+
+	        pform.on('select(urgentLevel-add)', function(data) {
+	            var urgentLevelName = $("#urgentLevel-read").find("option:selected").text();
+	            var urgentLevel = $("#urgentLevel-read").find("option:selected").val();
+	            if(urgentLevel != ""){
+	            	//$("#urgentLevelName-add").val(urgentLevelName)
+	            	$("#urgentLevelName-read").val(urgentLevelName);
+	            }else{
+	            	$("#urgentLevelName-read").val("");
+	            }
+	            
+	        });
+	       /*  pform.on('select(fromUnit-read)', function(data) {
+	            var fromUnitName = $("#fromUnit-read").find("option:selected").text();
+	            $("#fromUnitName-read").val(fromUnitName);
+	        }); */
+
+	        pform.on('select(fileType-read)', function(data) {
+	            var fileTypeName = $("#fileType-read").find("option:selected").text();
+	            $("#fileTypeName-read").val(fileTypeName);
+	        });
+
+	      /*   pform.on('select(urgentLevel-read)', function(data) {
+	            var urgentLevelName = $("#urgentLevel-read").find("option:selected").text();
+	            $("#urgentLevelName-read").val(urgentLevelName);
+	        }); */
+			//---------------------------------------------------------------------
+
+	        //收文登记提交
+	        pform.on('submit(form-regsub-submit)', function(data) {
+	            readReceipt.checkNextTaskInfo();
+	            readReceipt.getNextTaskInfo();
+	            readReceipt.completeTask();
+	            submit();
+	        });
+
+	        //池主任审批 保存
+	        pform.on('submit(form-director-save)', function(data) {
+	            var tr = $("#objList").find("tr");
+	            $("#readObjDiv").empty();
+	            var str = "";
+	            var i = 0;
+	            var isCheckAllUser = $("#all:checked").length;
+	            $("#isCheckAllUser").val(isCheckAllUser);
+				$(tr).each(function(index){
+				    var td = $(this).find("td").eq(1);
+	                var readUserNames = td.find("#readUserNames"+index).next().val() == '' ? td.find("#orgn-full-name"+index).val() : td.find("#readUserNames"+index).next().val();//td.find("#readUserNames"+index).text();
+	                var readUserIds = td.find("#readUserIds"+index).val();
+	                var dictCode = td.find("#dictCode"+index).val();
+	                var dictName = td.find("#dictName"+index).val();
+					if(readUserIds != ''){
+	                    str += '<input type="hidden" name="readObjectList['+i+'].readUserIds" value="'+readUserIds+'" />';
+	                    str += '<input type="hidden" name="readObjectList['+i+'].readUserNames" value="'+readUserNames+'" />';
+	                    if(index == 0 || index == 1 || index == 2){
+	                        str += '<input type="hidden" name="readObjectList['+i+'].objectId" value="'+(index+1)+'" />';
+						}else{
+	                        str += '<input type="hidden" name="readObjectList['+i+'].objectId" value="'+dictCode+'" />';
+	                    }
+	                    str += '<input type="hidden" name="readObjectList['+i+'].objectName" value="'+dictName+'" />';
+	                    i++;
+	                }
+				});
+	            if(isCheckAllUser > 0){
+					var dictCode = $("#dictCode").val();
+					var dictName = $("#dictName").val();
+	                str += '<input type="hidden" name="readObjectList['+i+'].readUserIds" value="\'+dictCode+\'" />';
+	                str += '<input type="hidden" name="readObjectList['+i+'].readUserNames" value="\'+dictCode+\'" />';
+
+					str += '<input type="hidden" name="readObjectList['+i+'].objectId" value="'+dictCode+'" />';
+
+	                str += '<input type="hidden" name="readObjectList['+i+'].objectName" value="'+dictName+'" />';
+	            }
+	            $("#readObjDiv").append(str);
+	            tool.post("/ioa/ioaReceiveFile/directorAudit", $("#director-object-form").serialize(),postCallBackDirectorInfo, false);
+
+	            return false;
+	        });
+
+	        //池主任审批提交
+	        pform.on('submit(form-director-sub)', function(data) {
+	        	var total=0;
+	            var tr = $("#objList").find("tr");
+	            $(tr).each(function(index){
+	               var length = $(this).find("td").eq(1).find("div").find("div").length;
+	                if(length>0){
+	                	total++
+	                }
+	            })
+	            var checked = $("#objList").next().find("#all:checked").length;
+	            console.log(checked)
+	            if(checked>0){
+	            	total++;
+	            }
+	            
+	            if(total<=0){
+	            	tool.error("请在页面上选择传阅人员");
+	            	return false;
+	            }
+	            $("#readObjDiv").empty();
+	            var str = "";
+	            var i = 0;
+	            var isCheckAllUser = $("#all:checked").length;
+	            $("#isCheckAllUser").val(isCheckAllUser);
+	            $(tr).each(function(index){
+	                var td = $(this).find("td").eq(1);
+	                var readUserNames = td.find("#readUserNames"+index).next().val() == '' ? td.find("#orgn-full-name"+index).val() : td.find("#readUserNames"+index).next().val();//td.find("#readUserNames"+index).text();
+	                var readUserIds = td.find("#readUserIds"+index).val();
+	                var dictCode = td.find("#dictCode"+index).val();
+	                var dictName = td.find("#dictName"+index).val();
+	                if(readUserIds != ''){
+	                    str += '<input type="hidden" name="readObjectList['+i+'].readUserIds" value="'+readUserIds+'" />';
+	                    str += '<input type="hidden" name="readObjectList['+i+'].readUserNames" value="'+readUserNames+'" />';
+	                    if(index == 0 || index == 1 || index==2){
+	                        str += '<input type="hidden" name="readObjectList['+i+'].objectId" value="'+(index+1)+'" />';
+	                    }else{
+	                        str += '<input type="hidden" name="readObjectList['+i+'].objectId" value="'+dictCode+'" />';
+	                    }
+	                    str += '<input type="hidden" name="readObjectList['+i+'].objectName" value="'+dictName+'" />';
+	                    i++;
+	                }
+	            });
+	            if(isCheckAllUser > 0){
+	                var dictCode = $("#dictCode").val();
+	                var dictName = $("#dictName").val();
+	                str += '<input type="hidden" name="readObjectList['+i+'].readUserIds" value="" />';
+	                str += '<input type="hidden" name="readObjectList['+i+'].readUserNames" value="" />';
+
+	                str += '<input type="hidden" name="readObjectList['+i+'].objectId" value="0" />';
+
+	                str += '<input type="hidden" name="readObjectList['+i+'].objectName" value="'+dictName+'" />';
+	            }
+	            $("#readObjDiv").append(str);
+	            tool.post("/ioa/ioaReceiveFile/directorAudit", $("#director-object-form").serialize(),function (data) {
+	                readReceipt.checkNextTaskInfo();
+	                readReceipt.getNextTaskInfo();
+	                readReceipt.completeTask(1);
+	                submit();
+	            }, false);
+	            return false;
+	        });
+
+	        //待阅文件 提交
+	        pform.on('submit(form-toread-submit)', function(data) {
+	            readReceipt.checkNextTaskInfo();
+	            readReceipt.getNextTaskInfo();
+	            submit();
+	            readReceipt.completeTask();
+	        });
+	        
+	        var arr_name=[];
+	        var arr_id=[];   
+	        //监听单级人员复选框
+	        pform.on('checkbox(human-checksign)', function(data) {
+	            var userId = $(this).attr("uId");
+	            var userName = $(this).attr("uName");
+	            if(data.elem.checked){
+	            	treeArr.push({id:userId,name:userName,userId:userId,userName:userName})
+	            	//console.log(treeArr)
+	            	 //数组去重
+		   			 var res = [];
+		   			 var json = {};
+		   			 for(var i = 0; i < treeArr.length; i++){
+		   			  if(!json[treeArr[i].userId]){
+		   			   res.push(treeArr[i]);
+		   			   json[treeArr[i].userId] = 1;
+		   			  }
+		   			 }
+		   			treeArr=res;
+	            }else{
+			    	 for(var i=0;i<treeArr.length;i++){
+			    		 if(treeArr[i].name==userName){
+			    			 treeArr.splice(i,1)
+			    		 }
+			    	 }
+	            }     
+	            var str="",namestr="",fullname="";
+	        	var divs="";
+	     		$.each(treeArr,function(index,value){ 
+	     			str+=value.userId+";"
+	     			namestr+=value.userName+";"
+	     			fullname+=value.name+";";
+	     			divs+='<div class="layui-input-inline" style="position: relative;float:none;width:auto;">'+
+	     			 '<i class="layui-icon" onclick="removeElement(this)" strid="'+value.userId+'" namestr="'+value.userName+'"  fullname="'+value.name+'"   style="cursor: default; font-size:16px; color: #d9d9d9;position: absolute;right: -8px;z-index: 10; ">&#x1007;</i>'+  
+	     	    	 '<a class="layui-btn" style="cursor: pointer;color: black; background: none;height:26px;line-hieght:26px;padding-left:6px;padding-right:6px" >'+value.name+'</a>'+
+	     	    	 '</div>'	    		
+	     		})
+	        	$("#win-director-object").find("#"+changeName).empty();
+				$("#win-director-object").find("#"+changeName).append(divs);
+	            $("#win-director-object").find("#"+changeName).next().val(fullname);
+	        	//id赋值
+	            $("#"+changeId).val(str);
+	        });
+	        //监听全选
+	        pform.on('checkbox(human-check-all)', function(data) {
+	        	var child = $(data.elem).parents('table').find('tbody input[type="checkbox"]');
+				child.each(function(index, item) {
+					item.checked = data.elem.checked; 
+					
+					var userId = $(item).attr("uid");
+		            var userName = $(item).attr("uname");
+		            
+					if(data.elem.checked){
+						treeArr.push({id:userId,name:userName,userId:userId,userName:userName})
+						 //数组去重
+			   			 var res = [];
+			   			 var json = {};
+			   			 for(var i = 0; i < treeArr.length; i++){
+			   			  if(!json[treeArr[i].userId]){
+			   			   res.push(treeArr[i]);
+			   			   json[treeArr[i].userId] = 1;
+			   			  }
+			   			 }
+			   			treeArr=res;
+		            	var str="",namestr="",fullname="";
+		            	var divs="";
+		         		$.each(treeArr,function(index,value){ 
+		         			str+=value.userId+";"
+		         			namestr+=value.userName+";"
+		         			fullname+=value.name+";";
+		         			divs+='<div class="layui-input-inline" style="position: relative;float:none;width:auto;">'+
+		         			 '<i class="layui-icon" onclick="removeElement(this)" strid="'+value.userId+'" namestr="'+value.userName+'"  fullname="'+value.name+'"   style="cursor: default; font-size:16px; color: #d9d9d9;position: absolute;right: -8px;z-index: 10; ">&#x1007;</i>'+  
+		         	    	 '<a class="layui-btn" style="cursor: pointer;color: black; background: none;height:26px;line-hieght:26px;padding-left:6px;padding-right:6px" >'+value.name+'</a>'+
+		         	    	 '</div>'	    		
+		         		})
+		            	$("#win-director-object").find("#"+changeName).empty();
+						$("#win-director-object").find("#"+changeName).append(divs);
+	                    $("#win-director-object").find("#"+changeName).next().val(fullname);
+	                    $("#win-director-object").find("#"+changeName).next().val(fullname);
+						//id赋值
+		                $("#"+changeId).val(str); 
+		
+		            }else{
+		            	treeArr=[];
+		            	 $("#win-director-object").find("#"+changeName).empty();
+		            	 $("#"+changeId).val(""); 
+		            }      
+
+				});
+				pform.render('checkbox');
+	        });
+		   
+	        /*回退到上一节点*/
+			readReceipt.jump2Task2("form-jump-submit");
+	        
+	})
+	//删除
+	 function delFilesData(thisObj){
+	    var delId = $(thisObj).attr("id");
+		layer.confirm('是否删除？', {
+			  icon : 3,
+			  btn: ['是','否'] //按钮
+			}, function(){
+		      var data = {
+		              id:delId,
+		              _csrf:$("#_csrf").val()
+		          }
+		          tool.post("/ioa/ioaCreateWork/deleteAttach",data,function(retMsg){
+		              if (retMsg.code == 0) {
+		           	   $(thisObj).parents("tr").remove();
+		                  tool.success(retMsg.message);
+		              } else {
+		                  tool.error(retMsg.message);
+		           }
+		        },false);
+		      
+			}, function(){
+				//alert("取消操作");
+		});	
+	 }
+	/* 提交弹窗 */
+		var inder_sub;
+		function submit(){
+			    inder_sub = layer.open({
+				title : '提交',
+				maxmin : false,
+				type : 1,
+                shade: false,
+				shadeClose: true,
+                area: ['900px', '510px'],
+				content : $('#win-submit-object')
+			});
+		}
+		
+		function agree(){
+            $("#form-jump-submit").attr("style","display:none");
+            $("#form-add-submit").removeAttr("style");
+            $(".agree").show();
+            $(".noagree").hide();
+            $(".yes").addClass("blue_border");
+            $(".no").removeClass("blue_border");
+        }
+		function noagree(){
+            $("#form-add-submit").attr("style","display:none");
+            $("#form-jump-submit").removeAttr("style");
+            readReceipt.getPreTaskInfo();
+		}
+          
+       //常用意见列表	
+       readReceipt.opinionList();
+       //文件上传
+       tool.fileUpload("demoList-read","test-read","/res/file/upload","testListAction_read","IOA_RECEIVE_FILE_DETAIL");
+	   //点击添加常用意见
+		function click_font(obj){
+			var a = $(obj).find('.sug').text();
+			/* var b = $('#draw_sug').val(); */
+			$('#draw_sug').val(a);
+		}
+		/* 日志弹窗 */
+		function daily(){
+            readReceipt.getAllTaskLogInfo();
+		}
+		function add_sug(){
+			layer.confirm('确定加入常用意见？', {
+				  btn: ['确定','取消'] //按钮
+				}, function(){
+				  readReceipt.addOpinion();
+				}, function(){
+				  
+				});
+		}
+		//传阅情况及意见
+		function batchidea(){
+			var processInstanceId = $("#processInstanceId").val()
+	        var pm = {
+	            _csrf:$("#_csrf").val(),
+	            processInstanceId : processInstanceId
+	        };
+	        //console.log(processInstanceId)
+	        tool.post("/ioa/ioaReceiveReadUser/circulation",pm,function(data){
+	            if(null != data){
+	                $("#inReadUserNames").text(data.inReadNames);
+	                $("#toReadUserNames").text(data.toReadNames);
+	            }
+	            var index = layer.open({
+	                title : '传阅情况及意见',
+	                maxmin : false,
+	                type : 1,
+	                shadeClose: true,
+	                content : $('#win-batchidea-object')
+	            });
+	            loadReadUserData();
+	            layer.full(index);
+	        },false);
+		}
+		//传阅情况及意见列表
+		 function loadReadUserData() {
+		    	var processInstanceId = $("#processInstanceId").val()
+		        var param = new Object();
+		        param.container = "paging4";
+		        param.url = "/ioa/ioaReceiveReadUser/list";
+		        param._csrf = $("#_csrf").val();
+		        param.id = processInstanceId;
+		        param.pageSize = 10;
+		        tool.loadpage(param);
+		    }
+		
+		 //删除自己新建的待阅文件
+		    $("#del").on("click",function(){
+		        var id = $("#id-read").val();
+		        layer.confirm('确定并删除?', {
+		            icon : 3,
+		            title : '提示'
+		        }, function(index) {
+		            var retMsg = tool.deleteById("/ioa/ioaReceiveFile/delete", id);
+		            if (retMsg.code == 0) {
+		                tool.success(retMsg.message);
+		                parent.layer.closeAll();
+		                parent.loadToReadData();
+		                parent.loadInReadData();
+		            } else {
+		                tool.error(retMsg.message);
+		            }
+		        });
+			});
+		 
+		    //池主任审批保存回调
+		    function postCallBackDirectorInfo(retMsg){
+		        if (retMsg.code == 0) {
+		            layer.alert(retMsg.message, {
+		                title : "操作提示",
+		                icon : 1
+		            }, function(index) {
+		            	if(parent.isWoPa=="yes"){
+		                parent.layer.closeAll();
+		                parent.loadToReadData();
+		                parent.loadInReadData();
+		            	}else if(parent.paretning=="false"){
+		            		 parent.layer.closeAll();
+		            		 parent.loadData();
+		            	}else{
+		            		parent.location.reload();
+		            	}
+		            });
+		            //location.href = "/ioa/ioaReceiveWork/ioaReceiveWorkPage";
+		        } else {
+		            tool.error(retMsg.message);
+		        }
+		    }
+		    
+		    //保存回调
+		    function postCallBackInfo(retMsg){
+		        if (retMsg.code == 0) {
+		            //提交后 再情况存放文件的数组 避免重复提交
+		            layer.alert(retMsg.message, {
+		                title : "操作提示",
+		                icon : 1
+		            }, function(index) {
+		                if(parent.paretnIndex=="false"){
+		                	parent.location.reload();
+		                }else if(parent.paretning=="false"){
+		                	 parent.layer.closeAll();
+		                	 parent.loadData();
+		                }else{
+			                clearForm();
+			                //判断是否从 在线通知模块进去
+			                if($("#isMsgOnline") == 0){
+				                parent.loadToReadData();
+				                parent.loadInReadData();
+				                parent.layer.closeAll();
+			                }else{
+				               loadToReadData();
+				               loadInReadData();
+				               parent.layer.closeAll();
+			                }
+		                }
+		            });
+		            //location.href = "/ioa/ioaReceiveWork/ioaReceiveWorkPage";
+		        } else {
+		            tool.error(retMsg.message);
+		        }
+		    }
+		    //提交回调
+	        function postCallBackSubInfo(retMsg){
+	            if(null != retMsg && null != retMsg.code){
+	                if (retMsg.code == 0) {
+	                    nameArr= [];
+	                    arr = [];
+	                    if(null != retMsg.object){
+	                        var data = retMsg.object;
+	                        var processInstanceId = data.processInstanceId;
+	                        var bizId = data.id;
+	                        $("#bizId").val(bizId);
+	                        $("#processInstanceId").val(processInstanceId);
+	                        readReceipt.checkNextTaskInfo();
+	                        readReceipt.getNextTaskInfo();
+	                        readReceipt.completeTask();
+							submit();
+	                    }
+	                } else {
+	                    tool.error(retMsg.message);
+	                }
+	            }
+	        }
+		    function clearForm() {
+		        $("#fileTitle-add").val("");
+		        $("#fileType-add").val("");
+		        $("#fromUnit-add").val("");
+				$("#fromFileCode-add").val("");
+				$("#receiveFileCode-add").val("");
+				$("#orgnlFileTime-add").val("");
+				$("#receiveFileTime-add").val("");
+				$("#handleLimitTime-add").val("");
+				$("#urgentLevel-add").val("");
+		    }
+		    function loadToReadData(){
+		    	
+		    }
+		    function loadInReadData(){
+		    	
+		    }
+	     $(document).ready(function(){
+			var bizId=$("#t_bizId").val();
+			var linkName=$("#t_linkName").val();
+			//console.log(bizId,linkName)
+			 if(linkName == "收文登记"){
+					$("#win-register-object").show();
+					 /*下拉多选初始化*/
+			         multselInit();
+					 readReceipt.registerDetail(bizId);
+				}else if(linkName == "办公室拟办意见"){
+					$("#win-director-object").show();
+					 readReceipt.directorAuditDetail(bizId);
+				}else if(linkName.indexOf("传阅")>-1){
+					 /*下拉多选初始化*/
+			         multselInit();
+					$('#win-toreaddetail-object').show();
+					readReceipt.toReadDetail(bizId);
+				}else{
+					 /*下拉多选初始化*/
+			         multselInit();
+					$("#win-readdetail-object").show();
+					readReceipt.readDetail(bizId);
+				} 
+			     //在线通知模块进去 title
+			    var titleTx = $("#titleTx").val();
+			    var childSpan = "<span class='layui-layer-setwin'><a class='layui-layer-ico layui-layer-close layui-layer-close1' href='javascript:;' onclick='offTitleTop()'></a></span>";
+			    var titleDiv = "<div class='layui-layer-title' style='cursor: move;margin-bottom: 5px;'>收文阅件详情"+ childSpan+"</div>";
+			    if(titleTx != ""){
+			    	$(".admin-main").children().children("#btns").prepend(titleDiv);
+			    	$("#win-register-object").css("padding-top","85px");
+			    }
+		    	 //字数设限
+		    	 stopFontSize("#fileTitle-read",51);  
+		    	 stopFontSize("#fromUnit-read",26);  
+		    	 stopFontSize("#fromFileCode-read",26);  
+		    	 stopFontSize("#receiveFileCode-read",26);  
+			
+		});
+   //动态关闭iframe
+     function offTitleTop(){
+     	 $(".layui-nav-tree", window.parent.parent.document).find("li").removeClass("layui-nav-itemed");
+     	 $("a[data-url='/tempMenu/indexPage']",window.parent.parent.document).parent().trigger("click");
+     }
+	//字数控制
+	var stopFontSize = function (thisObj,Xzhisize){
+		$(thisObj).on("input propertychange", function() {  
+				var thisVal = $(this);  
+				var writeVal = thisVal.val(); 
+				var count = "";  
+				if (writeVal.length > Xzhisize) {  
+					thisVal.val(writeVal.substring(0, Xzhisize));  
+				}  
+				count = Xzhisize - thisVal.val().length;  
+				if(count == 0 ){
+					layer.alert('字数超限!',{
+						icon : 0,
+						title : '提示'
+					})
+				}  
+		}); 	
+	}
+	 //下载
+    function showDownload(groupName,fileName){
+	    $("#groupName").val(groupName);
+	    $("#fileName").val(fileName);
+		$("#action_form").submit();
+   	}
+    var changeId="";
+	var changeName="";
+	var treeArr=[];   
+	//人员选择树
+	function personlSeclectOpen(index,tis,id,name){
+		arr_id = [];
+	    arr_name  = [];
+	    treeArr=[];
+
+		changeId=id;
+		changeName=name;
+        var td = $(tis).parent().prev();
+	    if(index == 0 || index == 1 || index == 2){
+            var dictCode = td.find("#dictCode"+index).val();
+            var _csrf = $("#_csrf").val();
+            var pm = {
+                dictCode:dictCode,
+                _csrf:_csrf
+            };
+            tool.post("/ioa/ioaReceiveFile/memberList",pm,function(data){
+                var memberlist={memberlist:data};
+                $('#paging5-data').html(template("paging5-script", memberlist));
+                pform.render();
+                human(tis);
+            },false);
+            //再次点击时复选框勾选
+            if($("#"+changeId).val() != ""){
+            	
+	    		arr_id = $("#"+changeId).val().split(";");
+	    		
+	    		console.log("id:"+arr_id);
+	    		for(var i=0;i<arr_id.length;i++){
+	    			$(".human").each(function(index){
+	    				if(arr_id[i] == $(this).attr("uId")){
+	    					$(this).attr("checked",true)
+	    						treeArr.push({id:$(this).attr("uid"),name:$(this).attr("uname"),userId:$(this).attr("uid"),userName:$(this).attr("uname")})
+		    			}
+	    			});
+	    		}
+	    		pform.render();
+	    		
+	    	}else{
+	    		$("#human-checkall").attr("checked",false);
+	    		pform.render();
+	    	}
+            
+		}else{
+			var deptId = td.find("#dictCode"+index).val();
+			var deptArrs = td.find("#dictKeyDetail"+index).val();
+			if(deptArrs != null && deptArrs != ""){
+				deptId = deptId + ";" + deptArrs
+			}
+			console.log(deptId)
+            var deptName = td.find("#dictName"+index).val();
+            if(deptId>0 || deptId.indexOf(";")>0){
+            	tool.treeDemo("win-personal-object",'treeDemo',"readUserIds"+index,"orgn-full-name"+index,"",false,"",deptId,'',name);
+            }else{
+            	tool.treeDemo("win-personal-object",'treeDemo',"readUserIds"+index,"orgn-full-name"+index,"",false,"",'','',name);
+            }
+            
+        }
+	    $("#number").html("");
+  	}
+	//重置树
+	function reset_tree(){
+		var mytree = $.fn.zTree.getZTreeObj("treeDemo");
+	    //打开弹窗前重置节点以及关闭展开状态，避免叠加
+		 $('#peopelSel').val("");
+		$("#number").html("");
+		$("#"+changeId).val("");
+		$("#"+changeName).html("");
+		mytree.checkAllNodes(false)
+	    mytree.expandAll(false);
+	}
+	
+	
+	 /* 一级人员弹窗 */
+    function human(tis){
+    	var index = layer.open({
+            title : '人员',
+            maxmin : false,
+            type : 1,
+            area:["250px","400px"],
+            shadeClose: true,
+            content : $('#win-human-object')
+        });
+    }
+    //人员选择树
+    function personlSeclect(){
+        var deptId = $("#deptId").val();
+        var uId = $("#deptUserId").val();
+        tool.treeDemo("win-personal-object",'treeDemo',"n_receiverNameid","n_receiverName_","n_receiverName",false,"",deptId,"","",uId);
+    }
+   //计算文本域数字
+    function countnum(par) { 
+    	var min = 0; 
+    	if (par.value.length > min){ 
+    	var str = min + par.value.length; 
+    	document.getElementById("count").innerHTML = str.toString(); 
+    	}
+    }
+  //初始化下拉框值
+    initSelect();
+    function initSelect(){
+        //来文类型
+        var  param={
+            _csrf:$("#_csrf").val()
+        }
+        tool.post("/ioa/ioaReceiveFile/loadDictByCode",param,function(data){
+            $("#fileType-search").empty();
+            $("#fileType-search").append('<option value="">请选择</option>');
+
+            $("#fileType-search2").empty();
+            $("#fileType-search2").append('<option value="">请选择</option>');
+
+            $("#fileType-add").empty();
+            $("#fileType-add").append('<option value="">请选择</option>');
+            $("#fileType-read").empty();
+            $("#fileType-read").append('<option value="">请选择</option>');
+
+            $("#fromUnit-search").empty();
+            /* $("#fromUnit-search").append('<option value="">请选择</option>'); */
+
+            $("#fromUnit-search2").empty();
+            /* $("#fromUnit-search2").append('<option value="">请选择</option>'); */
+
+            $("#fromUnit-add").empty();
+            /* $("#fromUnit-add").append('<option value="">请选择</option>'); */
+
+            $("#fromUnit-read").empty();
+           /*  $("#fromUnit-read").append('<option value="">请选择</option>'); */
+
+            $("#urgentLevel-search").empty();
+            $("#urgentLevel-search").append('<option value="">请选择</option>');
+
+            $("#urgentLevel-search2").empty();
+            $("#urgentLevel-search2").append('<option value="">请选择</option>');
+
+            $("#urgentLevel-add").empty();
+            $("#urgentLevel-add").append('<option value="">请选择</option>');
+
+            $("#urgentLevel-read").empty();
+            $("#urgentLevel-read").append('<option value="">请选择</option>');
+
+            var fileType = data.fileType;
+            var fromUnit = data.fromUnit;
+            var urgentLevel = data.urgentLevel;
+            var str="";
+            for(var i = 0 ;i < fileType.length;i++){
+                str+=' <option value="'+fileType[i].dictKey+'" >'+fileType[i].dictValue+'</option>';
+			}
+            $("#fileType-search").append(str);
+			$("#fileType-search2").append(str);
+            $("#fileType-add").append(str);
+            $("#fileType-read").append(str);
+
+            var str2="";
+            for(var i = 0 ;i < fromUnit.length;i++){
+                str2+=' <option value="'+fromUnit[i].dictKey+'" >'+fromUnit[i].dictValue+'</option>';
+            }
+           /*  $("#fromUnit-search").append(str2);
+            $("#fromUnit-search2").append(str2);
+            $("#fromUnit-add").append(str2);
+            $("#fromUnit-read").append(str2); */
+
+            var str3="";
+            for(var i = 0 ;i < urgentLevel.length;i++){
+                str3+=' <option value="'+urgentLevel[i].dictKey+'" >'+urgentLevel[i].dictValue+'</option>';
+            }
+            $("#urgentLevel-search").append(str3);
+            $("#urgentLevel-search2").append(str3);
+            $("#urgentLevel-add").append(str3);
+            $("#urgentLevel-read").append(str3);
+            /* for(var i = 0 ;i < all.length;i++){
+                $("#dictCode").val(all[i].dictCode);
+                $(".dict-text").text(all[i].dictValue);
+                $("#dictName").val(all[i].dictValue);
+            } */
+        },false);
+    }
+	</script>
+</body>
+
+</html>

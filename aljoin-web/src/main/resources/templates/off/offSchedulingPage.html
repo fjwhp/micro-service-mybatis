@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>日程安排</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<link rel="stylesheet" href="../../web/css/zhengls.css" media="all">
+<link rel="stylesheet" href="../../web/css/fullcalendar.min.css">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<style>
+	h2{
+		font-size:16px;
+		margin-top:6px;
+	}
+	/* 日历
+	#calendar {
+	    margin: 40px auto;
+	    padding: 0 10px;
+	} */
+	/* Event 参数 className 的值 
+	.done:before {
+	    content:"【 已完成 】";
+	    background-color:yellow;
+	    color:green;
+	    text-align:center;
+	    font-weight:bold;
+	    width:100%;
+	} */
+	/* Event 参数 className 的值 
+	.doing:before {
+	    content:"【 未完成 】";
+	    background-color:yellow;
+	    color:red;
+	    text-align:center;
+	    font-weight:bold;
+	} */
+</style>
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main">
+	
+		<!------------------------------------- 页面头部操作条 start---------------------------------------->
+		
+		<blockquote class="layui-elem-quote" style="padding:5px;">
+			
+			<form class="layui-form" action="">
+			<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+				
+				<div class="r">
+					<!-- 跟阙工核实。。。不要搜索
+					<div class="layui-input-inline">
+						<input type="text" name="searchKey" id="searchKey" placeholder="输入关键字" autocomplete="off" class="layui-input"
+							style="height: 30px; line-height: 30px;">
+					</div>
+					 <span><@a code="000101" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData()" iclass="layui-icon"
+						 icon="&#xe615;" text="查询"/></span>
+					 
+				    <span><a class="layui-btn layui-btn-small" onclick="scheduleExport()">导出Excel</a></span>
+					-->
+				</div>
+		    	<div class="layui-input-inline">
+		    		<span><@a code="080101" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="openAddWin()" iclass="layui-icon"
+						 icon="&#xe608;" text="新增"/></span>
+		    	
+<!-- 				<span><@a code="080101" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="openAddWin()"  text="新增"/></span> 
+<!-- 用了插件不要的操作条 				  	
+				  	<span><a class="layui-btn layui-btn-small" onclick="weekTableBlock()"><i class="layui-icon">&#xe637;</i>周日程</a></span>
+				  	<span><a class="layui-btn layui-btn-small" onclick="monthTableBlock()"><i class="layui-icon">&#xe637;</i>月日程</a></span>-->
+					
+					<!-- <span class="calendar_month_prev" style="margin-left:60px"><a>上周</a></span> -->
+<!-- 					<span>
+					<a class="layui-btn layui-btn-small calendar_month_prev monthbtn"  style="margin-left:120px;display:none;">上月</a>
+					<a class="layui-btn layui-btn-small  weekbtn"  style="margin-left:120px;">上周</a>
+					</span>
+					<span class="layui-input-inline">
+					<input type="text" class="layui-input inp_w120px monthbtn" id="startTime2" style="height:30px;width:170px;display:none;text-align:center;" >
+					<input type="text" class="layui-input inp_w120px weekbtn" id="startTime" style="height:30px;width:170px;text-align:center;" >
+					</span>
+				    <span>
+				    <a class="layui-btn layui-btn-small calendar_month_next monthbtn"  style="display:none;">下月</a>
+				    <a class="layui-btn layui-btn-small  weekbtn"   style="margin-left:0;">下周</a>
+				    </span>  -->
+				    <!-- <span class="calendar_month_next"><a>下周</a></span> -->
+				    	
+				</div> 
+				<div class="tips_color r" style="margin-top:5px;">
+		     <div style="text-align: right;" >
+                    <span style=" display: inline-block; width: 13px; height: 13px;background: #336fe1;" ></span>
+                    <span style="vertical-align: top; display:inline-block"">共享日程</span>
+                    <span style=" display: inline-block; width: 13px; height: 13px;background: #009688;" ></span>
+                    <span style=" display:inline-block">个人计划</span>
+                    <span style=" display: inline-block; width: 13px; height: 13px;background: #eaa905;"></span>
+                    <span style=" display:inline-block">会议通知</span>
+             </div>
+		</div>
+			</form>
+		</blockquote>
+		<!------------------------------------- 页面头部操作条end ---------------------------------------->
+			<!-- <form class="layui-form" action="../offScheduling/export"  method="post">
+				<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+				<div class="layui-input-inline" >
+				  <span><@a code="080101" href="javascript:void(0)" class="btn_blue m_r20" id="" onclick="openAddWin()" 
+					 text="新增"/></span>
+				</div>
+				<div class="layui-input-inline m_r20">
+				    <a class="btn_blue_e6e" onclick="weekTableBlock()">周日程</a>
+				</div>
+				<div class="layui-input-inline m_r20">
+				    <a class="btn_blue_e6e"  onclick="monthTableBlock()">月日程</a>
+				</div>
+				<div class="layui-input-inline calendar_month_prev" style="margin-left:60px">
+				 <span>上周</span>
+				</div>
+				<div class="layui-input-inline">
+					 <input type="text" class="layui-input inp_w120px" id="startTime2" >
+				</div>
+			    <div class="layui-input-inline calendar_month_next">
+				 <span>下周</span>
+				</div>
+			   <div class="calendar_month_span" style="display:none">2017年10月</div>
+			   <div class="layui-input-inline" style="float:right">
+			    <button  type="submit" class="layui-btn layui-btn-small">导出Excel</button>
+		      </div> 
+		
+			</form> -->
+	<!-- 	<div class="tips_color m_t10" style="margin-bottom:10px;">
+		     <div style="text-align: right;">
+                    <span style=" display: inline-block; width: 13px; height: 13px;background: #339bf1;" ></span>
+                    <span style="vertical-align: top; display:inline-block"">共享日程</span>
+                    <span style=" display: inline-block; width: 13px; height: 13px;background: #3eddce;" ></span>
+                    <span style=" display:inline-block">个人计划</span>
+                    <span style=" display: inline-block; width: 13px; height: 13px;background: #ffc132;"></span>
+                    <span style=" display:inline-block">会议通知</span>
+             </div>
+		</div> -->
+		<div class="layui-field-box layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<div id='calendar'></div>
+<!-- 加了插件以后不要的表格。。。		
+			 <table class="layui-table admin-table weekTable" style="display:none">
+				<thead>
+					<tr id="weekhead">
+						<th id="weekth1"></th>
+					</tr>
+				</thead>
+				<tbody class="DAM" id="weekbody">
+					 <tr>
+					  <td>00:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>01:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>02:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>03:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td rowspan="4" style="background:#fff;box-sizing:border-box;border-left:2px solid #009688">
+					    <p>疫病中心施工台介绍</p>
+					    <p>2017-07-04</p>
+					    <p>8:00-12:00</p>
+					  </td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>04:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>05:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>06:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>07:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>08:00:00</td>
+					  <td rowspan="4" style="background:#fff;box-sizing:border-box;border-left:2px solid #eaa905">
+					    <p>疫病中心施工台介绍</p>
+					    <p>2017-07-04</p>
+					    <p>8:00-12:00</p>
+					  </td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>09:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>10:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td  rowspan="4" style="background:#fff;box-sizing:border-box;border-left:2px solid #336fe1">
+					   <p>疫病中心施工台介绍</p>
+					    <p>2017-07-04</p>
+					    <p>8:00-12:00</p>
+					  </td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>11:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td ></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>12:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>13:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>14:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>15:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>16:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>17:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>18:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>19:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>20:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>21:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>22:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>23:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr>
+					<tr>
+					  <td>24:00:00</td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					  <td></td>
+					</tr> 
+				</tbody>
+			</table> 
+ 			 
+			<div class="monthTable" style="display:none">
+	  			<div  id="calendar1"></div>
+			</div>
+ -->				
+			<!-- 插件（fullCalendar）就是日程表 -->
+		</div>
+		
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	
+	<!------------------------------------ 新增对象窗口 ------------------------------------>
+	<div class="admin-main" style="display: none;z-index: 19940200;" id="win-add-object">
+		<form class="layui-form layui-form-pane" id="add-object-form"> 
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">主题</label>
+				<div class="layui-input-block">
+					<input type="text" name="theme" id="theme_add" lay-verify="required" autocomplete="off" placeholder="主题" maxlength="50" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">地点</label>
+				<div class="layui-input-block">
+					<input type="text" name="place" id="place_add"  autocomplete="off" placeholder="地点" maxlength="50" class="layui-input" lay-verify="required">
+				</div>
+			</div>
+			<div class="layui-form-item">
+			    <label class="layui-form-label">开始日期</label>
+				<div class="layui-input-block">
+					  <input type="text" class="layui-input startTime"  name="startDateStr" id="startDate_add" lay-verify="required" readonly>
+				</div>
+			<!-- 	<label class="layui-form-label">开始时间</label>
+				<div class="layui-input-inline">
+					  <input type="text" class="layui-input"  name="startHourMin" id="startHourMin_add" lay-verify="required">
+				</div> -->
+				
+			</div>
+			<div class="layui-form-item">	
+				<label class="layui-form-label">结束日期</label>
+				<div class="layui-input-block">
+					  <input type="text" class="layui-input endTime" name="endDateStr" id="endDate_add" lay-verify="required" readonly>
+				</div>
+			<!-- 	<label class="layui-form-label">结束时间</label>
+				<div class="layui-input-inline">
+					  <input type="text" class="layui-input"  name="endHourMin" id="endHourMin_add" lay-verify="required">
+				</div> -->
+				
+			</div>
+			<div class="layui-form-item layui-form-text">
+				<label class="layui-form-label">内容</label>
+				<div class="layui-input-block">
+					<textarea type="text" name="content" id="content_add"   lay-verify="contentLength"  autocomplete="off" placeholder="内容不得超500字" class="layui-input" style="height:120px" maxlength="500"></textarea>
+				</div>
+			</div>			
+			<div class="layui-form-item">
+				<label class="layui-form-label">共享给</label>
+				<div class="layui-input-block">
+					<div type="text" name="sharedPersonName" id="shareToId_h_add_div" class="newgg input_btn reset1"  style="width:81%;"></div>
+					<input type="hidden" id="shareToId_h_add" name="sharedPersonName" autocomplete="off" class="layui-input input_btn reset" >
+					<input type="hidden" id="shareToId_add"  name="sharedPersonId" autocomplete="off" class="layui-input reset" >
+					<a class="btn_blue2" style="float:right;" onclick="personlSeclectOpen()">人员选择</a>
+					<!-- <input type="hidden" name="noticeObjId" id="noticeObjId"> -->
+				</div>
+			</div>
+			<div class="layui-form-item" id="isWarn_add">
+				<label class="layui-form-label">提醒设置</label>
+				 <div class="layui-input-block">
+				      <input type="checkbox" name="isWarnMsg" id="isWarnMsg_add" title="短信提醒" value="1" lay-skin="primary">
+				      <input type="checkbox" name="isWarnOnline" id="isWarnOnline_add" title="消息提醒" value="1" lay-skin="primary">
+				      <input type="checkbox" name="isWarnMail" id="isWarnMail_add" title="邮件提醒" value="1" lay-skin="primary">
+   				 </div>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit">
+						<i class="fa fa-save"></i> 提交
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary" id="form-add-reset">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	
+	<!------------------------------------ 编辑对象窗口 ------------------------------------>
+	<div class="admin-main" style="display: none;;" id="win-edit-object">
+		<form class="layui-form layui-form-pane" id="edit-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<!-- <input type="hidden" name="id" id="hiddenId" /> -->
+			<input type="hidden" name="id" id="schedulingId" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">主题</label>
+				<div class="layui-input-block">
+					<input type="text" name="theme" id="theme_edit" lay-verify="required" autocomplete="off" placeholder="主题" class="layui-input" maxlength="50">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">地点</label>
+				<div class="layui-input-block">
+					<input type="text" name="place" id="place_edit"  autocomplete="off" placeholder="地点" class="layui-input" lay-verify="required" maxlength="50">
+				</div>
+			</div>
+			
+			<div class="layui-form-item">
+			   <label class="layui-form-label">开始日期</label>
+				<div class="layui-input-block">
+					  <input type="text" class="layui-input"  name="startDateStr" id="startDateStr_edit" lay-verify="required" readonly >
+				</div>
+				<!-- <label class="layui-form-label">开始时间</label>
+				<div class="layui-input-inline">
+					  <input type="text" class="layui-input"  name="startHourMin" id="startHourMin_edit" lay-verify="required" readonly >
+				</div>  -->
+			</div>
+			<div class="layui-form-item">
+				 <label class="layui-form-label">结束日期</label>
+				<div class="layui-input-block">
+					  <input type="text" class="layui-input" name="endDateStr" id="endDateStr_edit" lay-verify="required" readonly >
+				</div>
+				<!-- <label class="layui-form-label">结束时间</label>
+				<div class="layui-input-inline">
+					  <input type="text" class="layui-input"  name="endHourMin" id="endHourMin_edit" lay-verify="required" readonly >
+				</div>  -->
+			</div>
+			<!-- <div class="layui-form-item">
+				<label class="layui-form-label">日程类型</label>
+				<div class="layui-input-block">
+				       <select name="type" id="type_edit" disable="disable">
+							<option  value="">请选择</option>
+							<option value="1">共享日程</option>
+							<option value="2">个人计划</option>
+							<option value="3">会议通知</option>
+						</select>	
+				 </div>
+			</div> -->
+			<div class="layui-form-item layui-form-text">
+				<label class="layui-form-label">内容</label>
+				<div class="layui-input-block">
+					<textarea type="text" name="content" id="content_edit"  maxlength="500" lay-verify="contentLength"  autocomplete="off" placeholder="内容不得超500字" class="layui-input" style="height:120px"></textarea>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">共享给</label>
+				<div class="layui-input-block">
+					<div type="text" name="sharedPersonName" id="shareToId_h_edit_div" class="newgg input_btn reset1" style="width:81%;"></div>
+					<input type="hidden" id="shareToId_h_edit" name="sharedPersonName" class="layui-input input_btn reset">
+					<input type="hidden" id="shareToId_edit"  name="sharedPersonId" class="layui-input reset" >
+					<a class="btn_blue2" style="float:right;" onclick="personlSeclectOpen1()">人员选择</a>
+					<!-- <input type="hidden" name="noticeObjId" id="noticeObjId"> -->
+				</div>
+			</div>
+			<div class="layui-form-item" id="isWarn_edit" >
+				<label class="layui-form-label">提醒设置</label>
+				<div class="layui-input-block">
+					<input type="checkbox" name="isWarnMsg" id="isWarnMsg_edit" title="短信提醒" value="1" lay-skin="primary">
+			      	<input type="checkbox" name="isWarnOnline" id="isWarnOnline_edit" title="消息提醒" value="1" lay-skin="primary">
+			      	<input type="checkbox" name="isWarnMail" id="isWarnMail_edit" title="邮件提醒" value="1" lay-skin="primary">
+ 					</div>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+				<div style="float: right;" id="form-edit-btn">
+					<button class="layui-btn" lay-submit="" lay-filter="form-edit-submit" id="form-edit-submit">
+						<i class="fa fa-save"></i> 更新
+					</button>
+					<span><a class="layui-btn" onclick="showDelete()"><i class="layui-icon">&#xe640;</i>删除</a></span>
+					<!--<input type="button" class="layui-btn" lay-filter="form-edit-delete" id="form-edit-delete" onclick="showDelete()" value="删除">
+					 <button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button> -->
+				</div>
+			</div>
+		</form>
+	</div>
+	
+	<!----------------------------------- 详情对象窗口  ------------------------------------>
+	<div class="admin-main" style="display: none;" id="win-view-object">
+		<form class="layui-form layui-form-pane" id="view-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" name="id" id="hiddenId" />
+			<div class="" style="text-align: center;">
+				 <span id="theme_view" style="font-size:16px;font-weight: bold;word-wrap:break-word">235</span>
+			</div>
+			
+			<div class="outindss" style="clear:both;" id="mailContent">
+			    <p id="content_view" style="word-wrap: break-word;" class="heidf"></p>
+			</div>
+			
+			<div class="p_t10">
+				<span class="e6ed l">地点：</span>
+				<!-- <span id="place_view"></span> -->
+				<div id="place_view" class="l" style="word-wrap:break-word;width:85%;"></div>
+			</div>
+			
+			<div class="p_t10 cl">
+				<span class="e6ed">开始日期：</span>
+				<span id="startDateStr_view"></span>
+			</div>
+			<!-- <div class="p_t10">
+				<span class="e6ed">开始时间：</span>
+				<span id="startHourMin_view"></span>
+			</div> -->
+			
+			<div class="p_t10">
+				<span class="e6ed">结束日期：</span>
+				<span id="endDateStr_view"></span>
+			</div>
+			<!-- <div class="p_t10">
+				<span class="e6ed">结束时间：</span>
+				<span id="endHourMin_view"></span>
+			</div> -->
+			
+			<div class="p_t10">
+				<span class="e6ed">类型：</span>
+				<span id="typeStr_view"></span>
+			</div>
+
+			<div class="p_t10 cl">
+				<span class="e6ed l">共享给：</span>
+				<div id="shareToId_h" class="l" style="word-wrap:break-word;width:85%;"></div>
+			</div>
+			
+			<div class="p_t10 cl">
+				<span class="e6ed l">共享者：</span>
+				<div id="createFullName_view" class="l" style="word-wrap:break-word;width:85%;"></div>
+			</div>
+			
+			<div class="p_t10 cl">
+				<span class="e6ed">提醒设置：</span>
+				<span id="warn_setting"></span>
+			</div>
+			
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+			</div>
+		</form>
+	</div>
+	
+	<!---------------------------------- 被共享人------------------------------------------->
+	<div class="admin-main" id="user_list" style="display:none;">
+		<div class="layui-form">
+			<div>
+				<div class="layui-input-inline">
+					<input type="text" name="searchKey" id="searchKey2" placeholder="输入用户名称查询" autocomplete="off" class="layui-input"
+					style="height: 30px; line-height: 30px;">
+				</div>
+				<span style="margin-right: 15px;"> 
+					<@a code="" href="javascript:void(0)" class="layui-btn layui-btn-small" id=""
+					onclick="loadData2()" iclass="layui-icon" icon="&#xe615;" text="搜索"/> 
+				</span> 
+			</div>
+			<table class="layui-table admin-table">
+				<thead>
+					<tr>
+						<th style="display: none;">用户ID</th>
+						<th>用户账号</th>
+						<th>昵称</th>
+						<th>是否激活</th>
+					    <th>添加</th>
+					</tr>
+				</thead>
+				<tbody id="paging2-data">
+					<script id="paging2-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td style="display: none;">{{value.autUser.id}}</td>
+							<td>{{value.autUser.userName}}</td>
+							<td>{{value.autUser.fullName}}</td>
+							<td>{{if value.autUser.isActive == 1}}<font color="green">激活</font>{{/if}}{{if value.autUser.isActive == 0}}<font color="red">冻结</font>{{/if}}</td>
+						    <td><a 	class="layui-btn layui-btn-mini layui-btn-normal" onclick="addUser2Share('{{value.autUser.id}}','{{value.autUser.fullName}}')">添加</a>
+                                <a href="javascript:void(0)" class="layui-btn layui-btn-mini" id="show-role_c" onclick="cancelShare('{{value.autUser.id}}','{{value.autUser.fullName}}')">取消</a>		
+
+                             </td>
+						</tr>
+					{{/each}}
+					</script>
+				</tbody>
+			</table>
+		</div>
+		<div class="admin-table-page2" style="border-width: 0px; z-index: 0;">
+			<div id="paging2-footer" class="page"
+				style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	
+	<!-- 人员选择树 -->
+	<div style="display: none;z-index: 19940200;" id="win-personal-object">
+		<div class="search_h">
+			<input id="peopelSel" class="tree_search1 reset" type="text" value="" placeholder="搜索">
+			<a class="layui-btn layui-btn-small" id="" onclick="searchNodes()"><i class="layui-icon">&#xe615;</i>搜索</a>
+			<a class="layui-btn layui-btn-small layui-btn-primary" style="margin-left:2px;" type="reset" onclick="reset_tree()"><li class="fa fa-eraser"></li> 重置</a>
+			<label type="text"  id="resultKey" class="form-control">  
+                <div>  
+                    <a id="clickUp" class="tree_up" onclick="clickUp()"><i class="layui-icon">&#xe619;</i></a>  
+                    <a id="clickDown" class="tree_down" onclick="clickDown()"><i class="layui-icon">&#xe61a;</i></a>  
+                </div>  
+                <label id="number" class="tree_number"></label>  
+            </label>  
+        </div>
+        <div class="tree_h">
+        	<ul id="treeDemo" class="ztree treeDemo1" name="treeDemo" style="display:block"></ul>
+        </div>
+        <div class="sure_h">
+		    <a class="layui-btn layui-btn-small sure_s"><li class="fa fa-save"></li> 确定</a>
+		</div>
+	</div>
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+    <script type="text/javascript" src="../../web/js/dataRi2.js"></script>
+    <script type="text/javascript" src="../../web/js/moment.min.js"></script>
+    <script type="text/javascript" src="../../web/js/fullcalendar.min.js"></script>
+	<script type="text/javascript" src="../../web/js/zh-cn.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript">
+	//=======================新日程表初始化============================
+	/* tool.timeset('#startDate_edit','#endDate_edit'); */
+	/* tool.timeset('#startDate_add','#endDate_add');	 */
+	//tool.timeParse('#startDate_add');
+	//tool.timeParse('#endDate_add');
+	var ScehdP="false";
+    var	initLoadIndex;//加载层
+	var isCommitted = false;
+	laydate({
+	      elem:'#startDate_add',
+	      format:'YYYY-MM-DD hh:mm',
+	      istime: true,
+	      istoday: true,
+	      min:laydate.now() 
+	    });
+	laydate({
+	      elem:'#endDate_add',
+	      format:'YYYY-MM-DD hh:mm',
+	      istime: true,
+	      istoday: true,
+	      min:laydate.now()
+	    });
+	tool.dateTime('#startDateStr_edit','#endDateStr_edit','YYYY-MM-DD hh:mm',true);
+	//tool.dateTime('#startDate_add','#endDate_add','YYYY-MM-DD hh:mm',true);	
+	
+	var pform,pdate;
+	//添加事件
+	layui.use(['form','laydate'], function() {
+		pform = layui.form;
+		var laydate=layui.laydate;
+		pform.on('select(isActive)', function(data) {
+			//alert(data.value);
+			//form.render('checkbox');
+		});
+		/*var startDate_edit = laydate.render({ 
+			elem: '#startDate_edit'
+			,trigger: 'click'
+			,done:function(value,date){
+				date.month = date.month-1
+				endDate_edit.config.min = date
+			}
+		});
+		var endDate_edit = laydate.render({ 
+			elem: '#endDate_edit'
+			,trigger: 'click'
+			,done:function(value,date){
+				date.month = date.month-1
+				startDate_edit.config.max = date
+			}
+		});
+		
+		var startDate_add = laydate.render({ 
+			elem: '#startDate_add'
+			,trigger: 'click'
+			,done:function(value,date){
+				date.month = date.month-1
+				endDate_add.config.min = date
+			}
+		});
+		var endDate_add = laydate.render({ 
+			elem: '#endDate_add'
+			,trigger: 'click'
+			,done:function(value,date){
+				date.month = date.month-1
+				startDate_add.config.max = date
+			}
+		});*/
+		laydate.render({ 
+			  elem: '#startHourMin_add'
+			  ,type: 'time'
+			  ,format: 'HH:mm'
+			
+			});
+		laydate.render({ 
+			  elem: '#endHourMin_add'
+			  ,type: 'time'
+			  ,format: 'HH:mm'
+			 
+			});
+		laydate.render({ 
+			  elem: '#startHourMin_edit'
+			  ,type: 'time'
+			  ,format: 'HH:mm'
+			  ,trigger: 'click'
+			});
+		laydate.render({ 
+			  elem: '#endHourMin_edit'
+			  ,type: 'time'
+			  ,format: 'HH:mm'
+			  ,trigger: 'click'
+			});
+		var nowtime = new Date();
+    	var nowstr = nowtime.getFullYear()+"-"+(nowtime.getMonth()+1)+"-"+nowtime.getDate();   	  
+		//自定义表单校验
+		pform.verify({
+			contentLength:function(value){
+				if(value.length>500){
+					return '内容长度不能超过500个字符！！'
+				}
+			},
+		});
+		//监听新增提交
+		pform.on('submit(form-add-submit)', function(data) {
+			//console.log( $("#add-object-form").serialize())
+			var length = $("#add-object-form").find("input[type='checkbox']:checked").length;
+			if(length>0){
+				var text = $("#add-object-form").find("#shareToId_h_add_div").text();
+				if(text==""){
+					tool.error("共享者为空");
+					return false
+				}
+			}
+			 layer.confirm('确定提交吗 ?', {
+                      icon: 3,
+                      title: '提示'
+            },function(index){ 
+            	  layer.close(index);
+            	  initLoadIndex = layer.load(2, {shade: [0.1,'#fff']});
+            	  if(isCommitted == false){
+                      isCommitted = true; 
+		   		      tool.post("../offScheduling/add", $("#add-object-form").serialize(),postCallBack, false);
+            	  }
+            }) 	 
+			return false;
+		});
+		//监听新增提交
+		pform.on('submit(form-edit-submit)', function(data) {
+			var length = $("#edit-object-form").find("input[type='checkbox']:checked").length;
+			if(length>0){
+				var text = $("#edit-object-form").find("#shareToId_h_edit_div").text();
+				if(text==""){
+					tool.error("共享者为空");
+					return false
+				}
+			}
+			//console.log($("#edit-object-form").serialize())
+			initLoadIndex = layer.load(2, {shade: [0.1,'#fff']});
+			if(isCommitted == false){
+               isCommitted = true;
+			   tool.post("../offScheduling/update", $("#edit-object-form").serialize(), postCallBack, false);
+			}
+			return false;
+		});
+		//初始化出发数据加载
+		buildSchedulingTable()
+		
+	});
+	
+	//====================日程表===========================
+	function buildSchedulingTable(){
+        $('#calendar').fullCalendar({
+        	//--------------------设置头部信息，如果不想显示，可以设置header为false
+            header: {  
+                left: 'exportTable,today', //日历头部左边：初始化切换按钮
+                center: ' prev  , title  ,next',   //日历头部中间：显示当前日期信息
+                right: 'month,agendaWeek,agendaDay'  //日历头部右边：初始化视图
+            },
+            aspectRatio:'2.2',
+            slotDuration : '01:00:00',
+            height :'410',
+            fixedWeekCount : false,
+            weekends: true,//设置是否显示周六和周日，设为false则不显示  
+            allDaySlot: false,//agenda视图下是否显示all-day
+            timeFormat: 'H:mm',
+            handleWindowResize : true,
+            //eventlimit: true,
+            //theme : true,
+            firstDay : 1,
+            buttonText:{
+            	today:"返回今天",
+            	month: "月日程",
+            	week:"周日程",
+            	day:"当日日程"
+            },
+            slotEventOverlap: false,
+            customButtons: {            //自定义header属性中按钮[customButtons与header并用]  
+                exportTable: {  
+	                text: '导出Excel',  
+	                click: function(event) { 
+	                	 var  length = $(".fc-content").length;
+	                	 if(length==0){
+	                		 tool.error("暂无日常，无法导出")
+	                	 }else{
+	                		 var view = $('#calendar').fullCalendar('getView'); 
+	 	                	location.href = "../offScheduling/export?scheduleStartDate="+view.start.format() + "&scheduleEndDate=" + view.end.format() + "&_csrf =" +$("#_csrf").val();
+	                	 }
+	                }  
+                }  
+            },
+
+            //-------点击日程---------------
+            eventClick: function (date, allDay, jsEvent, view) {
+            	getObject(date.id);
+           		
+            },
+            //-------点击日期---------------
+           /* dayClick : function(date) {
+                openAddWin(date)
+            },*/
+            //-------日程数据---------------
+            events:function(start, end, timezone,callback) {  
+            	var param = new Object()
+     			param.scheduleStartDate=start.format()
+    	       	param.scheduleEndDate=end.format()
+    	       	param._csrf=$("#_csrf").val();
+            	//console.log(param)
+            	var urlR = "../offScheduling/list";  
+            	$.ajax({
+            		type: "post",
+            	    dataType: "json",
+            	    url: urlR,
+            	    data: param,
+            	    success: function (data) {
+            	    	var ev = data
+						//console.log(ev)
+            	    	var events = [];  
+//                    	var info = eval(data);  
+						var background = ""
+            	    	if(null!=ev){
+            	    		for(i=0;i<ev.length;i++){
+                	    		if(ev[i].type==1){//
+                	    		//	background ="#a0d2fb" 
+                	    			background ="#336fe1"
+                	    		}else if(ev[i].type==2){
+                	    		//	background ="#b5f7f1"
+                	    			background ="#009688"
+                	    		}else{
+                	    		//	background ="#fbdfa0"
+                	    			background ="#eaa905"
+                	    		}
+    							events.push({  
+    								id : ev[i].id,
+                            		title:ev[i].theme,   
+                            		start:ev[i].startDate.substr(0,10) + "T" +ev[i].startHourMin + ":00",
+                            		end:ev[i].endDate.substr(0,10) + "T" + ev[i].endHourMin + ":00",
+                            		borderColor : "gray",
+                            		//backgroundColor : "#ffffff",
+                            		color : background,
+                            		//textColor : "#000000",
+                            		rending : "background"
+                            	});
+                	    	}
+            	    	}
+						callback(events); 
+            		}
+            	});
+            }, 
+            
+        });
+	}
+	</script>
+	<script type="text/javascript">
+	function getObject(id){
+		var object = tool.getById("../offScheduling/getById", id);
+		//console.log(object)
+		if(object.isEdit == 1 && object.type != 3){//可编辑，出编辑窗口
+			showEdit(object)
+		}else{//不可编辑，出详情窗口
+			detail(object)
+		}
+		
+	}
+	//===================打开新增对象窗口===================
+	function openAddWin(date) {
+		$("#form-add-reset").click();
+		$("#shareToId_add").val("");
+		$("#shareToId_h_add").val("");
+		$("#shareToId_h_add_div").html("");
+		if(date!=null){
+			var datetime = date.format().toString()
+			if(datetime.length>10){
+				$("#startDate_add").val(datetime);
+			}else{
+				var currentdate = getNowFormatDate();
+				var startHourMinStr = currentdate.substr(11,currentdate.lastIndexOf(":"));
+				$("#startDate_add").val(datetime + " " + startHourMinStr);
+			}
+		}else{
+			var currentdate = getNowFormatDate();
+			$("#startDate_add").val(currentdate);
+		}
+		var index = layer.open({
+			title : '新增日程',
+			maxmin : false,
+			type : 1,
+			content : $('#win-add-object')
+		});
+		
+		layer.full(index);
+	}
+	
+	
+	//==============================================
+	function getNowFormatDate() {
+	    var date = new Date();
+	    var seperator1 = "-";
+	    var seperator2 = ":";
+	    var month = date.getMonth() + 1;
+	    var strDate = date.getDate();
+	    if (month >= 1 && month <= 9) {
+	        month = "0" + month;
+	    }
+	    if (strDate >= 0 && strDate <= 9) {
+	        strDate = "0" + strDate;
+	    }
+	    var min = date.getMinutes();
+	    if(min >=0 && min <= 9){
+	    	min = "0" + min
+	    }
+	    var hour = date.getHours();
+	    if(hour >=0 && hour <= 9){
+	    	hour = "0" + hour
+	    }
+	    var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+	            + " " + hour + seperator2 + min
+	    return currentdate;
+	}
+	//===================新增对象回调===================
+	function postCallBack(retMsg) {
+		isCommitted = false;
+		layer.close(initLoadIndex);
+		if (retMsg.code == 0) {
+			layer.closeAll()
+		//	$('#calendar').fullCalendar('updateEvent', event);
+			$('#calendar').fullCalendar( 'refetchEvents' );
+			tool.success(retMsg.message);
+			
+		} else {
+			tool.error(retMsg.message);
+		}
+	}
+	
+	//===================详情===================
+	function detail(object){
+		$("#shareToId_edit").val("");
+		$("#shareToId_h_edit").val("");
+		$("#shareToId_h_edit_div").html("");
+		$("#view-object-form").find("#isWarnMail_view").removeAttr("checked");
+		$("#view-object-form").find("#isWarnMsg_view").removeAttr("checked");
+		$("#view-object-form").find("#isWarnOnline_view").removeAttr("checked");
+		$("#view-object-form").find("#hiddenId").val(object.id)
+		//var object = tool.getById("../offSchedulingLeader/getById", id);
+		console.log(object)
+			//$("#view-object-form").find("#shareToId_h").val(object.shareToName)
+			//	$("#view-object-form").find("#shareToId_h").val(object.sharedPersonName)
+		
+		for ( var key in object) {
+			$("#view-object-form").find("#" + key + "_view").html(object[key]);
+		} 
+			
+		$("#view-object-form").find("#type_view").html(object.typeStr);
+		$("#view-object-form").find("#shareToId_h").html(sharedPersonName)
+		$("#view-object-form").find("#shareToId").html(object.sharedPersonId)
+		if(object.startDateStr!=""){
+			 $("#startDate_view").html(object.startDateStr)
+		}
+		if(object.endDateStr!=""){
+			$("#endDate_view").html(object.endDateStr)
+		}
+		if(object.sharedPersonName==null){
+			$("#view-object-form").find("#shareToId_h").val("");
+		}else{
+			var sharedPersonName=object.sharedPersonName.replace(/;/g,"；");
+			$("#view-object-form").find("#shareToId_h").html(sharedPersonName);
+		}
+		var str = ""
+		if(object.isWarnMail==1){
+			str += "邮件提醒; "
+		}
+		if(object.isWarnMsg==1){
+			str += "短信提醒; "
+		} 
+		if(object.isWarnOnline==1){
+			str += "消息提醒;"
+		} 
+		$("#warn_setting").html(str)
+		index = layer.open({
+			title : '日程详情',
+			maxmin : false,
+			type : 1,
+			content : $('#win-view-object')
+		});
+		pform.render();
+		layer.full(index);	
+	}
+	
+	//======================编辑对象======================
+	function showEdit(object) {
+		$("#edit-object-form").find("#isWarnOnline_edit").removeAttr("checked");
+		$("#edit-object-form").find("#isWarnMail_edit").removeAttr("checked");
+		$("#edit-object-form").find("#isWarnMsg_edit").removeAttr("checked");
+		$("#edit-object-form").find("#schedulingId").val(object.id)
+		
+		for (var key in object) {
+			$("#edit-object-form").find("#" + key + "_edit").val(object[key]);
+		} 
+		/* if(object.startDate!=null){
+			object.startDate=object.startDate.substr(0,10);
+			$("#startDate_edit").val(object.startDate)
+		}  */
+		/* if(object.endDate!=null){
+			object.endDate=object.endDate.substr(0,10);
+			$("#endDate_edit").val(object.endDate)
+		} */
+		if(object.sharedPersonName==null){
+			$("#edit-object-form").find("#shareToId_h_edit").val("");
+			$("#edit-object-form").find("#shareToId_h_edit").val("")
+			$("#edit-object-form").find("#shareToId_edit").val("")
+			$("#edit-object-form").find("#shareToId_h_edit_div").html("")
+			$("#isWarn_edit").hide()
+		}else{
+			$("#edit-object-form").find("#shareToId_h_edit").val(object.sharedPersonName)
+			$("#edit-object-form").find("#shareToId_edit").val(object.sharedPersonId)
+			$("#edit-object-form").find("#shareToId_h_edit_div").html(object.sharedPersonName)
+			$("#isWarn_edit").show()
+		}
+		if(object.isWarnMail==1){
+		//动态设置属性 才会重新渲染
+			$("#edit-object-form").find("#isWarnMail_edit").prop("checked","checked")
+		}
+		if(object.isWarnMsg==1){
+			$("#edit-object-form").find("#isWarnMsg_edit").prop("checked","checked")
+		} 
+		if(object.isWarnOnline==1){
+			$("#edit-object-form").find("#isWarnOnline_edit").prop("checked","checked")
+		} 
+		if(object.isEdit != 1){
+			$("#form-edit-btn").hide();
+			$("#form-edit-delete").hide();
+		}else{
+			$("#form-edit-submit").show();
+			$("#form-edit-delete").show();
+		}
+		/* $("#edit-object-form").find("#shareToId_h_edit_div").html("1234567") */
+		index = layer.open({
+			title : '编辑',
+			maxmin : false,
+			type : 1,
+			content : $('#win-edit-object')
+		});
+		pform.render();
+		layer.full(index);
+	}			
+	//===================删除对象===================
+	function showDelete() {
+		var id = $("#schedulingId").val()
+		layer.confirm('确定删除 ?', {
+			icon : 3,
+			title : '提示'
+		}, function(index) {
+			var retMsg = tool.deleteById("../offScheduling/delete", id)
+			//console.log(retMsg)
+			if (retMsg.code == 0) {
+				layer.closeAll()
+				tool.success(retMsg.message);
+				$('#calendar').fullCalendar( 'refetchEvents' );
+			} else {
+				tool.error(retMsg.message);
+			}
+		});
+	}
+		
+	//===================候选用户弹窗===================		
+	function loadData2() {
+		var param = new Object();
+		param.container = "paging2";
+		param.pageSize = 10;
+		param.pageNum = 1;
+		param.isActive = 1;
+		param.userName = $("#searchKey2").val();
+		param.url = "/pub/public/userList";
+		tool.loadpage(param);
+	}		
+		
+	//===================被共享人弹窗===================
+	/* var str_father;	
+	var winfather;
+    function shareToId_chuan(father){
+    	str_father= "win-" + father +"-object"
+    	winfather = father
+    	loadData2();
+    	var index = layer.open({
+			title : '选择共享人',
+			maxmin : false,
+			type : 1,
+			content : $('#user_list')
+		});
+    	pform.render();
+		layer.full(index);
+    }
+
+    //===================添加被共享人===================
+    function addUser2Share(id,name){
+    	var shared_id = $("#"+str_father).find("#shareToId" + "_" + winfather).val();
+    	var shared_name = $("#"+str_father).find("#shareToId_h" + "_" + winfather).val();
+    	if(""!= shared_id && String(shared_id).indexOf(String(id))>-1){
+    		layer.msg("已添加该用户")
+    	}else{
+        	$("#"+str_father).find("#shareToId" + "_" + winfather).val(shared_id + id + ";")
+        	$("#"+str_father).find("#shareToId_h" + "_" + winfather).val(shared_name + name + ";")
+        	layer.msg("添加成功！")
+    	}
+    	checkshareMan()
+    }
+	    
+    //===================取消添加===================
+    function cancelShare(id,name){
+    	//console.log(str_father)
+    	var shared_id = $("#"+str_father).find("#shareToId" + "_" + winfather).val();
+    	var shared_name = $("#"+str_father).find("#shareToId_h" + "_" + winfather).val();
+    	if(shared_id.indexOf(id)>-1){
+    		shared_id = shared_id.replace(id + ";","");
+    		shared_name = shared_name.replace(name + ";","");
+    		$("#"+str_father).find("#shareToId" + "_" + winfather).val(shared_id)
+        	$("#"+str_father).find("#shareToId_h" + "_" + winfather).val(shared_name)
+        	layer.msg("取消选择该共享用户成功！")
+    	}else{
+    		layer.msg("没有添加该共享人，不需要取消")
+    		return false;
+    	}
+    	checkshareMan()
+    }
+    
+    function checkshareMan(){
+    	var shared_id = $("#"+str_father).find("#shareToId" + "_" + winfather).val(); 
+    	if (shared_id =="" || shared_id ==null){
+    		$("#isWarn_" + winfather).hide()
+    	}else{
+    		$("#isWarn_" + winfather).show()
+    	}
+    } */
+    //人员选择树
+	function personlSeclectOpen(){	  
+		tool.treeDemo("win-personal-object",'treeDemo',"shareToId_add","shareToId_h_add","shareToId_h_add_div");
+		$("#number").html("");
+  	}
+	function personlSeclectOpen1(){	  
+		tool.treeDemo("win-personal-object",'treeDemo',"shareToId_edit","shareToId_h_edit","shareToId_h_edit_div");
+		$("#number").html("");
+  	}
+    //用按钮查询节点  
+   /*  function searchNodes(){  
+        var keywords=$("#peopelSel").val();  
+        var nodes = mytree.getNodesByParamFuzzy("name", keywords, null);  
+        if (nodes.length>0) {  
+            mytree.selectNode(nodes[0]);  
+        }  
+    } */  
+	//重置树
+	function reset_tree(){
+		var mytree = $.fn.zTree.getZTreeObj("treeDemo");
+	    //打开弹窗前重置节点以及关闭展开状态，避免叠加
+	    $("#number").html("");
+		$('.reset').val("");
+		$('.reset1').html("");
+		mytree.checkAllNodes(false)
+	    mytree.expandAll(false);
+	}
+
+//----------------------------------------------------------------------------
+	function showIsWarn(obj,type){
+		console.log(obj)
+		if(obj.value!= null && obj.value != ""){
+			$("#isWarn_" + type).show()
+		}else{
+			$("#isWarn_" + type).hide()
+		}
+		
+	}
+    
+    
+    
+    
+  //----------------------导出excel--------------------
+	function scheduleExport(){
+       // resourceName = encodeURIComponent(encodeURIComponent(resourceName));
+        location.href = "../offScheduling/export";
+	}
+	//===============旧代码备份========================
+	//月表格数据
+		/* $(function(){
+			//ajax获取日历json数据
+		    calUtil.init();
+		    	//显示周的表格
+	    function weekTableBlock(){
+	    	$(".weekTable").show();
+	    	$(".weekbtn").show();
+	    	
+	    	$(".monthTable").hide();
+	    	$(".monthbtn").hide();
+	    }
+	    //显示月表格
+	    function monthTableBlock(){
+	    	//显示上下月  和月的输入框 表格内容
+	    	$(".monthbtn").show();
+	    	$(".monthTable").show();
+	    	
+	    	//隐藏周的
+	    	$(".weekTable").hide();
+	    	$(".weekbtn").hide();
+	    }
+	    //搜索条件重置
+		function seacrhReact(myself){
+			$(myself).parent().parent().find("input").val("")
+		}
+		});
+			function loadData(){
+    	var dataC;
+		var param=new Object();
+		param._csrf=$("#_csrf").val();
+		param.weekSchedule = "1"
+		param.monthSchedule = "1"
+    	tool.post(
+    		"../offScheduling/list"
+    		,param
+    		,function(data){
+				var tdMaps = data.tdMaps
+				buildSchedulingTable(tdMaps)
+				}
+    		,false)
+	}
+	//选择共享人
+	var user_info="";
+    var user_hidden="";
+    var newarr=[];
+    function user(id,name){
+    	var data = {
+			id:id,
+			name:name
+		} 
+    	 for(var i=0;i<newarr.length;i++){
+    		if(newarr[i].id==id){
+    			tool.error("已经添加")
+    			return false;
+    		}
+    	}
+    	newarr.push(data) 
+    	user_info += ""+name+""+";";
+    	user_hidden+=""+id+""+";";
+    	//idList_user.push(data.id);
+
+    }
+    function user_c(id,name){
+    	for(var i=0;i<newarr.length;i++){
+    		if(newarr[i].id==id){
+           		newarr.splice(i,1)
+           	}
+        }
+     	//删除一条数据
+   		var temp = ""+name+""+";";
+   		var hid=""+id+""+";";
+   		user_info = user_info.replace(temp,"");
+   		user_hidden = user_hidden.replace(hid,"");
+   		$("#"+str_father).find("#shareToId_h").val(user_info)
+   		$("#"+str_father).find("#shareToId").val(user_hidden)  
+	}		
+			
+	*/
+    //===================开始时间-结束时间===================
+    /**
+    var start = {  
+    	    elem: '#startDate',  
+    	    format: 'YYYY-MM-DD hh:mm:ss',  
+    	    min: laydate.now(), //设定最小日期为当前日期  
+    	    max: '2099-06-16 23:59:59', //最大日期  
+    	    istime: true,  
+    	    istoday: false,  
+    	    choose: function(datas){  
+    	         end.min = datas; //开始日选好后，重置结束日的最小日期  
+    	         end.start = datas //将结束日的初始值设定为开始日  
+    	    }  
+    	};  
+   	var end = {  
+   	    elem: '#endDate',  
+   	    format: 'YYYY-MM-DD hh:mm:ss',  
+   	    min: laydate.now(),  
+   	    max: '2099-06-16 23:59:59',  
+   	    istime: true,  
+   	    istoday: false,  
+   	    choose: function(datas){  
+   	        start.max = datas; //结束日选好后，重置开始日的最大日期  
+   	    }  
+   	};  
+    laydate(start);  
+    laydate(end); 
+    */
+	    	
+	</script>
+	</body>
+
+</html>

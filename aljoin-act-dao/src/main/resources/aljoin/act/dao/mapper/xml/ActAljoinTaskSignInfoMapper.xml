@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.act.dao.mapper.ActAljoinTaskSignInfoMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.act.dao.entity.ActAljoinTaskSignInfo">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="bpmn_id" property="bpmnId" />
+		<result column="process_instance_id" property="processInstanceId" />
+		<result column="process_def_id" property="processDefId" />
+		<result column="execution_id" property="executionId" />
+		<result column="task_id" property="taskId" />
+		<result column="task_key" property="taskKey" />
+		<result column="task_name" property="taskName" />
+		<result column="sign_task_id" property="signTaskId" />
+		<result column="task_ids" property="taskIds" />
+		<result column="task_owner_id" property="taskOwnerId" />
+		<result column="task_owner_name" property="taskOwnerName" />
+		<result column="task_sign_user_id" property="taskSignUserId" />
+		<result column="task_sign_user_name" property="taskSignUserName" />
+		<result column="task_signed_user_id" property="taskSignedUserId" />
+		<result column="task_signed_user_name" property="taskSignedUserName" />
+		<result column="is_back_owner" property="isBackOwner" />
+		<result column="task_sign_user_ids" property="taskSignUserIds" />
+		<result column="task_sign_user_names" property="taskSignUserNames" />
+		<result column="finish_type" property="finishType" />
+		<result column="all_task_ids" property="allTaskIds" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name, bpmn_id, process_instance_id, process_def_id, execution_id, task_id, task_key, task_name, sign_task_id, task_ids, task_owner_id, task_owner_name, task_sign_user_id, task_sign_user_name, task_signed_user_id, task_signed_user_name, is_back_owner, task_sign_user_ids, task_sign_user_names, finish_type,all_task_ids
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM act_aljoin_task_sign_info WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="ActAljoinTaskSignInfo">
+    	INSERT INTO act_aljoin_task_sign_info(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{bpmnId}, #{processInstanceId}, #{processDefId}, #{executionId}, #{taskId}, #{taskKey}, #{taskName}, #{signTaskId}, #{taskIds}, #{taskOwnerId}, #{taskOwnerName}, #{taskSignUserId}, #{taskSignUserName}, #{taskSignedUserId}, #{taskSignedUserName}, #{isBackOwner}, #{taskSignUserIds}, #{taskSignUserNames}, #{finishType},#{allTaskIds})
+    </insert>
+
+</mapper>

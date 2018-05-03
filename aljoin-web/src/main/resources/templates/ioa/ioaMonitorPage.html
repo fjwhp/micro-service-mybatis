@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>流转监控</title>
+	<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css"
+	media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+
+<link rel="stylesheet"
+	href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<link rel="stylesheet" href="../../web/css/zhengls.css" media="all">
+<style>
+span.layui-laypage-total {
+	border: none;
+	margin-left: 2px;
+}
+</style>
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}"
+		id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<input type="hidden" id="taskIds" value="">
+	<input type="hidden" id="processInstanceIds" value="">
+	<input type="hidden" id="businessKeys" value="">
+	<div class="admin-main">
+		<blockquote class="layui-elem-quote" style="padding: 5px;">
+			<input type="hidden" name="${_csrf.parameterName}"
+				id="${_csrf.parameterName}" value="${_csrf.token}" /> <input
+				type="hidden" name="typeId" id="typeId" /> 
+			<form class="layui-form searchClass" action="" id="win-add-object">
+				<div class="r">
+					<div class="layui-input-inline">
+						<input type="text" name="searchKey" maxlength="20" id="searchKey"
+							placeholder="请输入标题或创建人" autocomplete="off" class="layui-input"
+							style="height: 30px; line-height: 30px;">
+					</div>
+					<span><@a code="060602" href="javascript:void(0)"
+						class="layui-btn layui-btn-small" id="searchBn" onclick="loadData(1)"
+						iclass="layui-icon" icon="&#xe615;" text="查询"/></span> <span><@a
+						code="060603" href="javascript:void(0)" class="layui-btn
+						layui-btn-small" id="" onclick="search_h()" text="高级搜索"/></span>
+				</div>
+				<div class="layui-input-inline">
+					<span><@a code="060601" href="javascript:void(0)"
+						class="layui-btn layui-btn-small" id="" onclick="reminders();"
+						iclass="layui-icon" icon="&#xe642;" text="催办"/></span>
+				</div>
+				<div class="layui-input-inline">
+					<span><@a code="060604" href="javascript:void(0)"
+						class="layui-btn layui-btn-small" id="" onclick="delivery();"
+						iclass="layui-icon" icon="&#xe642;" text="特送人员"/></span>
+				</div>
+			</form>
+		</blockquote>
+		<form class="layui-form searchClass sear" style="display: none;">
+			<input type="hidden" name="${_csrf.parameterName}"
+				id="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-input-inline">
+			 	<span>来文文号</span>
+			</div>
+		    <div class="layui-input-inline m_r20">
+			 	<input type="text" class="inp_w120px" id="referenceNumber">
+			</div>
+			<div class="layui-input-inline">
+			 	<span>文号</span>
+			</div>
+		    <div class="layui-input-inline m_r20">
+			 	<input type="text" class="inp_w120px" id="serialNumber">
+			</div>
+			<div class="layui-input-inline">
+				<span>创建时间</span>
+			</div>
+			<div class="layui-input-inline m_r20">
+				<input type="text" class="inp_date" id="startTime"
+					readonly="readonly">
+			</div>
+			<div class="layui-input-inline m_r10">
+				<span>至</span>
+			</div>
+			<div class="layui-input-inline m_r20">
+				<input type="text" class="inp_date" id="endTime" readonly="readonly">
+			</div>
+			<div class="layui-input-inline m_r10">
+				<span>缓急</span>
+			</div>
+			<div class="layui-input-inline m_r20 content_sel">
+				<select name="city" id="isUrgent" lay-verify="required">
+					<option value="">请选择</option>
+					<option value="一般">一般</option>
+					<option value="紧急">紧急</option>
+					<option value="加急">加急</option>
+				</select>
+			</div>
+			<div class="layui-input-inline" style="float: right">
+				<span><a class="layui-btn layui-btn-small" id=""
+					onclick="loadData(1)" style="float: right;"><i
+						class="layui-icon">&#xe615;</i>查询</a></span>
+			</div>
+			<div class="m_t10">
+			    <div class="layui-input-inline m_r10">
+				<span>流程类型 </span>
+				</div>
+				<div class="layui-input-inline m_r20 content_sel"><@selectLink
+					table="act_aljoin_category" layVerify="required" id="id" name="id"
+					class="layui-input-inline" def="" key="id" text="category_name"
+					level="1" levelName="category_level" rankName="category_rank"
+					where=" AND is_active=1"/>
+				</div>
+				<div class="layui-input-inline">
+				<span>流程名称</span>
+				</div>
+				<div class="layui-input-inline m_r20">
+					<select name="qBpmnId" id="qBpmnId">
+						<option value="">请选择</option>
+					</select>
+				</div>
+			</div>
+		</form>
+		<div class="layui-field-box layui-form"
+			style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table admin-table">
+				<!--  
+				<colgroup>
+				<col width="30">
+				<col width="50">
+				<col width="90">
+				<col width="60">
+				<col width="250">
+				<col width="90">
+				<col width="90">
+				<col width="115">
+				<col width="115">
+				<col width="60">
+				</colgroup> 
+				-->
+				<thead>
+					<tr>
+						<th style="width: 20px;"><input type="checkbox"
+							lay-skin="primary" lay-filter="paging_check-all"></th>
+						<th style="display: none;">用户ID</th>
+						<th style="width: 60px;">序号</th>
+						<th style="width: 100px;">表单类型</th>
+						<th style="width: 40px;">缓急</th>
+						<th>标题</th>
+						<th style="width: 100px;">环节</th>
+						<th style="width: 70px;">当前办理人</th>
+						<th style="width: 160px;">签收时间</th>
+						<th style="width: 160px;">创建时间<img
+							src="../../web/images/upgray.png" class="up"
+							onclick="loadData('2')";><img
+							src="../../web/images/downgray.png" class="down"
+							onclick="loadData('1')";></th>
+					<!-- 	<th style="width: 160px;">创建时间</th> -->
+						<th style="width: 60px;">创建人</th>
+					</tr>
+				</thead>
+
+				<!-- <td onclick="openForm('{{value.taskId}}','{{value.title}}','{{value.taskDefKey}}','{{value.bpmnId}}','{{value.businessKey}}','{{value.signInTime}}')" class="hand table_link" title="{{value.title}}">{{value.title}}</td>
+ -->
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">b
+					{{each records value index}}
+						<tr>
+							<td><input type="checkbox"  class="check-id moreInput"  lay-skin="primary" class="check-id" value="'{{value.taskId}}'" tId="{{value.taskId}}" pId="{{value.processInstanceId}}" bk="{{value.businessKey}}"></td>
+                            <td style="display: none;">{{value.id}}</td>                      
+							<td style="display: none;">{{value.bpmnId}}</td>
+							<td style="display: none;">{{value.taskDefKey}}</td>
+							<td style="display: none;">{{value.businessKey}}</td>                         
+	                        <td>{{(current-1)*size+index+1}}</td>
+							<td>{{value.formType}}</td>
+							<td>{{value.urgency}}</td>
+                            <td onclick="isOverTask('{{value.processInstanceId}}','{{value.title}}','{{value.businessKey}}')" class="hand table_link" title="{{value.title}}">{{value.title}}</td>
+							<td>{{value.link}}</td>
+							<td title="{{value.formerManager}}">{{value.formerManager}}</td>
+							<td>{{value.signInTime}}</td>
+							<td>{{value.fillingDate}}</td>
+							<td>{{value.founder}}</td>
+						</tr>
+					{{/each}}
+					</script>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page"
+				style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	<!-- 催办弹窗 -->
+	<div class="m_10" style="display: none; z-index: 19940200;"
+		id="win-reminders-object">
+		<form class="layui-form" id="add-object-form">
+			<div class="layui-form-item" id="isWarn_add">
+				<label class="layui-form-label" style="width: 120px">请选择催办方式：</label>
+			</div>
+			<div class="layui-input-block" style="top: -5px;margin-left:54px;">
+					<input type="checkbox" class="check-id msgs" name="msgs" id="sms"
+						title="短信催办" value="1" lay-skin="primary"> <input
+						type="checkbox" class="check-id msgs" name="msgs" id="mai"
+						title="邮件催办" value="2" lay-skin="primary"> <input
+						type="checkbox" class="check-id msgs" name="msgs" id="msg"
+						title="在线催办" value="3" lay-skin="primary">
+				</div>
+			<div class="">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary"
+					onclick="layer.closeAll();"><i class="fa fa-backward"></i> 取消</a>
+				<div style="float: right;">
+					<a class="layui-btn submit" onclick="msgSend();"> <i
+						class="fa fa-save"></i> 确认
+					</a>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 特送弹窗 -->
+	<div class="m_10" style="z-index: 19940200; display: none;" id="win-delivey-object">
+		<div id="win-newsms-object">
+			<form class="layui-form" id="delivey-object-form">
+				<div class="judge_div">
+					<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+					<div class="l" style="width:58%;">
+						<div class="agree">
+							<div class="layui-form-item">
+								<div id="audit-member">
+									<div class="layui-form-item">
+										<div class="cl" style="padding-top:10px;">
+											<label class="l" style="font-weight:bold;">选择特送人员：</label>
+											<div class="l" style="width:78%">
+												<div id="add_testarea" class="judge input_btn reset1" style="min-height:28px;width:100%;"></div>
+												<a class="btn_blue2 r m_t10" onclick="SeclectOpen_add()">请选择</a>
+												<!-- <input type="hidden" id="add_key"  value="" class="add_keyId"> -->
+												<input type="hidden" id="add_id" value="" class="add_keyId">
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+						<div>
+							<label style="font-weight:bold;">意见：</label>
+							<textarea id="deliveyComment" class="draw_sug1" style="height:100px;width:97%;margin-top:5px;" onkeyup="gooHHH1(this)"  maxlength="95"></textarea>
+							<div class="r hand" onclick="add_sug1()"><span class="table_btn"><small  style="color:#333;margin-right:20px;"><span id="count1">0</span>/95</small>加入常用意见</span></div>
+						</div>
+					</div>
+					<div class="layui-form l judge_table" style="width:40%;">
+						<table class="layui-table admin-table">
+							<colgroup>
+								<col width="15%">
+								<col width="85%">
+								<col>
+							</colgroup>
+							<thead>
+							<tr>
+								<th>序号</th>
+								<th>常用意见</th>
+							</tr>
+							</thead>
+							<tbody id="opinion1-data">
+							<script id="opinion1-script" type="text/html">
+								{{each opinionlist1 value index}}
+								<tr >
+									<td>{{index+1}}</td>
+									<td title="" class="hand" onclick="click_font1(this)"><p class="hand sug1" style="white-space: normal;word-wrap: break-word;">{{value.content}}</p></td>
+								</tr>
+								{{/each}}
+							</script>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="cl judge_fixed" style="margin:10px 0;">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();" style="margin-right:10px;"><i class="fa fa-backward"></i> 返回</a>
+					<div style="float: right;">
+						<button class="layui-btn" lay-submit="" lay-filter="form-delivery-submit" id="form-delivery-submit">
+							<i class="fa fa-save" style="color:#FFF"></i> 确认
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<!-- 人员选择树 -->
+	<div style="display: none;z-index: 19940200;" id="win-personal-object">
+		<div class="search_h">
+			<input id="peopelSel" class="tree_search1 reset" type="text" value="" placeholder="搜索">
+			<a class="layui-btn layui-btn-small" id="" onclick="searchNodes()"><i class="layui-icon">&#xe615;</i>搜索</a>
+			<a class="layui-btn layui-btn-small layui-btn-primary" style="margin-left:2px;" type="reset" onclick="reset_tree()"><li class="fa fa-eraser"></li> 重置</a>
+			<label type="text"  id="resultKey" class="form-control">
+				<div>
+					<a id="clickUp" class="tree_up" onclick="clickUp()"><i class="layui-icon">&#xe619;</i></a>
+					<a id="clickDown" class="tree_down" onclick="clickDown()"><i class="layui-icon">&#xe61a;</i></a>
+				</div>
+				<label id="number" class="tree_number"></label>
+			</label>
+		</div>
+		<div class="tree_h">
+			<ul id="treeDemo" class="ztree treeDemo1" name="treeDemo" style="display:block"></ul>
+		</div>
+		<div class="sure_h">
+			<a class="layui-btn layui-btn-small sure_s"><li class="fa fa-save"></li> 确定</a>
+		</div>
+	</div>
+	<div class="admin-main"
+		style="display: none; z-index: 19940200; padding-top: 60px;"
+		id="win-inreaddetail-object">
+		<form class="layui-form" id="inRead-object-form">
+			<div class="data-wrap">
+				<input type="hidden" name="${_csrf.parameterName}"
+					value="${_csrf.token}" /> <input type="hidden" name="id"
+					id="id-inread" value="" />
+				<!-- 来文标题  -->
+				<div class="headtitle-padding">
+					<span id="fileTitle-inread"
+						style="font-size: 16px; font-weight: bold; word-wrap: break-word"></span>
+				</div>
+	            <div class="ext-border">
+					<!-- 文件类型 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">文件类型：</span> <span id="fileTypeName-inread"></span>
+					</div>
+		
+					<!-- 来文单位 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">来文单位：</span> <span id="fromUnitName-inread"></span>
+					</div>
+		
+					<!-- 来文文号 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">来文文号：</span> <span id="fromFileCode-inread"></span>
+					</div>
+		
+					<!-- 收文编号 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">收文编号：</span> <span id="receiveFileCode-inread"></span>
+					</div>
+		
+					<!-- 原文日期 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">原文日期：</span> <span id="orgnlFileTime-inread"></span>
+					</div>
+		
+					<!-- 收文日期 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">收文日期：</span> <span id="receiveFileTime-inread"></span>
+					</div>
+		
+					<!-- 办理时限 -->
+					<div class="p_t10 xhle">
+						<span class="e6ed">办理时限：</span> <span id="handleLimitTime-inread"></span>
+					</div>
+		
+					<!-- 缓急 -->
+					<div class="p_t10 xhle" >
+						<span class="e6ed">缓急：</span> <span id="urgentLevelName-inread"></span>
+					</div>
+				</div>
+				<!-- 办公室拟办意见 -->
+				<div class="office-opinion readUserIds" style="display: none;" id="office-textareaHtml">
+					<label>办公室拟办意见</label>
+					<div>
+					</div>
+				</div>		
+	            <div class="office-opinion" style="display:none;">
+					<label>传阅对象</label>
+					<div>
+						<table class="layui-table" style="width: 100%;margin-top: 0px;border: none;">
+							<colgroup>
+								<col width="20%">
+								<col width="80%">
+							</colgroup>
+							<thead>
+							<tr>
+								<th>名称</th>
+								<th>传阅对象</th>
+							</tr>
+							</thead>
+							<tbody id="objList-inread">
+							<script id="obj-script-inread"  type="text/html">
+							{{each objlist value index}}
+							<tr {{if (value.readUserNames==""||value.readUserNames==null)&&index>2}}style="display:none"{{/if}}>
+								<td>{{value.text}}</td>
+								<td colspan="2">
+									<div style="height:auto;min-height:35px;overflow:auto;font-size:14px;padding:0px 10px;white-space: normal;" id="readUserNames-toread{{index}}">{{value.readUserNames}}</div>
+									<input type="hidden" id="readUserIds{{index}}-toread" value="{{value.readUserIds}}">
+									<input type="hidden" id="dictCode{{index}}" value="{{value.dictCode}}">
+									<input type="hidden" id="dictName{{index}}" value="{{value.dictName}}">
+									<input type="hidden" id="dictValue{{index}}-toread" value="{{value.dictValue}}">
+								</td>
+							</tr>
+							{{/each}}
+						</script>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<!-- 附件 -->
+				<div class="office-opinion">
+					<span style="padding-bottom: 10px;color: #666;display: block;">已传附件</span>
+					<div class="table-wrap">
+						<table class="layui-table"
+							style="width: 100%; margin-top: 0px; border: none;">
+							<tbody id="demoList-inread">
+								<script id="artt-inread" type="text/html">
+							{{each filelist value index}}
+							<tr>
+								<td style="border:none;">{{value.attachName}}</td>
+								<td style="border:none;">{{value.attachSize}}kb</td>
+								<td style="border:none;">
+									<a onclick="downLoads('{{value.attachPath}}','{{value.attachName}}')" style="color:#339bf1;cursor:pointer">下载</a>
+								</td>
+							</tr>
+							{{/each}}
+						</script>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="btn_fixed_top" id="btns" style="top:33px;">
+				<!-- <div class="l">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary"
+						onclick="layer.closeAll()"><i class="fa fa-backward "></i> 返回</a>
+				</div>
+				<div class="r"> -->
+					<a class="flow_btn" onclick="printAreaObj()"><i class="layui-icon">&#xe621;</i>打印</a> 
+					<a class="flow_btn" onclick="daily()"><i class="layui-icon">&#xe60a;</i>流转日志</a>
+					<a class="flow_btn" onclick="readReceipt.showImg()"><i class="layui-icon">&#xe62c;</i>流程图</a>
+					<a class="flow_btn btns" onclick="batchidea()" id="read-situation"><i class="layui-icon">&#xe640;</i>传阅意见</a>
+				<!-- 	<a class="flow_btn" id="revoke-inread" lay-submit="" lay-filter="revoke-inread"><i class="fa fa-save"></i> 撤回</a>	 -->				
+			</div>	
+					
+		</form>
+	</div>
+	<!-- 传阅情况及意见 -->
+	<div class="admin-main" style="display: none;z-index: 19940200;padding-bottom:60px;" id="win-batchidea-object">
+		<!-- 已阅人员 -->
+		<div class="p_t10">
+			<span class="e6ed l">已阅人员：</span>
+			<div id="inReadUserNames" class="l" style="word-wrap:break-word;width:85%;"></div>
+		</div>
+		<!-- 未阅人员 -->
+		<div class="p_t10 cl">
+			<span class="e6ed l">未阅人员：</span>
+			<div id="toReadUserNames" class="l" style="word-wrap:break-word;width:85%;"></div>
+		</div>
+		<div class="cl" style="padding-top:1px;">
+		<table class="layui-table admin-table">
+			<colgroup>
+				<col width="6%">
+				<col width="8%">
+				<col width="10%">
+				<col width="16%">
+				<col width="60%">
+				<col>
+			</colgroup>
+			<thead>
+				<tr>
+					<th>序号</th>
+					<th>操作人</th>
+					<th>部门</th>
+					<th>时间</th>
+					<th>意见</th>
+				</tr>
+			</thead>
+			<tbody id="paging4-data">
+				<script id="paging4-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td>{{(current-1)*size+index+1}}</td>
+							<td>{{value.operationName}}</td>
+							<td title="{{value.deptName}}">{{value.deptName}}</td>
+							<td>{{value.readTimeStr}}</td>
+							<td >{{value.readOpinion}}</td>
+						</tr>
+					{{/each}}
+				</script>
+			</tbody>
+	 	</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging4-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	<div class="" id="win-daily-object" style="display: none;">
+		<form class="layui-form layui-form-pane admin-main">
+			<input type="hidden" name="${_csrf.parameterName}"
+				value="${_csrf.token}" />
+			<div class="layui-form">
+				<table class="layui-table admin-table">
+					<colgroup>
+						<col width="10%">
+						<col width="20%">
+						<col width="10%">
+						<col width="15%">
+						<col width="45%">
+						<col>
+					</colgroup>
+					<thead>
+						<tr>
+							<th style="display: none;">用户ID</th>
+							<th>操作人</th>
+							<th>流程方向</th>
+							<th>接收人</th>
+							<th>操作时间</th>
+							<th>审核意见</th>
+						</tr>
+					</thead>
+					<tbody id="paging3-data">
+						<script id="paging3-script" type="text/html">
+						{{each loglist value index}}
+						<tr >
+							<td style="display: none;">{{value.taskId}}</td>
+							<td>{{value.operationName}}</td>
+							<td title="{{value.direction}}">{{value.direction}}</td>
+							<td title="{{value.recevieUserName}}">{{value.recevieUserName}}</td>
+							<td>{{value.operationTime}}</td>
+							<td>{{value.comment}} </td>
+						</tr>
+						{{/each}}
+					</script>
+					</tbody>
+				</table>
+			</div>
+			<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+				<div id="paging3-footer" class="page"
+					style="background-color: white; text-align: center;"></div>
+			</div>
+		</form>
+	</div>
+	<input type="hidden" name="processInstanceId" id="processInstanceId"
+		value="" />
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript"
+		src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../../web/js/readReceipt.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.PrintArea.js"></script>
+	<script>
+		tool.timeset('#startTime', '#endTime');
+		var pform, pdate, indexs;
+		//添加事件
+		layui.use('form', function() {
+			pform = layui.form;
+			pform.on('select(id)', function(data) {
+				//参数 1：当前元素id，参数2：顶级元素id（用来锁定唯一元素）					
+				$("#qBpmnId").find("option").remove();
+				$("#qBpmnId").append( "<option value=''>请选择</option>" );			
+				 if(data.value.length>0){
+						$("#typeId").val(data.value);
+					}else{
+						var emel=$(data.elem).parent().prev();
+						if(emel.find('select').length>0){
+							$("#typeId").val(emel.find('select option:selected').val())
+						}else{
+							$("#typeId").val("");
+						}
+					}
+				if(data.value!=''){						
+				var _csrf = $("#_csrf").val();
+				var pm = {
+					cateGoryId : data.value,
+					_csrf : _csrf
+				};
+				tool.post("/act/actAljoinBpmn/setCategoryBpmn",pm,
+						function(data) {
+					      for (var i = 0; i < data.length; i++) {
+					    	$("#qBpmnId").append( "<option value='"+data[i].id+"'>"+data[i].processName+"</option>" );
+					      }		
+					      pform.render();
+						}, false) 
+						
+			    }
+				tool.selectLinkTagByPid("id", "win-add-object", data);				
+			});
+			loadData(1);
+		});
+		$(function(){ 
+			$("#searchBn").keydown(function(e) {  
+			  if (e.keyCode == 13) {  
+				  loadData(1);
+			  } 
+			})
+		})
+		/* //详情对象 
+		function openForm(id,processName,taskDefKey,bpmnId,businessKey,signInTime) {		
+			var index = layer.open({
+				title : processName,
+				maxmin : false,
+				type : 2,
+				content : '../../act/modeler/openForm.html?id='+bpmnId+'&activityId='+id+'&taskId='+taskDefKey+'&businessKey='+businessKey+'&signInTime='+signInTime
+
+			});
+			pform.render();
+			layer.full(index);
+		}	 */
+		
+		//详情对象
+		function openForm(processInstanceId, title, businessKey) {
+			if (businessKey.indexOf('ioaReceiveFile') > -1) {
+				var strs = new Array(); //定义一数组 
+				strs = businessKey.split(",");
+				for (i = 0; i < strs.length; i++) {
+					processInstanceId = strs[i];
+				}
+				$("#processInstanceId").val(processInstanceId);
+				readReceipt.inReadDetail(processInstanceId);
+			} else {
+				$("#processInstanceId").val('');
+				var index = layer.open({
+							title : title,
+							maxmin : false,
+							type : 2,
+							content : '../../act/modeler/openForm.html?processInstanceId='
+									+ processInstanceId
+									+ '&businessKey='
+									+ businessKey + '&isWait=0&isMonitor=1'
+						});
+			
+				layer.full(index);
+			}
+			pform.render();
+		
+		}
+		function msgSend() {
+			var chk_value = "";
+			var chk_values = "";
+			$(".moreInput:checked").each(function() {
+				chk_value = chk_value + $(this).val() + ",";
+			})
+			if ($("input[name='msgs']:checked").length == 0) {
+				tool.error('至少选中一个通知方式');
+			} else {
+				$('input[name="msgs"]:checked').each(function() {
+					chk_values = chk_values + $(this).val() + ",";
+				});
+
+				var param = {
+					_csrf : $("#_csrf").val(),
+					urgentId : chk_value,
+					urgentMsg : chk_values
+				}
+				tool.post("/ioa/ioaMonitor/selectUrgent", param,
+						function(data) {
+							if (data.code == 0) {
+								tool.success(data.message);
+								layer.close(indexs);
+							} else {
+								tool.error(data.message);
+							}
+						}, false)
+			}
+
+		}
+		//加载流程list
+		function loadData(sorting) {
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+			param.formType = $('#typeId').val();
+			param.searchKey = $('#searchKey').val();
+			//param.founder =$('#createUserName').val();
+			param.startTime = $('#startTime').val();
+			param.endTime = $('#endTime').val();
+			param.isUrgent = $('#isUrgent').val();			
+			param.qBpmn= $('#qBpmnId').val();
+			param.referenceNumber = $('#referenceNumber').val();
+			param.serialNumber = $('#serialNumber').val();
+			param.sorting = sorting; //1为倒序，2为升序	
+			param.url = "/ioa/ioaMonitor/list";
+			tool.loadpage(param);
+			if (sorting == "1" || sorting == "2") {
+				param.sorting = sorting;
+				if (sorting == "1") {					
+					$(".up").attr("src", "../../web/images/upgray.png");
+					$(".down").attr("src", "../../web/images/downture.png");
+				} else {
+					$(".up").attr("src", "../../web/images/uptrue.png");
+					$(".down").attr("src", "../../web/images/downgray.png");	
+							
+				}
+
+			} 
+		}
+		/* 高级搜索 */
+		function search_h() {
+			$(".sear").toggle();
+		}
+		//催办
+		function selectUrgent() {
+
+		}		
+		//作废
+		function invalidTask(){
+			if ($(".moreInput:checked").length == 0) {
+				tool.error('至少选中一笔作废工作');
+			} else {				
+				var qid="";
+				$(".moreInput:checked").each(function() {
+					qid = qid + $(this).val() + ",";
+				})			
+				var param = {
+						_csrf : $("#_csrf").val(),
+						invalid : qid						
+					}
+				tool.post("/ioa/ioaMonitor/invalidTask", param,	function(data) {
+								if (data.code == 0) {
+									tool.success(data.message);										
+									loadData(1);									
+								} else {
+									tool.error(data.message);
+								}
+							}, false); 
+			}
+		}
+		//催办弹窗
+
+		function reminders() {
+			if ($(".moreInput:checked").length == 0) {
+				tool.error('至少选中一笔催办工作');
+			} else {
+				indexs = layer.open({
+					title : '催办提醒',
+					maxmin : false,
+					area : [ '400px', '150px' ],
+					type : 1,
+					content : $('#win-reminders-object')
+				});
+
+			}
+		}
+
+		/* 日志弹窗 */
+		function daily() {
+			var processInstanceId = $("#processInstanceId").val();
+			var _csrf = $("#_csrf").val();
+			var pm = {
+				processInstanceId : processInstanceId,
+				_csrf : _csrf
+			};
+			//tool.post("/ioa/ioaReceiveFile/getAllTaskInfo", pm, function(data) {
+			tool.post("/act/actFixedForm/getLog", pm, function (data) {
+				var loglist = {
+					loglist : data
+				};
+				$('#paging3-data').html(template("paging3-script", loglist));
+				var index = layer.open({
+					title : '日志',
+					maxmin : false,
+					type : 1,
+					content : $('#win-daily-object')
+				});
+				layer.full(index);
+			}, false);
+		}
+		 function downLoads(path,resourceName){
+		        resourceName = encodeURIComponent(encodeURIComponent(resourceName));
+		        location.href = "/res/resResource/download?path="+ encodeURIComponent(path)+"&resourceName="+resourceName;
+		    }
+		 function batchidea(){
+				var processInstanceId = $("#processInstanceId").val()
+		        var pm = {
+		            _csrf:$("#_csrf").val(),
+		            processInstanceId : processInstanceId
+		        };
+		        //console.log(processInstanceId)
+		        tool.post("/ioa/ioaReceiveReadUser/circulation",pm,function(data){
+		            if(null != data){
+		                $("#inReadUserNames").text(data.inReadNames);
+		                $("#toReadUserNames").text(data.toReadNames);
+		            }
+		            var index = layer.open({
+		                title : '传阅情况及意见',
+		                maxmin : false,
+		                type : 1,
+		                shadeClose: true,
+		                content : $('#win-batchidea-object')
+		            });
+		            loadReadUserData();
+		            layer.full(index);
+		        },false);
+			}
+		//传阅情况及意见列表
+		 function loadReadUserData() {
+		    	var processInstanceId = $("#processInstanceId").val()
+		        var param = new Object();
+		        param.container = "paging4";
+		        param.url = "/ioa/ioaReceiveReadUser/list";
+		        param._csrf = $("#_csrf").val();
+		        param.id = processInstanceId;
+		        param.pageSize = 10;
+		        tool.loadpage(param);
+		    }
+			//打印
+			function printAreaObj(){
+				$("#inRead-object-form").find("#btns").css("display","none");
+				$("#inRead-object-form").children(".data-wrap").css("padding","0px");
+				$("#inRead-object-form").printArea();
+				$("#inRead-object-form").find("#btns").css("display","block");
+				$("#inRead-object-form").children(".data-wrap").css("padding","0px 100px");
+			}
+			function isOverTask(processInstanceId,title,businessKey){
+				var param = new Object()
+				param.pid = processInstanceId;		
+				param._csrf = $("#_csrf").val()			
+				tool.post("../ioaWaitWork/isOverTask", param, function(data){				
+					if (data.code == 0) {	
+						openForm(processInstanceId,title,businessKey);
+					} else {
+						tool.success(data.message);		
+						loadData();
+					}				
+				}, false); 
+			}
+
+        /**
+         * 特送弹窗
+         */
+        function delivery(){
+            if ($(".moreInput:checked").length == 0) {
+                tool.error('至少选中一笔工作');
+                return false;
+            }
+           /* if($(".moreInput:checked").length > 1){
+                tool.error('最多选中一笔工作');
+                return false;
+            }*/
+			var taskIds = "";
+            var processInstanceIds = "";
+            var businessKeys = "";
+			for(var i = 0;i<$(".moreInput:checked").length;i++){
+                taskIds += $($(".moreInput:checked")[i]).attr("tid") + ";";
+                processInstanceIds += $($(".moreInput:checked")[i]).attr("pId") + ";";
+                businessKeys += $($(".moreInput:checked")[i]).attr("bk") + ";";
+			}
+            $("#taskIds").val(taskIds);
+            $("#processInstanceIds").val(processInstanceIds);
+            $("#businessKeys").val(businessKeys);
+            var index = layer.open({
+                title : '特送人员',
+                maxmin : false,
+                type : 1,
+                area: ['900px', '510px'],
+                shadeClose: true,
+                content : $('#win-delivey-object')
+            });
+		}
+
+		//特送人员组织机构树弹窗
+        function SeclectOpen_add() {
+            /*弹出组织机构树 */
+            tool.treeDemo("win-personal-object", "treeDemo", "add_id", "", "add_testarea", false, "", "", "", "");
+        }
+
+        //加签点击添加常用意见
+        function click_font1(obj){
+            var a = $(obj).find('.sug1').text();
+            $('.draw_sug1').val(a);
+        }
+        function add_sug1(){
+            layer.confirm('确定加入常用意见？', {
+                icon:3,
+                btn: ['确定','取消'] //按钮
+            }, function(){
+                add_sugfun1();
+            }, function(){
+
+            });
+        }
+        function add_sugfun1(){
+            if($(".draw_sug1").val() ==""){
+                tool.error("请加入有内容的意见")
+                return false;
+            }
+            var pm = {
+                _csrf:_csrf,
+                content:$(".draw_sug1").val()
+            };
+            tool.post("/per/autUsefulOpinion/add",pm,function(retMsg){
+                if (retMsg.code == 0) {
+                    layer.msg(retMsg.message, {
+                        icon : 1,
+                        time : 1500
+                    }, function(index) {
+                        var pm = {
+                            _csrf : _csrf
+                        };
+                        tool.post("/per/autUsefulOpinion/opinionList", pm, function(retMsg) {
+                            if (null != retMsg) {
+                                var fileBack = retMsg;
+                                var opinionlist1 = {
+                                    opinionlist1 : fileBack
+                                };
+                                $('#opinion1-data').html(template("opinion1-script", opinionlist1));
+                            }
+                        }, false);
+                        layer.close(index);
+                    });
+                } else {
+                    tool.error(retMsg.message);
+                }
+            },false);
+        }
+
+        /**
+         * 特送确认操作
+         */
+        var flag = true;
+        $("#form-delivery-submit").click(function(){
+            if($("#add_id").val() == ""){
+                tool.error("请先选特送人员");
+                return false;
+            }
+            //表单数据
+            var _csrf = $("#_csrf").val();
+            var  assignees = $("#add_id").val();
+            var taskIds = $("#taskIds").val();
+            var taskDefKeys = $("#taskDefKeys").val();
+            var processInstanceIds = $("#processInstanceIds").val();
+            var param = {
+                processInstanceIds : processInstanceIds,
+				_csrf : _csrf,
+                assignees : assignees,
+                taskIds : taskIds,
+                taskKeys : taskDefKeys,
+                message:$("#deliveyComment").val()
+			};
+            if($("#signTaskUserComment").val()==""){
+                layer.confirm('意见为空，确定提交？', {
+                    icon : 3,
+                    btn: ['确定','取消'] //按钮
+                }, function(){
+                    if(flag == true){
+                        flag = false;
+                        tool.post("../../ioa/ioaMonitor/deliveryPersonnel",param,postCallBackInfo, false);
+                    }
+                }, function(){
+
+                });
+            }else{
+                layer.confirm('确定提交？', {
+                    icon : 3,
+                    btn: ['确定','取消'] //按钮
+                }, function(){
+                    if(flag == true){
+                        flag = false;
+                        tool.post("../../ioa/ioaMonitor/deliveryPersonnel",param,postCallBackInfo, false);
+                    }
+                }, function(){
+
+                });
+            }
+            return false;
+        });
+
+        function gooHHH1(myself){
+            var value=$(myself).val();
+            value=value.replace(/[%+&\"|\"]+/g,'');
+            $(myself).val(value);
+
+            var min = 0;
+            if (myself.value.length > min) {
+                var str = min + myself.value.length;
+                document.getElementById("count1").innerHTML = str.toString();
+            }
+        }
+
+        function postCallBackInfo(retMsg) {
+            if (retMsg.code == 0) {
+                layer.msg(retMsg.message, {
+                    icon : 1,
+                    time : 1500
+                }, function(index) {
+                    //是否从标签页进入刷新和三种情况撤回,回退,提交刷新
+                    var isWait = $("#isWait").val();
+                    var iframeUrlStry = $("iframe").context.URL;
+                    var titleTxIs = iframeUrlStry.indexOf("isIndexLog");
+                    if(isWait == 0){
+                        if(titleTxIs != -1){
+                            parent.layer.closeAll();
+                            parent.loadData();
+                        }else{
+                            $(".layui-nav-tree", window.parent.parent.document).find("li").removeClass("layui-nav-itemed");
+                            $("a[data-url='/tempMenu/indexPage']",window.parent.parent.document).parent().trigger("click");
+                        }
+                    }else{
+                        if(titleTxIs != -1){
+                            parent.layer.closeAll();
+                            parent.loadData();
+                        }else{
+                            $(".layui-nav-tree", window.parent.parent.document).find("li").removeClass("layui-nav-itemed");
+                            $("a[data-url='/tempMenu/indexPage']",window.parent.parent.document).parent().trigger("click");
+                        }
+                    }
+                });
+            } else {
+                tool.error(retMsg.message);
+            }
+        }
+	</script>
+</body>
+
+</html>

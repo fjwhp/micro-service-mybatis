@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>已办工作</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<link rel="stylesheet" href="../../web/css/zhengls.css" media="all">
+<style>
+span.layui-laypage-total{border: none;margin-left: 2px;}
+</style>
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<input type="hidden" name="typeId"  id="typeId"/>
+	<div class="admin-main"> 
+		<blockquote class="layui-elem-quote" style="padding:5px;">
+			<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+			<form class="layui-form searchClass" action="">
+				<div class="r">
+					<div class="layui-input-inline">
+						<input type="text" name="searchKey" id="searchKey" placeholder="请输入标题" autocomplete="off" class="layui-input"
+							style="height: 30px; line-height: 30px;" maxlength="20">
+					</div>
+					<span><@a code="060201" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="select()" iclass="layui-icon"
+						 icon="&#xe615;" text="查询"/></span>
+				    <span><@a code="060202" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="search_h()" text="高级搜索"/></span>
+				</div>
+			    <div class="layui-input-inline">
+				  	<!-- <span><a class="layui-btn layui-btn-small" onclick="onclick="showDeletes()"><i class="layui-icon">&#xe642;</i>催办</a></span> -->
+				</div>
+			</form>
+		</blockquote>
+			<form class="layui-form searchClass sear" style="display:none;">
+			<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+				
+			  <!--   <div class="layui-input-inline ">
+				 <span>标题</span>
+				</div>
+			    <div class="layui-input-inline m_r20">
+				 <input type="text" class="inp_w120px" id="theme" >
+				</div> -->
+				<div class="layui-input-inline">
+				 <span>创建人</span>
+				</div>
+			    <div class="layui-input-inline m_r20">
+				 <input type="text" class="inp_w120px" id="createUserName"  >
+				</div>
+				<div class="layui-input-inline">
+				 <span>来文文号</span>
+				</div>
+			    <div class="layui-input-inline m_r20">
+				 <input type="text" class="inp_w120px" id="referenceNumber">
+				</div>
+				<div class="layui-input-inline">
+				 <span>文号</span>
+				</div>
+			    <div class="layui-input-inline m_r20">
+				 <input type="text" class="inp_w120px" id="serialNumber">
+				</div>
+				<div class="layui-input-inline">
+				 <span>创建时间</span>
+				</div>
+				<div class="layui-input-inline m_r10">
+					 <input type="text" class="inp_date" id="startTime" readonly="readonly">
+				</div>
+				
+				<div class="layui-input-inline m_r10">
+				 	<span >至</span>
+				</div>
+				<div class="layui-input-inline m_r20">
+					 <input type="text" class="inp_date" id="endTime" readonly="readonly">
+				</div>
+				 
+		         <div class="layui-input-inline m_r10">
+						 	<span>缓急</span>
+				</div>
+				<div class="layui-input-inline m_r20 content_sel">
+					      		<select name="city" lay-verify="required" id="isUrgent">
+							        <option value="">请选择</option>
+							        <option value="一般">一般</option>
+							        <option value="紧急">紧急</option>
+							        <option value="加急">加急</option>
+					      		</select>
+				</div>
+				<div class="layui-input-inline" style="float:right">
+					<span><a class="layui-btn layui-btn-small" id="" onclick="loadData()" style="float:right;"><i class="layui-icon">&#xe615;</i>查询</a></span>
+			  	</div>
+			  	<div class="m_t10">
+				  	<div class="layui-input-inline m_r10">
+							 	<span>流程类型</span>
+					</div>
+					<div class="layui-input-inline m_r20 content_sel">
+			      		<@selectLink table="act_aljoin_category" layVerify="required"  id="id"  name="id" class="layui-input-inline" def="" key="id" text="category_name" level="1" levelName="category_level" rankName="category_rank" where=" AND is_active=1"/>
+					</div>
+					<div class="layui-input-inline">
+						<span>流程名称</span>
+					</div>
+					<div class="layui-input-inline m_r20 content_sel">
+						<select name="qBpmnId" id="qBpmnId">
+							<option value="">请选择</option>
+						</select>
+					</div>
+			  	</div>
+			</form>
+<!-- 		<form class="layui-form m_t30" action="" style="margin-bottom:20px;">
+				<a class="btn_blue" onclick="openAddWin()">催办</a>
+		</form> -->
+		<div class="layui-field-box layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table admin-table">
+				<thead>
+					<tr>
+					    <th style="width: 20px;"><input type="checkbox" lay-skin="primary" lay-filter="paging_check-all"></th>
+						<th style="display: none;">用户ID</th>
+						<th style="width: 60px;">序号</th>
+						<!-- <th style="width: 100px;">流程类型</th>
+						<td>{{value.formType}}</td> -->
+						<th>标题</th>
+						<th style="width: 100px;">文号</th>
+						<th style="width: 100px;">当前环节</th>
+						<th style="width: 70px;">当前办理人</th>
+						<th style="width: 60px;">缓急<img src="../../web/images/upgray.png"  class="up" onclick="loadData('','1')";><img src="../../web/images/downgray.png" class="down" onclick="loadData('','0')";></th>
+						<th style="width: 160px;">处理时间</th> 
+						<th style="width: 160px;">收件时间<img src="../../web/images/upgray.png"  class="up1" onclick="loadData('1','')";><img src="../../web/images/downgray.png" class="down1" onclick="loadData('0','')";></th>
+						<th style="width: 60px;">创建人</th> 
+						<!-- <th style="width: 40px;">操作</th> 
+						<td><@a code="" href="javascript:void(0)" class="table_btn" id="show-section" onclick="showImg('{{value.processInstanceId}}')" text="查看"/></td>
+					 --></tr>
+				</thead>
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr  onclick="isOverTask('{{value.processInstanceId}}','{{value.title}}','{{value.businessKey}}','{{value.taskDefKey}}')" class="hand" >
+							<td onclick="defalt_td(event)"><input type="checkbox" lay-skin="primary" class="check-id"></td>
+                            <td style="display: none;">{{value.id}}</td>
+                            <td>{{(current-1)*size+index+1}}</td>
+							<td title="{{value.title}}">{{value.title}}</td>
+							<td title="{{value.referenceNumber}}">{{value.referenceNumber}}</td>
+							<td title="{{value.link}}">{{value.link}}</td>
+							<td title="{{value.currentAdmin}}">{{value.currentAdmin}}</td>
+							<td>{{value.urgency}}</td>
+							<td>{{value.processingDate}}</td>
+							<td>{{value.fillingDate}}</td>
+							<td title="{{value.founder}}">{{value.founder}}</td>
+						</tr>
+					{{/each}}
+					</script>
+				</tbody>
+			</table>
+		</div>
+			               
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+
+	
+	<!-- <script type="text/javascript" src="../../web/plugins/layui/layui.js"></script> -->
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script>
+		tool.timeset("#startTime","#endTime");
+		var pform,pdate;
+		//添加事件
+		layui.use('form', function() {
+			pform = layui.form;
+			loadData();
+			
+			pform.on('select(id)', function(data) {
+	            //参数 1：当前元素id，参数2：顶级元素id（用来锁定唯一元素）
+                $("#qBpmnId").find("option").remove();
+                $("#qBpmnId").append( "<option value=''>请选择</option>" );
+                if(data.value.length>0){
+					$("#typeId").val(data.value);
+				}else{
+					var emel=$(data.elem).parent().prev();
+					if(emel.find('select').length>0){
+						$("#typeId").val(emel.find('select option:selected').val())
+					}else{
+						$("#typeId").val("");
+					}
+				}
+                if(data.value!=''){
+                    var _csrf = $("#_csrf").val();
+                    var pm = {
+                        cateGoryId : data.value,
+                        _csrf : _csrf
+                    };
+                    tool.post("/act/actAljoinBpmn/setCategoryBpmn",pm,
+                        function(data) {
+                            for (var i = 0; i < data.length; i++) {
+                                $("#qBpmnId").append( "<option value='"+data[i].id+"'>"+data[i].processName+"</option>" );
+                            }
+                            pform.render();
+                        }, false)
+                }
+                tool.selectLinkTagByPid("id","win-add-object",data);
+	    	});
+		});
+		
+		//查询
+		function select() {
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+			param.title =$('#searchKey').val();
+			param.url = "../ioaDoingWork/selectDoTask";
+		 	tool.loadpage(param);
+		} 
+	
+		//加载流程list
+		function loadData(fillingDateIsAsc,urgencyIsAsc) {
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+            param.fillingDateIsAsc = fillingDateIsAsc;
+            param.urgencyIsAsc = urgencyIsAsc;
+			param.formType =$('#typeId').val();
+			param.title =$('#searchKey').val();
+			param.founder =$('#createUserName').val();
+			param.createBegTime =$('#startTime').val();
+            param.createEndTime =$('#endTime').val();
+            param.referenceNumber = $('#referenceNumber').val();
+			param.serialNumber = $('#serialNumber').val();
+			param.urgency =$('#isUrgent').val();
+            param.processName= $("#qBpmnId option:checked").text() == '请选择' ? "" : $("#qBpmnId option:checked").text();
+			param.url = "../ioaDoingWork/selectDoTask";
+		 	tool.loadpage(param);
+		 	
+		 	if(urgencyIsAsc=="0"||urgencyIsAsc=="1"){
+				param.urgencyIsAsc=urgencyIsAsc;
+				if(urgencyIsAsc=="1"){
+						$(".up").attr("src","../../web/images/uptrue.png");
+						$(".down").attr("src","../../web/images/downgray.png");
+					}else{
+						$(".up").attr("src","../../web/images/upgray.png");
+						$(".down").attr("src","../../web/images/downture.png");
+					}
+				
+			}
+			if(fillingDateIsAsc=="0"||fillingDateIsAsc=="1"){
+				param.fillingDateIsAsc=fillingDateIsAsc;
+				if(fillingDateIsAsc=="1"){
+						$(".up1").attr("src","../../web/images/uptrue.png");
+						$(".down1").attr("src","../../web/images/downgray.png");
+					}else{
+						$(".up1").attr("src","../../web/images/upgray.png");
+						$(".down1").attr("src","../../web/images/downture.png");
+					}
+				
+			}
+		} 
+		function isOverTask(processInstanceId,title,businessKey,taskKey){
+			var param = new Object()
+			param.pid = processInstanceId;		
+			param._csrf = $("#_csrf").val()			
+			tool.post("../ioaWaitWork/isOverTask", param, function(data){				
+				if (data.code == 0) {	
+					openForm(processInstanceId,title,businessKey,taskKey);
+				} else {
+					tool.success(data.message);		
+					loadData();
+				}				
+			}, false); 
+		}
+		function showImg(processInstanceId) {
+			var index = layer.open({
+				title : '流程图',
+				maxmin : false,
+				type : 1,                                     
+				content : '<img src="../ioaWaitWork/showImg?processInstanceId='+processInstanceId+'" />'
+			});
+			pform.render();
+			layer.full(index);
+		}
+		/* 高级搜索 */
+		function search_h(){
+			$(".sear").toggle();
+		}
+
+        //详情对象
+        function openForm(processInstanceId,title,businessKey,taskKey) {
+            var index = layer.open({
+                title : title,
+                maxmin : false,
+                type : 2,
+                //isIndexLog判断是否从标签页进入
+                content : '../../act/modeler/openForm.html?processInstanceId='+processInstanceId+'&businessKey='+businessKey+'&isWait=0'+'&isIndexLog=0&taskId='+taskKey,
+			    end:function(){ 
+				   //刷新列表数据 
+				   loadData(); 
+				}		
+
+            });
+            pform.render();
+            layer.full(index);
+        }
+        function defalt_td(event){
+			event.cancelBubble=true;
+		}
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.act.dao.mapper.ActRuTaskMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.act.dao.entity.ActRuTask">
+		<id column="ID_" property="id" />
+		<result column="REV_" property="rev" />
+		<result column="EXECUTION_ID_" property="executionId" />
+		<result column="PROC_INST_ID_" property="procInstId" />
+		<result column="PROC_DEF_ID_" property="procDefId" />
+		<result column="NAME_" property="name" />
+		<result column="PARENT_TASK_ID_" property="parentTaskId" />
+		<result column="DESCRIPTION_" property="description" />
+		<result column="TASK_DEF_KEY_" property="taskDefKey" />
+		<result column="OWNER_" property="owner" />
+		<result column="ASSIGNEE_" property="assignee" />
+		<result column="DELEGATION_" property="delegation" />
+		<result column="PRIORITY_" property="priority" />
+		<result column="CREATE_TIME_" property="createTime" />
+		<result column="DUE_DATE_" property="dueDate" />
+		<result column="CATEGORY_" property="category" />
+		<result column="SUSPENSION_STATE_" property="suspensionState" />
+		<result column="TENANT_ID_" property="tenantId" />
+		<result column="FORM_KEY_" property="formKey" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        ID_ AS id, REV_ AS rev, EXECUTION_ID_ AS executionId, PROC_INST_ID_ AS procInstId, PROC_DEF_ID_ AS procDefId, NAME_ AS name, PARENT_TASK_ID_ AS parentTaskId, DESCRIPTION_ AS description, TASK_DEF_KEY_ AS taskDefKey, OWNER_ AS owner, ASSIGNEE_ AS assignee, DELEGATION_ AS delegation, PRIORITY_ AS priority, CREATE_TIME_ AS createTime, DUE_DATE_ AS dueDate, CATEGORY_ AS category, SUSPENSION_STATE_ AS suspensionState, TENANT_ID_ AS tenantId, FORM_KEY_ AS formKey
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM act_ru_task WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="ActRuTask">
+    	INSERT INTO act_ru_task(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{rev}, #{executionId}, #{procInstId}, #{procDefId}, #{name}, #{parentTaskId}, #{description}, #{taskDefKey}, #{owner}, #{assignee}, #{delegation}, #{priority}, #{createTime}, #{dueDate}, #{category}, #{suspensionState}, #{tenantId}, #{formKey})
+    </insert>
+
+	<!-- 待办任务分页列表 -->
+	<select id="selectWaitPage" resultMap="BaseResultMap" parameterType="aljoin.act.dao.entity.ActRuTask">
+		select tmpTable.*
+		from act_hi_taskinst hiTask JOIN (
+		select
+			distinct
+			RES.ID_,
+			RES.CREATE_TIME_,
+			RES.NAME_,
+			RES.ASSIGNEE_,
+			RES.PROC_INST_ID_,
+			RES.TASK_DEF_KEY_
+		from ACT_RU_TASK  RES
+		LEFT JOIN ACT_RU_IDENTITYLINK  I ON I.TASK_ID_ = RES.ID_
+		<where>
+			<if test="assignee != null and assignee != ''">
+				RES.ASSIGNEE_ = #{assignee}
+			</if>
+			<if test="procDefId != null and procDefId != ''">
+				AND RES.PROC_DEF_ID_ NOT LIKE CONCAT(CONCAT('%',#{procDefId}),'%')
+				AND RES.PROC_DEF_ID_ NOT LIKE '%Process_r2T2ZjtOsO%'
+			</if>
+			<if test="processInstanceIds != null">
+				AND RES.PROC_INST_ID_ IN
+				<foreach collection="processInstanceIds" item="processInstanceId" index="index"
+						 open="(" close=")" separator=",">
+					#{processInstanceId}
+				</foreach>
+			</if>
+			<if test="dbType == 'mysql'">
+				<if test="createBegTime!=null and createBegTime != ''">
+					<![CDATA[   and  DATE_FORMAT(RES.CREATE_TIME_, '%Y-%m-%d') >= #{createBegTime}]]>
+				</if>
+				<if test="createEndTime!=null and createEndTime != ''">
+					<![CDATA[   and  DATE_FORMAT(RES.CREATE_TIME_, '%Y-%m-%d') <= #{createEndTime}]]>
+				</if>
+			</if>
+			<if test="dbType == 'oracle'">
+				<if test="createBegTime!=null and createBegTime!=''">
+					<![CDATA[   and  to_char(RES.CREATE_TIME_,'yyyy-MM-dd') >= #{createBegTime} ]]>
+				</if>
+				<if test="createEndTime!=null and createEndTime!=''">
+					<![CDATA[   and  to_char(RES.CREATE_TIME_,'yyyy-MM-dd') <= #{createEndTime}  ]]>
+				</if>
+			</if>
+
+			OR (
+				RES.ASSIGNEE_ IS NULL
+				<if test="procDefId != null and procDefId != ''">
+					AND RES.PROC_DEF_ID_ NOT LIKE CONCAT(CONCAT('%',#{procDefId}),'%')
+					AND RES.PROC_DEF_ID_ NOT LIKE '%Process_r2T2ZjtOsO%'
+				</if>
+				<if test="processInstanceIds != null">
+					AND RES.PROC_INST_ID_ IN
+					<foreach collection="processInstanceIds" item="processInstanceId" index="index"
+							 open="(" close=")" separator=",">
+						#{processInstanceId}
+					</foreach>
+				</if>
+				<if test="dbType == 'mysql'">
+					<if test="createBegTime!=null and createBegTime != ''">
+						<![CDATA[   and  DATE_FORMAT(RES.CREATE_TIME_, '%Y-%m-%d') >= #{createBegTime}]]>
+					</if>
+					<if test="createEndTime!=null and createEndTime != ''">
+						<![CDATA[   and  DATE_FORMAT(RES.CREATE_TIME_, '%Y-%m-%d') <= #{createEndTime}]]>
+					</if>
+				</if>
+				<if test="dbType == 'oracle'">
+					<if test="createBegTime!=null and createBegTime!=''">
+						<![CDATA[   and  to_char(RES.CREATE_TIME_,'yyyy-MM-dd') >= #{createBegTime} ]]>
+					</if>
+					<if test="createEndTime!=null and createEndTime!=''">
+						<![CDATA[   and  to_char(RES.CREATE_TIME_,'yyyy-MM-dd') <= #{createEndTime}  ]]>
+					</if>
+				</if>
+				AND (
+					<if test="assignee != null and assignee != ''">
+						I.USER_ID_ = #{assignee}
+					</if>
+					OR I.GROUP_ID_ IN (
+						SELECT
+							g.GROUP_ID_
+						FROM
+							ACT_ID_MEMBERSHIP  g
+						<where>
+							<if test="assignee != null and assignee != ''">
+							  g.USER_ID_ = #{assignee}
+							</if>
+						</where>
+					)
+				)
+			)
+		</where>
+		) as tmpTable ON hiTask.ID_= tmpTable.ID_ WHERE (ISNULL(hiTask.ASSIGNEE_) or ISNULL(hiTask.CLAIM_TIME_))  and  NOT ISNULL(hiTask.NAME_)  and  ISNULL(hiTask.DELETE_REASON_)   ORDER BY
+		tmpTable.CREATE_TIME_ DESC 
+	</select>
+	
+	<!-- 在办任务分页列表 -->
+	<select id="selectWaitingPage" resultMap="BaseResultMap" parameterType="aljoin.act.dao.entity.ActRuTask">
+		select tmpTable.*
+		from act_hi_taskinst hiTask JOIN (
+		select
+			distinct
+			RES.ID_,
+			RES.CREATE_TIME_,
+			RES.NAME_,
+			RES.ASSIGNEE_,
+			RES.PROC_INST_ID_,
+			RES.TASK_DEF_KEY_
+		from ACT_RU_TASK  RES
+		LEFT JOIN ACT_RU_IDENTITYLINK  I ON I.TASK_ID_ = RES.ID_
+		<where>
+			<if test="assignee != null and assignee != ''">
+				RES.ASSIGNEE_ = #{assignee}
+			</if>
+			<if test="procDefId != null and procDefId != ''">
+				AND RES.PROC_DEF_ID_ NOT LIKE CONCAT(CONCAT('%',#{procDefId}),'%')
+				AND RES.PROC_DEF_ID_ NOT LIKE '%Process_r2T2ZjtOsO%'
+			</if>
+			<if test="processInstanceIds != null">
+				AND RES.PROC_INST_ID_ IN
+				<foreach collection="processInstanceIds" item="processInstanceId" index="index"
+						 open="(" close=")" separator=",">
+					#{processInstanceId}
+				</foreach>
+			</if>
+			<if test="dbType == 'mysql'">
+				<if test="createBegTime!=null and createBegTime != ''">
+					<![CDATA[   and  DATE_FORMAT(RES.CREATE_TIME_, '%Y-%m-%d') >= #{createBegTime}]]>
+				</if>
+				<if test="createEndTime!=null and createEndTime != ''">
+					<![CDATA[   and  DATE_FORMAT(RES.CREATE_TIME_, '%Y-%m-%d') <= #{createEndTime}]]>
+				</if>
+			</if>
+			<if test="dbType == 'oracle'">
+				<if test="createBegTime!=null and createBegTime!=''">
+					<![CDATA[   and  to_char(RES.CREATE_TIME_,'yyyy-MM-dd') >= #{createBegTime} ]]>
+				</if>
+				<if test="createEndTime!=null and createEndTime!=''">
+					<![CDATA[   and  to_char(RES.CREATE_TIME_,'yyyy-MM-dd') <= #{createEndTime}  ]]>
+				</if>
+			</if>
+
+			OR (
+				RES.ASSIGNEE_ IS NULL
+				<if test="procDefId != null and procDefId != ''">
+					AND RES.PROC_DEF_ID_ NOT LIKE CONCAT(CONCAT('%',#{procDefId}),'%')
+					AND RES.PROC_DEF_ID_ NOT LIKE '%Process_r2T2ZjtOsO%'
+				</if>
+				<if test="processInstanceIds != null">
+					AND RES.PROC_INST_ID_ IN
+					<foreach collection="processInstanceIds" item="processInstanceId" index="index"
+							 open="(" close=")" separator=",">
+						#{processInstanceId}
+					</foreach>
+				</if>
+				<if test="dbType == 'mysql'">
+					<if test="createBegTime!=null and createBegTime != ''">
+						<![CDATA[   and  DATE_FORMAT(RES.CREATE_TIME_, '%Y-%m-%d') >= #{createBegTime}]]>
+					</if>
+					<if test="createEndTime!=null and createEndTime != ''">
+						<![CDATA[   and  DATE_FORMAT(RES.CREATE_TIME_, '%Y-%m-%d') <= #{createEndTime}]]>
+					</if>
+				</if>
+				<if test="dbType == 'oracle'">
+					<if test="createBegTime!=null and createBegTime!=''">
+						<![CDATA[   and  to_char(RES.CREATE_TIME_,'yyyy-MM-dd') >= #{createBegTime} ]]>
+					</if>
+					<if test="createEndTime!=null and createEndTime!=''">
+						<![CDATA[   and  to_char(RES.CREATE_TIME_,'yyyy-MM-dd') <= #{createEndTime}  ]]>
+					</if>
+				</if>
+				AND (
+					<if test="assignee != null and assignee != ''">
+						I.USER_ID_ = #{assignee}
+					</if>
+					OR I.GROUP_ID_ IN (
+						SELECT
+							g.GROUP_ID_
+						FROM
+							ACT_ID_MEMBERSHIP  g
+						<where>
+							<if test="assignee != null and assignee != ''">
+							  g.USER_ID_ = #{assignee}
+							</if>
+						</where>
+					)
+				)
+			)
+		</where>
+		) as tmpTable ON hiTask.ID_= tmpTable.ID_ WHERE (hiTask.ASSIGNEE_ = #{assignee} and  Not ISNULL(hiTask.CLAIM_TIME_)) and  NOT ISNULL(hiTask.NAME_)  and  ISNULL(hiTask.DELETE_REASON_)   ORDER BY
+		tmpTable.CREATE_TIME_ DESC 
+	</select>
+
+</mapper>

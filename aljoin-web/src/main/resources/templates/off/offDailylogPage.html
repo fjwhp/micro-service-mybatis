@@ -1,0 +1,1988 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>工作日志</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<link rel="stylesheet" href="../../web/css/zhengls.css" media="all">
+<link rel="stylesheet" href="../../web/css/multsel.css" media="all">
+<style>
+/* 下拉框样式 */
+	.content_sel input.layui-input.layui-unselect{width:105px;height:27px;}
+	.blue_border{border:solid 1px #339bf1;}
+    div#audit-member-list a:hover {
+        background-color:#f1f1f1;
+    }
+</style>
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<form class="layui-form" action="/res/file/download" method="get" id="action_form">
+	   <input type="hidden" name="groupName" id="groupName">
+	   <input type="hidden" name="fileName" id="fileName">
+	</form>
+	<div class="layui-tab layui-tab-brief m_t0" lay-filter="docDemoTabBrief" style="margin-bottom:50px;">
+		<ul class="layui-tab-title">		    
+		    <li class="layui-this"><@a code="080206" href="javascript:void(0)" text="工作报表"/></li>
+		    <li class=""><@a code="080207" href="javascript:void(0)" text="工作月报"/></li>
+		    <li class=""><@a code="080208" href="javascript:void(0)" text="已收月报"/></li>
+		    <li class=""><@a code="080209" href="javascript:void(0)" text="月报管理"/></li>
+		</ul>
+		<div class="layui-tab-content">
+			<!--------------------------------------- 工作报表Tab start--------------------------------------->
+		  	<div class="layui-tab-item content_sel layui-show">
+		  		<div class="">
+		  		<blockquote class="layui-elem-quote" style="padding:5px;">
+					<form class="layui-form" action="">
+						<div style="float:right;">
+							<div class="layui-input-inline m_r10">
+							 	 <span>日志日期</span>
+							</div>
+							<div class="layui-input-inline m_r10">
+								 <input type="text" class="inp_date" name="" id="startTime" readonly>
+							</div>
+							<div class="layui-input-inline m_r10">
+							 <span>至</span>
+							</div> 
+							<div class="layui-input-inline m_r20">
+								  <input type="text" class="inp_date" name="" id="endTime" readonly>
+							</div> 
+							<div class="layui-input-inline">
+								<input type="text" name="searchKey" id="searchKey" placeholder="请输入标题" autocomplete="off" class="layui-input"
+									style="height: 30px; line-height: 30px;" maxlength="20">
+							</div>
+							<span><@a code="080205" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData_log()" iclass="layui-icon"
+								 icon="&#xe615;" text="查询"/></span>
+						</div>
+					    <div class="layui-input-inline">
+					    	<span><@a code="080201" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="openAddWin()" iclass="layui-icon"
+								 icon="&#xe608;" text="新增"/></span>
+							<span><@a code="080204" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="deleteIds()" iclass="layui-icon"
+								 icon="&#xe640;" text="删除"/></span>
+						</div> 
+					</form>
+				</blockquote>
+					<div class="layui-form">
+						<table class="layui-table admin-table">
+						    <!--  <colgroup>
+							    <col width="5%">
+							    <col width="6%">
+							    <col width="25%">
+							    <col width="15%">
+							    <col width="15%">
+							    <col width="15%">
+							    <col width="20%">
+							    <col>
+							  </colgroup> -->
+							<thead>
+								<tr>
+								    <th style="width:20px;"><input type="checkbox" lay-skin="primary" id="dailylog_check-all" lay-filter="dailylog_check-all"></th>
+									<th style="display: none;">用户ID</th>
+									<th style="width:60px;">序号</th>
+									<th>标题</th>
+									<th style="width:100px;">日志日期</th>
+									<th style="width:160px;">创建时间</th>
+									<th style="width:60px;">创建人</th>
+									<th style="width:90px;">操作</th>
+								</tr>
+							</thead>
+					<tbody id="dailylog-data">
+					<script id="dailylog-script" type="text/html">
+					{{each records value index}}
+						<tr> 
+                            <td><input type="checkbox" lay-skin="primary" lay-filter="paging_check-all" class="log_chb" value="{{value.id}}"></td>                  
+							<td style="display: none;">{{value.id}}</td>
+							<td>{{(current-1)*size + index+1 }}</td>
+							<td onclick="log_Detail('{{value.id}}')" class="hand table_link" title="{{value.title}}" >{{value.title}}</td>
+							<td>{{value.workDate}}</td>							
+							<td>{{value.createDate}}</td>
+							<td>{{value.createFullName}}</td>
+							<td>
+                            {{if value.status=="0"}}
+                              <@a code="080213" href="javascript:void(0)" class="color339 table_btn table_link" id="show-edit" onclick="log_update('{{value.id}}',this)" text="编辑"/>
+							  <@a code="080204" href="javascript:void(0)" class="color339 table_btn table_link" id="show-edit" onclick="showDelete('{{value.id}}',this)" text="删除"/>
+                            {{/if}}
+							
+							</td>
+						</tr>
+					{{/each}}
+					{{if records.length==0}}
+					<tr>
+						<td colspan="7" style="text-align:center">
+							暂无数据
+						</td>
+					</tr>
+					{{/if}}
+					</script>
+					</tbody>
+					</table>
+					</div>
+					<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+						<div id="dailylog-footer" class="page" style="background-color: white; text-align: center;"></div>
+					</div>
+		  		</div>
+		  	</div>
+		    <!--------------------------------------- 工作报表Tab end--------------------------------------->
+		   
+		    <!--------------------------------------- 工作月报Tab start--------------------------------------->
+		    <div class="layui-tab-item content_sel">
+		    
+		    	<div class="">
+		    	<blockquote class="layui-elem-quote" style="padding:5px;text-align: right;">
+					<form class="layui-form" action="">
+						<div>
+							
+							<div class="layui-input-inline m_r10">
+							 	<span>状态</span>
+							</div>
+							<div class="layui-input-inline m_r20" style="text-align:left">
+						      		<select name="city" id="statusMR" lay-verify="required" style="width:120px;height:32px;">
+								        <option value=""></option>
+								        <option value="0">未提交</option>
+								        <option value="1">审核中</option>
+								        <option value="2">审核通过</option>
+								        <option value="3">审核失败</option>
+						      		</select>
+						   	</div>
+						   	
+							<div class="layui-input-inline m_r10">
+							 	<span>月份</span>
+							</div>
+							<div class="layui-input-inline m_r20">
+								<input type="text" name="monthMR" id="monthMR" placeholder="请选择" autocomplete="off" class="layui-input"
+									style="height: 30px; line-height: 30px;" readonly>
+							</div>
+							<div class="layui-input-inline">
+								<input type="text" name="titleMR" id="titleMR" placeholder="请输入标题" autocomplete="off" class="layui-input"
+									style="height: 30px; line-height: 30px;" maxlength="20">
+							</div>
+							<span><@a code="080210" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData_workMR()" iclass="layui-icon"
+								 icon="&#xe615;" text="查询"/></span>
+						</div>
+				<!-- 	    <div class="layui-input-inline">
+						  	<span><a class="layui-btn layui-btn-small" onclick="onclick="showDeletes()"><i class="layui-icon">&#xe640;</i>删除</a></span>
+						</div> -->
+					</form>
+				</blockquote>
+					<!-- <form class="layui-form" action="">
+					<div>
+						<div class="layui-input-inline m_r10">
+						 <span onclick="yuedetailAdd()">标题</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							<input type="text" class="inp_w120px" name="" id="" style="width:180px;">
+						</div>
+						<div class="layui-input-inline m_r10">
+						 	<span>状态</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+					      		<select name="city" lay-verify="required" style="width:120px;height:32px;">
+							        <option value=""></option>
+							        <option value="0">个人</option>
+							        <option value="1">归集</option>
+					      		</select>
+					   	</div>
+					   	<div class="layui-input-inline m_r10">
+						 	<span>月份</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							<input type="text" class="inp_w120px" name="" id="" >
+						</div>
+						<span><a class="btn_search_blue" id="" onclick="loadData()" style="float:right;">查询</a></span>
+				    </div>
+					</form> -->
+					<div class="layui-form">
+						<table class="layui-table admin-table">
+							<!-- <colgroup>
+							 	<col width="5%">
+							    <col width="6%">
+							    <col width="25%">
+							    <col width="15%">
+							    <col width="15%">
+							    <col width="15%">
+							    <col width="20%">
+							    <col>
+							  </colgroup> -->
+							<thead>
+								<tr>
+									<th style="width: 20px;"><input type="checkbox" lay-skin="primary" lay-filter="workMR_check-all"><div class="layui-unselect layui-form-checkbox" lay-skin="primary"><i class="layui-icon"></i></div></th>
+									<th style="display: none;">用户ID</th>
+									<th style="width:60px;">序号</th>
+									<th>标题</th>
+									<th style="width:80px;">月份</th>
+									<th style="width:60px;">状态</th>
+									<th style="width:60px;">创建人</th>
+									<th style="width:50px;">操作</th>
+								</tr>
+							</thead>
+					<tbody id="workMR-data">
+					<script id="workMR-script" type="text/html">
+					{{each records value index}}
+						<tr> 
+							<td><input type="checkbox"  class="check-id"  lay-skin="primary"   id="{{value.id}}"></td>
+							<td style="display: none;">{{value.id}}</td>
+							<td>{{(current-1)*size+index+1}}</td>
+							<td class="hand table_link" {{if value.status=="未提交" || value.status=="审核失败"}}onclick="detailMR('{{value.id}}','{{value.createFullName}}','{{value.status}}')"{{/if}} {{if value.status=="审核中"||value.status=="审核通过"}} onclick="detail_receivedMR('{{value.id}}','{{value.createFullName}}','0','1')"{{/if}}  title="{{value.title}}">{{value.title}}</td>
+							<td>{{value.month}}</td>
+							<td>{{value.status}}</td>
+							<td>{{value.createFullName}}</td>
+							<td>
+							{{if value.status=="未提交" || value.status=="审核失败"}}<a href="javascript:void(0)" class="table_btn table_link" id="show-edit" onclick="detail_receivedMR('{{value.id}}','{{value.createFullName}}','0')">提交</a>{{/if}}
+							</td>
+						</tr>
+					{{/each}}
+					{{if records.length==0}}
+					<tr>
+						<td colspan="7" style="text-align:center">
+							暂无数据
+						</td>
+					</tr>
+					{{/if}}
+					</script>
+					</tbody>
+					</table>
+					</div>
+					<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+						<div id="workMR-footer" class="page" style="background-color: white; text-align: center;"></div>
+					</div>
+		  		</div>
+		    </div>
+		    <!--------------------------------------- 工作月报Tab end--------------------------------------->
+		    
+		    <!--------------------------------------- 已收月报Tab start--------------------------------------->
+		    <div class="layui-tab-item content_sel">
+			     <div class="">
+			     <blockquote class="layui-elem-quote" style="padding:5px;text-align: right;">
+					<form class="layui-form" action="">
+						<div>
+							
+							<div class="layui-input-inline m_r10">
+								<span>提交时间</span>
+							</div>
+							<div class="layui-input-inline m_r10">
+								 <input type="text" class="inp_date" name="" id="startTime1" readonly="readonly">
+							</div>
+							<div class="layui-input-inline m_r10">
+							 <span>至</span>
+							</div>
+							<div class="layui-input-inline m_r20">
+								  <input type="text" class="inp_date" name="" id="endTime1" readonly="readonly">
+							</div> 
+							<div class="layui-input-inline m_r10">
+							 	<span>月份</span>
+							</div>
+							<div class="layui-input-inline m_r20">
+								<input type="text" name="month_receivedMR" id="month_receivedMR" placeholder="请选择" autocomplete="off" class="layui-input"
+									style="height: 30px; width:120px; line-height: 30px;" >
+							</div>
+							<div class="layui-input-inline">
+								<input type="text" name="title_receivedMR" id="title_receivedMR" placeholder="请输入标题" autocomplete="off" class="layui-input"
+									style="height: 30px; line-height: 30px;" maxlength="20">
+							</div>
+							<span><@a code="080211" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData_receivedMR()" iclass="layui-icon"
+								 icon="&#xe615;" text="查询"/></span>
+						</div>
+				<!-- 	    <div class="layui-input-inline">
+						  	<span><a class="layui-btn layui-btn-small" onclick="onclick="showDeletes()"><i class="layui-icon">&#xe640;</i>删除</a></span>
+						</div> -->
+					</form>
+				</blockquote>
+					<div class="layui-form">
+						<table class="layui-table admin-table">
+						     <!-- <colgroup>
+							    <col width="5%">
+							    <col width="6%">
+							    <col width="25%">
+							    <col width="15%">
+							    <col width="15%">
+							    <col width="15%">
+							    <col width="20%">
+							  </colgroup> -->
+							<thead>
+								<tr>
+								    <th style="width: 20px;"><input type="checkbox" lay-skin="primary" lay-filter="receivedMR_check-all"></th>
+									<th style="display: none;">用户ID</th>
+									<th style="width:60px;">序号</th>
+									<th>标题</th>
+									<th style="width:160px;">提交时间</th>
+									<th style="width:80px;">月份</th>
+									<th style="width:60px;">上报人</th>
+									<th style="width:160px;">所属部门</th>
+								</tr>
+							</thead>
+					<tbody id="receivedMR-data">
+					<script id="receivedMR-script" type="text/html">
+					{{each records value index}}
+						<tr> 
+                            <td><input type="checkbox" lay-skin="primary" class="check-id"></td>                  
+							<td style="display: none;">{{value.id}}</td>
+							<td>{{(current-1)*size+index+1}}</td>
+							<td class="hand table_link" onclick="detail_receivedMR('{{value.id}}','{{value.createFullName}}')" title="{{value.title}}">{{value.title}}</td>
+							<td>{{value.submitDate}}</td>
+							<td>{{value.month}}</td>
+							<td>{{value.createFullName}}</td>
+							<td>{{value.deptName}}</td>
+						</tr>
+					{{/each}}
+					{{if records.length==0}}
+					<tr>
+						<td colspan="7" style="text-align:center">
+							暂无数据
+						</td>
+					</tr>
+					{{/if}}
+					</script>
+					</tbody>
+					</table>
+					</div>
+					<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+						<div id="receivedMR-footer" class="page" style="background-color: white; text-align: center;"></div>
+					</div>
+		  		</div>
+		    </div>
+		    <!--------------------------------------- 已收月报Tab end--------------------------------------->
+		    
+		    <!--------------------------------------- 月报管理Tab start--------------------------------------->
+		    <div class="layui-tab-item content_sel">
+		       <div class="tree_left">
+	                  <div class="left" >
+						<input id="citySel" class="tree_search" type="text" value="" onkeyup="AutoMatch(this)" placeholder="搜索"/>	
+		              </div>
+			         <ul id="treeDemo" class="ztree"></ul>
+	           </div>	
+		       <div class="m_l10" style="width:78%;float:left;">
+		       <blockquote class="layui-elem-quote" style="padding:5px;text-align: right;">
+					<form class="layui-form" action="" >
+					<div class="r">
+						<input type="hidden" class="inp_date" name="belongDeptId" id="belongDeptId">
+						<!-- <div class="layui-input-inline m_r10">
+						 <span>标题</span>
+						</div>
+						<div class="layui-input-inline m_r20">
+							<input type="text" class="inp_w120px" name="" id="">
+						</div> -->
+<!-- 							<div class="layui-input-inline m_r10">
+							 <span>提交时间</span>
+							</div>
+							<div class="layui-input-inline m_120">
+							
+								<input type="text" class="inp_date" name="" id="startTime_manageMR" readonly>
+							</div>
+							<div class="layui-input-inline m_r10">
+							 <span>至</span>
+							</div>
+							<div class="layui-input-inline m_r20">
+								  <input type="text" class="inp_date" name="" id="endTime_manageMR" readonly>
+							</div> --> 
+							<div class="layui-input-inline m_r10">
+							 	<span>月份</span>
+							</div>
+							<div class="layui-input-inline m_r20">
+								<input type="text" name="month_manageMR" id="month_manageMR" placeholder="请选择" autocomplete="off" class="layui-input"
+									style="height: 30px; width:120px; line-height: 30px;">
+							</div>
+						
+							<div class="layui-input-inline ">
+								<input type="text" name="searchKey" id="title_manageMR" placeholder="请输入标题" autocomplete="off" class="layui-input"
+									style="height: 30px; line-height: 30px;" maxlength="20">
+							</div>
+							<span><@a code="080212" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData_manageMR()" iclass="layui-icon"
+									 icon="&#xe615;" text="查询"/></span>
+							<!-- <span><a class="btn_search_blue" id="" onclick="loadData()" style="float:right;">查询</a></span> -->
+				   	</div>
+					</form>
+					</blockquote>
+					<div class="layui-form">
+						<table class="layui-table admin-table">
+						      <!--  <colgroup>
+							    <col width="7%">
+							    <col width="10%">
+							    <col width="23%">
+							    <col width="20%">
+							    <col width="12%">
+							    <col width="13%">
+							    <col width="15%">
+							    <col>
+							  </colgroup> -->
+							<thead>
+								<tr>
+								    <th style="width: 20px;"><input type="checkbox" lay-skin="primary" lay-filter="manageMR_check-all"></th>
+									<th style="display: none;">用户ID</th>
+									<th style="width:60px;">序号</th>
+									<th>标题</th>
+									<th style="width:160px;">提交时间</th>
+									<th style="width:80px;">月份</th>
+									<th style="width:60px;">上报人</th>
+									<th style="width:160px;">所属部门</th>
+								</tr>
+							</thead>
+					<tbody id="manageMR-data">
+					<script id="manageMR-script" type="text/html">
+					{{each records value index}}
+						<tr> 
+                            <td><input type="checkbox" lay-skin="primary" class="check-id"></td>                  
+							<td style="display: none;">{{value.id}}</td>
+							<td>{{(current-1)*size+index+1}}</td>
+							<td class="hand table_link" onclick="detail_receivedMR('{{value.id}}','{{value.createFullName}}','0','1')" title="{{value.title}}">{{value.title}}</td>
+							<td>{{value.submitDate}}</td>
+							<td>{{value.month}}</td>
+							<td>{{value.createFullName}}</td>
+							<td>{{value.deptName}}</td>
+						</tr>
+					{{/each}}
+					{{if records.length==0}}
+					<tr>
+						<td colspan="7" style="text-align:center">
+							没有数据
+						</td>
+					</tr>
+					{{/if}}
+					</script>
+					</tbody>
+					</table>
+					</div>
+					<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+						<div id="manageMR-footer" class="page" style="background-color: white; text-align: center;"></div>
+					</div>
+		  		</div>
+		    </div>
+			<!--------------------------------------- 月报管理Tab end--------------------------------------->
+		</div>
+	</div>
+	
+	<!--------------------------------------- 新增工作日志 start--------------------------------------->
+	<div class="admin-main" style="display: none;z-index: 19940200;" id="log-add-object">
+		<form class="layui-form layui-form-pane" id="log-add-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<!-- 附件 -->
+			<div id="filealea_add">
+
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">标题</label>
+				<div class="layui-input-block">
+					<input type="text" id="title" name="title" maxlength="50" lay-verify="required" autocomplete="off" placeholder="标题" class="layui-input" >
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">日志日期</label>
+				<div class="layui-input-block">
+					<input type="text" name="workDate" id="workDate"   autocomplete="off" placeholder="日期" class="layui-input"  readonly>
+				</div>
+			</div>
+			<div class="layui-form-item">
+			   <label class="layui-form-label textarea_new">日志内容</label>
+				<div class="layui-input-block">
+					  <textarea type="text" name="content" id="content"  lay-verify="contentLength" placeholder="日志内容" autocomplete="off" maxlength="500" placeholder="内容不得超过500字" class="layui-textarea" ></textarea>
+				</div>
+			</div>
+			<div class="layui-form-item">
+			<label class="layui-form-label">上传附件</label>
+				<div class="layui-input-block">
+					<div class="layui-upload">
+ 					   <div class="layui-upload-drag drag" id="upload_add" style="padding:5px">
+							<i class="layui-icon"></i>
+							<p>点击上传，或将文件拖拽到此处</p>
+					   </div>
+ 					  <a class="layui-btn bigin_upload" id="testListAction_add">
+							<i class="layui-icon">&#xe62f;</i> 开始上传
+					  </a> 
+					  <div class="layui-upload-list">
+					  <table class="layui-table">
+						    <colgroup>
+							    <col width="200">
+							    <col width="60">
+							    <col width="60">
+							    <col width="30">
+							  </colgroup>
+					      <tbody id="demoList_add"></tbody>
+					    </table>
+					  </div>
+					
+					</div> 
+				    
+				</div>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="log-add-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<button class="layui-btn layui-btn-primary" type="reset" id="log_add_rest" style="display:none">
+						<i class="fa fa-eraser"></i> 重置
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!--------------------------------------- 新增工作日志  end--------------------------------------->
+	
+	<!--------------------------------------- 编辑日志窗口 strart--------------------------------------->
+	<div class="admin-main" style="display: none;" id="log-update-object">
+		<form class="layui-form layui-form-pane" id="log-update-form">
+			<div id="filealea_edit">
+			</div>
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" name="id"  id="id_edit" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">标题</label>
+				<div class="layui-input-block">
+					<input type="text" id="title_edit" name="title" maxlength="50" lay-verify="required" autocomplete="off" placeholder="标题" class="layui-input" >
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">姓名</label>
+				<div class="layui-input-block">
+					<input type="text" id="createFullName_edit" lay-verify="required" autocomplete="off"  class="layui-input" readonly="readonly">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">日志日期</label>
+				<div class="layui-input-block">
+					<input type="text" name="workDate" id="workDate_edit"  autocomplete="off" placeholder="地点" class="layui-input" readonly="readonly">
+				</div>
+			</div>
+			<div class="layui-form-item">
+			   <label class="layui-form-label textarea_new">日志内容</label>
+				<div class="layui-input-block">
+					  <textarea type="text" class="layui-textarea"  maxlength="500" name="content" id="content_edit" lay-verify="contentLength"  autocomplete="off" placeholder="内容不得超过500字"></textarea>
+				</div>
+			</div>
+			<div class="layui-form-item" id="log_att_edit">
+				<label class="layui-form-label">上传附件</label>
+				<div class="layui-input-block">
+					<div class="layui-upload">
+						<div class="layui-upload-drag drag" id="upload_edit">
+							<i class="layui-icon"></i>
+							<p>点击上传，或将文件拖拽到此处</p>
+						</div>
+						<a class="layui-btn bigin_upload" id="testListAction_edit">
+							<i class="layui-icon">&#xe62f;</i> 开始上传
+						</a>
+						<div class="layui-upload-list">
+							<table class="layui-table">
+								<!-- <thead>
+								<tr><th>文件名</th>
+									<th>大小</th>
+									<th>状态</th>
+									<th>操作</th>
+								</tr>
+								</thead> -->
+								<tbody id="demoList_edit">
+								<script id="artt_edit"  type="text/html">
+									{{each filelist value index}}
+									<tr>
+										<td>{{value.orgnlFileName}}</td>
+										<td>{{value.fileSize}}kb</td>
+										<td><span style="color: #5FB878;">上传成功</span></td>
+										<td>
+											<a style="color:#339bf1;" index="{{index}}" onclick="aleafile('{{value.id}}',this,{{index}})" >删除</a>
+										</td>
+									</tr>
+									{{/each}}
+								</script>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="log-update-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<div style="display:none">
+					<button class="layui-btn layui-btn-primary" type="reset" id="log_edit_rest" style="display:none">
+						<i class="fa fa-eraser"></i> 重置
+					</button>
+					</div>
+				</div>
+			</div>
+		</form> 
+	</div>
+	<!--------------------------------------- 编辑日志窗口 end--------------------------------------->
+		
+	<!--------------------------------------- 日志详情窗口 strart--------------------------------------->
+	<div class="admin-main" style="display: none; margin-bottom:50px" id="log-view-object">
+	<form class="layui-form layui-form-pane" id="log-view-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+	<!-- 		<div class="layui-form-item">
+				<label class="layui-form-label">标题</label>
+				<div class="layui-input-block">
+					<input type="text" id="title_view" lay-verify="required" autocomplete="off" placeholder="标题" class="layui-input" readonly="readonly">
+				</div>
+			</div> -->
+			<div class="" style="text-align: center;">
+				<span id="title_view" style="font-size:16px;font-weight: bold;word-wrap:break-word"></span>
+			</div>
+			
+		<!-- 	<div class="layui-form-item">
+				<label class="layui-form-label">创建时间</label>
+				<div class="layui-input-block">
+					<input type="text" id="createTimeStr_view" lay-verify="required" autocomplete="off" placeholder="创建日期" class="layui-input" readonly="readonly">
+				</div>
+			</div> -->
+			<div class="p_t10">
+				<span class="e6ed">创建时间：</span>
+				<span id="createTimeStr_view"></span>
+			</div>
+			
+	<!-- 		<div class="layui-form-item">
+				<label class="layui-form-label">日志日期</label>
+				<div class="layui-input-block">
+					<input type="text" name="workDate" id="workDateStr_view"   autocomplete="off" placeholder="日期" class="layui-input"  readonly="readonly">
+				</div>
+			</div> -->
+			<div class="p_t10">
+				<span class="e6ed">日志日期：</span>
+				<span id="workDateStr_view"></span>
+			</div>
+			
+		<!-- 	<div class="layui-form-item">
+				<label class="layui-form-label">姓名</label>
+				<div class="layui-input-block">
+					<input type="text" id="createFullName_view"   autocomplete="off" placeholder="姓名" class="layui-input"  readonly="readonly">
+				</div>
+			</div> -->
+			<div class="p_t10">
+				<span class="e6ed">姓名：</span>
+				<span id="createFullName_view"></span>
+			</div>
+			
+	<!-- 		<div class="layui-form-item layui-form-text">
+			   <label class="layui-form-label">日志内容</label>
+				<div class="layui-input-block">
+					  <textarea type="text" class="layui-input"  name="content" id="content_view"  lay-verify="contentLength" placeholder="日志内容" autocomplete="off" placeholder="内容不得超过500字" class="layui-input"  style="height:120px"></textarea>
+				</div>
+			</div> -->
+			  <!-- 日志内容 -->
+            <div class="outindss line_h_26px" style="clear:both;" id="mailContent">
+			    <p id="content_view" style="word-wrap: break-word;" class="heidf "></p>
+			</div>
+			
+			<div class="p_t10 cl" >
+				<span class="e6ed l">附件：</span>
+				<div >
+					<table class="layui-table" style="width: 50%;margin-top: -4px;border: none;">
+				      <colgroup>
+						    <col width="60%">
+						    <col width="20%">
+						    <col width="20%">
+						  </colgroup>				
+						<tbody id="demoList_view">
+						<script id="artt_detail"  type="text/html">
+								{{each filelist value index}}
+								<tr>
+									<td style="border:none;">{{value.orgnlFileName}}</td>
+									<td style="border:none;">{{value.fileSize}}kb</td>
+									<td style="border:none;">
+										<a onclick="showDownload('{{value.groupName}}','{{value.fileName}}')" style="color:#339bf1;cursor:pointer">下载</a>
+									</td>
+								</tr>
+								{{/each}}
+						</script>
+					</tbody>
+			    	</table> 
+				</div>
+			</div>			
+			
+			
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+			</div>
+		</form>
+	</div>
+	<!--------------------------------------- 日志详情窗口 end--------------------------------------->
+
+	<!--------------------------------------- 工作月报详情 strart--------------------------------------->
+	<div class="admin-main" style="display: none; margin-bottom:150px" id="MR-detail-object">
+		<form class="layui-form layui-form-pane" id="MR-detail-form">
+			<div id="filealeaMR_edit">
+			</div>
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" name="id" id="MRid" />
+			 <div class="" style="text-align: center;">
+				 <span id="titleMR_edit" style="font-size:16px;font-weight: bold;word-wrap:break-word"></span>
+			</div> 
+			<div class="layui-form-item">
+				<span style="margin-left:30px;">填报时间：</span>
+				<span id="createtimeMR" ></span>
+				<div class="r" style="margin-right:30px;">
+					<span>部门：</span>
+					<span class="" id="userDeptMR"></span>
+				
+				</div>
+			</div>
+		    <table class="layui-table">
+				<thead>
+					<colgroup>
+						<col width="20%">
+						<col width="70%">
+						<col width="10%">
+					</colgroup>
+					<tr>
+					    <th>日志日期</th>
+					    <th>日志内容</th>
+					    <th>操作</th>
+					</tr> 
+				</thead>
+			  <tbody id="tbody_editMR">
+			    <tr id="leadertr_edit" style="display:none">
+			      <td>工作建议</td>
+			      <td colspan="2">
+			      	<textarea style='height:40px;width:100%;border:none' name='advice' id="adviceMR" readonly></textarea>
+			      </td>
+			    </tr>
+			    <tr id="mainLeader_editMR">
+			      <td>主管领导意见</td>
+			      <td colspan="2">
+			      <div style='width:100%;border:none;white-space: normal' id="commentMR"></div> 
+			      <!-- <textarea style='height:40px;width:100%;border:none' name='comment' id="commentMR" readonly></textarea> -->
+			      </td>
+			    </tr>
+			    <tr id="">
+			      <td colspan="3">
+			      <span>
+			      	说明：<br/>
+			      	1、每月五日前提交主管领导；<br/>
+					2、每月一表，历史可查，请认真填写。<br/>
+			      </span>
+			      </td>
+			    </tr>
+			  </tbody>
+			</table>
+			<div class="layui-form-item" id="attachmentMR_edit">
+				<label class="layui-form-label">上传附件</label>
+				<div class="layui-input-block">
+					<div class="layui-upload">
+						<div class="layui-upload-drag drag" id="uploadMR_edit">
+							<i class="layui-icon"></i>
+							<p>点击上传，或将文件拖拽到此处</p>
+						</div>
+						 <a class="layui-btn bigin_upload" id="testListAction_editMR">
+							<i class="layui-icon">&#xe62f;</i> 开始上传
+						</a> 
+						<div class="layui-upload-list">
+							<table class="layui-table">
+								<!-- <thead>
+								<tr><th>文件名</th>
+									<th>大小</th>
+									<th>状态</th>
+									<th>操作</th>
+								</tr>
+								</thead> -->
+								<tbody id="demoListMR_edit">
+								<script id="arttMR_edit"  type="text/html">
+									{{each filelist value index}}
+									<tr>
+										<td >{{value.orgnlFileName}}</td>
+										<td >{{value.fileSize}}kb</td>
+										<td><span style="border:none;color: #5FB878;">上传成功</span></td>
+										<td>
+											<a style="color:#339bf1;" index="{{index}}" onclick="aleafile('{{value.id}}',this,{{index}})" class="month_delete">删除</a>
+										</td>
+									</tr>
+									{{/each}}
+								</script>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- <div class="layui-form-item" id="attachmentMR_view">
+				<label class="layui-form-label">附件列表</label> 
+			</div> -->
+				<div class="layui-upload-list" id="attachmentMR_views">
+				       <table class="layui-table">
+					      	<!-- <thead>
+						        <tr><th>文件名</th>
+						        <th>大小</th>
+						        <th>操作</th>
+						      	</tr>
+						    </thead> -->
+					      	<tbody id="demoListMR_view">
+							<script id="arttMR_detail"  type="text/html">
+								{{each filelist value index}}
+								<tr>
+									<td>{{value.orgnlFileName}}</td>
+									<td>{{value.fileSize}}kb</td>
+									<td>
+										<a onclick="showDownload('{{value.groupName}}','{{value.fileName}}')" style="color:#339bf1;cursor:pointer">下载</a>
+									</td>
+								</tr>
+								{{/each}}
+							</script>
+							</tbody>
+				       </table>
+				    </div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+				
+				<div style="float: right; margin-right:20px" id="saveMRDiv">
+					<button class="layui-btn" lay-submit="" lay-filter="MR-detail-save" id="MR-detail-save">
+						<i class="fa fa-save"></i> 保存
+					</button>
+				</div>
+				<!-- <div style="float: right;margin-right:20px" id="submitMRDiv">
+					<button class="layui-btn" lay-submit="" lay-filter="MR-detail-submit" id="MR-detail-submit">
+						<i class="fa fa-save"></i> 提交
+					</button>
+				</div> -->
+				<!-- <div style="float: right; margin-right:20px">
+					<button class="layui-btn">
+						<i class="fa fa-save"></i> 打印
+					</button>
+				</div>	 -->
+			</div>
+		</form>
+	</div>
+	<!--------------------------------------- 月报详情提交 end--------------------------------------->
+		
+	<!--------------------------------------- 已收月报详情 strart--------------------------------------->
+	<div class="admin-main" style="display: none; margin-bottom:150px" id="receivedMR-detail-object">
+		<form class="layui-form layui-form-pane" id="receivedMR-detail-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" name="id" id="MRid_received" />
+		    <!-- <div class="layui-form-item" >
+		    	<input type="text" id="titleMR_edit" value="" name="createtimeMR" style="border:none" lay-verify="required" autocomplete="off" class="layui-input" readonly>
+		    </div> -->
+		    
+		    <!-- 标题 -->
+			 <div class="" style="text-align: center;">
+				 <span id="titlereceivedMR_edit" style="font-size:16px;font-weight: bold;word-wrap:break-word"></span>
+			</div> 
+			
+		    <div class="layui-form-item">
+				<span style="margin-left:30px;">提交时间：</span>
+				<span id="createtimeMR_received" ></span>
+				<div class="r" style="margin-right:30px;">
+					<span>部门：</span>
+					<span class="" id="userDeptMR_received"></span>
+				
+				</div>
+			</div>
+		    <table class="layui-table">
+			  <thead>
+			   
+			    <colgroup>
+					<col width="20%">
+					<col width="50%">
+					<col width="30%">
+				</colgroup>
+			    <tr>
+			      <th>日期</th>
+			      <th>内容</th>
+			      <th>附件</th>
+			      <!-- <th>操作</th> -->
+			    </tr> 
+			  </thead>
+			  <tbody id="tbody_receivedMR">
+				<tr id="leadertr_view" style="display:none;word-break:break-all;">
+			      <td>工作建议</td>
+			      <td colspan="2">
+			      <textarea style='height:40px;width:100%;border:none' name='advice' id="advice_receivedMR" readonly></textarea>
+			      </td>
+			    </tr>
+			    <tr id="" style="word-break:break-all;">
+			      <td>主管领导意见</td>
+			      <td colspan="2">
+			      <div style='width:100%;border:none;white-space: normal' id="comment_receivedMR"></div> 
+			      <!-- <textarea style='height:40px;width:100%;border:none' name='comment' id="comment_receivedMR" readonly></textarea> -->
+			      </td>
+			    </tr>
+			    <tr id="">
+			      <td colspan="3">
+			      <span>
+			      	说明：<br/>
+			      	1、每月五日前提交主管领导；<br/>
+					2、每月一表，历史可查，请认真填写。<br/>
+			      </span>
+			      </td>
+			    </tr>
+			  </tbody>
+			</table>
+			<!-- <div class="layui-form-item" id="attachmentMR_review">
+				<label class="layui-form-label">附件列表</label> 
+			</div> -->
+			<div class="layui-form-item" id="attachmentMR_review">
+				<label class="" style="font-weight:bold;">附件:</label> 
+			</div>
+				<div class="layui-upload-list" id="attachmentMR_reviews" style="width:50%;">
+				       <table class="layui-table">
+				       <colgroup>
+						    <col width="60%">
+						    <col width="20%">
+						    <col width="20%">
+					</colgroup>	
+				       
+					      	<!-- <thead>
+						        <tr><th>文件名</th>
+						        <th>大小</th>
+						        <th>操作</th>
+						      	</tr>
+						    </thead> -->
+					      	<tbody id="demoListMR_reviews">
+							<script id="arttMR_review"  type="text/html">
+								{{each filelist value index}}
+								<tr>
+									<td style="border:none;">{{value.orgnlFileName}}</td>
+									<td style="border:none;">{{value.fileSize}}kb</td>
+									<td style="border:none;color:#339bf1;">
+										<a onclick="showDownload('{{value.groupName}}','{{value.fileName}}')" style="color:#339bf1;cursor:pointer">下载</a>
+									</td>
+								</tr>
+								{{/each}}
+							</script>
+							</tbody>
+				       </table>
+				    </div>
+		    <div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+				<div style="float: right; display:none">
+					<button class="layui-btn" lay-submit="" lay-filter="receivedMR-update-submit" id="receivedMR-update-submit">
+						<i class="fa fa-save"></i> 意见保存
+					</button>
+				</div>
+				<div style="float: right;margin-right:20px" id="submitMRDiv">
+					<button class="layui-btn" lay-submit="" lay-filter="MR-detail-submit" id="MR-detail-submit">
+						<i class="fa fa-save"></i> 提交
+					</button>
+				</div> 
+				<!-- <div style="float: right; margin-right:20px">
+					<button class="layui-btn">
+						<i class="fa fa-save"></i> 打印
+					</button>
+				</div> -->
+				<!-- <div style="float: right; margin-right:20px">
+					<button class="layui-btn">
+						<i class="fa fa-save"></i> 提交
+					</button>
+				</div> -->
+			</div>
+		</form>
+	</div>
+	<!--------------------------------------- 已收月报详情 strart--------------------------------------->
+	<input  type="hidden"  id="nowUserName"  />
+	<input  type="hidden"  id="nowDate" /> 
+	
+	<!-- 人员选择树 -->
+	<div style="display: none;z-index: 19940200;" id="win-personal-object">
+		<div class="search_h">
+			<input id="peopelSel" class="tree_search1 reset" type="text" value="" placeholder="搜索">
+			<a class="layui-btn layui-btn-small" id="" onclick="searchNodes()"><i class="layui-icon">&#xe615;</i>搜索</a>
+			<a class="layui-btn layui-btn-small layui-btn-primary" style="margin-left:2px;" type="reset" onclick="reset_tree()"><li class="fa fa-eraser"></li> 重置</a>
+			<label type="text"  id="resultKey" class="form-control">  
+                <div>  
+                    <a id="clickUp" class="tree_up" onclick="clickUp()"><i class="layui-icon">&#xe619;</i></a>  
+                    <a id="clickDown" class="tree_down" onclick="clickDown()"><i class="layui-icon">&#xe61a;</i></a>  
+                </div>  
+                <label id="number" class="tree_number"></label>  
+            </label>  
+        </div>
+        <div class="tree_h">
+        	<ul id="treeDemo" class="ztree treeDemo1" name="treeDemo" style="display:block"></ul>
+        </div>
+        <div class="sure_h">
+		    <a class="layui-btn layui-btn-small sure_s"><li class="fa fa-save"></li> 确定</a>
+		</div>
+	</div>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.ztree.exhide-3.5.min.js"></script>
+	<!-- <script type="text/javascript" charset="utf-8" src="../../web/js/multsel.js"></script> -->
+	<script>
+	//================时间控件=================
+ 	tool.dateTime('#startTime','#endTime','',false);
+ 	tool.dateTime('#startTime1','#endTime1','',false);
+    var start = {  
+    	    elem: '#workDate',  
+    	    format: 'YYYY-MM-DD', 
+    	    istoday: true,  
+    	    choose: function(datas){
+    	    	var title = datas + " " + getWeekName(datas) + "工作日志" 
+    	    	$("#title").val(title)
+    	    	$("#workDate").focus()
+    	    }  
+    	}; 
+    laydate(start)
+	//定义layui
+	var pform,parentIndex="isme";
+	var tabIndex;
+	layui.use(['form','element','laydate'], function() {
+		pform = layui.form;
+		var element = layui.element;
+		var laydate = layui.laydate;
+		
+		laydate.render({ 
+	 		elem: '#monthMR'
+	 		,type: 'month'
+	 	});
+		laydate.render({ 
+	 		elem: '#monthMR'
+	 		,type: 'month'
+	 	});
+		laydate.render({ 
+	 		elem: '#month_receivedMR'
+	 		,type: 'month'
+	 	});
+		laydate.render({ 
+	 		elem: '#month_manageMR'
+	 		,type: 'month'
+	 	});
+		/*laydate.render({ 
+	 		elem: '#workDate'
+	 		,value: new Date()
+	 	});*/
+	 	pform.verify({
+            //限制输入的长度为200
+            textLength200 : function(value) {
+                if (value.length>200) {
+                    return "长度不能超过200个字符";
+                }
+            },
+            //限制不能输入特殊10
+            specailChar:function (value) {
+                if (new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]").test(value)) {
+                    return '不能输入特殊字符';
+                }
+            }
+        });
+
+		//加载tab数据
+		element.on('tab(docDemoTabBrief)', function(data){
+			if(data.index==0){
+				loadData_log()
+				tabIndex = 0
+			}if(data.index==1){
+				loadData_workMR()
+				tabIndex = 1
+			}else if(data.index==2){
+				loadData_receivedMR()
+				tabIndex = 2
+			}else if(data.index==3){
+				//loadData_manageMR()
+				tabIndex = 3
+			}
+		});
+		
+		//新增日志
+		pform.on('submit(log-add-submit)', function(data) {
+			//console.log( $("#log-add-form").serialize())
+			layer.confirm('确定保存日志内容 ?', {
+                      icon: 3,
+                      title: '提示'
+            },function(index){ 
+			$("#filealea_add").empty();
+            var str = "";
+            if (arr.length > 0) {
+                for (var i = 0; i < arr.length; i++) {
+                	str += '<input type="hidden" name="resResourceList['+i+'].id" value="'+arr[i].res.id+'" />';
+                }
+                $("#filealea_add").append(str);
+            }
+		    tool.post("../offDailylog/add", $("#log-add-form").serialize(),postCallBack, false); 
+            })	 
+			return false;
+		});
+		//更新日志
+		pform.on('submit(log-update-submit)', function(data) {
+			//console.log( $("#log-update-form").serialize())
+			$("#filealea_edit").empty();
+            var str = "";
+            if (arr.length > 0) {
+                for (var i = 0; i < arr.length; i++) {
+                	str += '<input type="hidden" name="resResourceList['+i+'].id" value="'+arr[i].res.id+'" />';
+                }
+                $("#filealea_edit").append(str);
+            }
+		    tool.post("../offDailylog/update", $("#log-update-form").serialize(),postCallBack_edit, false); 
+			return false;
+		});
+		
+		//月报保存
+		pform.on('submit(MR-detail-save)',function(data){
+			//console.log( $("#log-add-form").serialize())
+			$("#filealeaMR_edit").empty();
+            var str = "";
+            if (arr.length > 0) {
+                for (var i = 0; i < arr.length; i++) {
+                	str += '<input type="hidden" name="resResourceMRList[' + i + '].id" value="'+arr[i].res.id+'" />';
+                }
+                $("#filealeaMR_edit").append(str);
+            }
+		    tool.post("../offMonthReport/save", $("#MR-detail-form").serialize(),postCallBack, false); 
+			return false;
+		});
+		
+		
+		//月报提交
+		pform.on('submit(MR-detail-submit)',function(data){
+			//console.log(data)
+			var id = $("#MRid_received").val();
+			submitOffMR(id)
+			return false;
+		});
+		//页面一打开，先加载一次
+		loadData_log()
+	});
+	
+// 	tool.timeset('#startTime_manageMR','#endTime_manageMR');
+	
+	//===============加载数据====================MR表示月报-MonthReport
+	function loadData_manageMR(){//月报管理
+		var param = new Object();
+		param.container = "manageMR";
+		param.pageSize = 10;
+		param.belongDeptId = $("#belongDeptId").val()
+		param.title = $("#title_manageMR").val();
+		param.month = $("#month_manageMR").val();
+//		param.begTime = $("#startTime_manageMR").val();
+//		param.endTime = $("#endTime_manageMR").val();
+		param.url = "../offMonthReport/managerList";
+		tool.loadpage(param);
+	}
+	function loadData_receivedMR(){//已收月报
+		var param = new Object();
+		param.container = "receivedMR";
+		param.pageSize = 10;
+		param.title = $("#title_receivedMR").val();
+		param.month = $("#month_receivedMR").val();
+		param.begTime = $("#startTime1").val();
+		param.endTime = $("#endTime1").val();
+		param.url = "../offMonthReport/recevieList";
+		tool.loadpage(param);
+	}
+	
+	function loadData_workMR(){//工作月报
+		var param = new Object();
+		param.container = "workMR";
+		param.pageSize = 10;
+		param.status = $("#statusMR").val();
+		param.month = $("#monthMR").val();
+		param.title = $("#titleMR").val();
+		param.url = "../offMonthReport/list";
+		tool.loadpage(param);
+	}
+	
+	function loadData_log() {//工作报表
+		var param = new Object();
+		param.container = "dailylog";
+		param.pageSize = 10;
+		param.workBegDate = $("#startTime").val();
+		param.workEndDate = $("#endTime").val();
+		param.title = $("#searchKey").val();
+		param.url = "../offDailylog/list";
+		tool.loadpage(param);
+	}
+	
+	//===============月报提交动作=====================
+	function submitOffMR(id){
+		 layer.confirm('确认提交该份月报',{
+			 btn: ['提交','取消'],
+			 icon: 3
+		  }, function(){
+				var url ="../offMonthReport/submit"
+				var param = new Object();
+				param._csrf = $("#_csrf").val();
+				param.id = id;
+				tool.post(url, param, openForm
+					, false);
+				
+				}
+			, function(){
+			});  
+		// suggest();
+	}
+	function openForm(data1) {
+		console.log(data1)
+		var data = data1.object;
+		var id = data.id;
+		var processName = data.processName;
+		var bpmnId = data.bpmnId;
+		var taskDefKey = data.taskDefKey;
+		var businessKey = data.businessKey;
+		var signInTime = data.signInTime
+		var index = layer.open({
+			title : processName,
+			maxmin : false,
+			type : 2,
+			content : '../../act/modeler/openForm.html?id='+bpmnId+'&activityId='+id+'&taskId='+taskDefKey+'&businessKey='+businessKey+'&signInTime='+signInTime+'&isWait=1'+'&isIndexLog=0',
+			cancel: function(){ 
+			    //右上角关闭回调
+			    layer.closeAll();
+			    loadData_workMR();
+			    //return false 开启该代码可禁止点击该按钮关闭
+			  },
+			success: function(layero, index){
+				//var body = layer.getChildFrame('body', index);
+				var iframeWin = window[layero.find('iframe')[0]['name']]; //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
+				//iframeWin.yes();
+				iframeWin.$("#sub").trigger("click")
+			}
+		});
+		pform.render();
+		layer.full(index);
+	}	
+	
+	//================弹窗提交回调==================
+	function postCallBack(retMsg) {
+		if (retMsg.code == 0) {
+			//console.log(tabIndex)
+			arr = [];
+			nameArr = [];
+			layer.closeAll();
+			loadData_log();
+			loadData_workMR();
+			loadData_receivedMR()
+			tool.success(retMsg.message);
+		} else {
+			tool.error(retMsg.message);
+		}
+	}
+	//================编辑弹窗提交回调==================
+		function postCallBack_edit(retMsg) {
+		if (retMsg.code == 0) {
+			//console.log(tabIndex)
+			arr = [];
+			nameArr = [];
+        	var laypageBtn=$(pageBtn).parents(".admin-table").parent().next().find(".layui-laypage-btn");
+        	if(laypageBtn.length>0){
+        		laypageBtn.trigger("click");
+        	}else{
+        		loadData_log();
+        	}
+			layer.closeAll();
+            
+			tool.success(retMsg.message);
+		} else {
+			tool.error(retMsg.message);
+		}
+	}
+	//=================计算文本域数字=================
+	function countnum(par) { 
+		var min = 0; 
+		if (par.value.length > min) 
+		var str = min + par.value.length; 
+		document.getElementById("count").innerHTML = str.toString(); 
+	} 	
+	
+	//===============工作日志新增弹窗===============
+	function openAddWin(content,workdate) {
+		var titleTime;
+		//$("#log_add_rest").click()
+		$("#title").val("")
+		$("#demoList_add").empty()
+		if(content != null ){
+			$("#content").val(content)
+		}else{
+			$("#content").val("")
+		}
+		if(workdate != null && workdate != ""){
+			titleTime = workdate
+			$("#workDate").val(workdate.substring(0,workdate.indexOf(" ")))
+		}else{
+			titleTime = getTimeNow()
+			$("#workDate").val(titleTime.substring(0,titleTime.indexOf(" ")))
+		}
+		$("#title").val(titleTime + "工作日志")
+		var index = layer.open({
+			title : '新增工作日志',
+			maxmin : false,
+			type : 1,
+			content : $('#log-add-object')
+		});
+		layer.full(index);
+		pform.render();
+	}
+	
+	//获取当前时间，格式YYYY-MM-DD
+    function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        
+        var currentdate = year + seperator1 + month + seperator1 + strDate;
+        return currentdate;
+    }
+	
+	function getTimeNow(){
+		var date = new Date();
+		this.year = date.getFullYear();
+		this.month = date.getMonth() + 1;
+		this.date = date.getDate();
+        if (this.month >= 1 && this.month <= 9) {
+        	this.month = "0" + month;
+        }
+        if (this.date >= 0 && this.date <= 9) {
+        	this.date = "0" + this.date;
+        }
+		this.day = new Array("星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六")[date.getDay()];
+		this.hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+		this.minute = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+		this.second = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+		var currentTime = this.year + "-" + this.month + "-" + this.date + " " + this.day;
+		return currentTime;
+	}
+	//===============工作日志详情弹窗=====================
+	function log_Detail(logId) {
+		var object = tool.getById("../offDailylog/getById", logId);
+		console.log(object)
+		for (var key in object) {
+			$("#log-view-form").find("#" + key + "_view").html(object[key]);
+		} 
+		if(object.workDate!=null){
+			object.workDate=object.workDate.substr(0,10);
+			$("#workDate_view").val(object.workDate)
+		}
+		var fileBack=object.resResourceList;
+        var filelist={filelist:fileBack};
+        /* if(object.resResourceList!=null){
+			for(var i=0;i<filelist.filelist.length;i++){
+				filelist.filelist[i].attachPath = filelist.filelist[i].attachPath.replace(/\\/g,"\\/")
+			}
+		} */
+        $('#demoList_view').html(template("artt_detail", filelist));
+		if(object.resResourceList == null){
+			$("#log_att_view").hide()
+			$("#log_attH_view").hide()
+		}else{
+			$("#log_att_view").show()
+			$("#log_attH_view").show()
+		}
+        var index = layer.open({
+			title : '工作日志详情',
+			maxmin : false,
+			type : 1,
+			content : $('#log-view-object')
+		});
+		layer.full(index);
+		pform.render(); 
+	}
+	
+	 var pageBtn;//锁定分页的确定按钮
+	//===============更新工作日志弹窗=====================
+	function log_update(logId,content) {
+		pageBtn=content;
+		$("#log_edit_rest").click()
+		var object = tool.getById("../offDailylog/getById", logId);
+		for (var key in object) {
+			$("#log-update-form").find("#" + key + "_edit").val(object[key]);
+		} 
+		if(object.workDate!=null){
+			object.workDate=object.workDate.substr(0,10);
+			$("#workDate_edit").val(object.workDate)
+		}
+        var fileBack=object.resResourceList;
+        var filelist={filelist:fileBack};
+        $('#demoList_edit').html(template("artt_edit", filelist));
+		var index = layer.open({
+			title : '编辑工作日志',
+			maxmin : false,
+			type : 1,
+			content : $('#log-update-object')
+		});
+		layer.full(index);
+		pform.render(); 
+	}
+	
+	//===============月报详情================
+	function detailMR(id,username,status){
+		//初始化
+		$("#createMonthMR").val("");
+		$("#userNameMR").val("");
+		$("#userDeptMR").html("");
+		$("#MRid").val("");
+		$(".worklog_MR").remove();
+		
+		//填数据
+		var object = tool.getById("../offMonthReport/getById", id);
+		console.log(object);
+		var readonly = "";
+		var edit = "";
+		if(object.status == 0){
+			$("#saveMRDiv").show();
+			$("#submitMRDiv").show();
+			$(".month_delete").show();
+			readonly = ""
+			$("#uploadMR_edit").show()
+			$("#attachmentMR_edit").show()
+			//$("#attachmentMR_view").hide()
+			$("#attachmentMR_views").hide()
+			edit = "编辑";
+			$("#mainLeader_editMR").hide();
+		}else{
+			$("#saveMRDiv").hide();
+			$("#submitMRDiv").hide();
+			$(".month_delete").hide();
+			readonly = "readonly";
+			$("#uploadMR_edit").hide()
+			$("#attachmentMR_edit").hide()
+			//$("#attachmentMR_view").show()
+			$("#attachmentMR_views").show()
+			edit = "";
+			$("#mainLeader_editMR").show();
+		}
+		//mainLeader_editMR
+		$("#commentMR").html(object.comment);
+		$("#userDeptMR").html(object.belongDept);
+		$("#MRid").val(object.id);
+		var d = new Date();
+		$("#createtimeMR").html(d.toLocaleDateString() + " " +d.toLocaleTimeString());
+		var monthReportDetailList = object.monthReportDetailList
+	//	$("#th_editMR").text(object.title)
+		$("#titleMR_edit").html(object.title)  //月报详情头上建个标题字大一点，明显一点
+		var valuei = 0;
+		var id = "";
+		var dailylogId = "";
+		var workDate = "";
+		var monthReportId ="";
+		var content = ""
+		//console.log(monthReportDetailList)
+		for (var value = 0; value<monthReportDetailList.length; value++){
+			if(monthReportDetailList[value].offMonthReportDetail!=null){
+				if(monthReportDetailList[value].offMonthReportDetail.id != null){
+					id = monthReportDetailList[value].offMonthReportDetail.id
+				}
+				if(monthReportDetailList[value].offMonthReportDetail.dailylogId != null){
+					dailylogId = monthReportDetailList[value].offMonthReportDetail.dailylogId
+				}
+				if(monthReportDetailList[value].offMonthReportDetail.workDate != null){
+					workDate = monthReportDetailList[value].offMonthReportDetail.workDate
+				}
+				if(monthReportDetailList[value].offMonthReportDetail.monthReportId != null){
+					monthReportId = monthReportDetailList[value].offMonthReportDetail.monthReportId
+				}	
+				if(monthReportDetailList[value].offMonthReportDetail.content != null){
+					content = monthReportDetailList[value].offMonthReportDetail.content
+				}	
+			}
+		    valuei ++
+			var str = '<tr class="worklog_MR" style="height:40px;">'
+			str += "<td>"+monthReportDetailList[value].offMonthReportDetail.workDate+"</td>"	
+			str += '<td style="display:none">'
+			str += '<input id="id'+valuei+'" name="monthReportDetailList[' + valuei + '].offMonthReportDetail.id" value="'+ id +'" />'
+			str += '<input id="logid'+valuei+'" name="monthReportDetailList[' + valuei + '].offMonthReportDetail.dailylogId" value="'+ dailylogId +'" />'
+			str += '<input id="workdate'+valuei+'" name="monthReportDetailList[' + valuei + '].offMonthReportDetail.workDate" value="'+ workDate +'" />'
+			str += '<input name="monthReportDetailList[' + valuei + '].offMonthReportDetail.monthReportId" value="'+ monthReportId +'" />'
+			
+			str += '</td>'
+			str += "<td><textarea style='height:40px;width:100%;border:none' maxlength='500px' name='monthReportDetailList[" + valuei + "].offMonthReportDetail.content' id='textArea"+ valuei +"'"+readonly+">"+content+"</textarea></td>"	
+		    str += '<td><a class="hand table_btn" onclick=monthReport_update("'+ valuei +'")>'+edit+'</a></td>'
+		    str += "</tr>"  
+		  	$("#leadertr_edit").before(str)
+			id = "";
+			dailylogId = "";
+			workDate = "";
+			monthReportId ="" ;
+			content = "";
+		}
+        var fileBack=object.resResourceMRList;
+        var filelist={filelist:fileBack};
+        if(object.resResourceMRList!=null){
+			$("#attachmentMR_views").show()
+		}else{
+			$("#attachmentMR_views").hide()
+		}
+        $('#demoListMR_edit').html(template("arttMR_edit", filelist));
+        $('#demoListMR_view').html(template("arttMR_detail", filelist));
+		//$("#leadertr_edit").after()
+		var index = layer.open({
+			title : "月报详情",
+			maxmin : false,
+			type : 1,
+			content : $('#MR-detail-object')
+		});
+		layer.full(index);
+		pform.render();
+	}
+	
+	//===============已收月报详情弹窗=================
+	function detail_receivedMR(id,username,isread,btnHidden){
+		if(btnHidden=="1"){
+			$("#MR-detail-submit").hide();
+		}else{
+			$("#MR-detail-submit").show();
+		}
+		$("#createtimeMR_received").html("");
+		$("#userDeptMR_received").html("");
+		$(".worklog_receivedMR").remove()
+		var object = tool.getById("../offMonthReport/getSubmitById", id);
+		//console.log(object);
+		var monthReportDetailList = object.monthReportDetailList
+		$("#comment_receivedMR").html(object.comment);
+		$("#createtimeMR_received").html(object.submitTime);
+		$("#userDeptMR_received").html(object.belongDept);
+		//$("#th_receivedMR").text(username + "的工作月报")
+		$("#titlereceivedMR_edit").html(object.title)  //已收月报详情头上建个标题字大一点，明显一点
+		$("#MRid_received").val(object.id)//隔壁老孫
+		
+		for (var value in monthReportDetailList){
+		    //console.log(value);
+			var str = '<tr class="worklog_receivedMR" style="word-break:break-all">'
+			str += "<td>"+monthReportDetailList[value].offMonthReportDetail.workDate+"</td>"	
+			str += "<td style='white-space: normal;'><p readonly>"+monthReportDetailList[value].offMonthReportDetail.content+"</p></td>" 	
+			/* str += "<td style="">"+monthReportDetailList[value].content+"</td>" */
+		    str += "<td>"
+		    if(monthReportDetailList[value].resResourceList){
+		    	for(resource in monthReportDetailList[value].resResourceList){
+		    		var groupName ="'"+monthReportDetailList[value].resResourceList[resource].groupName+"'";
+		    		var fileName ="'"+monthReportDetailList[value].resResourceList[resource].fileName+"'";
+			    	str += '<div><div style="width:80%;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;float:left;" title="'+monthReportDetailList[value].resResourceList[resource].orgnlFileName+'">'+monthReportDetailList[value].resResourceList[resource].orgnlFileName+'</div><a class="downLoad" onclick="showDownload('+groupName+','+fileName+')" >下载</a></div>'  
+			    }
+		    }
+		    str += "</td>"
+		  //  str += '<td><a onclick="log_update('+monthReportDetailList[value].id+')">编辑</a></td>'
+		    str += "</tr>"  
+		  $("#leadertr_view").before(str)
+		  //$("#tbody_receivedMR").before(str)
+		}
+		
+		var fileBack=object.resResourceMRList;
+	    var filelist={filelist:fileBack};
+	    /* for(var i=0;i<filelist.filelist.length;i++){
+			filelist.filelist[i].attachPath = filelist.filelist[i].attachPath.replace(/\\/g,"\\/")
+		} */
+	    $('#demoListMR_reviews').html(template("arttMR_review", filelist));
+	    if(isread == "0"){
+	    	$("#receivedMR-update-submit").hide()
+	    }else{
+	    	$("#MR-detail-submit").hide()
+	    }
+		var index = layer.open({
+			title : "月报详情",
+			maxmin : false,
+			type : 1,
+			content : $('#receivedMR-detail-object')
+		});
+		layer.full(index);
+		pform.render();
+	}
+	
+	//======================工作日志删除======================
+	function showDelete(id, type) {
+		pageBtn = type;
+		layer.confirm('确定删除 ?', {
+			icon : 3,
+			title : '提示'
+		}, function(index) {
+			var url ="";
+			if(type == 0){
+				url = "../offDailylog/delete"//工作日志删除
+			}else {
+				url = "../"//月报删除
+			}
+			var retMsg = tool.deleteById("../offDailylog/delete", id)
+			if (retMsg.code == 0) {
+				var laypageBtn=$(pageBtn).parents(".admin-table").parent().next().find(".layui-laypage-btn");
+	        	if(laypageBtn.length>0){
+	        		laypageBtn.trigger("click");
+	        	}else{
+	        		loadData_log();
+	        	}
+				tool.success(retMsg.message);
+			} else {
+				tool.error(retMsg.message);
+			}
+		});
+	}
+	
+	//=====================月报编辑工作日志===========================
+	function monthReport_update(i){
+		console.log(i)
+		//var id = $("#id" + i).val();
+		var content = $("#textArea" + i).val();
+		var workdate = $("#workdate" + i).val()
+		var logid =  $("#logid" + i).val();
+		if("" == logid || logid == null){
+			openAddWin(content,workdate)
+		}else{
+			log_update(logid,content)
+		}
+	}
+	//======================阻止maopao======================
+    function defalt_td(event){
+           event.cancelBubble=true;
+    }
+	
+  //===============================下载===================================
+    //下载
+    function showDownload(groupName,fileName){
+	   	$("#groupName").val(groupName);
+	   	$("#fileName").val(fileName);
+		$("#action_form").submit();
+  	}
+  //==================生成树=====================
+	var setting = {
+		data : {
+			simpleData : {
+			enable : true
+			}
+		},
+		callback : {
+			beforeClick : beforeClick
+		}
+	};
+	var param = new Object();
+	param._csrf = $("#_csrf").val();
+	redern();
+	function redern() {
+		tool.post("/aut/autDepartment/getDepartmentList", param, postCallBack_newtree);
+	}
+	var obj = [];
+	var zTreeObj; 
+	
+	function postCallBack_newtree(data) {
+		for (var i = 0; i < data.length; i++) {
+			obj.push({
+				id : data[i].id,
+				pId : data[i].parentId,
+				name : data[i].deptName,
+				obj : {
+					deptCode : data[i].deptCode,
+					deptLevel : data[i].deptLevel,
+					isActive : data[i].isActive,
+					parentId : data[i].parentId,
+					parentCode : data[i].parentCode
+				}
+			}) 
+		}  
+		zTreeObj = $.fn.zTree.init($("#treeDemo"), setting, obj);
+	}
+
+	var hiddenNodes=[];	//用于存储被隐藏的结点
+	var targetParent = [];
+	function getParentByChild(node){
+		if(node.parentTId != null){
+			targetParent.push(node.getParentNode());
+			getParentByChild(node.getParentNode());
+		}
+	}
+	
+	//过滤ztree显示数据
+	function AutoMatch(){
+		//console.log(zTreeObj)
+		//显示上次搜索后背隐藏的结点
+		zTreeObj.showNodes(hiddenNodes);
+		//查找不符合条件的叶子节点
+		targetParent = [];
+		function filterFunc(node){
+			var _keywords=$("#citySel").val();
+			if(node.name.indexOf(_keywords)!=-1) {
+				getParentByChild(node)
+				return false;
+			}
+			return true;		
+		};
+		//获取不符合条件的叶子结点
+		hiddenNodes=zTreeObj.getNodesByFilter(filterFunc);
+		//隐藏不符合条件的叶子结点
+		zTreeObj.hideNodes(hiddenNodes);
+		//显示满足条件的根节点
+		zTreeObj.showNodes(targetParent);
+		zTreeObj.expandAll(true);
+	};
+
+	//获取数节点加载岗位列表
+	function beforeClick(hh, treeNode) {
+		$("#belongDeptId").val(treeNode.id)
+		loadData_manageMR();
+	}
+	
+	//-------------------------------------------------------上传附件--小郑的代码格式太乱了。。。不要跟别的混在一起
+	var arr=[];//放路径
+	var nameArr=[];//放本地文件名
+
+	
+	      
+	//新增上传uploadMR_edit
+	tool.fileUpload("demoList_add","upload_add","/res/file/upload","testListAction_add","OFF_DAILYLOG_ADD");
+	tool.fileUpload("demoList_edit","upload_edit","/res/file/upload","testListAction_edit","OFF_DAILYLOG_EDITOR");
+	tool.fileUpload("demoListMR_edit","uploadMR_edit","/res/file/upload","testListAction_editMR","OFF_MONTH_REPORT");
+    
+    
+   /*  clickfleupload("demoList_add","upload_add","testListAction_add");
+    clickfleupload("demoList_edit","upload_edit","testListAction_edit");
+    
+    clickfleupload("demoListMR_edit","uploadMR_edit","testListAction_edit");
+    var fileData = tool.getfiletiao('../../util/utilController/getAllowType') //调取后台文件格式 大小数据
+
+    function clickfleupload(attchListSelector,dragSelector,startUploadSelector){
+        layui.use('upload', function(){
+            var upload = layui.upload;
+            //多文件列表示例
+            var demoListView = $('#'+attchListSelector)
+                ,uploadListIns = upload.render({
+                elem: '#'+dragSelector
+                ,url: '/mai/maiWrite/upload'
+                ,accept: 'file'//接收文件
+                ,exts:fileData.allowType//接收文件后缀
+                ,method: 'post'
+                ,size:fileData.limitSize*1024   //文件大小  kb
+                ,data:{_csrf:$("#_csrf").val(),allowType:fileData.allowType,limitSize:fileData.limitSize}//上传的参数
+                ,multiple: true//是否多文件上传
+                ,auto: true//设置是否自动上传(true)   false需要指定一个bindAction按钮来点击上传
+              //  ,bindAction: '#'+startUploadSelector
+                ,before: function(obj){ //选中玩文件调用
+                    var files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                    //读取本地文件
+                    obj.preview(function(index, file, result){
+                        nameArr.push({fileName:file.name,index:index,fileSize:parseInt(file.size/1014)})
+                        var tr = $(['<tr id="upload-'+ index +'">'
+                            ,'<td>'+ file.name +'</td>'
+                            ,'<td>'+ (file.size/1014).toFixed(1) +'kb</td>'
+                            ,'<td>等待上传</td>'
+                            ,'<td>'
+                            ,'<a class="demo-delete" style="color:#33a1ff;cursor:pointer;" index="'+index+'">删除</a>'
+                            ,'</td>'
+                            ,'</tr>'].join(''));
+
+
+                        //单个重传
+                        tr.find('.demo-reload').on('click', function(){
+                            obj.upload(index, file);
+                            return false;
+                        });
+                        //删除
+                        tr.find('.demo-delete').on('click', function(){
+                            var index = $(this).attr("index");
+                            for(var i=0;i<nameArr.length;i++){
+                                if(nameArr[i].index==index){
+                                    nameArr.splice(i,1)
+                                }
+                            }
+                            for(var i=0;i<arr.length;i++){
+                                if(arr[i].index==index){
+                                    arr.splice(i,1)
+                                }
+                            }
+                            delete files[index]; //删除对应的文件
+                            tr.remove();
+                            return false;
+                        });
+                        //上传成功的 要删除对应的文件
+                        $("#"+startUploadSelector).on("click",function(){
+                            delete files[index];
+                        })
+                        delete files[index];
+                        demoListView.append(tr);
+                    });
+                }
+                ,done: function(res, index, upload){//开始上传到接口调用
+                    if(res.code!=0){
+                        tool.error(res.message)
+                    }
+                    //res 后台返回给前台的数据
+                    var item = this.item;
+                    if(res.code==0){ //上传成功c
+                        arr.push({res:res.object[0],index:index});
+                      //延时改变状态为了防止 出现等待上传的情况
+                        setTimeout(function(){
+                        var tr = demoListView.find('tr#upload-'+ index)
+                            ,tds = tr.children();
+                        tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
+                        },500)
+                        // tds.eq(3).html('')
+                        // delete files[index]; //删除文件队列已经上传成功的文件
+                        return;
+                    }
+                    this.error(index, upload);
+                }
+                ,error: function(index, upload){
+                    //如果上传失败 删除源文件名数组中的这项目
+                    for(var i=0;i<nameArr.length;i++){
+                        if(nameArr[i].index==index){
+                            nameArr.splice(i,1);
+                        }
+                    }
+                    var tr = demoListView.find('tr#upload-'+ index)
+                        ,tds = tr.children();
+                    tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
+                    tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
+                }
+            });
+        });
+    }
+ */
+    //删除编辑里面的附件
+    function aleafile(id,myself,index){
+        layer.confirm('确定删除吗 ?', {
+            icon: 3,
+            title: '提示'
+        }, function (index) {
+            var retMsg = tool.deleteById("/res/resResource/delete", id);
+            if (retMsg.code == 0) {
+                tool.success(retMsg.message);
+                $(myself).parent().parent().remove();
+                for(var i=0;i<arr.length;i++){
+                    if(arr[i].index==index){
+                        arr.splice(i,1)
+                    }
+                }
+                for(var i=0;i<nameArr.length;i++){
+                    if(nameArr[i].index==index){
+                        nameArr.splice(i,1)
+                    }
+                }
+            } else {
+                tool.error(retMsg.message);
+            }
+        });
+    }
+    
+    
+    
+    //===============================批量删除===============================
+    function deleteIds(){
+		  if($(".log_chb:checked").length==0){
+				tool.error('至少选中一个');
+		  }else{
+		  var str="";
+		  $(".log_chb:checked").each(function(index,value){
+			  str+=value.value +";";
+		  })
+		   //调批量删除接口 最后重新渲染列表 
+		  layer.confirm('确定删除吗 ?', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				var retMsg = tool.deleteByIds("../offDailylog/deleteByIds", str)
+				if (retMsg.code == 0) {
+					$("#dailylog_check-all").attr("checked",false);
+					pform.render();
+					layer.closeAll();
+					tool.success(retMsg.message);
+					loadData_log(); 
+				} else {
+					tool.error(retMsg.message);
+				}
+			});
+		  }
+	  }
+    
+	//================新建短信弹窗==================
+	function newSms() {
+		var index = layer.open({
+			title : '添加用户',
+			maxmin : false,
+			type : 1,
+			content : $('#win-newsms-object')
+		});
+		pform.render();
+		layer.full(index);
+	}
+	//----------------获取星期---------------------
+	function getWeekName(date){
+		var arys1 = new Array();
+		arys1 = date.split('-');     //日期为输入日期，格式为 2013-3-10
+		var ssdate = new Date(arys1[0], parseInt(arys1[1] - 1), arys1[2]);
+		var  week1=String(ssdate.getDay()).replace("0","日").replace("1","一").replace("2","二").replace("3","三").replace("4","四").replace("5","五").replace("6","六")//就是你要的星期几
+		var week="星期"+week1;//就是你要的星期几
+		return week;
+	}
+
+	/*下拉多选初始化
+    multselInit();*/
+	/* 审批填写意见弹窗 */
+	function suggest(){
+		var index = layer.open({
+			title : '审批',
+			maxmin : false,
+			type : 1,
+			shadeClose: true,
+               area: ['900px', '550px'],
+			content : $('#win-suggest-object')
+		});
+	}
+	/*切换按钮  */
+	function change_btn(){
+		$(".sign").hide();
+		$(".btns").show();
+	}
+	function agree(){
+		$(".agree").show();
+		$(".noagree").hide();
+		$(".yes").addClass("blue_border");
+		$(".no").removeClass("blue_border");
+		
+		 $("#form-jump-submit").attr("style","display:none");
+	        $("#form-add-submit").removeAttr("style");
+	}
+	function noagree(){
+		$(".agree").hide();
+		$(".noagree").show();
+		$(".yes").removeClass("blue_border");
+		$(".no").addClass("blue_border");
+		
+		$("#form-add-submit").attr("style","display:none");
+	    $("#form-jump-submit").removeAttr("style");
+	}
+
+	//点击添加常用意见
+	function click_font(obj){
+		var a = $(obj).find('.sug').text();
+		var b = $('#draw_sug').val();
+		$('#draw_sug').val(b+a);
+	}	
+	function add_sug(){
+		layer.confirm('确定加入常用意见？', {
+			  btn: ['确定','取消'] //按钮
+			}, function(){
+			  layer.msg('添加成功', {icon: 1});
+			}, function(){
+			  
+			});
+	}
+	//人员选择树
+	function personlSeclectOpen(){	  
+		tool.treeDemo("win-personal-object",'treeDemo1',"n_receiverNameid","n_receiverName_","n_receiverName");
+		$("#number").html("");
+  	}
+    //用按钮查询节点  
+    /* function searchNodes(){  
+        var keywords=$("#peopelSel").val();  
+        var nodes = mytree.getNodesByParamFuzzy("name", keywords, null);  
+        if (nodes.length>0) {  
+            mytree.selectNode(nodes[0]);  
+        }  
+    } */  
+	//重置树
+	function reset_tree(){
+		var mytree = $.fn.zTree.getZTreeObj("treeDemo");
+	    //打开弹窗前重置节点以及关闭展开状态，避免叠加
+	    $("#number").html("");
+		$('.reset').val("");
+		$('.reset1').html("");
+		mytree.checkAllNodes(false)
+	    mytree.expandAll(false);
+	}
+	function loadData(){
+		
+	}
+</script>
+	
+</body>
+
+</html>

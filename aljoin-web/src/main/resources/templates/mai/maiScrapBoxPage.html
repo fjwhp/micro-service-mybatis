@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>废件箱</title>
+ <link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" />
+<link rel="stylesheet" href="../../web/css/zhengls.css" /> 
+<style>
+	.layui-form-pane .label_m{width:90px;}
+	.layui-form-pane .layui-input-block1{margin-left:90px;} 
+	.layui-input-block1 .layui-select-title .layui-input{width:100px;}
+</style>
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main">
+	<!-- <div style="font-size:16px;font-weight:bold;margin-bottom:5px;color:#339bf1;""><i class="fa fa-envelope-o" aria-hidden="true" data-icon="fa-envelope-o" style="margin-right:6px;"></i>废件箱</div> -->
+			<blockquote class="layui-elem-quote" style="padding: 5px;">
+				<form class="layui-form" action="">
+					<div style="float:right">
+						<div class="layui-input-inline">
+							<input type="text" name="searchKey" id="searchKey" placeholder="请输入发件人或主题" autocomplete="off" lay-verify="" maxlength="20" class="layui-input"
+								style="height: 30px; line-height: 30px;">
+						</div>
+						<span lay-submit="" lay-filter="form-search-submit"><@a code="090201" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" iclass="layui-icon"
+							 icon="&#xe615;" text="查询"/></span>
+					</div>
+					<div class="layui-input-inline">
+					  	<span><@a  code="090202" href="javascript:void(0)" onclick="showDeletes()" class="layui-btn layui-btn-small" id=""  
+							 text="彻底删除"/></span>
+					  	<span><@a  code="090203" href="javascript:void(0)" onclick="recove()" class="layui-btn layui-btn-small" id=""  
+							 text="恢复"/></span>
+					</div>
+						
+				</form>
+		</blockquote>
+		<!-- 	<form class="layui-form" action="">
+				<div class="layui-input-inline" >
+				 <span>主题</span>
+				</div>
+				<div class="layui-input-inline m_r20" >
+					<input type="text" name="searchKey" id="searchKey"  autocomplete="off" class=inp_w120px
+						style="width:180px;">
+				</div>
+				<div class="layui-input-inline">
+				 <span>发送时间</span>
+				</div>
+				<div class="layui-input-inline">
+					 <input type="text" class="inp_date" id="startTime" >
+				</div>
+				<div class="layui-input-inline">
+				 <span>至</span>
+				</div>
+				<div class="layui-input-inline">
+					  <input type="text" class="inp_date" id="endTime" >
+				</div>
+				<div class="layui-input-inline" style="float:right">
+				<span><@a code="000101" href="javascript:void(0)" class="btn_blue xiangdui" id="" onclick="loadData()"  text="查询"/></span>
+				  <a class="btn_blue xiangdui" onclick="seacrhReact(this)">重置</a>
+			    </div>	
+			</form>
+		<div class="delimany">
+		      <a class="btn_blue_e6e m_r20" onclick="showDeletes()">彻底删除</a>
+              <a class="btn_blue_e6e" onclick="recove()">恢复</a>
+        </div> -->
+		<div class="layui-field-box  layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table admin-table">
+			        <!-- <col width="35">
+				    <col width="150">
+				    <col width="350">
+				    <col width="130">
+				    <col width="100"> -->
+				<thead>
+					<tr>
+						<th style="width:20px;"><input type="checkbox" lay-skin="primary" id="paging_check-all" lay-filter="paging_check-all"></th>
+						<th style="display: none;">用户ID</th>
+						<th style="width:150px;">发件人</th>
+						<th>主题</th>
+						<th style="width:160px;">创建时间<img src="../../web/images/upgray.png"  class="up" onclick="loadData('1','0')";><img src="../../web/images/downgray.png" class="down" onclick="loadData('2','0')";></th>
+						<th style="width:100px;">大小(KB)<img src="../../web/images/upgray.png"  class="up1" onclick="loadData('0','1')";><img src="../../web/images/downgray.png" class="down1" onclick="loadData('0','2')";></th>
+				<!-- 		<th>操作</th> -->
+					</tr>
+				</thead>
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+                      {{if records.length==0}}
+                       <tr>
+							<td colspan="5" style="text-align:center">
+                                                                                          没有邮件
+							</td>
+						</tr>
+                     {{/if}}
+					{{each records value index}}
+						<tr>
+							<td><input type="checkbox" name="check" lay-filter="checkboxf" class="check-id" lay-skin="primary"   id="{{value.id}}" orgnlType="{{value.orgnlType}}" orgnlId="{{value.orgnlId}}"></td>
+							<td style="display: none;">{{value.id}}</td>
+							<td>{{value.sendFullName}}</td>
+							<td title="{{value.subjectText}}">{{value.subjectText}}</td>
+							<td>{{value.lastUpdateTime}}</td>
+							<td>{{value.mailSize}}</td>
+						</tr>
+					{{/each}}
+					</script>
+					<!-- 		<td>
+								<@a code="000105" href="javascript:void(0)" class="layui-btn layui-btn-danger layui-btn-mini" id="show-delete" onclick="showDelete('{{value.id}}','{{value.code}}')" text="删除"/>
+							</td> -->
+				</tbody>
+			</table>
+		<!-- 	删除list隐藏域 -->
+			<form id="add-scrap-form">
+				<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+			</form>	
+			<form id="add-scrap-form2">
+				<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+			</form>	
+			<form id="add-scrap-form3">
+				<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+			</form>	
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script>
+		//时间控件
+ 		//tool.timeset('#startTime','#endTime');
+		var pform;
+		//添加事件
+		var newarr=[];
+		
+		layui.use('form', function() {
+			pform = layui.form;
+			pform.verify({
+				length50 : function(value) {
+					if (value.length>50) {
+						return "长度不能超过50个字符";
+					}
+				},
+				length20:function(value){
+					if (value.length>20) {
+						return "长度不能超过20个字符";
+					}
+				},
+				special:function(value){
+					var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]"); 
+					if(pattern.test(value)){
+					     return "不能输入特殊字符";
+					}
+				}  
+		  });
+		
+		//查询
+		 pform.on('submit(form-search-submit)',function(data){
+			   loadData();
+			 return false;
+		 })
+			//初始化出发数据加载
+			loadData();
+		});
+		//加载数据
+		function loadData(orderByTime,mailSize) {
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+			param.pageNum = 1;
+			param.url = "../maiScrapBox/list";
+		 	param.subjectText = $("#searchKey").val();
+		 	if(mailSize==1||mailSize==2){
+	     		param.mailSize=mailSize;
+	     		if(mailSize==1){
+					$(".up1").attr("src","../../web/images/uptrue.png");
+					$(".down1").attr("src","../../web/images/downgray.png");
+				}else{
+					$(".up1").attr("src","../../web/images/upgray.png");
+					$(".down1").attr("src","../../web/images/downture.png");
+				}
+	     	}
+	     	if(orderByTime==1||orderByTime==2){
+	     		param.orderByTime=orderByTime;
+	     		if(orderByTime==1){
+					$(".up").attr("src","../../web/images/uptrue.png");
+					$(".down").attr("src","../../web/images/downgray.png");
+				}else{
+					$(".up").attr("src","../../web/images/upgray.png");
+					$(".down").attr("src","../../web/images/downture.png");
+				}
+	     	}
+			tool.loadpage(param);
+		}
+		//删除对象
+		function showDeletes() {
+			obj = $(".check-id");
+			check_val = [];
+			for(k in obj){
+			    if(obj[k].checked)check_val.push(obj[k].id);
+			}
+			if(check_val==""){
+			    tool.error('至少选中一个');
+		    }else{
+				layer.confirm('确定删除吗 ?', {
+					icon : 3,
+					title : '提示'
+				}, function(index) { 
+				    var str="";
+				    $.each(check_val,function(index,value){
+						str += '<input type="hidden" name="maiScrapBoxList['+index+'].id" value="'+value+'" />';
+					})
+			        $("#add-scrap-form").append(str);
+				    $("#paging_check-all").attr("checked",false);
+					pform.render();
+					var retMsg = tool.post("../maiScrapBox/delete",$("#add-scrap-form").serialize(),decallback,false); 
+				/* 	if (retMsg.code == 0) {
+						tool.success(retMsg.message);
+						loadData();
+					} else {
+						tool.error(retMsg.message);
+					}   */
+				});
+			}
+		}
+		function decallback(data){
+			$("#add-scrap-form").empty();
+			$("#add-scrap-form").append('<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />')
+			tool.success("删除成功");
+			layer.closeAll();
+			loadData();
+		}
+		//单个删除对象
+		/* function showDelete(id,code) {
+			layer.confirm('确定删除 ?', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				$("#add-scrap-form2").empty(); 
+				var str = '<input type="hidden" name="maiScrapBoxList[0].id" value="'+id+'" />';
+				str += '<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />';
+		        $("#add-scrap-form2").append(str);
+				var retMsg = tool.post("../maiScrapBox/delete",$("#add-scrap-form2").serialize(),decallback,false); 
+		 	 	if (retMsg.code == 0) {
+					tool.success(retMsg.message);
+					loadData();
+				} else {
+					tool.error(retMsg.message);
+				}   
+			});
+		}
+		function decallback(retMsg){
+			if (retMsg.code == 0) {
+				layer.confirm(retMsg.message);
+				 console.log("data___"+retMsg.message) 
+				loadData();
+			} else {
+				tool.error(retMsg.message);
+			}   
+	
+			layer.msg("删除成功");
+			layer.closeAll();
+			loadData();
+		} */
+		//恢复
+		function recove(){
+			obj = $(".check-id");
+			check_id = []; 
+			check_orgnlId = [];
+			check_type = [];
+		
+	 		for(j in obj){
+			    if(obj[j].checked)check_id.push(obj[j].id);
+			} 
+			for(k in obj){
+			    if(obj[k].checked)check_orgnlId.push($(obj[k]).attr("orgnlId"));
+			}
+			for(s in obj){
+			    if(obj[s].checked)check_type.push($(obj[s]).attr("orgnlType"));
+			}
+			if(check_type==""){
+				 tool.error('至少选中一个');
+			}else{
+				layer.confirm('确定恢复吗 ?', {
+					icon : 3,
+					title : '提示'
+				}, function(index) { 
+					var str="";
+					$.each(check_orgnlId,function(index,value){
+						str += '<input type="hidden" name="maiScrapBoxList['+index+'].orgnlId" value="'+value+'" />';
+					})
+					var str1="";
+					$.each(check_type,function(index,value){
+						str1 += '<input type="hidden" name="maiScrapBoxList['+index+'].orgnlType" value="'+value+'" />';
+					})
+					var str2="";
+					$.each(check_id,function(index,value){
+						str2 += '<input type="hidden" name="maiScrapBoxList['+index+'].id" value="'+value+'" />';
+					})
+				    $("#add-scrap-form3").append(str);
+					$("#add-scrap-form3").append(str1);
+					$("#add-scrap-form3").append(str2);
+					
+					var retMsg = tool.post("../maiScrapBox/recover",$("#add-scrap-form3").serialize(),decallback1,false); 
+		  
+				})
+			}
+		}
+		function decallback1(data){
+			tool.success("恢复成功");
+			$("#add-scrap-form3").empty();
+			$("#add-scrap-form3").append('<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />')
+			layer.closeAll();
+			loadData();
+		}
+	</script>
+</body>
+</html>

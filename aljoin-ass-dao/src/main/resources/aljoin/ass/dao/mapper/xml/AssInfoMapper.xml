@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.ass.dao.mapper.AssInfoMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.ass.dao.entity.AssInfo">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="is_active" property="isActive" />
+		<result column="ass_name" property="assName" />
+		<result column="category_id" property="categoryId" />
+		<result column="category_name" property="categoryName" />
+		<result column="department_id" property="departmentId" />
+		<result column="department_name" property="departmentName" />
+		<result column="agent_id" property="agentId" />
+		<result column="agent_name" property="agentName" />
+		<result column="ass_type" property="assType" />
+		<result column="in_place" property="inPlace" />
+		<result column="ass_number" property="assNumber" />
+		<result column="add_time" property="addTime" />
+		<result column="ass_code" property="assCode" />
+		<result column="unit" property="unit" />
+		<result column="already_use_time" property="alreadyUseTime" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name, is_active, ass_name, category_id, category_name, department_id, department_name, agent_id, agent_name, ass_type, in_place, ass_number, add_time, ass_code, unit, already_use_time
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM ass_info WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="AssInfo">
+    	INSERT INTO ass_info(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{isActive}, #{assName}, #{categoryId}, #{categoryName}, #{departmentId}, #{departmentName}, #{agentId}, #{agentName}, #{assType}, #{inPlace}, #{assNumber}, #{addTime}, #{assCode}, #{unit}, #{alreadyUseTime})
+    </insert>
+
+</mapper>

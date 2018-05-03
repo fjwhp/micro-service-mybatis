@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.off.dao.mapper.OffSchedulingMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.off.dao.entity.OffScheduling">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="theme" property="theme" />
+		<result column="place" property="place" />
+		<result column="start_date" property="startDate" />
+		<result column="start_hour_min" property="startHourMin" />
+		<result column="end_date" property="endDate" />
+		<result column="end_hour_min" property="endHourMin" />
+		<result column="content" property="content" />
+		<result column="type" property="type" />
+		<result column="shared_person_id" property="sharedPersonId" />
+		<result column="shared_person_name" property="sharedPersonName" />
+		<result column="is_warn_msg" property="isWarnMsg" />
+		<result column="is_warn_mail" property="isWarnMail" />
+		<result column="is_warn_online" property="isWarnOnline" />
+		<result column="biz_id" property="bizId" />
+		<result column="biz_type" property="bizType" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name, theme, place, start_date, start_hour_min, end_date, end_hour_min, content, type, shared_person_id, shared_person_name, is_warn_msg, is_warn_mail, is_warn_online,biz_id,biz_type
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM off_scheduling WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="OffScheduling">
+    	INSERT INTO off_scheduling(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{theme}, #{place}, #{startDate}, #{startHourMin}, #{endDate}, #{endHourMin}, #{content}, #{type}, #{sharedPersonId}, #{sharedPersonName}, #{isWarnMsg}, #{isWarnMail}, #{isWarnOnline})
+    </insert>
+
+</mapper>

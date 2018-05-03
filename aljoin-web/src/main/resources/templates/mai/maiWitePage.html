@@ -1,0 +1,652 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE10,chrome=1" > <!--以IE9模式渲染-->
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+
+<link rel="stylesheet" href="../../web/css/public.css" />
+<link rel="stylesheet" href="../../web/css/zhengls.css" />
+<style>
+.layui-form-pane .layui-form-checkbox {margin: 0;}
+.btn_sty{top: -1px;position:relative;}
+</style>
+</head>
+<body>
+<!-- <div class="layui-layer-title" style="height:28px;line-height:28px;"><i class="fa fa-envelope-o" aria-hidden="true" data-icon="fa-envelope-o" style="margin-right:6px;"></i>撰写新邮件</div> -->
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<!-- 撰写文件 -->
+	<div class="m_10" id="win-add-object">
+	<!-- <div style="font-size:16px;font-weight:bold;margin-bottom:5px;color:#339bf1;"><i class="fa fa-envelope-o" aria-hidden="true" data-icon="fa-envelope-o" style="margin-right:6px;"></i>撰写邮件</div> -->
+	  <div class="floatLeft"  style="width:75%; float:left;padding-bottom:45px;">
+		<form class="layui-form layui-form-pane" id="add-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" name="maiReceiveBox.weekDay"   id="weekDay" />
+			<input type="hidden" name="maiSendBox.receiveUserCount"   id="receiveUserCount" />
+			<input type="hidden" name="maiReceiveBox.mailSize"   id="mailSize" value="10" />
+			<input type="hidden" name="maiReceiveBoxSearch.attachmentCount"   id="attachmentCount"  /> 
+            <input type="hidden" name="maiReceiveBox.mailContent"   id="mailContent" />
+            <div id="FileLei1">
+
+	        </div> 
+			
+			<div class="layui-form-item"  id="receiveFather">
+				<label class="layui-form-label">收件人</label>
+				<div class="layui-input-inline" style="width:70%">
+				    <div style="width:100%;" class="newgg inputBorCl inputBor" onclick="setValue(0,this)"></div>
+					<input  type="hidden" name="maiReceiveBox.receiveFullNames" id="receiveFullName"   autocomplete="off" placeholder="账号" readonly="readonly" class="layui-input emptyinput" >
+					<input type="hidden" name="maiReceiveBox.receiveUserNames"   id="receiveUserName"  autocomplete="off" class="layui-input emptyinput" >
+				    <input type="hidden" name="maiReceiveBox.receiveUserIds"   id="receiveUserId"  autocomplete="off" class="layui-input idszhan emptyinput" >
+				</div>
+				 <div  style="float:right">
+				   <input type="checkbox" class="faslecheck" name="maiSendBox.isReceiveSmsRemind" id="isReceiveSmsRemind" title="短信提醒" value="1">
+   			     </div>
+			
+			</div>
+			
+			<div class="layui-form-item" id="sendFather">
+				<label class="layui-form-label">抄送人</label>
+				<div class="layui-input-inline" style="width:70%">
+				    <div style="width:100%;" class="newgg1 inputBorCl" onclick="setValue(1,this)"></div>
+					<input  type="hidden" name="maiReceiveBox.copyFullNames" id="copyFullNames"  autocomplete="off" placeholder="抄送人" class="layui-input emptyinput" readonly="readonly" >
+				    <input type="hidden" name="maiReceiveBox.copyUserNames" id="copyUserNames" autocomplete="off" class="layui-input emptyinput" >
+				    <input type="hidden" name="maiReceiveBox.copyUserIds" id="copyUserIds"  autocomplete="off" class="layui-input  idszhan emptyinput" >
+				</div>
+				<div style="float:right" >
+				      <input type="checkbox" class="faslecheck" name="maiSendBox.isCopySmsRemind" id="isCopySmsRemind" title="短信提醒" value="1">
+   			</div>
+			</div>
+			
+			<div class="layui-form-item">
+				<label class="layui-form-label">主题</label>
+				<div class="layui-input-block">
+					<input type="text" name="maiReceiveBoxSearch.subjectText" id="subjectText"  lay-verify="" maxlength="50"  autocomplete="off"  placeholder="主题" class="layui-input emptyinput">
+				</div>
+			</div>
+			<div class="layui-form-item">
+			<label class="layui-form-label">上传附件</label>
+				<div class="layui-input-block">
+					<div class="layui-upload">
+ 					  <div class="layui-upload-drag" id="test10" style="padding:5px;width:99%">
+							  <i class="layui-icon"></i>
+							  <p>点击上传，或将文件拖拽到此处</p>
+					  </div>
+		                <a class="layui-btn" id="testListAction" style="position: absolute;right: 0px;top: 51px;">
+						<i class="layui-icon">&#xe62f;</i> 开始上传
+					   </a>    
+					  <div class="layui-upload-list">
+					     
+					    <table class="layui-table">
+						    <colgroup>
+							    <col width="200">
+							    <col width="60">
+							    <col width="60">
+							    <col width="30">
+							  </colgroup>
+					      <tbody id="demoList"></tbody>
+					    </table>
+					  </div>
+					
+					</div> 
+				   
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">内容</label>
+				<div class="layui-input-block">
+				  <script id="editor-id"  type="text/plain" style="width: 100%; height: 500px;"></script>
+				</div>
+			</div>
+			<div class="layui-form-item">
+			 	<label class="layui-form-label" style="opacity:0"></label>
+				 <div class="layui-input-inline">
+   				  <input type="checkbox" class="faslecheck" name="maiSendBox.isReceipt" id="isReceiptMail" title="是否回执" value="1">
+		         </div>
+				 <div class="layui-input-inline" style="margin-left: -40px;">
+   				  <input type="checkbox" class="faslecheck" name="maiReceiveBoxSearch.isUrgent" id="isUrgent" title="是否紧急" value="1">
+		         </div>
+			</div>
+			
+			<div class="btn_fixed">
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit"  id="disabled_send">
+						<i class="fa fa-save"></i> 发送
+					</button>
+					<button  class="layui-btn layui-btn-primary" lay-submit="" lay-filter="form-cao-submit" id="disabled_cao">
+						<li class="fa fa-eraser"></li> 存为草稿
+					</button>
+		
+				</div> 
+			</div>
+
+		 </form>
+		</div>
+		<div class="floatRighr" style="width:24%;float:right;border:1px solid #c9d3d6;" >
+		 <form class="layui-form layui-form-pane" id="add-object10-form" >
+		  <div class="tree_head" style="font-weight:bold;font-size:16px;">
+		          收件人选择
+		  </div>
+		   <div class="srarch">
+				<div class="layui-input-inline" style="margin: 0 2%;width:90%;height: 46px;">
+					<input type="text" name="searchKey" id="peopelSel" placeholder="搜索..." autocomplete="off" class="tree_search1 "
+					style="height: 30px; line-height: 30px;text-align:left;cursor:pointer;width: 60%;margin-top: inherit;">
+					<@a code="090503" href="javascript:void(0)" class="layui-btn layui-btn-small btn_sty" id="" iclass="layui-icon" icon="&#xe615;"
+					onclick="searchNodes()" text="搜索"/> 	
+					<label type="text"  id="resultKey" class="form-control">  
+		                <div class="tree_father1">  
+		                    <a id="clickUp"    class="tree_up1" onclick="clickUp()"><i class="layui-icon">&#xe619;</i></a>  
+		                    <a id="clickDown"  class="tree_down1" onclick="clickDown()"><i class="layui-icon">&#xe61a;</i></a>  
+		                    <label id="number" class="tree_number1"></label>
+		                </div>  
+		                 
+		            </label> 
+				</div>
+			<ul id="treeDemo" class="ztree treeDemo1" name="treeDemo" style="display:block;height: 390px;overflow: auto;border: 1px solid #c9d3d6;"></ul>
+			<div style="display:none"  id="searcgUs">
+			      <div id="paging5-data">
+					<script id="paging5-script" type="text/html">
+                     <div >
+                       <div style="height: 30px; position:relative">
+                       <i class="layui-icon" style="cursor:pointer;font-size: 22px;height: 30px  color: #1E9FFF;position: absolute; right: 0;"   onclick="showTree()">&#x1006;</i>
+					   </div>
+                    {{each records value index}}
+			 			    <div class="searchW" style="padding:1% 1% 1% 5%; border-bottom:1px solid #ccc; cursor: pointer;"  onclick="chooseMe('{{value.autUser.id}}','{{value.autUser.userName}}','{{value.autUser.fullName}}')">
+	                		  {{value.autUser.fullName}}
+			   				 </div>
+               		 {{/each}}  
+                     
+                        {{if records.length==0}}
+                             <div class="searchW1" style="width:80%;  padding:10%;  "  >
+                                                                                             没有查找到
+			   				 </div>
+                             
+                        {{/if}}
+                        </div>
+					</script>
+				</div>        			
+				<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+				  <div id="paging5-footer" class="page" style="background-color: white; text-align: center;"></div>
+		     	</div>
+	     	</div>
+		   </form>
+		</div>
+		
+	</div>
+	
+	
+	<input type="hidden" id="hiddenPp"  value="0">
+	
+           
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/ueditor.all.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/lang/zh-cn/zh-cn.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.exhide-3.5.min.js"></script>
+
+     <script>
+     //构建出百度文本编辑器
+      var ue = UE.getEditor('editor-id',{initialFrameHeight: 196});
+
+		var pform;
+		//添加事件
+		layui.use(['form','element'], function() {
+			pform = layui.form;
+			var element=layui.element;
+			pform.verify({
+				 //限制输入的长度
+				length50 : function(value) {
+					if (value.length>50) {
+						return "长度不能超过50个字符";
+					}
+				},
+				special:function(value){
+					var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]"); 
+					if(pattern.test(value)){
+					     return "不能输入特殊字符";
+					}
+				}
+			});
+		
+			//监听新增提交 
+			pform.on('submit(form-add-submit)', function(data) {
+				  var a = jy();
+				   if(a==false){
+					   return false;
+				   }
+				   layer.confirm('确定发送吗 ?', {
+	                      icon: 3,
+	                      title: '提示',
+	                      offset: '280px'
+	                },function(index){ 
+					 //发送成工后发送按钮不可点
+		    		  $("#disabled_send").attr("disabled","disabled");
+ 			          $("#disabled_cao").attr("disabled","disabled");
+					  //赋值附件个数
+					  $("#attachmentCount").val(arr.length)
+					 //源文件名 路径 大小 赋值
+					   $("#FileLei1").empty();
+					    var str="";
+					    for(var i=0;i<arr.length;i++){
+					    	str += '<input type="hidden" name="maiAttachmentList['+i+'].attachName" value="'+nameArr[i].fileName+'" />';
+			                str += '<input type="hidden" name="maiAttachmentList['+i+'].attachPath" value="'+arr[i].res.groupName+"&"+arr[i].res.fileName+'" />';
+			                str += '<input type="hidden" name="maiAttachmentList['+i+'].attachSize" value="'+nameArr[i].fileSize+'" />';
+			            }
+			            $("#FileLei1").append(str);
+					//获取文本编辑器内容
+					var uevalue = ue.getContent();
+					console.log(uevalue)
+					$("#mailContent").val(uevalue)
+					tool.post("../maiWrite/add", $("#add-object-form").serialize(),postCallBackMail, false); 
+	            })
+	            return false;
+			
+			});
+		
+			  
+		
+			//监听编辑提交
+			pform.on('submit(form-cao-submit)', function(data) {
+				   var a = jy();
+				  if(a==false){
+						return false;
+					}; 
+				 //发送成工后发送按钮不可点
+	    		  $("#disabled_send").attr("disabled","disabled");
+ 			      $("#disabled_cao").attr("disabled","disabled");
+				  //赋值附件个数
+				  $("#attachmentCount").val(arr.length)
+				 //源文件名 路径 大小 赋值
+				   $("#FileLei1").empty();
+				    var str="";
+		            for(var i=0;i<arr.length;i++){
+		            	str += '<input type="hidden" name="maiAttachmentList['+i+'].attachName" value="'+nameArr[i].fileName+'" />';
+		                str += '<input type="hidden" name="maiAttachmentList['+i+'].attachPath" value="'+arr[i].res.groupName+"&"+arr[i].res.fileName+'" />';
+		                str += '<input type="hidden" name="maiAttachmentList['+i+'].attachSize" value="'+nameArr[i].fileSize+'" />';
+		            }
+		            $("#FileLei1").append(str);
+				//获取文本编辑器内容
+				var uevalue = ue.getContent();
+				$("#mailContent").val(uevalue);
+				tool.post("../maiDraftBox/add", $("#add-object-form").serialize(),postCallBackCao, false);
+				
+				return false;
+			 });
+			
+			
+		});
+		function jy(){
+			/* 收件人必填--填则校验 */
+			var userMail =$(".newgg").text();
+		   if(userMail==""||userMail==undefined){
+			     layer.alert('收件人不能为空', {
+					title : "操作提示",
+					icon : 2,
+					closeBtn:0,
+					offset: '280px'
+				}, function(index) {
+					layer.close(index);
+				});
+			   return false;
+			} 
+		   
+			/* 收件人必填--填则校验 */
+			var subjectText =$("#subjectText").val();
+		    if(subjectText==""||subjectText==undefined){
+		    layer.alert("主题不能为空", {
+					title : "操作提示",
+					icon : 2,
+					closeBtn:0,
+					offset: '280px'
+				}, function(index) {
+					layer.close(index);
+				});
+			   return false;
+			}
+		    /*编辑器字数判断 */
+		    var value=ue.getContentTxt();
+		    if(value.length>1000){
+		    	 layer.alert("内容不能超过1000字", {
+						title : "操作提示",
+						icon : 2,
+						closeBtn:0,
+						offset: '280px'
+					}, function(index) {
+						layer.close(index);
+					});
+				   return false;
+		    }
+		   
+	  }
+	
+		//获取当前星期
+		getweekDayFn();
+	  function getweekDayFn(){
+		var d=new Date()
+		var weekday=new Array(7)
+			weekday[0]="星期天"
+			weekday[1]="星期一"
+			weekday[2]="星期二"
+			weekday[3]="星期三"
+			weekday[4]="星期四"
+			weekday[5]="星期五"
+			weekday[6]="星期六"
+		var nowweekDay=	weekday[d.getDay()]
+		$("#win-add-object").find("#weekDay").val(nowweekDay)	
+		}	
+		
+
+		 var mytree;
+	     //添加联系人弹窗组织机构树
+	     shareToId_tree();
+	     function shareToId_tree(){
+	    	 tool.post("/pub/public/organList",{_csrf:$("#_csrf").val()},function(data){
+	    		 
+	    		var  departmentList=data.departmentList;//部门
+	    		var  userPositionList=data.departmentUserList;//用户
+	    		var setting = {  
+						check : {
+							enable : true ,
+							},  
+						data : { simpleData : { enable : true }  },
+						callback: {
+							onCheck: onCheck
+						}
+					};
+				var obj=[];
+				for(var i=0;i<departmentList.length;i++){  
+					obj.push({id:departmentList[i].id,pId: departmentList[i].parentId,name:departmentList[i].deptName,necessary:0,icon:"../../web/images/z_folder.png"})
+					for(var j=0;j<userPositionList.length;j++){
+						if(userPositionList[j].deptId==departmentList[i].id){
+							obj.push({id:userPositionList[j].id,pId:departmentList[i].id,name:userPositionList[j].fullName,necessary:1,userId:userPositionList[j].userId,userName:userPositionList[j].userName,icon:"../../web/images/z_person.png" })
+						}
+					}
+				}
+				mytree= $.fn.zTree.init($("#treeDemo"), setting, obj);
+				/* mytree.expandAll(true)  */
+				/*  var selectedNode = mytree.getSelectedNodes();    
+                 var nodes = mytree.getNodes();    
+                 mytree.expandNode(nodes[0], true);  */
+	    	 },false)
+	     }
+	     //勾选用户
+		 function onCheck(){
+    		 var  treeArr=[];
+    		 var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+    		 var changeNodes = zTree.getChangeCheckedNodes();
+    		    //数组去重
+    			 var res = [];
+    			 var json = {};
+    			 for(var i = 0; i < changeNodes.length; i++){
+    			  if(!json[changeNodes[i].userId]){
+    			   res.push(changeNodes[i]);
+    			   json[changeNodes[i].userId] = 1;
+    			  }
+    			 }
+              changeNodes=res
+    		 if(changeNodes.length>0){
+    		 $.each(changeNodes,function(index,value){
+    			 if(value.necessary==1){
+    			    treeArr.push({id:value.id,name:value.name,userId:value.userId,userName:value.userName})
+    			 }
+    		 })
+    	   }
+    		 
+	    	if(treeArr.length>0){
+	    		 var str="",namestr="",fullname="";
+	    		 var divs="";
+	    		$.each(treeArr,function(index,value){ 
+	    			str+=value.userId+";"
+	    			namestr+=value.userName+";"
+	    			fullname+=value.name+";";
+	    			divs+='<div class="layui-input-inline hoverDiv" style="position: relative;float:none;width:auto;" >'+
+	    			 '<i class="layui-icon" onclick="removeElement(this)" strid="'+value.userId+'" namestr="'+value.userName+'"  fullname="'+value.name+'"   style="cursor: default; font-size:16px; color: #d9d9d9;position: absolute;right: -8px;z-index: 10; ">&#x1007;</i>'+  
+			    	 '<a class="layui-btn" style="cursor: pointer;color: black; background: none;height:26px;line-hieght:26px;padding-left:6px;padding-right:6px" >'+value.name+'</a>'+
+			    	 '</div>'	    		
+	    		})
+	    	  }else{
+	    		  var str="",namestr="",fullname="";
+	    	  }
+	    		var choose=$("#hiddenPp").val()
+	    		if(choose==0){
+	    		$("#add-object-form").find("#receiveUserId").val(str);
+	    		$("#add-object-form").find("#receiveUserName").val(namestr);
+	    		$("#add-object-form").find("#receiveFullName").val(fullname);
+	    		$("#add-object-form").find(".newgg").empty();
+	    		$("#add-object-form").find(".newgg").append(divs);
+	    		$("#receiveUserCount").val(treeArr.length)
+	
+	    		}else{
+	    			$("#add-object-form").find("#copyUserIds").val(str);
+		    		$("#add-object-form").find("#copyUserNames").val(namestr);
+		    		$("#add-object-form").find("#copyFullNames").val(fullname);
+		    		$("#add-object-form").find(".newgg1").empty();
+		    		$("#add-object-form").find(".newgg1").append(divs);
+	    		}
+    	 }
+	     
+		    //移除
+   	     function removeElement(tis) {
+		       var parent=$(tis).parent().parent().parent();
+               var id=$(tis).attr("strid")+";";
+               var namestr=$(tis).attr("namestr")+";";
+               var fullname=$(tis).attr("fullname")+";";
+               
+               var receiveFullName = parent.find("input").eq(0).val();
+               var fullStr = receiveFullName.replace(fullname,"");
+                     parent.find("input").eq(0).val(fullStr);
+                   
+                var receiveUserName =  parent.find("input").eq(1).val();
+                var userStr = receiveUserName.replace(namestr,"");
+                parent.find("input").eq(1).val(userStr);   
+                
+               var ids =  parent.find("input").eq(2).val();
+               var pmnIdStr = ids.replace(id,"");
+               parent.find("input").eq(2).val(pmnIdStr);
+               pmnIdStr=pmnIdStr.substr(0,pmnIdStr.length-1).split(";");
+ 	    	   $(tis).parent().remove();
+ 
+           }
+	 
+		  
+	     //点击input
+	     function setValue(value,myself){
+		    	$(".inputBorCl").removeClass("inputBor");
+		    	$(myself).addClass("inputBor");
+		    	if(value=="0"){
+		    		$(".tree_head").text('收件人选择');
+		    	}else{
+		    		$(".tree_head").text('抄送人选择');
+		    	}
+	    	 var ids=$(myself).parent().find(".idszhan").val();
+	    	     ids=ids.substr(0,ids.length-1).split(";");
+	    	      $("#hiddenPp").val(value)
+	    	 shareToId_tree()
+	    	var mytree1 = $.fn.zTree.getZTreeObj("treeDemo");
+	    	 for(var i=0;i<ids.length;i++){
+	    		 var nodes= mytree1.getNodeByParam("userId",ids[i]);
+				 if(nodes){
+					 nodes.checked=true;
+					 mytree1.selectNode(nodes,true);//指定选中ID的节点  
+					 mytree1.updateNode(nodes)
+					 mytree1.expandNode(nodes, true, false);//指定选中ID节点展开 
+				 }
+	    	 } 
+	    	  $("#peopelSel").val("");
+	    	  $("#treeDemo").show();
+	    	  $("#searcgUs").hide();
+	    	  searchNodes();
+	    	 
+	     }
+	    
+	     //tree 搜索用户
+	   /*   function searchUsername(){
+	    	 var param = new Object(); 
+	    	     param.pageSize=10000;
+	    	     param.container = "paging5";
+	    	     param.url="/pub/public/userList"
+				 param.userName = $("#peopelSel").val();
+	    	     tool.loadpage(param);
+	    	  $("#treeDemo").hide();
+	    	  $("#searcgUs").show();
+	     } */
+	     //用按钮查询节点  
+	     /*    function searchNodes(){  
+	            var keywords=$("#peopelSel").val();  
+	            var nodes = mytree.getNodesByParamFuzzy("name", keywords, null);  
+	            if (nodes.length>0) {  
+	                mytree.selectNode(nodes[0]);  
+	            }  
+	        }  */
+	      //回车
+	     /* $("#peopelSel").keydown(function(e) {  
+	    	  if (e.keyCode == 13) {  
+	    		  searchNodes(); 
+	    	  } 
+	    	}) */
+	     //返回tree
+	     function showTree(){
+	    	  $("#peopelSel").val("");
+	    	  $("#treeDemo").show();
+	    	  $("#searcgUs").hide();
+	     }
+	     //选择人
+	     function chooseMe(id,username,fullname){
+	    	 var num=0;
+	    	var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+	        var nodes = zTree.getCheckedNodes(true); 
+		          $.each(nodes,function(index,value){
+		        	   if(value.necessary==1){
+		        		   if(value.userId==id){
+		        			   num++
+		        		   }
+		        	   }
+		          })
+		           //如果num为0表示没有添加过
+		          if(num==0){
+		        	  var nodes= zTree.getNodeByParam("userId",id);
+						 if(nodes){
+							 nodes.checked=true;
+							 zTree.selectNode(nodes,true);//指定选中ID的节点  
+							 zTree.updateNode(nodes)
+							 zTree.expandNode(nodes, true, false);//指定选中ID节点展开
+						 }
+						 onCheck();
+		          }
+		         
+	     }
+		
+	     tool.fileUpload("demoList","test10","/res/file/upload","testListAction","MAI_WRITE_ADD");
+	  //新增对象回调
+		function postCallBack(retMsg) {
+			if (retMsg.code == 0) {
+				tool.success(retMsg.message);
+				
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+	    //发送回调
+	    function postCallBackMail(retMsg){
+	    	if (retMsg.code == 0) {
+	    		  
+	    		  //提交后 再情况存放文件的数组 避免重复提交
+	            arr.splice(0,arr.length);
+	            nameArr.splice(0,nameArr.length);
+	            layer.alert(retMsg.message, {
+	    			title : "操作提示",
+	    			icon : 1,
+	    			closeBtn:0,
+	    			offset: '280px'
+	    		},function(index){
+	    			//重置
+	    			 reactWrite();
+	    			//跳转到发件箱
+	    			/*  parent.tab.tabAdd({
+	 	    			href : "mai/maiSendBox/maiSendBoxPage",
+	 	    			icon : "fa-user",
+	 	    			title : "发件箱"
+	 	    		}); */
+	 	           // $("a[data-url='mai/maiWrite/maiWitePage']",window.parent.document).parent().removeClass("layui-this");
+	 	            $("a[data-url='mai/maiSendBox/maiSendBoxPage']",window.parent.document).parent().trigger("click");
+	    			//layer.close(index);
+	    		});
+				
+			} else {
+				$("#disabled_send").removeAttr("disabled");
+				$("#disabled_cao").removeAttr("disabled");
+				layer.alert(retMsg.message, {
+					title : "操作提示",
+					icon : 2,
+					closeBtn:0,
+					offset: '280px'
+				}, function(index) {
+					layer.close(index);
+				});
+			}
+		   
+	   }
+	     //清空编写内容
+	     function reactWrite(){
+	    	 $("#peopelSel").val("");
+	    	 $(".newgg").text("");
+	    	 $(".newgg1").text("");
+	    	 $("#add-object-form").find(".emptyinput").val("");
+	    	 $("#add-object-form").find("#peopelSel").val("");
+ 			 $("#add-object-form").find(".faslecheck").each(function(index,value){
+ 				$(this).prop("checked",false)
+ 			});
+ 			$("#disabled_send").removeAttr("disabled");
+ 			$("#disabled_cao").removeAttr("disabled");
+ 			ue.setContent('') ;
+ 			shareToId_tree();
+ 			pform.render();
+ 			$("#add-object-form").find("#demoList").empty();
+	     }
+	    //存为草稿回调
+	     function postCallBackCao(retMsg){
+	    	if (retMsg.code == 0) {
+	    		  //提交后 再情况存放文件的数组 避免重复提交
+	            arr.splice(0,arr.length);
+	            nameArr.splice(0,nameArr.length);
+	    		layer.alert(retMsg.message, {
+	    			title : "操作提示",
+	    			icon : 1,
+	    			closeBtn:0,
+	    			offset: '280px'
+	    		}, function(index) {
+	    			//重置
+	    			 reactWrite()
+	    			//跳转到发件箱
+	    			 parent.tab.tabAdd({
+	 	    			href : "mai/maiDraftBox/maiDraftBoxPage",
+	 	    			icon : "fa-user",
+	 	    			title : "草稿箱"
+	 	    		});
+	 	            $("a[data-url='mai/maiWrite/maiWitePage']",window.parent.document).parent().removeClass("layui-this");
+	 	            $("a[data-url='mai/maiDraftBox/maiDraftBoxPage']",window.parent.document).parent().addClass("layui-this");
+	    			layer.close(index);
+	    		});
+				
+			} else {
+				$("#disabled_send").removeAttr("disabled");
+				$("#disabled_cao").removeAttr("disabled");
+				tool.error(retMsg.message);
+			}
+		  
+	   }
+	    
+	    
+	</script>
+</body>
+
+</html>

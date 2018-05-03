@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>个人页面定制</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+</head>
+<body> 
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+  		<div class="admin-main content_sel">
+  			<!-- <blockquote class="layui-elem-quote" style="padding:5px;text-align: right;">
+				<form class="layui-form" action="">
+					<div>
+						<div class="layui-input-inline">
+							<input type="text" name="searchKey" id="searchKey" placeholder="输入名称查询" autocomplete="off" class="layui-input"
+								style="height: 30px; line-height: 30px;">
+						</div>
+						<span><@a code="000101" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData()" iclass="layui-icon"
+							 icon="&#xe615;" text="查询"/></span>
+					</div>
+				    <div class="layui-input-inline">
+					  	<span><a class="layui-btn layui-btn-small" onclick="onclick="showDeletes()"><i class="layui-icon">&#xe640;</i>删除</a></span>
+					</div>
+				</form>
+			</blockquote> -->
+			<!-- <form class="layui-form" action="">
+			<div>
+				<div class="layui-input-inline m_r10" >
+				 	<span>姓名</span>
+				</div>
+				<div class="layui-input-inline m_r20">
+					<input type="text" class="inp_w120px" name="" id="" style="width:180px;">
+				</div>
+				<span><a class="btn_search_blue" id="" onclick="edit()" style="float:right;">查询</a></span>
+		    </div>
+			</form> -->
+			<div class="layui-form">
+				<table class="layui-table admin-table">
+				<!-- <colgroup>
+					<col width="5%">
+					<col width="8%">								
+					<col>
+				</colgroup> -->
+					<thead>
+						<tr>
+							<th style="width: 20px;"><input type="checkbox" lay-skin="primary" lay-filter="paging_check-all"></th>
+							<th style="display: none;">用户ID</th>
+							<th>序号</th>
+							<th>名称</th>
+							<th>排序</th>
+							<th>位置</th>
+							<th>状态</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+			<tbody id="paging-data">
+			<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr> 
+							<td><input type="checkbox"  lass="check-id"  lay-skin="primary" id="{{value.id}}"></td>
+							<td style="display: none;">{{value.id}}</td>
+							<td>{{index+1}}</td>
+							<td>{{value.moduleName}}</td>
+							<td>{{value.moduleRank}}</td>
+                            <td>{{if value.moduleCode.indexOf('R&')>-1}}右模块{{/if}}{{if value.moduleCode.indexOf('L&')>-1}}左模块{{/if}}</td>
+							<td>{{if value.isHide==1}}隐藏{{/if}}{{if value.isHide==0}}显示{{/if}}</td>
+							<td>
+								<@a code="" href="javascript:void(0)" class="table_btn table_link" id="show-edit" onclick="edit('{{value.moduleCode}}','{{value.moduleRank}}','{{value.moduleName}}','{{value.isHide}}')" text="编辑"/>
+							</td>
+						</tr>
+					{{/each}}
+			</script>
+			</tbody>
+			</table>
+			</div>
+			<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+				<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+			</div>
+  		</div>
+  	<!-- 编辑-->	
+  	<div class="admin-main" style="display: none; z-index: 19940200;" id="edit-object-form">
+		<form class="layui-form layui-form-pane"  name="update-object-form" id="update-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" id="moduleCode" name="moduleCode"  />
+			<div class="layui-form-item">
+				<label class="layui-form-label">名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="moduleName" id="moduleName" readonly="readonly" lay-verify="required|spactily" autocomplete="off" placeholder="名称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-block">
+				 <select id="moduleRank" name="moduleRank">
+				 <option value="1">1</option>
+				 <option value="2">2</option>
+				 <option value="3">3</option>
+				 </select>
+				<!-- 	<input type="text" name="" id="" lay-verify="required|spactily" autocomplete="off" placeholder="排序" class="layui-input"> -->
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">状态</label>
+				<div class="layui-input-block">
+					<input type="radio" name="isHide" value="显示" title="显示" checked>
+			    	<input type="radio" name="isHide" value="隐藏" title="隐藏" >
+				</div>
+			</div>
+			<div class="layui-input-block" style="margin-top: 15px;clear:both;">
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit" >
+						<i class="fa fa-save"></i> 保存
+					</button>
+				<!-- 	<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button> -->
+				</div>
+			</div>
+		</form>
+	</div>
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+    
+	<script>
+		//定义layui
+		var pform;
+		layui.use(['form','element'], function() {
+			pform = layui.form;			
+			loadData();
+		});
+		
+	
+		function loadData() {			
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+			param.url = "/per/autIndexPageModule/listgage";					
+			tool.loadpage(param);
+		}
+		layui.use(['form','element'], function() {
+			pform = layui.form;
+			pform.on('submit(form-add-submit)',function(data){	
+			
+			 layer.confirm('确定提交吗 ?', {
+                    icon: 3,
+                    title: '提示'
+               },function(index){	
+			var param = new Object();
+		    	param.moduleCode=$("#moduleCode").val();
+		    	if($("input[name='isHide']:checked").val()=='显示'){
+		    	    param.isHide="0";		    	
+		    	}else{
+		    		param.isHide="1";		    		
+		    	}		    
+		    	
+		        param.moduleRank=$("#moduleRank").val();
+		   		param._csrf = $("#_csrf").val();	
+		   	    tool.post("/per/autIndexPageModule/update",param,function(data){
+		   	    	if (data.code == 0) {
+		   	    		layer.closeAll();	
+						tool.success(data.message);			
+						pform.render();		
+						loadData();
+					} else {
+						tool.error(data.message);
+					}   
+		   	    	
+		   		   },false); 
+			//tool.post("/per/autIndexPageModule/update",$("#update-object-form").serialize(data),postCallBack_add,false)
+               })	
+               return false;
+			}) 
+		});
+		function postCallBack_add(retMsg){			
+			if (retMsg.code == 0) {						
+				layer.closeAll();	
+				//pform.render();
+				tool.success(retMsg.message);				
+				location.reload();
+				//loadData();
+				
+			} else {				
+				tool.error(retMsg.message);
+			}
+		}
+		//编辑
+		function edit(a,b,c,d) {
+			var index = layer.open({
+				title : '编辑',
+				maxmin : false,
+				type : 1,
+				content : $('#edit-object-form')
+			});
+			
+			$("#edit-object-form").find("#moduleName").val(c);	
+			$("#moduleRank").val(b);
+			$("#edit-object-form").find("#moduleCode").val(a);
+			if(d==0){
+				$("input:radio[value='显示']").prop('checked',true);
+			}else{
+				$("input:radio[value='隐藏']").prop('checked',true);
+			}
+			
+			pform.render();
+			layer.full(index);
+		}
+		
+	</script>
+</body>
+</html>

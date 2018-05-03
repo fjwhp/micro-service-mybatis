@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.sys.dao.mapper.SysOperateLogMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.sys.dao.entity.SysOperateLog">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="operate_user_id" property="operateUserId" />
+		<result column="operate_user_name" property="operateUserName" />
+		<result column="operate_user_ip" property="operateUserIp" />
+		<result column="operate_time" property="operateTime" />
+		<result column="request_address" property="requestAddress" />
+		<result column="operate_log_name" property="operateLogName" />
+		<result column="method_name" property="methodName" />
+		<result column="operate_detail_desc" property="operateDetailDesc" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name, operate_user_id, operate_user_name, operate_user_ip, operate_time, request_address, operate_log_name, method_name, operate_detail_desc
+    </sql>
+
+</mapper>

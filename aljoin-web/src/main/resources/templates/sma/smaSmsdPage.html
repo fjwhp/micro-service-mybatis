@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>消息模板设置</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+</head>
+<body> 
+ 	<form  id="add-form" >
+ 	            		 
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<input type="hidden" name="groupName" id="groupName" value="" />
+	<input type="hidden" name="attrDesc" id="attrDesc" value="" />
+	<input type="hidden" name="attrCode" id="attrCode" value="" />
+	<input type="hidden" name="attrName" id="attrName" value="" />
+	<input type="hidden" name="attrValue" id="attrValue" value="" />
+	<div class="admin-main content_sel">
+		<table class="layui-table admin-table">
+			<thead>
+				<tr>
+					<th style="display: none;">用户ID</th>
+					<th>序号</th>
+					<th>模板名称</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody>
+			    <tr>
+			    	<td>1</td>
+			    	<td>协同办公</td>
+			    	<td onclick="edit()" style="color:${ALJOIN_CURRENT_MAIN_COLOR};cursor:pointer;">编辑</td>
+			    </tr>
+			    <tr>
+			    	<td>2</td>
+			    	<td>工作计划</td>
+			    	<td onclick="edit1()" style="color:${ALJOIN_CURRENT_MAIN_COLOR};cursor:pointer;">编辑</td>
+			    </tr>
+			    <tr>
+			    	<td>3</td>
+			    	<td>邮箱模块</td>
+			    	<td onclick="edit2()" style="color:${ALJOIN_CURRENT_MAIN_COLOR};cursor:pointer;">编辑</td>
+			    </tr>
+			    <tr>
+			    	<td>4</td>
+			    	<td>会议模块</td>
+			    	<td onclick="edit3()" style="color:${ALJOIN_CURRENT_MAIN_COLOR};cursor:pointer;">编辑</td>
+			    </tr>
+			</tbody>
+		<tbody id="paging-data">
+		<script id="paging-script" type="text/html">
+			{{each records value index}}
+				<tr onclick="detail()"> 
+					<td style="display: none;">{{value.id}}</td>
+					<td>{{value.}}</td>
+					<td>{{value.}}</td>
+					<td>
+						<@a code="000103" href="javascript:void(0)" class="layui-btn layui-btn-mini" id="show-edit" onclick="edit('{{value.id}}')" text="编辑"/>
+					</td>
+				</tr>
+			{{/each}}
+		</script>
+		</tbody>
+		</table>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+ 		</div>
+
+ 		<!-- 协同办公弹窗  -->
+ 		<div class="admin-main" style="display: none; z-index: 19940200;" id="win-detail-object">
+		<form class="layui-form layui-form-pane" id="add-object-form">
+		<div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">操作提示</label>
+				<div class="layui-input-block">
+					<input type="text" name="" id="" lay-verify="required|spactily" autocomplete="off" placeholder="平台可给用户提供在线消息、短信三种通知方式。平台可以选择开启一种或多种通知方式供用户选择" class="layui-input" readonly="readonly">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">可用变量</label>
+			<!-- 	<div class="layui-input-block">
+					<input type="text" name="" id="" lay-verify="required|spactily" autocomplete="off" placeholder="{$1}:用户名；{$2}:会议室；{$3}:会议地址；{$4}:会议主题；{$5}:会议开始时间；{$6}:会议结束时间；{$7}:联系人；//当前办理入、创建人、流程名称、缓急程度、标题" class="layui-input" readonly="readonly">
+				</div> -->
+				<div class="layui-input-block hand">
+					 <div name="" id="d_receiverName" class="newgg">
+					 	<span>{handle}:当前办理人;</span>
+					 	<span>{create}:创建人;</span>
+					 	<span>{process}:流程名称;</span>
+					 	<span>{priorities}:缓急程度;</span>
+					 	<span>{title}:标题;</span>
+					 </div>					 
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">模板名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="" id="" lay-verify="required|spactily" autocomplete="off" placeholder="协同办公" class="layui-input" readonly="readonly">
+				</div>
+			</div>
+		</div>
+		</form>
+			<div class="" id="add-object-form" style="margin-bottom:60px;">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+				  <ul class="layui-tab-title">
+				      <li class="layui-this">在线消息</li>
+				      <li>手机短信</li>
+				      <li>邮件模块</li>
+				  </ul>
+				  <div class="layui-tab-content" style="margin-left:-10px;">
+				  	  <div class="layui-tab-item layui-show">
+					  	  <form class="layui-form layui-form-pane" id="add-object-form">
+					  	  	  <div class="layui-form-item layui-form-text">
+							    <label class="layui-form-label">催办</label>
+							    <div class="layui-input-block">
+							      <textarea name="notice1" id="notice1" placeholder="请输入内容" lay-verify="required"  class="layui-textarea" maxlength="40"></textarea>
+							    </div>
+							  </div>
+							  <div class="r" style="margin-bottom:10px;">
+									<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="submistD('notice1','催办')">
+										<i class="fa fa-save"></i> 提交
+									</a>
+							  </div>
+							  
+							   <div class="layui-form-item layui-form-text">
+							    <label class="layui-form-label">待办</label>
+							    <div class="layui-input-block">
+							      <textarea name="notice9" id="notice9" placeholder="请输入内容" lay-verify="required"  class="layui-textarea" maxlength="40"></textarea>
+							    </div>
+							  </div>
+							  <div class="r" style="margin-bottom:10px;">
+									<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="submistD('notice9','待办')">
+										<i class="fa fa-save"></i> 提交
+									</a>
+							  </div>
+							  <div class="layui-form-item layui-form-text">
+								  <label class="layui-form-label">特送</label>
+								  <div class="layui-input-block">
+									  <textarea name="notice9" id="notice10" placeholder="请输入内容" lay-verify="required"  class="layui-textarea" maxlength="40"></textarea>
+								  </div>
+							  </div>
+							  <div class="r" style="margin-bottom:10px;">
+								  <a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="submistD('notice10','特送')">
+									  <i class="fa fa-save"></i> 提交
+								  </a>
+							  </div>
+						  </form>
+							
+						   <form class="layui-form layui-form-pane" id="add-object-form" style="display:none;">
+							  <div class="layui-form-item layui-form-text">
+							    <label class="layui-form-label">办结时间</label>
+							    <div class="layui-input-block">
+							      <textarea name="notice2"  id="notice2" placeholder="请输入内容" lay-verify="required" class="layui-textarea" maxlength="40"></textarea>
+							    </div>
+							  </div>
+							   <div class="r" style="margin-bottom:10px;">
+									<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="submistD('notice2','办结时间')">
+										<i class="fa fa-save"></i> 提交
+									</a>
+								</div>
+							</form>  
+							
+				  	  </div>
+					  <div class="layui-tab-item">
+						  <form class="layui-form layui-form-pane" id="add-object-form">
+					  	  	  <div class="layui-form-item layui-form-text">
+							    <label class="layui-form-label">催办</label>
+							    <div class="layui-input-block">
+							      <textarea  id="sm1" placeholder="请输入内容" class="layui-textarea" maxlength="40"></textarea>
+							    </div>
+							  </div>
+							  <div class="r" style="margin-bottom:10px;">
+									<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="submistD('sm1','催办')">
+										<i class="fa fa-save"></i> 提交
+									</a>
+							  </div>
+							  <!--  <div class="layui-form-item layui-form-text">
+							    <label class="layui-form-label">待办</label>
+							    <div class="layui-input-block">
+							      <textarea  id="" placeholder="请输入内容" class="layui-textarea" maxlength="40"></textarea>
+							    </div>
+							  </div>
+							  <div class="r" style="margin-bottom:10px;">
+									<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="">
+										<i class="fa fa-save"></i> 提交
+									</a>
+							  </div> -->
+							</form>
+
+						<form class="layui-form layui-form-pane" id="add-object-form" style="display:none;">
+				  	  	  <div class="layui-form-item layui-form-text">
+						    <label class="layui-form-label">办结时间</label>
+						    <div class="layui-input-block">
+						      <textarea name="sm2" id="sm2" placeholder="请输入内容" class="layui-textarea" maxlength="40"></textarea>
+						    </div>
+						  </div>
+						  <div class="r" style="margin-bottom:10px;">
+								<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="submistD('sm2','办结时间')">
+									<i class="fa fa-save"></i> 提交
+								</a>
+						  </div>
+						  
+						 <!--  <div class="layui-form-item layui-form-text">
+						    <label class="layui-form-label">待办时间</label>
+						    <div class="layui-input-block">
+						      <textarea name="" id="" placeholder="请输入内容" class="layui-textarea" maxlength="40"></textarea>
+						    </div>
+						  </div>
+						  <div class="r" style="margin-bottom:10px;">
+								<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="">
+									<i class="fa fa-save"></i> 提交
+								</a>
+						  </div> -->
+						</form>
+						
+						
+					  </div>
+
+					  <div class="layui-tab-item">
+					  	 <form class="layui-form layui-form-pane" id="add-object-form">
+							  <div class="layui-form-item layui-form-text">
+							    <label class="" style="font-weight:bold;">催办：</label>
+							  </div>
+							  <div class="layui-form-item">
+								<label class="layui-form-label">消息标题</label>
+								<div class="layui-input-block">
+									<input type="text" name="mai1T" id="mai1T" lay-verify="required" autocomplete="off" placeholder="填写标题" class="layui-input" maxlength="40">
+								</div>
+							  </div>
+							  <div class="layui-form-item">
+								<label class="layui-form-label">邮件内容</label>
+								<div class="layui-input-block">
+								  <script id="mai1"  type="text/plain" style="width: 100%; height: 500px;"></script>
+								</div>
+							 </div>
+							 <div class="r" style="margin-bottom:10px;">
+									<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="submistM('mai1T','mai1','催办')">
+										<i class="fa fa-save"></i> 提交
+									</a>
+							  </div>
+							  
+							  
+							<!--    <div class="layui-form-item layui-form-text">
+							    <label class="" style="font-weight:bold;">待办：</label>
+							  </div>
+							  <div class="layui-form-item">
+								<label class="layui-form-label">消息标题</label>
+								<div class="layui-input-block">
+									<input type="text" name="mai1T" id="mai1T" lay-verify="required" autocomplete="off" placeholder="填写标题" class="layui-input" maxlength="40">
+								</div>
+							  </div>
+							  <div class="layui-form-item">
+								<label class="layui-form-label">待办内容</label>
+								<div class="layui-input-block">
+								  <script id="mai1W"  type="text/plain" style="width: 100%; height: 500px;"></script>
+								</div>
+							 </div>
+							 <div class="r" style="margin-bottom:10px;">
+									<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="">
+										<i class="fa fa-save"></i> 提交
+									</a>
+							  </div> -->
+						  </form>
+						 
+						 <form class="layui-form layui-form-pane" id="add-object-form" style="display:none;">
+							  <div class="layui-form-item layui-form-text">
+							    <label class="" style="font-weight:bold;">办结时间：</label>
+							  </div>
+							  <div class="layui-form-item">
+								<label class="layui-form-label">消息标题</label>
+								<div class="layui-input-block">
+									<input type="text" name="mai2T" id="mai2T" lay-verify="required" autocomplete="off" placeholder="填写标题" class="layui-input" maxlength="40">
+								</div>
+							  </div>
+							  <div class="layui-form-item">
+								<label class="layui-form-label">邮件内容</label>
+								<div class="layui-input-block">
+								  <script id="mai2"  type="text/plain" style="width: 100%; height: 500px;"></script>
+								</div>
+							 </div>
+							 <div class="r" style="margin-bottom:10px;">
+									<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="submistM('mai2T','mai2','办结时间')">
+										<i class="fa fa-save"></i> 提交
+									</a>
+							  </div>
+						  </form>
+					 </div>
+				  </div>
+				 </div>
+			</div>  
+		</div>
+		<!-- 工作计划弹窗  -->
+		<div class="admin-main" style="display: none; z-index: 19940200;" id="win-detail1-object">
+		<div id="win-newsms-object">
+		<div class="layui-form layui-form-pane" id="add-object-form">
+		<div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">操作提示</label>
+				<div class="layui-input-block">
+					<input type="text" name="" id=""  autocomplete="off" placeholder="平台可给用户提供在线消息、短信三种通知方式。平台可以选择开启一种或多种通知方式供用户选择" class="layui-input" readonly="readonly">
+				</div>
+			</div>
+			<div class="layui-form-item"> 
+				<label class="layui-form-label">可用变量</label> 
+					<!-- <input type="text" name="" id="" lay-verify="required|spactily" autocomplete="off" placeholder="{$1}:用户名；{$2}:会议室；{$3}:会议地址；{$4}:会议主题；{$5}:会议开始时间；{$6}:会议结束时间；{$7}:联系人；/" class="layui-input" readonly="readonly"> -->
+				    <div class="layui-input-block hand">
+						 <div name="" id="" class="newgg">
+						 	<span>{theme}:主题;</span>
+						 	<span>{create}:创建人;</span>
+						 	<span>{startTime}:开始时间;</span>
+						 	<span>{endTime}:结束时间;</span>
+						 	<span>{Share}:被共享人;</span>
+						 </div>					 
+					</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">模板名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="" id=""  autocomplete="off" placeholder="工作计划" class="layui-input" readonly="readonly">
+				</div>
+			</div>
+		</div>
+		</div>
+			<div class="" id="add-object-form" style="margin-bottom:60px;">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+				  <ul class="layui-tab-title">
+				      <li class="layui-this">在线消息</li>
+				      <li>手机短信</li>
+				      <li>邮件模块</li>
+				  </ul>
+				  <div class="layui-tab-content" style="margin-left:-10px;">
+				  	  <div class="layui-tab-item layui-show">
+					  	  <form class="layui-form layui-form-pane" id="add-object-form">
+					  	  	  <div class="layui-form-item layui-form-text">
+							    <label class="layui-form-label">新增日程</label>
+							    <div class="layui-input-block">
+							      <textarea name="notice3" id="notice3" placeholder="请输入内容" class="layui-textarea" maxlength="40"></textarea>
+							    </div>
+							  </div>
+							  <div class="r" style="margin-bottom:10px;">
+									<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="submistD('notice3','新增日程')">
+										<i class="fa fa-save"></i> 提交
+									</a>
+							  </div>
+							</form>
+				  	  </div>
+					  <div class="layui-tab-item">
+					 <form class="layui-form layui-form-pane" id="add-object-form">
+				  	  	  <div class="layui-form-item layui-form-text">
+						    <label class="layui-form-label">新增日程</label>
+						    <div class="layui-input-block">
+						      <textarea name="sm3" id="sm3"  placeholder="请输入内容" class="layui-textarea" maxlength="40"></textarea>
+						    </div>
+						  </div>
+						  <div class="r" style="margin-bottom:10px;">
+								<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="submistD('sm3','新增日程')">
+									<i class="fa fa-save"></i> 提交
+								</a>
+						  </div>
+						</form>
+					  </div>
+					  <div class="layui-tab-item">
+						  <form class="layui-form layui-form-pane" id="add-object-form">
+							  <div class="layui-form-item layui-form-text">
+							    <label class="" style="font-weight:bold;">新增日程</label>
+							  </div>
+							  <div class="layui-form-item">
+								<label class="layui-form-label">消息标题</label>
+								<div class="layui-input-block">
+									<input type="text" name="mai3T" id="mai3T" lay-verify="required|spactily" autocomplete="off" placeholder="填写标题" class="layui-input" maxlength="40">
+								</div>
+							  </div>
+							  <div class="layui-form-item">
+								<label class="layui-form-label">邮件内容</label>
+								<div class="layui-input-block">
+								  <script id="mai3"  type="text/plain" style="width: 100%; height: 500px;"></script>
+								</div>
+							 </div>
+							 <div class="r" style="margin-bottom:10px;">
+									<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="submistM('mai3T','mai3','新增日程')">
+										<i class="fa fa-save"></i> 提交
+									</a>
+							  </div>
+						  </form>
+							
+						
+						</div>
+					  </form> 
+					  </div>
+				  </div>
+				</div>  
+			</div>
+		</div>
+		<!-- 邮箱模块弹窗  -->
+		<div class="admin-main" style="display: none; z-index: 19940200;" id="win-detail2-object">
+		<div id="win-newsms-object">
+		<form class="layui-form-pane" id="add-object-form">
+		<div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">操作提示</label>
+				<div class="layui-input-block">
+					<input type="text" name="" id="" lay-verify="required|spactily" autocomplete="off" placeholder="平台可给用户提供在线消息、短信两种通知方式。平台可以选择开启一种或多种通知方式供用户选择" class="layui-input" readonly="readonly">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">可用变量</label>
+				<div class="layui-input-block hand">
+					 <div name="" id="" class="newgg">
+					 	<span>{recipient}:收件人;</span>
+					 	<span>{refer}:抄送人;</span>
+					 	<span>{sender}:发件人;</span>
+					 	<span>{theme}:主题;</span>
+					 	<span>{emergency}:紧急状态;</span>
+					 	<span>{sendTime}:发送时间;</span>
+					 </div>					 
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">模板名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="" id=""  autocomplete="off" placeholder="邮箱模块" class="layui-input" readonly="readonly">
+				</div>
+			</div>
+		</div>
+		</form>
+			<form class="layui-form layui-form-pane" id="add-object-form" style="margin-bottom:60px;">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+				  <ul class="layui-tab-title">
+				      <li class="layui-this">在线消息</li>
+				      <li>手机短信</li>
+				      <!-- <li>邮件模块</li> -->
+				  </ul>
+				  <div class="layui-tab-content" style="margin-left:-10px;">
+				  	  <div class="layui-tab-item layui-show">
+					  	  <form class="layui-form layui-form-pane" id="add-object-form">
+					  	  	  <div class="layui-form-item layui-form-text">
+							    <label class="layui-form-label">撰写新邮件</label>
+							    <div class="layui-input-block">
+							      <textarea name="notice4" id="notice4" placeholder="请输入内容" class="layui-textarea" maxlength="40"></textarea>
+							    </div>
+							  </div>
+							  <div class="r" style="margin-bottom:10px;">
+									<a class="layui-btn" lay-submit="" lay-filter="form-add-submit"   onclick="submistD('notice4','撰写新邮件')">
+										<i class="fa fa-save"></i> 提交
+									</a>
+							  </div>
+							</form>
+						
+				  	  </div>
+					  <div class="layui-tab-item">
+					 <form class="layui-form layui-form-pane" id="add-object-form">
+				  	  	  <div class="layui-form-item layui-form-text">
+						    <label class="layui-form-label">撰写新邮件</label>
+						    <div class="layui-input-block">
+						      <textarea name="sm4" id="sm4" placeholder="请输入内容" class="layui-textarea" maxlength="40"></textarea>
+						    </div>
+						  </div>
+						  <div class="r" style="margin-bottom:10px;">
+								<a class="layui-btn" lay-submit="" lay-filter="form-add-submit"  onclick="submistD('sm4','撰写新邮件')"> 
+									<i class="fa fa-save"></i> 提交
+								</a>
+						  </div>
+						</form>
+					  </div>
+				  </div>
+				</div>  
+			</form>
+		</div>
+		</div>
+		<!-- 会议模块弹窗  -->
+ 		<div class="admin-main" style="display: none; z-index: 19940200;" id="win-detail3-object">
+ 		<form class="layui-form-pane" id="add-object-form">
+			<div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">操作提示</label>
+					<div class="layui-input-block">
+						<input type="text" name="" id="" lay-verify="required|spactily" autocomplete="off" placeholder="平台可给用户提供在线消息、短信三种通知方式。平台可以选择开启一种或多种通知方式供用户选择" class="layui-input" readonly="readonly">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">可用变量</label>
+					<div class="layui-input-block hand">
+						 <div name="" id="" class="newgg">
+						 	<span>{userName}:创建人;</span>
+						 	<span>{meetingRoom}:会议室;</span>
+						 	<span>{theme}:会议主题;</span>
+						 	<span>{address}:会议地址;</span>
+						 	<span>{startTime}:会议开始时间;</span>
+						 	<span>{endTime}:会议结束时间;</span>
+						 	<span>{contact}:联系人;</span>
+						 </div>					 
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">模板名称</label>
+					<div class="layui-input-block">
+						<input type="text" name="" id="" lay-verify="required|spactily" autocomplete="off" placeholder="会议模块" class="layui-input" readonly="readonly"> 
+					</div>
+				</div>
+
+			<form class="layui-form layui-form-pane" id="add-object-form" style="margin-bottom:60px;">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+				  <ul class="layui-tab-title">
+				      <li class="layui-this">在线消息</li>
+				      <li>手机短信</li>
+				      <li>邮件模块</li>
+				  </ul>
+				  <div class="layui-tab-content" style="margin-left:-10px;">
+				  	  <div class="layui-tab-item layui-show">
+					  	  <form class="layui-form layui-form-pane" id="add-object-form">
+					  	  	  <div class="layui-form-item layui-form-text">
+							    <label class="layui-form-label">新建会议</label>
+							    <div class="layui-input-block">
+							      <textarea name="notice5" id="notice5" placeholder="请输入内容" class="layui-textarea" maxlength="40"></textarea>
+							    </div>
+							  </div>
+							  <div class="r" style="margin-bottom:10px;">
+									<a class="layui-btn" lay-submit="" lay-filter="form-add-submit"  onclick="submistD('notice5','新建会议')">
+										<i class="fa fa-save"></i> 提交
+									</a>
+							  </div>
+							</form>
+							
+							<!-- <form>
+							  <div class="layui-form-item layui-form-text">
+							    <label class="layui-form-label">会议变更</label>
+							    <div class="layui-input-block">
+							      <textarea name="notice6" id="notice6" placeholder="请输入内容" class="layui-textarea" maxlength="40"></textarea>
+							    </div>
+							  </div>
+							   <div class="r" style="margin-bottom:10px;">
+									<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="submistD('notice6','会议变更')">
+										<i class="fa fa-save"></i> 提交
+									</a>
+								</div>
+							</form>   -->
+							<form>
+							   <div class="layui-form-item layui-form-text">
+							    	<label class="layui-form-label">会议取消</label>
+							    	<div class="layui-input-block">
+							      		<textarea name="notice7" id="notice7" placeholder="请输入内容" class="layui-textarea" maxlength="40"></textarea>
+							    	</div>
+							    </div>
+							    <div class="r" style="margin-bottom:10px;">
+									<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="submistD('notice7','会议取消')">
+										<i class="fa fa-save"></i> 提交
+									</a>
+								</div>
+						  	</form>  
+						  	<form class="layui-form layui-form-pane" id="add-object-form">
+							  <div class="layui-form-item layui-form-text">
+							    <label class="layui-form-label">会议提醒</label>
+							    <div class="layui-input-block">
+							      <textarea name="notice8"  id="notice8" placeholder="请输入内容" lay-verify="required" class="layui-textarea" maxlength="40"></textarea>
+							    </div>
+							  </div>
+							   <div class="r" style="margin-bottom:10px;">
+									<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="submistD('notice8','会议提醒')">
+										<i class="fa fa-save"></i> 提交
+									</a>
+								</div>
+							</form>  
+				  	  </div>
+					  <div class="layui-tab-item">
+					 <form class="layui-form layui-form-pane" id="add-object-form">
+				  	  	  <div class="layui-form-item layui-form-text">
+						    <label class="layui-form-label">新建会议</label>
+						    <div class="layui-input-block">
+						      <textarea name="sm5" id="sm5"  placeholder="请输入内容" class="layui-textarea" maxlength="40"></textarea>
+						    </div>
+						  </div>
+						  <div class="r" style="margin-bottom:10px;">
+								<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="submistD('sm5','新建会议')">
+									<i class="fa fa-save"></i> 提交
+								</a>
+						  </div>
+						</form>
+						
+						<!-- <form>
+						  <div class="layui-form-item layui-form-text">
+						    <label class="layui-form-label">会议变更</label>
+						    <div class="layui-input-block">
+						      <textarea name="sm6" id="sm6" placeholder="请输入内容" class="layui-textarea" maxlength="40"></textarea>
+						    </div>
+						  </div>
+						   <div class="r" style="margin-bottom:10px;">
+								<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="submistD('sm6','会议变更')">
+									<i class="fa fa-save"></i> 提交
+								</a>
+							</div>
+						</form>   -->
+						<form>
+						   <div class="layui-form-item layui-form-text">
+						    	<label class="layui-form-label">会议取消</label>
+						    	<div class="layui-input-block">
+						      		<textarea name="sm7" id="sm7" placeholder="请输入内容" class="layui-textarea" maxlength="40"></textarea>
+						    	</div>
+						    </div>
+						    <div class="r" style="margin-bottom:10px;">
+								<a class="layui-btn" lay-submit="" lay-filter="form-add-submit"  onclick="submistD('sm7','会议取消')">
+									<i class="fa fa-save"></i> 提交
+								</a>
+							</div>
+					  	</form>  
+					  	<form class="layui-form layui-form-pane" id="add-object-form">
+				  	  	  <div class="layui-form-item layui-form-text">
+						    <label class="layui-form-label">会议提醒</label>
+						    <div class="layui-input-block">
+						      <textarea name="sm8" id="sm8" placeholder="请输入内容" class="layui-textarea" maxlength="40"></textarea>
+						    </div>
+						  </div>
+						  <div class="r" style="margin-bottom:10px;">
+								<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="submistD('sm8','会议提醒')">
+									<i class="fa fa-save"></i> 提交
+								</a>
+						  </div>
+						</form>
+					  	
+					  </div>
+					  <div class="layui-tab-item">
+					  	 <form class="layui-form layui-form-pane" id="add-object-form">
+							  <div class="layui-form-item layui-form-text">
+							    <label class="" style="font-weight:bold;">新建会议：</label>
+							  </div>
+							  <div class="layui-form-item">
+								<label class="layui-form-label">消息标题</label>
+								<div class="layui-input-block">
+									<input type="text" name="mai4T" id="mai4T" lay-verify="required|spactily" autocomplete="off" placeholder="填写标题" class="layui-input" maxlength="40">
+								</div>
+							  </div>
+							  <div class="layui-form-item">
+								<label class="layui-form-label">邮件内容</label>
+								<div class="layui-input-block">
+								  <script id="mai4"  type="text/plain" style="width: 100%; height: 500px;"></script>
+								</div>
+							 </div>
+							 <div class="r" style="margin-bottom:10px;">
+									<a class="layui-btn" lay-submit="" lay-filter="form-add-submit"  onclick="submistM('mai4T','mai4','新建会议')">
+										<i class="fa fa-save"></i> 提交
+									</a>
+							  </div>
+						  </form>
+						 
+						<!--  <form class="layui-form layui-form-pane" id="add-object-form">
+							  <div class="layui-form-item layui-form-text">
+							    <label class="" style="font-weight:bold;">会议变更：</label>
+							  </div>
+							  <div class="layui-form-item">
+								<label class="layui-form-label">消息标题</label>
+								<div class="layui-input-block">
+									<input type="text" name="mai5T" id="mai5T" lay-verify="required|spactily" autocomplete="off" placeholder="填写标题" class="layui-input" maxlength="40">
+								</div>
+							  </div>
+							  <div class="layui-form-item">
+								<label class="layui-form-label">邮件内容</label>
+								<div class="layui-input-block">
+								  <script id="mai5"  type="text/plain" style="width: 100%; height: 500px;"></script>
+								</div>
+							 </div>
+							 <div class="r" style="margin-bottom:10px;">
+									<a class="layui-btn" lay-submit="" lay-filter="form-add-submit"  onclick="submistM('mai5T','mai5','会议变更')">
+										<i class="fa fa-save"></i> 提交
+									</a>
+							  </div>
+						  </form> -->
+				
+						 <form class="layui-form layui-form-pane" id="add-object-form">
+							  <div class="layui-form-item layui-form-text">
+							    <label class="" style="font-weight:bold;">会议取消</label>
+							  </div>
+							  <div class="layui-form-item">
+								<label class="layui-form-label">消息标题</label>
+								<div class="layui-input-block">
+									<input type="text" name="mai6T" id="mai6T" lay-verify="required|spactily" autocomplete="off" placeholder="填写标题" class="layui-input" maxlength="40">
+								</div>
+							  </div>
+							  <div class="layui-form-item">
+								<label class="layui-form-label">邮件内容</label>
+								<div class="layui-input-block">
+								  <script id="mai6"  type="text/plain" style="width: 100%; height: 500px;"></script>
+								</div>
+							 </div>
+							 <div class="r" style="margin-bottom:10px;">
+									<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="submistM('mai6T','mai6','会议取消')">
+										<i class="fa fa-save"></i> 提交
+									</a>
+							  </div>
+						  </form>
+						  
+						  <form class="layui-form layui-form-pane" id="add-object-form">
+							  <div class="layui-form-item layui-form-text">
+							    <label class="" style="font-weight:bold;">会议提醒：</label>
+							  </div>
+							  <div class="layui-form-item">
+								<label class="layui-form-label">消息标题</label>
+								<div class="layui-input-block">
+									<input type="text" name="mai7T" id="mai7T" lay-verify="required" autocomplete="off" placeholder="填写标题" class="layui-input" maxlength="40">
+								</div>
+							  </div>
+							  <div class="layui-form-item">
+								<label class="layui-form-label">邮件内容</label>
+								<div class="layui-input-block">
+								  <script id="mai7"  type="text/plain" style="width: 100%; height: 500px;"></script>
+								</div>
+							 </div>
+							 <div class="r" style="margin-bottom:10px;">
+									<a class="layui-btn" lay-submit="" lay-filter="form-add-submit" onclick="submistM('mai7T','mai7','会议提醒')">
+										<i class="fa fa-save"></i> 提交
+									</a>
+							  </div>
+						  </form>
+					  </div>
+			</form> 
+		</div>
+		</form>
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/ueditor.all.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/lang/zh-cn/zh-cn.js"></script>
+	<script type="text/javascript" src="../../web/js/tool.js"></script>
+	<script>
+		//构建出百度文本编辑器
+    	var ue1 = UE.getEditor('mai1',{initialFrameHeight: 196});
+	    var ue2 = UE.getEditor('mai2',{initialFrameHeight: 196});
+	    var ue3 = UE.getEditor('mai3',{initialFrameHeight: 196});
+    	var ue4 = UE.getEditor('mai4',{initialFrameHeight: 196});
+    	//var ue5 = UE.getEditor('mai5',{initialFrameHeight: 196});
+    	var ue6 = UE.getEditor('mai6',{initialFrameHeight: 196});
+    	var ue7 = UE.getEditor('mai7',{initialFrameHeight: 196});  
+    	//var ue1w = UE.getEditor('mai1W',{initialFrameHeight: 196}); 
+		//定义layui
+		var pform;
+		layui.use(['form','element'], function() {
+			pform = layui.form;
+		});
+		//协同办公编辑
+		function edit() {
+			
+			var index = layer.open({			
+				title : '协同办公编辑',
+				maxmin : false,
+				type : 1,				
+				content : $('#win-detail-object')
+				
+			});		
+			
+			pform.render();
+			layer.full(index);
+			init("协同办公");
+		}
+		function init(str){
+			$("#groupName").val(str);
+			 var  param={
+					 groupName:str,
+					 _csrf:$("#_csrf").val()
+			  }			
+			 tool.post("/sma/sysMsgModuleCategory/classification",param,postCallBack_list,false);			
+		}
+		function postCallBack_list(retMsg) {	
+			if (retMsg.code == 0) {					
+					 if(retMsg.object!=null){								 
+		                if(retMsg.object.length > 0){                 
+		                	 var userList = retMsg.object;		             
+		                	  $(userList).each(function(index){
+			                         var data = userList[index];
+			                         var Code=data.attrCode;		
+			                         if(Code.indexOf("mai")>=0){
+			                        	 $("#"+Code+"T").val(data.attrDesc);
+			                        	 if(Code=="mai1"){
+			                        		 setTimeout(function(){
+			                        			 ue1.setContent(data.attrValue);			 
+			                        		 },888)			                         		
+			                         	 }else if(Code=="mai2"){
+			                         		setTimeout(function(){
+			                        			 ue2.setContent(data.attrValue);			 
+			                        		 },888)
+			                         	 }else if(Code=="mai3"){
+			                         		setTimeout(function(){
+			                        			 ue3.setContent(data.attrValue);			 
+			                        		 },888)
+			                             }else if(Code=="mai4"){
+			                            	 setTimeout(function(){
+			                        			 ue4.setContent(data.attrValue);			 
+			                        		 },888)
+			                         	 }else if(Code=="mai5"){
+			                         		/* setTimeout(function(){
+			                        			 ue5.setContent(data.attrValue);			 
+			                        		 },888) */
+			                         	 }else if(Code=="mai6"){
+			                         		setTimeout(function(){
+			                        			 ue6.setContent(data.attrValue);			 
+			                        		 },888)
+			                             }else{
+			                            	 setTimeout(function(){
+			                        			 ue7.setContent(data.attrValue);			 
+			                        		 },888)
+			                             }
+			                         
+			                         }else{
+			                        	 $("#"+Code).val(data.attrValue);
+			                         }
+			                           
+			                  });
+		                }
+		            }
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+		function postCallBack_add(retMsg) {			
+			if (retMsg.code == 0) {
+				tool.success(retMsg.message);				
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+		//工作计划弹窗
+		function edit1() {
+			var index = layer.open({
+				title : '工作计划编辑',
+				maxmin : false,
+				type : 1,
+				content : $('#win-detail1-object')
+			});
+			pform.render();
+			layer.full(index);
+			init("工作计划");
+		}
+		//邮箱模块弹窗
+		function edit2() {
+			var index = layer.open({
+				title : '邮箱模块编辑',
+				maxmin : false,
+				type : 1,
+				content : $('#win-detail2-object')
+			});
+			pform.render();
+			layer.full(index);
+			init("邮箱");
+		}
+		//会议模块弹窗
+		function edit3() {
+			var index = layer.open({
+				title : '会议模块编辑',
+				maxmin : false,
+				type : 1,
+				content : $('#win-detail3-object')
+			});
+			pform.render();
+			layer.full(index);
+			init("会议");
+		}
+		function submistD(attrCode,attrName){		
+			$("#attrName").val(attrName);
+			$("#attrCode").val(attrCode);			
+			$("#attrValue").val($("#"+attrCode).val());		
+		    tool.post("/sma/sysMsgModuleInfo/add",$("#add-form").serialize(),postCallBack_add,false);	
+		}
+        function submistM(attrCodeT,attrCode,attrName){        
+        	var con;
+        	if(attrCode=="mai1"){
+        		con=ue1.getContent();
+        	}else if(attrCode=="mai2"){
+        		con=ue2.getContent();
+        	}else if(attrCode=="mai3"){
+        		con=ue3.getContent();
+        	}else if(attrCode=="mai4"){
+        		con=ue4.getContent();
+        	}else if(attrCode=="mai5"){
+        		con=ue5.getContent();
+        	}else if(attrCode=="mai6"){
+        		con=ue6.getContent();
+        	}else{
+        		con=ue7.getContent();
+        	}
+        	
+        	$("#attrName").val(attrName);
+			$("#attrCode").val(attrCode);
+			$("#attrValue").val(con);		
+			$("#attrDesc").val($("#"+attrCodeT).val());	
+	       tool.post("/sma/sysMsgModuleInfo/add",$("#add-form").serialize(),postCallBack_add,false);	
+		}		
+	</script>
+</body>
+</html>

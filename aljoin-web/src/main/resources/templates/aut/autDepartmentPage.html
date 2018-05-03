@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>部门岗位</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css"
+	media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet"
+	href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" />
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<style>
+.span_addUser{padding:3px 3px;margin-right:15px;border:1px solid #ccc}
+.table_btn{color:#339bf1;margin-right: 12px;}	
+#treeDemo a{
+	width:260px;
+}
+ 
+</style>
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}"
+		id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main" style="margin: 10px;">
+		<blockquote class="layui-elem-quote" style="padding: 5px;">
+			<form class="layui-form" action="">
+				<span><@a code="160801" href="javascript:void(0)"
+					class="layui-btn layui-btn-small" id="" onclick="createDept1(this)"
+					iclass="layui-icon" icon="&#xe608;" text="新增一级部门"/> </span>
+				<div style="float: right;">
+
+					<div class="layui-input-inline">
+						<input type="text" name="searchKey" id="searchKey"
+							placeholder="请输入岗位名称" autocomplete="off" class="layui-input"
+							style="height: 30px; line-height: 30px;" maxlength="20">
+					</div>
+					<span style="margin-right: 15px;"> <@a code="160802"
+						href="javascript:void(0)" class="layui-btn layui-btn-small" id=""
+						onclick="loadData()" iclass="layui-icon" icon="&#xe615;"
+						text="搜索"/> </span> 
+					<@a code="160803" href="javascript:void(0)"
+					class="layui-btn layui-btn-normal layui-btn-small" id="show-active"
+					onclick="openAddWin(this)" text="新增岗位"/>
+				</div>
+			</form>
+		</blockquote>
+	</div>
+	<!-- tree -->
+	<div class="tree_left" style="width:46%;">
+		<ul id="treeDemo" class="ztree"></ul>
+	</div>
+	<!-- 岗位 -->
+	<div id="post_list" class="tree_right" style="width:50%;">
+		<div class="layui-form"">
+			<table class="layui-table admin-table">
+				<thead>
+					<tr>
+						<th style="width: 20px;display:none;"><input type="checkbox"
+							lay-skin="primary" lay-filter="paging_check-all"></th>
+						<th style="display: none;">用户ID</th>
+						<th>岗位名称</th>
+						<!--<th>排序</th>-->
+						<th>部门编号</th>
+						<th>是否激活</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td style="display:none;"><input type="checkbox" lay-skin="primary" class="check-id" id="{{value.autPosition.id}}"></td>
+							<td style="display: none;">{{value.id}}</td>
+							<td>{{value.autPosition.positionName}}</td>
+							<!--<td>{{value.autPosition.positionRank}}</td>-->
+							<td>{{value.autPosition.deptCode}}</td>
+							<td>{{if value.autPosition.isActive == 1}}<font color="green">激活</font>{{/if}}{{if value.autPosition.isActive == 0}}<font color="red">冻结</font>{{/if}}</td>
+							<td>
+								<@a code="160813" href="javascript:void(0)" class="table_btn" id="show-edit" onclick="postEdit('{{value.autPosition.id}}')" text="编辑"/>
+								<@a code="160814" href="javascript:void(0)" class="table_btn" id="show-view" onclick="postDetail('{{value.autPosition.id}}')" text="详情"/>
+								<@a code="160815" href="javascript:void(0)" class="table_btn" id="show-delete" onclick="postDelete('{{value.autPosition.id}}')" text="删除"/>	
+							</td>
+						</tr>
+					{{/each}}
+					</script>
+				</tbody>
+			</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page"
+				style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	<!-- 新增树一级部门窗口 -->
+	<div
+		style="padding: 10px; display: none; padding-right: 10px; z-index: 19940200;"
+		id="win-add-object1">
+		<form class="layui-form layui-form-pane" id="add-object-form">
+			<input type="hidden" name="${_csrf.parameterName}"
+				value="${_csrf.token}" />
+
+			<!-- <input type="hidden" id="parentId" name="parentId" value="" />
+			<input type="hidden" id="parentCode" name="parentCode" value="" /> -->
+			<div class="layui-form-item">
+				<label class="layui-form-label">部门名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="deptName" id="deptName"
+						lay-verify="required|special" maxlength="30" autocomplete="off" placeholder="部门名称"
+						class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="deptRank" id="deptRank"
+						lay-verify="required|number" maxlength="5" onkeyup="value=value.replace(/[^\d]/g,'')"  autocomplete="off"
+						placeholder="部门(同级)排序" value="" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label> <@select
+				dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive"
+				class="layui-input-block" def="1"/>
+			</div>
+		
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 新增树子部门窗口 -->
+	<div
+		style="padding: 10px; display: none; padding-right: 10px; z-index: 19940200;"
+		id="win-add-object">
+		<form class="layui-form layui-form-pane" id="add-object-form2">
+			<input type="hidden" name="${_csrf.parameterName}"
+				value="${_csrf.token}" /> <input type="hidden" id="deptLevel"
+				name="deptLevel" value="" /> <input type="hidden" id="parentId"
+				name="parentId" value="" /> <input type="hidden" id="parentCode"
+				name="parentCode" value="" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">部门名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="deptName" id="deptName"
+						lay-verify="required" autocomplete="off" placeholder="部门名称"
+						class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="deptRank" id="deptRank"
+						lay-verify="required|number" maxlength="5" onkeyup="value=value.replace(/[^\d]/g,'')" autocomplete="off"
+						placeholder="部门(同级)排序" value="" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label> <@select
+				dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive"
+				class="layui-input-block" def="1"/>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit2">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+			
+		</form>
+	</div>
+	<!-- 树详情对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 10px;"
+		id="win-view-object">
+		<form class="layui-form layui-form-pane" id="view-object-form">
+			<input type="hidden" name="id" id="id"> <input type="hidden"
+				name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">部门名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="deptName" id="deptName_det"
+						autocomplete="off" class="layui-input" disabled>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">部门排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="deptRank" id="deptRank_det"
+						autocomplete="off" class="layui-input" disabled>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<div class="layui-input-block">
+					<input type="text" name="isActive" id="isActive_det"
+						autocomplete="off" class="layui-input" disabled>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">创建时间</label>
+				<div class="layui-input-block">
+					<input type="text" name="createTime" id="createTime_det"
+						autocomplete="off" class="layui-input" disabled>
+				</div>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+			</div>
+		</form>
+	</div>
+	<!-- 树编辑对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 10px;"
+		id="win-update-object">
+		<form class="layui-form layui-form-pane" id="update-object-form">
+			<input type="hidden" name="id" id="id_edit"> <input
+				type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<!-- <input type="hidden" name="deptRank" id="deptRank" value=" " /> -->
+			<div class="layui-form-item">
+				<label class="layui-form-label">部门名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="deptName" id="deptName_edit"
+						lay-verify="required|special" maxlength="30" autocomplete="off" placeholder="部门名称"
+						class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">部门排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="deptRank" id="deptRank_edit"
+						lay-verify="required|number" maxlength="5"  onkeyup="value=value.replace(/[^\d]/g,'')" autocomplete="off" placeholder="部门排序"
+						class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label> <@select
+				dict="IS_ACTIVE" layVerify="required" id="isActive_edit"
+				name="isActive" class="layui-input-block" def=""/>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-update-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<!-- <button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button> -->
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 分配角色 -->
+	<div id="auth-div" style="display: none; padding-left: 10px; padding-right: 10px;">
+		<input type="hidden" name="deptId" id="deptId_role">		
+		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+		<div class="layui-field-box layui-form roles"  id="mkmk" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+	           <script   id="artt"  type="text/html">
+                 {{each list value index}}
+                      <input {{if value.isCheck == 1}}checked{{/if}} type="checkbox" class="de_role" lay-filter="checknodes" value="{{value.autRole.id}}" name="" title="{{value.autRole.roleName}}" style="height:40px;">	
+                 {{/each}}
+               </script>
+		</div>
+	</div>
+
+	<!--树部门添加用隐藏域  -->
+	<form class="layui-form layui-form-pane" id="add-addUserYin-form">
+		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" /> 
+		<input type="hidden" name="deptId" id="deptId_addUser" /> 
+		<input type="hidden" name="deptCode" id="deptCode_addUser" />
+		<input type="hidden" name="userId" id="userId" />
+		<input type="hidden" name="userName" id="userName" />
+		<input type="hidden" name="isActive" id="isActive" />
+		<input type="hidden" name="departmentUserRank" id="departmentUserRank" />
+		<input type="hidden" name="isLeader" id="leader" />
+	</form>
+	<!-- 树部门添加用户 -->
+	<div
+		style="padding: 10px; display: none; padding-right: 10px; z-index: 19940200;"
+		id="win-addUser-object">
+		<form class=" layui-form-pane" id="add-addUser-form">
+			<div style="margin-bottom:10px;">
+				<div class="layui-input-inline">
+					<input type="text" name="searchKey" id="searchKey2"
+							placeholder="请输入名称" autocomplete="off" class="layui-input"
+							style="height: 30px; line-height: 30px;">
+				</div>
+				<span style="margin-right: 15px;">
+					 <@a code="160816" href="javascript:void(0)" class="layui-btn layui-btn-small" id=""
+						onclick="createUserList()" iclass="layui-icon" icon="&#xe615;"
+						text="搜索"/> 
+				</span> 
+			</div>
+			<div class="layui-field-box layui-form" style="padding: 0 0 20px 0;">
+				<div  id="paiDiv" style="border:1px solid #ccc;height:80px;overflow:auto;font-size:14px;padding: 10px 10px;">
+					
+				</div>
+				<table class="layui-table admin-table">
+					<thead>
+						<tr>
+							<th style="display: none;">用户ID</th>
+							<th style="width: 60px;">序号</th>
+							<th>用户账号</th>
+							<th>用户名</th>
+							<th>是否激活</th>
+							<th>是否过期</th>
+							<th>是否被锁</th>
+							<th>证书状态</th>
+							<th>邮箱</th>
+							<th style="width:50px;">操作</th>
+						</tr>
+					</thead>
+					<tbody id="paging2-data">
+						<script id="paging2-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td style="display: none;">{{value.id}}</td>
+                            <td>{{(current-1)*size+index+1}}</td>
+							<td>{{value.userName}}</td>
+							<td>{{value.fullName}}</td>
+							<td>{{if value.isActive == 1}}<font color="green">激活</font>{{/if}}{{if value.isActive == 0}}<font color="red">冻结</font>{{/if}}</td>
+							<td>{{if value.isAccountExpired == 1}}<font color="red">过期</font>{{/if}}{{if value.isAccountExpired == 0}}<font color="green">正常</font>{{/if}}</td>
+							<td>{{if value.isAccountLocked == 1}}<font color="red">锁定</font>{{/if}}{{if value.isAccountLocked == 0}}<font color="green">正常</font>{{/if}}</td>
+							<td>{{if value.isCredentialsExpired == 1}}<font color="red">过期</font>{{/if}}{{if value.isCredentialsExpired == 0}}<font color="green">正常</font>{{/if}}</td>
+							<td>{{value.userEmail}}</td>
+                            <td><@a code="160817" href="javascript:void(0)" class="layui-btn layui-btn-danger layui-btn-mini" id="show-section" onclick="createUserp('{{value.id}}','{{value.userName}}','{{value.isActive}}')" text="新增"/></td>
+						</tr>
+					{{/each}}
+					</script>
+					</tbody>
+				</table>
+			</div>
+			<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+				<div id="paging2-footer" class="page"
+					style="background-color: white; text-align: center;"></div>
+			</div>
+				<!-- <div class="layui-input-block" style="margin-top: 15px; float:left;">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary"
+					onclick="layer.closeAll();redern();"><i class="fa fa-backward"></i>
+					返回</a>
+				</div>
+				<div class="layui-input-block" style="margin-top: 15px; float: right;">
+					<button class="layui-btn" lay-submit=""
+						lay-filter="form-addUser-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			 -->
+		</form>
+	</div>
+	<!-- 新增岗位窗口 -->
+	<div
+		style="padding: 10px; display: none; padding-right: 10px; z-index: 19940200;"
+		id="win-addPost-object">
+		<form class="layui-form layui-form-pane" id="add-post-form">
+			<input type="hidden" name="${_csrf.parameterName}"
+				value="${_csrf.token}" /> <input type="hidden" id="deptId"
+				name="deptId" value="" />
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">岗位名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="positionName" id="positionName_post"
+						lay-verify="required|special" maxlength="30"  autocomplete="off" placeholder="岗位名称"
+						class="layui-input val_n">
+				</div>
+			</div>
+			 <div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="positionRank" id="positionRank_post"
+						lay-verify="required|number" maxlength="5" onkeyup="value=value.replace(/[^\d]/g,'')" autocomplete="off" placeholder="部门排序"
+						value="" class="layui-input val_n">
+				</div>
+			</div> 
+			<div class="layui-form-item">
+				<label class="layui-form-label">部门编号</label>
+				<div class="layui-input-block">
+					<input type="text" name="deptCode" id="deptCode_post"
+						lay-verify="required|number" maxlength="50" autocomplete="off" placeholder="部门编号"
+						value="" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label> <@select
+				dict="IS_ACTIVE" layVerify="required" id="isActive_post"
+				name="isActive" class="layui-input-block val_n" def=""/>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-addP-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<span class="layui-btn layui-btn-primary" onclick="reset_inp();">
+						<li class="fa fa-eraser""></li> 重置
+					</span>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 编辑岗位窗口 -->
+	<div
+		style="padding: 10px; display: none; padding-right: 10px; z-index: 19940200;"
+		id="win-editPost-object">
+		<form class="layui-form layui-form-pane" id="edit-post-form">
+			<input type="hidden" name="${_csrf.parameterName}"
+				value="${_csrf.token}" /> <input type="hidden" id="id_postEdit"
+				name="id" value="" />
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">岗位名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="positionName" id="positionName_postEdit"
+						lay-verify="required|special" maxlength="50" autocomplete="off" placeholder="岗位名称"
+						class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="positionRank" id="positionRank_postEdit"
+						lay-verify="required|number" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="5" autocomplete="off" placeholder="部门排序"
+						value="" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">部门编号</label>
+				<div class="layui-input-block">
+					<input type="text" name="deptCode" id="deptCode_postEdit"
+						lay-verify="required|number" autocomplete="off" placeholder="部门编号"
+						value="" class="layui-input" readonly="readonly">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label> <@select
+				dict="IS_ACTIVE" layVerify="required" id="isActive_postEdit"
+				name="isActive" class="layui-input-block" def=""/>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter=form-editP-submit>
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<!-- <button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button> -->
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 岗位详情窗口 -->
+	<div
+		style="padding: 10px; display: none; padding-right: 10px; z-index: 19940200;"
+		id="win-detPost-object">
+		<form class="layui-form layui-form-pane" id="det-form">
+			<input type="hidden" name="${_csrf.parameterName}"
+				value="${_csrf.token}" /> <input type="hidden" name="id" id="id">
+			<input type="hidden" id="deptId" name="deptId" value="" />
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">岗位名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="positionName" id="positionName_postDet"
+						autocomplete="off" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="positionRank" id="positionRank_postDet"
+						autocomplete="off" value="" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">部门编号</label>
+				<div class="layui-input-block">
+					<input type="text" name="deptCode" id="deptCode_postDet"
+						autocomplete="off" value="" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<div class="layui-input-block">
+					<input type="text" name="isActive" id="isActive_postDet"
+						autocomplete="off" value="" class="layui-input">
+				</div>
+			</div>
+		</form>
+	</div>
+<!-- 新增用户排序 -->
+    <div style="padding: 10px; display: none; padding-right: 10px; z-index: 19940200;"
+		id="newuserpai">
+		<form class="layui-form layui-form-pane" id="newuserpai-form">
+			<input type="hidden" name="${_csrf.parameterName}"
+				value="${_csrf.token}" /> 
+			<input type="hidden" name="id" id="id">
+			<div class="layui-form-item">
+				<label class="layui-form-label">用户排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="positionName" id="positionName_postDet"
+						autocomplete="off" class="layui-input" lay-verify="num_1" min="0" maxlength="5" onkeyup="check_1(this)">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">部门领导</label>
+				<div class="layui-input-block">
+					<select id="leader_user" name="leader">
+						<option value="0" >否</option>
+						<option value="1">是</option>
+					</select>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<script type="text/javascript" src="../../web/plugins/layui/layui.js"></script>
+	<script type="text/javascript"
+		src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript"
+		src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript" src="../../web/js/tool.js"></script>
+
+	<script>
+		//生成树
+		var param = new Object();
+		param._csrf = $("#_csrf").val();
+		redern();
+		function redern() {
+			tool.post("../autDepartment/getDepartmentList", param, postCallBack_newtree);
+		}
+		function postCallBack_newtree(data) {
+			var setting = {
+				view : {
+					addDiyDom : addDiyDom,  
+				 	/* addHoverDom: addHoverDom,
+					removeHoverDom: removeHoverDom,  */ 
+					selectedMulti: false
+				},
+				data : {
+					simpleData : {
+						enable : true
+					}
+				},
+				callback : {
+					beforeClick : beforeClick
+				}
+			};
+			var obj = [];
+			for (var i = 0; i < data.length; i++) {
+				obj.push({
+					id : data[i].id,
+					pId : data[i].parentId,
+					name : data[i].deptName,
+					obj : {
+						deptCode : data[i].deptCode,
+						deptLevel : data[i].deptLevel,
+						isActive : data[i].isActive,
+						parentId : data[i].parentId,
+						parentCode : data[i].parentCode
+					}
+				})
+			}
+			$.fn.zTree.init($("#treeDemo"), setting, obj);
+		}
+		//树的功能键
+		IDMark_A = "_a";
+		//获取数节点加载岗位列表
+		function beforeClick(hh, treeNode) {
+			/* console.log(treeNode) */
+			$("#show-active").attr("deptId", treeNode.id);
+			$("#show-active").attr("deptCode", treeNode.obj.deptCode);
+			loadData(treeNode.id, treeNode.obj.deptCode, treeNode.name,
+					treeNode.obj.isActive);
+		}
+		
+		function addDiyDom(treeId, treeNode) {
+			   /*  var spaceWidth = 5;
+	            var switchObj = $("#" + treeNode.tId + "_switch"),
+	            icoObj = $("#" + treeNode.tId + "_ico");
+	            switchObj.remove();
+	            icoObj.parent().before(switchObj);
+	            var spantxt = $("#" + treeNode.tId + "_span").html();
+	             if (spantxt.length > 60) {
+	                spantxt = spantxt.substring(0, 60) + "...";
+	                $("#" + treeNode.tId + "_span").html(spantxt);
+	            }  */
+			var editStr = "";
+			var aObj = $("#" + treeNode.tId + IDMark_A);
+			if (treeNode.check_Child_State == 0 || -1) {
+				editStr += "<span id='diyBtn_space_" +treeNode.id+ "' >&nbsp;</span>"
+				var treeNodeId = "'" + treeNode.id + "'";
+				var treeNodeLevel = "'" + treeNode.obj.deptLevel + "'";
+				var treeNodeCode = "'" + treeNode.obj.deptCode + "'";
+				var treeNodeName = "'" + treeNode.name + "'";
+				editStr += '<@span code="160807"  class="button add"      id="diyBtn_'
+						+ treeNode.id
+						+ '" onclick="createDept('
+						+ treeNodeId
+						+ ','
+						+ treeNodeLevel
+						+ ','
+						+ treeNodeCode
+						+ ')" title="新增子部门"/>';
+				editStr += '<@span code="160808"  class="button remove"   id="diyBtn_'
+						+ treeNode.id
+						+ '" onclick="deletes('
+						+ treeNodeId
+						+ ','
+						+ treeNodeCode
+						+ ')" title="删除"/>';
+				editStr += '<@span code="160809"  class="button edit hov"     id="diyBtn_'
+						+ treeNode.id
+						+ '" onclick="edit('
+						+ treeNodeId
+						+ ')" title="编辑"/>';
+				editStr += '<@span code="160810"  class="button ico_docu hov" id="diyBtn_'
+						+ treeNode.id
+						+ '" onclick="detail('
+						+ treeNodeId
+						+ ')" title="详情"/>';
+				editStr += '<@span code="160811"  class="button addu"      id="diyBtn_'
+						+ treeNode.id
+						+ '" onclick="createUser('
+						+ treeNodeId
+						+ ',' + treeNodeCode + ')" title="添加用户"/>';
+				editStr += '<@span code="160812" class="button arole"       id="diyBtn_'
+						+ treeNode.id
+						+ '"onclick="showAuth('
+						+ treeNodeId 
+						+ ',' + treeNodeName + ')" title="分配角色"/>';
+			}
+			aObj.after(editStr);
+		}
+		function removeHoverDom(treeId, treeNode) {
+			$("#diyBtn_" + treeNode.tId).unbind().remove();
+		}; 
+		//新增一级部门
+		function createDept1() {
+			var index = layer.open({
+				title : '新增',
+				maxmin : false,
+				type : 1,
+				content : $('#win-add-object1')
+			});
+			layer.full(index);
+		}
+
+		//新增子部门
+		function createDept(Id, deptLevel, deptCode) {
+			deptLevel = String(Number(deptLevel) + 1)
+			var object = {
+				deptLevel : deptLevel,
+				parentId : Id,
+				parentCode : deptCode
+			}
+			for ( var key in object) {
+				$("#" + key).val(object[key])
+			}
+			//截取deptCode后三位进行判断
+			var a = deptCode;
+			a = a.substring(a.length - 3);
+			if (a < 999) {
+				var index = layer.open({
+					title : '新增',
+					maxmin : false,
+					type : 1,
+					content : $('#win-add-object')
+				});
+				layer.full(index);
+			} else {
+				/* layer.msg("同级部门已超过999，不能再新增"); */
+				layer.alert("同级部门已超过999，不能再新增", {
+					title : "操作提示",
+					icon : 1
+				}, function(index) {
+					layer.close(index);
+				});
+			}
+
+		}
+		//删除部门
+		function deletes(id,deptCode) {
+			var _csrf = $("#_csrf").val();
+			var data = {
+					id:id,
+					deptCode:deptCode,
+					_csrf:_csrf
+				} 
+			
+			var a = tool.post("../autDepartment/deleteConfirm",data,callBackDelect,false);		
+			function callBackDelect(data){
+				var msg = data.message;
+				layer.confirm(msg, {
+					icon : 3,
+					title : '提示'
+				}, function() {
+					var data2 = {
+							id:id,
+						deptCode:deptCode,
+						_csrf:_csrf
+					}
+					var b = tool.post("../autDepartment/delete ",data2,callb,false);
+					function callb(data){
+						layer.alert("删除成功", {
+							title : "操作提示",
+							icon : 1
+						}, function(index) {
+							layer.close(index);
+							redern();
+						});
+					}
+					
+				}) 
+			}
+			
+		}
+		//部门详情
+		function detail(id) {
+			var a = tool.getById("../autDepartment/getById", id);
+			$('#deptName_det').val(a.deptName);
+			$('#createTime_det').val(a.createTime);
+			$('#deptRank_det').val(a.deptRank);
+			if (a.isActive == 1) {
+				$('#isActive_det').val('激活');
+			} else {
+				$('#isActive_det').val('冻结');
+			}
+			var index = layer.open({
+				title : '详情',
+				maxmin : false,
+				type : 1,
+				content : $('#win-view-object')
+			});
+			layer.full(index);
+		}
+		//编辑部门
+		function edit(id) {
+			var object = tool.getById("../autDepartment/getById", id);
+			for ( var key in object) {
+				$("#update-object-form").find("#" + key + "_edit").val(
+						object[key]);
+			}
+
+			var index = layer.open({
+				title : '编辑',
+				maxmin : false,
+				type : 1,
+				content : $('#win-update-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		
+		//添加用户list弹窗
+		function createUser(id, deptCode) {
+			$("#searchKey2").val("");
+			$("input[name='addUser']").prop("checked", false);
+			$("#deptId_addUser").val(id);
+			$("#deptCode_addUser").val(deptCode);
+		
+			UserListTrue(id);//选中的list
+			var index = layer.open({
+				title : '添加用户',
+				maxmin : false,
+				type : 1,
+				content : $('#win-addUser-object')
+			});
+			//pform.render();
+			createUserList();//用户lis表
+			layer.full(index);
+			
+		}
+		//添加用户list列表
+		function createUserList() {
+			var param={
+					container:"paging2",
+					pageSize:10,
+					userName: $("#searchKey2").val(),
+					fullName:$("#searchKey2").val(),
+					url:"../autUser/listIsAvtive"
+			   }
+			tool.loadpage(param); 
+			
+			//pform.render();
+			
+		}
+		//选中的用户list
+		function UserListTrue(bumenId){
+			var arrobj = tool.getById("../autDepartmentUser/getUserByDeptId",bumenId);
+			var fdsd= arrobj.autDepartmentUserList;
+			var	arrobj = arrobj.autUserList;
+			  $("#paiDiv").empty();
+			 if(arrobj.length>0){
+				 var str =  "";
+				$.each(arrobj,function(index,value){
+					var id= "'" + fdsd[index].id + "'";
+					var userid= "'" + fdsd[index].userId + "'";
+					var deptId= "'" + fdsd[index].deptId + "'";
+					var departmentUserRank =  "'" + fdsd[index].departmentUserRank + "'";
+					var leader = "'" + fdsd[index].isLeader + "'";	
+				    str+='<div class="layui-input-inline" style="position: relative;margin-right:16px;margin-bottom:8px;">'+
+				         '<i class="layui-icon" onclick="delete_pai('+id+','+userid+','+deptId+',this)" style="cursor: default; font-size:16px; color: darkslategray;position: absolute;right: 0;z-index: 10; ">&#xe640;</i>'+
+				    	 '<a class="layui-btn" style="cursor: pointer;" onclick="eidt_pai('+id+','+departmentUserRank+','+leader+')">'+value.fullName+'</a>'+
+				    	 '</div>'
+				    	 
+				})
+			  $("#paiDiv").append(str)	
+			} 
+			
+			
+		}
+		//编辑排序
+		function eidt_pai(id,departmentUserRank,leader){			
+			$("#newuserpai").find("#positionName_postDet").val(departmentUserRank);
+			$("#newuserpai").find("#leader_user ").val(leader);	
+			 layer.open({
+				    title : '排序',
+					maxmin : false,
+					type : 1,
+					area: ['300px', '300px'],
+					content : $('#newuserpai'),
+					btn:['保存','取消'],
+					yes:function(index, layero){
+						var value=$("#newuserpai").find("#positionName_postDet").val();
+						var value2=$("#newuserpai").find("#leader_user").val();
+						if(value!=""){
+							 var reg = new RegExp("^[0-9]*$");
+							 
+						    if(!reg.test(value)){
+						        tool.error("请输入数字!");
+						    }else{
+							var param = new Object();
+							param._csrf=$("#_csrf").val();
+							param.id=id;
+							param.departmentUserRank=value;
+							param.isLeader=value2;
+							tool.post("../autDepartmentUser/update",param,function(retMsg){
+								 if (retMsg.code == 0) {
+										tool.success(retMsg.message);
+										 var bumenId=$("#deptId_addUser").val()
+										 UserListTrue(bumenId)
+										 layer.close(index)
+									} else {
+										tool.error(retMsg.message);
+									}
+							 },false)
+						    }	
+						}else{
+							tool.error('排序不能为空')
+						}
+					},
+					btn2:function(index, layero){
+					}
+				});
+			  pform.render();
+		}
+		//删除排序
+		function delete_pai(id,userId,deptId,myself){
+			layer.confirm('确定删除 ?', {
+				icon :  3,
+				title : '提示'
+			}, function(index) {
+				var param=new Object();
+				param.id=id;
+				param.userId=userId;
+				param.deptId=deptId;
+				param._csrf=$("#_csrf").val();
+				tool.post("../autDepartmentUser/deleteDeptUser",param,function(retMsg){
+					if (retMsg.code == 0) {
+						tool.success(retMsg.message);
+						$(myself).parent().remove()
+					} else {
+						tool.error(retMsg.message);
+					}
+				},false) 
+				
+				
+			});
+		}
+		//新增用户(排序)
+		 function createUserp(userId,userName,isActive){
+			 $("#newuserpai").find("#positionName_postDet").val("")
+			 $("#newuserpai").find("#leader_user").val("0") 
+			 $("#add-addUserYin-form").find("#userId").val(userId)
+			 $("#add-addUserYin-form").find("#userName").val(userName)
+			 $("#add-addUserYin-form").find("#isActive").val(isActive)
+			 layer.open({
+				    title : '排序',
+					maxmin : false,
+					type : 1,
+					area: ['300px', '300px'],
+					content : $('#newuserpai'),
+					btn:['新增','取消'],
+					yes:function(index, layero){
+						var value=$("#newuserpai").find("#positionName_postDet").val();
+						var value2=$("#newuserpai").find("#leader_user").val(); 
+						if(value!=""){
+							$("#add-addUserYin-form").find("#departmentUserRank").val(value)
+							$("#add-addUserYin-form").find("#leader").val(value2);
+							 tool.post("../autDepartmentUser/addDepartmentUser",$("#add-addUserYin-form").serialize(),function(retMsg){
+								 if (retMsg.code == 0) {
+										tool.success(retMsg.message);
+										var bumenId=$("#deptId_addUser").val()
+										 UserListTrue(bumenId)
+										layer.close(index)
+									} else {
+										tool.error(retMsg.message);
+									}
+							 },false)
+						}else{
+							tool.error("排序不能为空")
+						}
+					},
+					btn2:function(index, layero){
+					}
+				});
+			 pform.render();
+		}
+		//分配角色
+		function showAuth(deptId, userName) {
+			var _csrf = $("#_csrf").val();
+			$("#deptId_role").val(deptId);
+			/* console.log(deptId) */
+			var data = {
+				deptId:deptId,
+				_csrf:_csrf
+			} 
+			tool.post("../autDepartmentRole/roleList",data,callBackRole,false);		
+			function callBackRole(data){
+				var datas={list:[]};
+				for(var i=0;i<data.length;i++){
+					datas.list.push(data[i])
+				}
+				$('#mkmk').html(template("artt", datas));
+			}
+			var index = layer.open({
+				title : "【" + userName + "】分配角色",
+				maxmin : false,
+				type : 1,
+				content : $('#auth-div')
+			});
+			pform.render();
+			layer.full(index);
+			
+		}
+		
+		//加载岗位list
+		function loadData(deptId, deptCode, name, isActive, positionRank) {
+			var param = new Object();
+			param.deptId = deptId;
+			param.container = "paging";
+			param.pageSize = 10;
+			param.url = "../autPosition/list";
+			//console.log(param)
+			param.positionName = $("#searchKey").val();
+		/* 	param.positionRank = $("#searchKey").val(); */
+			tool.loadpage(param);
+		}
+		//打开岗位新增对象窗口
+		function openAddWin(myself) {
+			var deptId = $(myself).attr('deptId')
+			var deptcode = $(myself).attr('deptcode')
+			$("#win-addPost-object").find("#deptId").val(deptId);
+			$("#deptCode_post").val(deptcode).attr("readonly", "readonly");
+			$("#win-addPost-object").find("#isActive_post").val("1");
+			if(deptcode==""||deptcode==null){
+				tool.error("请先选择部门")
+			}else{
+			var index = layer.open({
+				title : '新增',
+				maxmin : false,
+				type : 1,
+				content : $('#win-addPost-object')
+			});
+			pform.render();
+			layer.full(index);
+			}
+			
+		}
+		//岗位详情
+		function postDetail(id) {
+			/* console.log(id) */
+			var a = tool.getById("../autPosition/getById", id);
+			$('#positionName_postDet').val(a.positionName).attr("disabled",
+					"disabled");
+			$('#positionRank_postDet').val(a.positionRank).attr("disabled",
+					"disabled");
+			$('#deptCode_postDet').val(a.deptCode).attr("disabled", "disabled");
+			if (a.isActive == 1) {
+				$('#isActive_postDet').val('激活').attr("disabled", "disabled");
+			} else {
+				$('#isActive_postDet').val('冻结').attr("disabled", "disabled");
+			}
+			var index = layer.open({
+				title : '详情',
+				maxmin : false,
+				type : 1,
+				content : $('#win-detPost-object')
+			});
+			layer.full(index);
+		}
+		//编辑岗位
+		function postEdit(id) {
+			var object = tool.getById("../autPosition/getById", id);
+			/* console.log(object) */
+			for ( var key in object) {
+				$("#edit-post-form").find("#" + key + '_postEdit').val(
+						object[key]);
+			}
+			var index = layer.open({
+				title : '编辑',
+				maxmin : false,
+				type : 1,
+				content : $('#win-editPost-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		//删除岗位对象
+		function postDelete(id) {
+			layer.confirm('确定删除 ?', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				var retMsg = tool.deleteById("../autPosition/delete", id);
+				layer.alert("删除成功", {
+					title : "操作提示",
+					icon : 1
+				}, function(index) {
+					layer.close(index);
+					var deptId = $("#show-active").attr("deptId");
+					loadData(deptId);
+				});
+			});
+		}
+
+		var pform;
+		//添加layui事件
+		//控制input不能输入负号
+		function check_1(a){
+			if(a.value.length==1){
+				a.value=a.value.replace(/[^1-9]/g,'')
+			}else{
+				a.value=a.value.replace(/\D/g,'')
+			}
+		};
+		layui.use('form', function() {
+			pform = layui.form();
+			pform.verify({
+			  num_1: function(value){ //value：表单的值、item：表单的DOM对象
+			    if(!new RegExp("/[^1-9]/g").test(value)){
+			      return '输入正整数';
+			    }
+			  },
+			  special:function(value){
+					var pattern = new RegExp("[`~!@#$^&*()=|{}':',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，？]"); 
+					if(pattern.test(value)){
+					     return "不能输入特殊字符";
+					} 
+				}
+			});  
+			//监听tree一级部门新增提交
+			pform.on('submit(form-add-submit)', function(data) {
+				/* console.log($("#add-object-form").serialize()); */
+				tool.post("../autDepartment/add", $("#add-object-form")
+						.serialize(), postCallBack_add, false);
+				return false;
+			});
+			//监听tree子部门新增提交
+			pform.on('submit(form-add-submit2)', function(data) {
+				/* console.log($("#add-object-form2").serialize())  */
+				tool.post("../autDepartment/add", $("#add-object-form2")
+						.serialize(), postCallBack_add, false);
+				return false;
+			});
+			//新增tree对象回调
+			function postCallBack_add(retMsg) {
+				if (retMsg.code == 0) {
+					layer.alert(retMsg.message, {
+	                    title : "操作提示",
+	                    icon : 1,
+	                    closeBtn:0
+	                }, function(index) {
+	                	$("button[type='reset']").trigger("click");
+	                	redern();
+	   				    layer.closeAll();
+	                });
+				} else {
+					tool.error(retMsg.message);
+				}
+			}
+			//监听tree编辑提交
+			pform.on('submit(form-update-submit)', function(data) {
+				/* console.log($("#update-object-form").serialize()) */
+				tool.post("../autDepartment/updateById", $("#update-object-form").serialize(), postCallBack_edit,false);
+				return false;
+			});
+			//编辑tree对象回调
+			function postCallBack_edit(retMsg) { 
+				if (retMsg.code == 0) {
+					layer.alert(retMsg.message, {
+	                    title : "操作提示",
+	                    icon : 1,
+	                    closeBtn:0
+	                }, function(index) {
+	                	$("button[type='reset']").trigger("click");
+	                	redern();
+	   				    layer.closeAll();
+	                });
+				} else {
+					tool.error(retMsg.message);
+				}
+			}
+			//tree添加用户监听
+			pform.on('submit(form-addUser-submit)', function(data, treeNode) {
+				var html = "";
+				$("#addUserYin").empty();
+				$("input[name='addUser']:checked").each(
+						function(index, value) {
+							html += '<input type="hidden" name="autUserList['
+									+ index + '].id" value="'
+									+ $(this).attr("id") + '" />';
+							html += '<input type="hidden" name="autUserList['
+									+ index + '].userName" value="'
+									+ $(this).attr("userName") + '" />';
+							html += '<input type="hidden" name="autUserList['
+									+ index + '].isActive" value="'
+									+ $(this).attr("isActive") + '" />';
+						});
+				$("#addUserYin").append(html);
+				tool.post("../autDepartmentUser/addDepartmentUser", $(
+						"#add-addUserYin-form").serialize(),
+						postCallBack_addUser, false);
+				return false;
+			});
+			function postCallBack_addUser(retMsg) {
+				if (retMsg.code == 0) {
+					tool.success(retMsg.message);
+				} else {
+					tool.error(retMsg.message);
+				}
+			}
+			//tree分配角色勾选监听
+			pform.on('checkbox(checknodes)', function(data) {
+				/*  console.log(data)  */
+				var isActive = data.elem.checked ? 1 : 0;
+				var roleId = data.value; 
+				var deptId = $("#deptId_role").val();
+				var _csrf = $("#_csrf").val();
+				/* var param = "_csrf=" + _csrf + "&isActive=" + isActive + "&roleId=" + roleId + "&deptId=" + deptId; */
+				param._csrf = _csrf;
+				param.isActive = isActive;
+				param.deptId = deptId;
+				param.roleId = roleId;
+			 	tool.post("../autDepartmentRole/setAuth", param, function(retMsg) {
+				}, true);   
+				 return false;
+			});  
+			//监听岗位新增提交
+			pform.on('submit(form-addP-submit)', function(data) {
+				/* console.log($("#add-post-form").serialize()) */
+				tool.post("../autPosition/add",
+						$("#add-post-form").serialize(), postCallBack_post,
+						false);
+				return false;
+			});
+			//新增岗位对象回调
+			function postCallBack_post(retMsg) {
+				if (retMsg.code == 0) {
+					layer.alert(retMsg.message, {
+	                    title : "操作提示",
+	                    icon : 1,
+	                    closeBtn:0
+	                }, function(index) {
+	                	var deptId = $("#show-active").attr("deptId");
+						loadData(deptId); 
+						redern();
+						reset_inp();
+						layer.closeAll();
+	                });
+				} else {
+					tool.error(retMsg.message);
+				}
+			}
+			//监听岗位编辑提交
+			pform.on('submit(form-editP-submit)', function(data) {
+				/* console.log($("#edit-post-form").serialize()); */
+				tool.post("../autPosition/update", $("#edit-post-form")
+						.serialize(), postCallBack_editP, false);
+				return false;
+			});
+			function postCallBack_editP(retMsg) {
+				/* console.log(retMsg) */
+				var editId = $("#show-active").attr("deptId");
+				if (retMsg.code == 0) {
+					layer.alert(retMsg.message, {
+	                    title : "操作提示",
+	                    icon : 1,
+	                    closeBtn:0
+	                }, function(index) {
+	                	loadData(editId);
+						layer.closeAll();
+	                });
+					
+				} else {
+					tool.error(retMsg.message);
+				}
+			}
+			
+
+		});
+		function reset_inp(){
+			$(".val_n").val("");
+		}
+		
+	</script>
+</body>
+
+</html>

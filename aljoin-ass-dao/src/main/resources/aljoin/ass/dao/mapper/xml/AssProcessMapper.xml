@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.ass.dao.mapper.AssProcessMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.ass.dao.entity.AssProcess">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="application_id" property="applicationId" />
+		<result column="application_name" property="applicationName" />
+		<result column="dept_id" property="deptId" />
+		<result column="dept_name" property="deptName" />
+		<result column="list_code" property="listCode" />
+		<result column="title" property="title" />
+		<result column="process_name" property="processName" />
+		<result column="content" property="content" />
+		<result column="submit_time" property="submitTime" />
+		<result column="audit_status" property="auditStatus" />
+		<result column="audit_time" property="auditTime" />
+		<result column="process_id" property="processId" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name, application_id, application_name, dept_id, dept_name, list_code, title, process_name, content, submit_time, audit_status, audit_time, process_id
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM ass_process WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="AssProcess">
+    	INSERT INTO ass_process(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{applicationId}, #{applicationName}, #{deptId}, #{deptName}, #{listCode}, #{title}, #{processName}, #{content}, #{submitTime}, #{auditStatus}, #{auditTime}, #{processId})
+    </insert>
+
+</mapper>

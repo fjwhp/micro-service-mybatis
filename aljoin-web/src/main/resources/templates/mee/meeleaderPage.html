@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>领导会议</title>
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet"
+	href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<link rel="stylesheet" href="../../web/css/zhengls.css" /> 
+<style>
+.thisweek {
+	width: 10px;
+	height: 20px;
+	background: #ff5454;
+	margin-right: 6px;
+	float: left;
+}
+.workword{
+word-wrap : break-word;
+}
+</style>
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}"
+		id="${_csrf.parameterName}" value="${_csrf.token}" />
+		<div class="admin-main content_sel">
+              <blockquote class="layui-elem-quote"
+							style="padding: 5px; ">
+					<form class="layui-form" style="float:right">
+						<div>
+							<div class="layui-input-inline m_r10">
+		 	       				  <span>领导人</span>
+			   				</div>
+
+							<div class="layui-input-inline">
+									<input type="text" name="searchKey" id="searchKey" lay-verify="" maxlength="20" placeholder="请输入领导人" autocomplete="off" class="layui-input" style="height: 30px; line-height: 30px;">
+							</div>
+							<input type="hidden" value="1" id="weekOrmonth"/>
+							<span lay-submit=""><@a code="120105" href="javascript:void(0)"	class="layui-btn layui-btn-small" id="" onclick="loadCountData()"
+								iclass="layui-icon" icon="&#xe615;" style="float: right;" text="查询"/></span>							
+						</div>
+					</form>
+				</blockquote>
+				<div class="main_tips">
+		  		<div class="tips_right">
+			  		 <div class="tips_right1 tip1" style="background:#339bf1">
+			  		 </div>
+			  		 <span style="position: relative; top: -4px;">内部会议</span>
+			  		 <div class="tips_right1 tip2" style="background:#169888">
+			  		 </div>
+			  		 <span style="position: relative; top: -4px;">外部会议</span>
+			  	
+		  		</div>
+			</div>
+				<!-- tab中tab -->
+				<div class="layui-tab" >
+					<ul class="layui-tab-title">
+						<li class="layui-this" id="thisWeek">本周</li>
+						<li id="thisMonth">本月</li>
+					</ul>
+					<div class="layui-tab-content" style="height: 100px; padding: 0;">
+						<div class="layui-tab-item layui-show">
+							<!--本周-->
+							<div class="layui-form">
+								<table class="layui-table admin-table">
+									<thead>
+										<tr id="headone1">
+										</tr>
+									</thead>
+									<tbody class="bufffa1">
+										<tr id="headTwo1">
+
+										</tr>
+									</tbody>
+									<tbody id="paging2-data">
+										<script id="paging2-script" type="text/html">
+							{{each records value index}}
+							<tr >
+								<td style="display: none;">{{value.id}}</td>
+								<td>{{value.}}</td>
+								<td>{{value.}}</td>
+								<td>{{value.}}</td>
+								<td>{{value.}}</td>
+								<td>{{value.}}</td>
+								<td>{{value.}}</td>
+								<td>{{value.}}</td>
+								<td>{{value.}}</td>
+								<td>{{value.}}</td>
+							</tr>
+							{{/each}}
+						</script>
+									</tbody>
+								</table>
+							</div>
+							<div class="admin-table-page"
+								style="border-width: 0px; z-index: 0;">
+								<div id="paging2-footer" class="page"
+									style="background-color: white; text-align: center;"></div>
+							</div>
+						</div>
+						<div class="layui-tab-item">
+							<!--本月-->
+							<div class="layui-form">
+								<table class="layui-table admin-table">
+								    <colgroup>
+										<col width="8%">
+										<col width="8%">
+								   </colgroup>
+									<thead >
+										<tr id="headone2">
+										</tr>
+									</thead>
+									<tbody class="bufffa2">
+										<tr id="headTwo2">
+
+										</tr>
+										</tr>
+									</tbody>
+									<tbody id="paging3-data">
+										<script id="paging3-script" type="text/html">
+							{{each records value index}}
+							<tr >
+								<td style="display: none;">{{value.id}}</td>
+								<td>{{value.}}</td>
+								<td>{{value.}}</td>
+								<td>{{value.}}</td>
+								<td>{{value.}}</td>
+								<td>{{value.}}</td>
+								<td>{{value.}}</td>
+								<td>{{value.}}</td>
+								<td>
+									<@a code="000103" href="javascript:void(0)" class="layui-btn layui-btn-mini" id="show-edit" onclick="edit('{{value.id}}')" text="编辑"/>
+									<@a code="000105" href="javascript:void(0)" class="layui-btn layui-btn-danger layui-btn-mini" id="show-delete" onclick="showDelete('{{value.id}}',this)" text="删除"/>
+								</td>
+							</tr>
+							{{/each}}
+						</script>
+									</tbody>
+								</table>
+							</div>
+							<div class="admin-table-page"
+								style="border-width: 0px; z-index: 0;">
+								<div id="paging3-footer" class="page"
+									style="background-color: white; text-align: center;"></div>
+							</div>
+						</div>
+					</div>
+				</div> 
+			</div>	
+	<!-- 会议详情 -->
+	<div class="admin-main layui-layer-wrap" id="win-detail-object" style="display: none">
+		<form class="layui-form " id="detail-object-form">
+			<input type="hidden" name="${_csrf.parameterName}"
+				   value="${_csrf.token}" />
+			<!-- <div class="layui-form-item">
+				<label class="layui-form-label">会议室名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="meetingRoomName" id="meetingRoomName" lay-verify="required|special|textLength100"
+						   autocomplete="off" placeholder="会议室名称" class="layui-input">
+				</div>
+			</div> -->
+			<div class="p_t10">
+				<span class="e6ed" style="width:100px;">会议室名称：</span>
+				<span id="meetingRoomName"></span>
+			</div>
+			<div class="p_t10">
+				<span class="e6ed" style="width:100px;">可容纳人数：</span>
+				<span id="personNumber"></span>
+			</div>
+			<div class="p_t10">
+				<span class="e6ed" style="width:100px;">会议室地址：</span>
+				<span id="meetingRoomAddress"></span>
+			</div>
+			<div class="p_t10">
+				<span class="e6ed l" style="width:100px;">负责人：</span>
+				<div id="personCharge" class="l" style="word-wrap: break-word; width: 85%;line-height:26px;"></div>
+			</div>
+		    <div class="p_t10 cl">
+				<span class="e6ed l" style="width:100px;">设备描述：</span>
+				<div id="deviceDescription" class="l line_h_26px" style="word-wrap: break-word; width: 85%;"></div>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+			</div>
+		</form>
+	</div>
+	<!-- 编辑会议室-->
+	<div class="admin-main" id="win-editmee-object" style="margin-bottom:50px; display: none">
+		<form class="layui-form layui-form-pane" id="edit-object-form">
+			<input type="hidden" name="${_csrf.parameterName}"
+				   value="${_csrf.token}" />
+			<input type="hidden" name="id" id="id-edit" value=""/>
+			<div class="layui-form-item">
+				<label class="layui-form-label">会议室名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="meetingRoomName" id="meetingRoomName-edit" maxlength="50" lay-verify="required"
+						   autocomplete="off" placeholder="会议室名称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">可容纳人数</label>
+				<div class="layui-input-block">
+					<input type="text" name="personNumber" onkeyup="value=value.replace(/[^\d]/g,'')" id="personNumber-edit" maxlength="5" lay-verify="required|number"
+						   autocomplete="off" placeholder="可容纳人数" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">会议室地址</label>
+				<div class="layui-input-block">
+					<input type="text" name="meetingRoomAddress" id="meetingRoomAddress-edit" maxlength="100" lay-verify="required"
+						   autocomplete="off" placeholder="会议室地址" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">负责人</label>
+				<div class="layui-input-block">
+					<input type="hidden" style="width: 81%; float: left;"  readonly name="personCharge"
+						   id="personCharge-edit" lay-verify="" autocomplete="off"
+						   placeholder="会议室负责人" class="layui-input">
+					<div type="text" style="width:81%;float:left;" name="personCharge-editDiv" id="personCharge-editDiv" lay-verify="" autocomplete="off" placeholder="公告对象" class="newgg reset1" readonly="readonly"></div>
+					<input type="hidden" name="personChargeId" id="personChargeId-edit" value=""/>
+					<a class="btn_blue2 btn_blue2two" style="float: right;" >人员选择</a>
+				</div>
+			</div>
+			<div class="layui-form-item layui-form-text">
+				<label class="layui-form-label">设备描述</label>
+				<div class="layui-input-block">
+								<textarea name="deviceDescription" maxlength="500" id="deviceDescription-edit" placeholder="请输入内容"
+										  class="layui-textarea"></textarea>
+				</div>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit=""
+							lay-filter="form-edit-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 人员选择树 -->
+	<div style="display: none;z-index: 19940200;margin-bottom:20px;" id="win-personal-object">
+		<input id="peopelSel" class="tree_search1 reset" type="text" value="" placeholder="搜索">
+		<a class="layui-btn layui-btn-small" id="" onclick="searchNodes()"><i class="layui-icon">&#xe615;</i>搜索</a>
+		<a class="layui-btn layui-btn-small layui-btn-primary" style="margin-left:2px;" type="reset" onclick="reset_tree(treeDemo)"><li class="fa fa-eraser"></li> 重置</a>
+		<ul id="treeDemo" class="ztree treeDemo1" name="treeDemo" style="display:block"></ul>
+	</div>
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript"
+		src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script type="text/javascript"
+		src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script>
+	
+	    var tipsnum=0;//会议tips显示定位id;
+		//时间控件
+		//tool.timeset('#startTime', '#endTime');
+		/* tool.dateTime('#startTime1','#endTime1');  */
+		//定义layui
+		var pform;
+        var isCommitted = false;//表单是否已经提交标识，默认为false
+		layui.use([ 'form', 'element' ], function() {
+			pform = layui.form;
+            var element=layui.element;
+            
+            pform.verify({
+                //限制输入的长度为200
+                textLength200 : function(value) {
+                    if (value.length>200) {
+                        return "长度不能超过200个字符";
+                    }
+                },
+                //限制输入的长度为100
+                textLength100 : function(value) {
+                    if (value.length>100) {
+                        return "长度不能超过100个字符";
+                    }
+                },
+                //限制输入的长度为10
+                textLength10 : function(value) {
+                    if (value.length>10) {
+                        return "长度不能超过10个字符";
+                    }
+                },
+                //限制输入的长度为10
+                numberLength10 : function(value) {
+                    if (value.length>10) {
+                        return "数字不能超过10位";
+                    }
+                },
+				special:function(value){
+					var pattern = new RegExp("[`~!@#$^&*()=|{}':',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，？]"); 
+					if(pattern.test(value)){
+					     return "不能输入特殊字符";
+					} 
+				},
+                length20:function(value){
+                	if(value.length>20){
+                		return "长度不能超过20个字符"
+                	}
+                }
+                
+            });
+
+			$("#thisWeek").on("click",function () {
+                loadCountData(1);
+                $("#weekOrmonth").val(1)
+            });
+            $("#thisMonth").on("click",function () {
+                loadCountData(2);
+                $("#weekOrmonth").val(2)
+            });
+            loadCountData(1);
+		});
+        
+	
+		
+
+        function loadCountData(index) {
+            var param = new Object();
+            param._csrf = $("#_csrf").val();
+            var type = $("#weekOrmonth").val()
+            if(index == null){
+            	index = type
+            	if(type == 1){
+                    param.thisWeek = "1";
+                }else{
+                    param.thisMonth = "1";
+    			}
+            }else{
+            	if(index == 1){
+                    param.thisWeek = "1";
+                }else{
+                    param.thisMonth = "1";
+    			}
+            }
+            if($("#startTime").val()!="" && $("#startTime").val()!=null){
+            	param.beginTime = $("#startTime").val()+" 00:00";
+            }
+            if($("#endTime").val()!="" && $("#endTime").val()!=null){
+            	param.endTime = $("#endTime").val()+" 23:59";
+            }
+            
+            //param.searchKey = $("#searchKey").val();
+            param.searchKey = $("#searchKey").val();
+            tool.post("/mee/meeInsideMeeting/leaderList", param, function (data) {
+            	$("#headTwo"+index).nextAll().remove();
+            	$("#headone"+index).empty();
+            	  var theadList = data.theadList;
+                //生成表头
+                for(var i=0;i<theadList.length;i++){
+                    var datas=theadList[i];
+                    strone+=' <th><p>'+datas+'</p></th>'
+                }
+                $("#headone"+index).append(strone);
+                if(null != data.mapList){
+                    var count = 0;
+                    var mapList = data.mapList[0];
+                    for(var key  in mapList){//获得数据行
+                        count++;
+                    }
+
+                    var strone = "",content="";
+                    $("#headTwo"+index).empty();
+                    //生成表格内容
+                    for(var k=0;k<count;k++){
+                        content+='<tr class="xuanz  publicchoose" style="position:relative">';
+                        for(var m=0;m<theadList.length;m++){
+                            if(m!=0 || m!=1){
+                                content+='<td id='+theadList[m]+' style="position:relative"></td>';
+                            }
+                        }
+                        content+='</tr>';
+                    }
+                    $("#headTwo"+index).after(content);
+                    
+                    /*  防止顺序错乱 用数组来存放数据 再经过数组按照排序值来重新排序   开始*/
+   		         var arrName=[];
+   			     var arrTotal=[];
+   			      for(var key in mapList){
+   			    	  arrName.push(key)
+   			      }
+   			          arrName.sort(function(a,b){
+   			    	  a=a.substring(a.indexOf("(")+1,a.indexOf(")"));
+   			    	  b=b.substring(b.indexOf("(")+1,b.indexOf(")"));
+   			    	  return a-b;
+   			      })
+   			      for(var i=0;i<arrName.length;i++){
+   					for(var keys in mapList){
+   		　					　if(arrName[i]==keys){
+   		　						arrTotal.push(mapList[keys])
+   		　					　}
+   					 }
+   		          }
+   			     /*  防止顺序错乱 用数组来存放数据 再经过数组按照排序值来重新排序  结束*/
+                    var flag = 0;
+                    $(".bufffa"+index).find(".xuanz").each(function(){
+                        var thisObj = this;
+                        var flag2 = 0;
+                        var cont = 0;
+                        for(var key=0; key<arrName.length;key++){
+                            if(flag == flag2){
+                                var roomArr = [];
+                                if(arrName[key].indexOf(",")>-1){
+                                    roomArr = arrName[key].split(",");
+                                }
+								if(null != roomArr){
+									var subkey=arrName[key].substring(0,arrName[key].indexOf("("));
+                                    $(thisObj).find("td").eq(0).text(subkey);
+                                    $(thisObj).find("td").eq(0).attr("title",subkey);
+                                    
+								}
+								var count = 0;
+                                for(var keys in arrTotal[key]){
+                                	     tipsnum++;
+                                	    var tipsId= 'tipsId'+tipsnum;
+                                        var ke= keys.replace(/\s+/g,"");
+                                        count+=arrTotal[key][keys].length;
+                                        for(var i = 0;i<arrTotal[key][keys].length;i++){
+                                        	tipsId= tipsId+i;
+                                            var obj = arrTotal[key][keys][i];
+                                            //开始时间 obj.beginTime
+                                            // 结束时间 obj.endTime
+                                            // 主题  obj.meetingTitle
+											// 主持人 obj.meetingHost
+											obj.beginTime='开始时间：'+obj.beginTime;
+											obj.endTime='结束时间：'+obj.endTime;
+											obj.meetingTitle='会议主题：'+obj.meetingTitle;
+											obj.meetingHost='&nbsp;&nbsp;&nbsp;主持人：'+obj.meetingHost;
+											var background="";
+											if(obj.flag=="inside"){
+												background="#339bf1";
+											}else{
+												background="#169888";
+											}
+											//var title=obj.beginTime+obj.endTime+obj.meetingTitle+obj.meetingHost;
+											var title='<div class="workword">'+obj.beginTime+'</div>'+'<div  class="workword">'+obj.endTime+'</div>'+'<div  class="workword">'+obj.meetingTitle+'</div>'+'<div  class="workword">'+obj.meetingHost+'</div>'
+                                            $(thisObj).find("#"+ke).append("<div class='thisweek' style='margin-bottom: 5px;position: relative;background:"+background+";' id='"+tipsId+"' tetl='"+title+"' onmouseenter='tipsMee(event,this)'></div>");
+											
+                                        }
+                                       
+                                }
+                                $(thisObj).find("td").eq(1).text(count);
+                              break;
+                            }
+                            flag2++;
+                        }
+                        flag++;
+                    });
+				}else{
+					    /* if(index==2){
+					    	data.theadList.length=31;
+					    } */
+					    var strone = "";
+	                    //生成表头
+	                    strone='<tr style="text-align:center;"><td colspan="'+data.theadList.length+'">暂无数据</td></tr>'
+	                    $("#headTwo"+index).after(strone);
+					
+				}
+            }, false);
+        }
+
+    	function tipsMee(event,myself){
+    		var  id= $(myself).attr("id");
+    		var  title= $(myself).attr("tetl");
+    		layer.tips(title, '#'+id,{
+    			 tips: [2, '#3595CC'],
+   			     time: 3000
+    		});
+		}
+
+
+        getMeeRoom();
+        //分类下拉框数据加载
+        function getMeeRoom(){
+            var  param={
+                _csrf:$("#_csrf").val()
+            }
+            tool.post("/mee/meeMeetingRoom/roomList",param,function(data){
+                $("#meetingRoomId-search").empty();
+                $("#meetingRoomId-search2").empty();
+                $("#meetingRoomId-search").append('<option value="">请选择</option>');
+                $("#meetingRoomId-search2").append('<option value="">请选择</option>');
+                var str="";
+                for(var i=0;i<data.length;i++){
+                    str+=' <option value="'+data[i].id+'" title="'+data[i].meetingRoomName+'">'+data[i].meetingRoomName+'</option>';
+                }
+                $("#meetingRoomId-search").append(str);
+                $("#meetingRoomId-search2").append(str);
+                //pform.render();
+            },false)
+        }
+
+
+
+        /* 高级搜索 */
+		function search_h() {
+			$(".sear").toggle();
+		}
+        //阻止maopao
+        function defalt_td(event){
+            event.cancelBubble=true;
+        }
+        function loadData_log(){
+        	
+        }
+	</script>
+</body>
+</html>

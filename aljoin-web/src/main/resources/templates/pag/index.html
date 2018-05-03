@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<!-- PageOffice.js文件和jquery.min.js一定要引用 -->
+	<script type="text/javascript" src="../../pageoffice/js/jquery.min.js"></script>
+	<script type="text/javascript" src="/pageoffice.js" id="po_js_main"></script>
+	<script type="text/javascript">
+
+	//查看word
+	function viewWord(wordUrl){
+		POBrowser.openWindow('/pag/pageOffice/poBrowser?openModeType=1&attachId='+ $("#attachId").val()+'&isNewWord=0&resourceId=123&redTitle=0&handSign=0', 'width=1200px;height=800px;');
+	}
+	//编辑
+	function editWord(wordUrl){
+		POBrowser.openWindow('/pag/pageOffice/poBrowser?openModeType=2&attachId='+ $("#attachId").val() +'&isNewWord=0&resourceId=123&redTitle=0&handSign=0', 'width=1200px;height=800px;');
+	}
+	//痕迹保留
+	function revisionWord(wordUrl){
+		POBrowser.openWindow('/pag/pageOffice/poBrowser?openModeType=3&attachId='+ $("#attachId").val() +'&isNewWord=0&resourceId=123&redTitle=0&handSign=0', 'width=1200px;height=800px;');
+	}
+	//新建页面
+	function newWord(){
+		POBrowser.openWindow('/pag/pageOffice/poBrowser?openModeType=3&attachId='+ $("#attachId").val() +'&isNewWord=1&resourceId=123&redTitle=0&handSign=0', 'width=1200px;height=800px;');
+	}
+	//红头文件
+	function redTitle(){
+		POBrowser.openWindow('/pag/pageOffice/poBrowser?openModeType=3&attachId='+ $("#attachId").val() +'&isNewWord=0&resourceId=123&redTitle=1&handSign=0', 'width=1200px;height=800px;');
+	}
+	
+	//给子窗调用，返回附件id
+	function setAttachId(attachId,attacheName){
+		if(attachId!=''){  
+			$("#attachId").val(attachId.replace("_Str",""));
+		}
+		if(attacheName!=''){  
+			$("#attacheName").val(decodeURIComponent(decodeURIComponent(attacheName)));
+		}
+	}
+	//给子窗口调用，返回模板（套红或者套打模板）
+	function setPageModelId(attachId){
+		$("#modelId").val(attachId);
+	}
+	//创建 带有主题名的，空白文件
+	function createNewBlankWord(){
+		var fileNameDesc=$("#fileNameDesc").val();
+		if(fileNameDesc==''){
+			alert("文件主题不能为空!");
+			return;
+		}
+		var pageTypeStr=$('#pageType option:selected').val();
+		var fields=$("#fields").val();
+		if(pageType='page_print'){
+			if(fields==''){
+				alert("域名城列表不能为空");
+				return;
+			}
+		}
+		
+		fileNameDesc=encodeURIComponent(fileNameDesc);
+		fields=encodeURIComponent(fields);
+		var formId=$("#formId").val();
+		if(formId==''){
+			alert("表单ID不能为空!");
+			return;
+		}
+		
+		POBrowser.openWindow('/pag/pageOffice/poBlankBrowser?openModeType=3&attachId='+ $("#modelId").val() +'&isNewWord=2&resourceId=123&redTitle=0&handSign=0&fileNameDesc='+fileNameDesc+"&pageType="+pageTypeStr+"&formId="+formId+"&fields="+fields, 'width=1200px;height=800px;');
+		
+	}
+	//套打
+	function pagePrint_fun(){
+		var fieldValues=$("#fieldValues").val();
+		var modelId=$("#modelId").val();
+		if(modelId==''){
+			alert('请先上传附件');
+			return;
+		}
+		fieldValues=encodeURIComponent(fieldValues);
+		POBrowser.openWindow('/pag/pageOffice/poBlankBrowser?openModeType=1&attachId='+ modelId +'&isNewWord=0&resourceId=123&redTitle=0&handSign=0&fieldValues='+fieldValues+"&pagePrint=1", 'width=1200px;height=800px;');
+	}
+	
+	
+</script>
+
+	<button onclick=viewWord('fw/test.doc')>正文预览（只读）</button>
+	<button onclick=editWord('fw/test.doc')>正文编辑</button>
+	<button onclick=revisionWord('fw/test.doc')>正文保留痕迹</button>
+	<button onclick=redTitle()>设置红头文件</button>
+	<button onclick=newWord()>新建文件</button>
+	正文附件上传附件返回ID：
+	<input type="text" id="attachId" name="attachId" value="" />,附件名称
+	<input type="text" id="attacheName" name="attacheName" value="" />
+	<button onclick=redTitle()>模板文件上传</button>
+	</br>------------------------------------------------------
+	<br> 
+	域名称列表(英文逗号隔开):<input type="text" id="fields" name="fields" value=""/>
+	表单ID<input type="text" id="formId" name="formId"/>&nbsp;
+	文件主题：
+	<input type="text" id="fileNameDesc" name="fileNameDesc"> 模板类型：
+	<select id="pageType">
+		<option value="page_red_title">套红模板</option>
+		<option value="page_print">套打模板</option>
+	</select>
+	<button onclick=createNewBlankWord()>创建word模板</button>
+	返回的附件Id
+	<input type="text" id="modelId" name="modelId" value="986081436256088066"/>
+	</br>------------------------------------------------------
+	<br>
+	域名称列表（英文逗号隔开）<input type="text" id="fieldValues" name="fieldValues" value="aaa-府见府,bbb-富斗富"/>
+	<button onclick="pagePrint_fun()">模板套打</button> 
+	
+</body>
+</html>

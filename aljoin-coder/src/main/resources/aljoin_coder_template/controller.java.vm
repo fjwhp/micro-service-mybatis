@@ -1,0 +1,163 @@
+package ${package.Controller};
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.baomidou.mybatisplus.plugins.Page;
+
+import auto.deploy.dao.entity.${table.entityName};
+import aljoin.object.PageBean;
+import aljoin.object.RetMsg;
+import auto.deploy.service.${table.serviceName};
+#if(${superControllerClassPackage})
+import ${superControllerClassPackage};
+#end
+
+/**
+ * 
+ * @描述：${table.comment}(控制器).
+ * 
+ * @作者：${author}
+ * 
+ * @时间: ${date}
+ */
+@Controller
+@RequestMapping("#if(${package.ModuleName})/${package.ModuleName}#end/${table.entityPath}")
+#if(${superControllerClass})
+public class ${table.controllerName} extends ${superControllerClass} {
+#else
+public class ${table.controllerName} {
+#end
+	@Resource
+	private ${table.serviceName} ${table.entityPath}Service;
+	
+	/**
+	 * 
+	 * @描述：${table.comment}(页面).
+	 *
+	 * @返回：String
+	 *
+	 * @作者：${author}
+	 *
+	 * @时间：${date}
+	 */
+	@RequestMapping("/${table.entityPath}Page")
+	public String ${table.entityPath}Page(HttpServletRequest request,HttpServletResponse response) {
+		
+		return "${package.ModuleName}/${table.entityPath}Page";
+	}
+	
+	/**
+	 * 
+	 * @描述：${table.comment}(分页列表).
+	 *
+	 * @返回：Page<${table.entityName}>
+	 *
+	 * @作者：${author}
+	 *
+	 * @时间：${date}
+	 */
+	@RequestMapping("/list")
+	@ResponseBody
+	public Page<${table.entityName}> list(HttpServletRequest request, HttpServletResponse response, PageBean pageBean, ${table.entityName} obj) {
+		Page<${table.entityName}> page = null;
+		try {
+			page = ${table.entityPath}Service.list(pageBean, obj);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return page;
+	}
+	
+
+	/**
+	 * 
+	 * @描述：${table.comment}(新增).
+	 *
+	 * @返回：RetMsg
+	 *
+	 * @作者：${author}
+	 *
+	 * @时间：${date}
+	 */
+	@RequestMapping("/add")
+	@ResponseBody
+	public RetMsg add(HttpServletRequest request, HttpServletResponse response, ${table.entityName} obj) {
+		RetMsg retMsg = new RetMsg();
+
+		// obj.set...
+
+		${table.entityPath}Service.insert(obj);
+		retMsg.setCode(0);
+		retMsg.setMessage("操作成功");
+		return retMsg;
+	}
+	
+	/**
+	 * 
+	 * @描述：${table.comment}(根据ID删除对象).
+	 *
+	 * @返回：RetMsg
+	 *
+	 * @作者：${author}
+	 *
+	 * @时间：${date}
+	 */
+	@RequestMapping("/delete")
+	@ResponseBody
+	public RetMsg delete(HttpServletRequest request, HttpServletResponse response, ${table.entityName} obj) {
+		RetMsg retMsg = new RetMsg();
+
+		${table.entityPath}Service.deleteById(obj.getId());
+
+		retMsg.setCode(0);
+		retMsg.setMessage("操作成功");
+		return retMsg;
+	}
+	
+	/**
+	 * 
+	 * @描述：${table.comment}(根据ID修改对象).
+	 *
+	 * @返回：RetMsg
+	 *
+	 * @作者：${author}
+	 *
+	 * @时间：${date}
+	 */
+	@RequestMapping("/update")
+	@ResponseBody
+	public RetMsg update(HttpServletRequest request, HttpServletResponse response, ${table.entityName} obj) {
+		RetMsg retMsg = new RetMsg();
+
+		${table.entityName} orgnlObj = ${table.entityPath}Service.selectById(obj.getId());
+		// orgnlObj.set...
+
+		${table.entityPath}Service.updateById(orgnlObj);
+		retMsg.setCode(0);
+		retMsg.setMessage("操作成功");
+		return retMsg;
+	}
+    
+	/**
+	 * 
+	 * @描述：${table.comment}(根据ID获取对象).
+	 *
+	 * @返回：AutUser
+	 *
+	 * @作者：${author}
+	 *
+	 * @时间：${date}
+	 */
+	@RequestMapping("/getById")
+	@ResponseBody
+	public ${table.entityName} getById(HttpServletRequest request, HttpServletResponse response, ${table.entityName} obj) {
+		return ${table.entityPath}Service.selectById(obj.getId());
+	}
+
+}

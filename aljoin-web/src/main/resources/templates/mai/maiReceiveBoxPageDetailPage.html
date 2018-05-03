@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" />
+<link rel="stylesheet" href="../../web/css/zhengls.css" />
+<style>
+	.layui-form-pane .label_m{width:90px;}
+	.layui-form-pane .layui-input-block1{margin-left:90px;} 
+	.layui-input-block1 .layui-select-title .layui-input{width:100px;}
+</style>
+</head>
+<body>
+
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<input type="hidden" id="t_id" value="${t_id}" />
+	<input type="hidden" id="t_isImportant" value="${t_isImportant}" />
+	<input type="hidden" id="t_isRead" value="${t_isRead}" />
+	<form class="layui-form" action="/res/file/download" method="get" id="action_form">
+	   <input type="hidden" name="groupName" id="groupName">
+	   <input type="hidden" name="fileName" id="fileName">
+	</form>
+		<!-- 详情对象窗口 -->
+	<div class="admin-main" style="margin-bottom:60px;" id="win-view-object">
+	    <div class="btn_fixed" style="display:none">
+	          <input type="hidden"  id="hiddenId" />
+		      <a href="javascript:void(0)" class="layui-btn layui-btn-primary" id="goL" onclick="layerClone()"><i class="fa fa-backward "></i> 返回</a>
+	          <div style="float: right;">  
+	              <a class="layui-btn" onclick="editAgain(0,'回复')"><i class="layui-icon">&#xe606;</i>回复</a>
+	              <a class="layui-btn" onclick="editAgain(1,'转发')"><i class="layui-icon">&#xe641;</i>转发</a>			
+	              <a class="layui-btn" onclick="deleteId(0)"><i class="layui-icon">&#xe640;</i>删除</a>	
+	          </div>
+		</div>
+		<form class="layui-form layui-form-pane" id="view-object-formDetal">
+		<div class="">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="" style="text-align: center;">
+				  <span id="subjectText"  class="m_r10" style="font-size:16px; font-weight: bold;word-wrap:break-word"></span>
+				  <img class="importantStar" src="../../web/images/star.png"  style="display:none;margin-top: -8px;"/>
+			</div>
+			<div class="mr_top10">
+				<span class="e6ed">发件人：</span>
+				<span id="sendFullName"></span>
+			</div>
+		<!-- 	<div class="layui-form-item m_t10">
+				<label class="layui-form-label">发件人</label>
+				<div class="layui-input-block">
+					<input type="text" name="sendFullName" id="sendFullName"  autocomplete="off"  placeholder="发件人" class="layui-input" disabled>
+				</div>
+			</div> -->
+			
+			<div class="mr_top10">
+				<span class="e6ed">发件时间：</span>
+				<span id="sendTime"></span>
+			</div> 
+		<!-- 	<div class="layui-form-item">
+				<label class="layui-form-label">发件时间</label>
+				<div class="layui-input-block">
+					<input type="text" name="sendTime" id="sendTime"  autocomplete="off"  placeholder="发送时间" class="layui-input" disabled>
+				</div>
+			</div> -->
+			
+		   <div class="p_t10">
+				<span class="e6ed l">收件人：</span>
+				<div id="receiveFullNames" class="l" style="word-wrap:break-word;width:85%;line-height:26px;"></div>
+			</div> 
+			<!-- <div class="layui-form-item layui-form-text">
+				<label class="layui-form-label">收件人</label>
+				<div class="layui-input-block">
+					<textarea type="text" name="receiveFullNames" id="receiveFullNames"   class="layui-input" style="height:58px"></textarea>
+				</div>
+			</div> -->
+			
+			 <div class="p_t10 cl">
+				<span class="e6ed l">抄送：</span>
+				<div id="copyFullNames" class="l" style="word-wrap:break-word;width:85%;line-height:26px;"></div>
+			</div>
+			<!-- <div class="layui-form-item layui-form-text">
+				<label class="layui-form-label">抄送</label>
+				<div class="layui-input-block">
+					<textarea type="text" name="copyFullNames" id="copyFullNames"   class="layui-input" style="height:58px"></textarea>
+				</div>
+			</div> -->
+			
+		
+			<div class="p_t10 cl">
+				<span class="e6ed l">附件：</span>
+				<div id="fileCount">
+		
+				</div>
+			</div>
+			
+		 </div>
+			 <div class="outindss line_h_26px" style="clear:both;float:left;width:97%;margin-top: 10px;"">
+				  <p id="mailContent" class="heidf" style="word-wrap: break-word;margin-top:0"></p>
+			</div>
+			
+			<div class="p_t10 cl">
+				<span class="e6ed l">附件：</span>
+				<div >
+					<table class="layui-table" style="width: 50%;margin-top: 0px;border: none;">
+				      <colgroup>
+						    <col width="60%">
+						    <col width="20%">
+						    <col width="20%">
+						  </colgroup>
+				      <tbody id="mkmk">
+						   <script  id="artt"  type="text/html">
+                    			{{each list value index}}
+                                    <tr>
+                   					   <td style="border:none"><span style="margin-right:20px;">{{value.attachName}}</span></td>
+                                       <td style="border:none"><span style="margin-right:20px;">{{value.attachSize}}kb</span></td>
+                   					   <td style="border:none"><a onclick="showDownload('{{value.attachPath}}')" style="color:#339bf1;cursor:pointer">下载</a></td>
+                                    </tr>
+	              				 {{/each}}
+                  			 </script>
+				      </tbody>
+				</table> 
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<input type="hidden" id="hiddenPp"  value="0">
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/ueditor.config.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/ueditor.all.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/lang/zh-cn/zh-cn.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+    
+    
+  
+	<script> 
+	//构建出百度文本编辑器
+   
+	   
+    var pform;
+	//添加事件
+	layui.use('form', function() {
+		pform = layui.form;
+		pform.verify({
+			length50 : function(value) {
+				if (value.length>50) {
+					return "长度不能超过50个字符";
+				}
+			},
+			length20:function(value){
+				if (value.length>20) {
+					return "长度不能超过20个字符";
+				}
+			}, 
+			special:function(value){
+				var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]"); 
+				if(pattern.test(value)){
+				     return "不能输入特殊字符";
+				}
+			}
+		});
+		//查询
+		 pform.on('submit(form-search-submit)',function(data){
+			   loadData();
+			 return false;
+		 })
+	   
+
+	
+	});
+	
+	
+
+			//详情
+			function showView(id,isImportant,isRead){
+				$("#win-view-object").find("#copyFullNames").text("");
+				if(isImportant==1){
+					$(".importantStar").show();
+				}else{
+					$(".importantStar").hide();
+				}
+				//赋值id 用于更新
+				$("#win-view-object").find("#hiddenId").val(id)
+				var object = tool.getById("../maiReceiveBox/getById",id);
+				if(object!=null){
+				var datas={list:object.maiAttachmentList};
+				   if(object.maiAttachmentList!=null){
+					   $("#fileCount").text(object.maiAttachmentList.length+"个")
+					   for(var i=0;i<datas.list.length;i++){
+							 datas.list[i].attachPath = datas.list[i].attachPath.replace(/\\/g,"\\/");
+						 }
+				   } 
+				
+				 object1 = object.maiReceiveBox
+				 $('#mkmk').html(template("artt", datas)); 
+				 for ( var key in object1) {
+							$("#win-view-object").find("#" + key).val(object1[key]);
+						}
+				 object2 = object.maiReceiveBoxSearch
+					$('#mkmk').html(template("artt", datas)); 
+					 for ( var key in object2) {
+								$("#win-view-object").find("#" + key).val(object2[key]);
+							}
+		         //var subjectText=object.subjectText.replace("已阅读","")
+		         $("#win-view-object").find("#subjectText").text(object2.subjectText)
+	
+				 $("#win-view-object").find("#mailContent").html(object1.mailContent)
+				 $("#win-view-object").find("#sendTime").text(object2.sendTime)
+				 if(object1.receiveFullNames!=null&&object1.receiveFullNames!=""){
+					 var nameArr = object1.receiveFullNames.replace(/;/g,"；");
+					 if(nameArr.substr(nameArr.length-1,1)=="；"){
+						 nameArr=nameArr.substr(0,nameArr.length-1);
+						}
+					 $("#win-view-object").find("#receiveFullNames").text(nameArr)
+				 }
+				if(object1.copyFullNames!=null&&object1.copyFullNames!=""){
+					var coptyName=object1.copyFullNames.replace(/;/g,"；");
+					if(coptyName.substr(coptyName.length-1,1)=="；"){
+						coptyName=coptyName.substr(0,coptyName.length-1);
+					}
+					 $("#win-view-object").find("#copyFullNames").text(coptyName)
+				}
+				 $("#win-view-object").find("#sendFullName").text(object2.sendFullName)
+	
+				}
+				$(".btn_fixed").css("display","block")
+			}
+			
+		
+		
+			//删除  撤回并删除
+			function deleteId(type){
+				var id = $("#win-view-object").find("#hiddenId").val();
+				layer.confirm('确定删除 ?', {
+					icon : 3,
+					title : '提示'
+				}, function(index) {
+					if(type==0){
+						var retMsg = tool.deleteByIds("../maiReceiveBox/delete", id);
+						
+					}else{
+						var retMsg = tool.deleteById("../maiReceiveBox/revoke", id);
+					}
+					if (retMsg.code == 0) {
+						tool.success(retMsg.message);
+						parent.layer.closeAll();
+						parent.loadData("0","0"); 
+					} else {
+						tool.error(retMsg.message);
+					}
+				});
+			}
+			
+			//再次编辑
+			function editAgain(who,title){
+				var index= layer.open({
+					  type: 2,
+					  title: title,
+					  closeBtn:0,
+					  shade: 0.8, 
+					  shadeClose: true,
+					  content: 'maiReceiveBoxPageEdit.html?who='+who+'&title='+encodeURI(title)
+					});
+	 	    		
+				    pform.render();
+					layer.full(index);
+			}
+			
+		
+		   
+		 
+			    
+			   //详情返回重新渲染数据
+			   function layerClone(){
+				   //其它页面进入不执行关闭
+				  /*  if(typeof(parent.tab) != "undefined"){
+					   parent.tab.deleteTab(parent.tab.getCurrentTabId());
+				   } */
+				   if(parent.$(".layui-laypage-btn").length>0){
+					   parent.$(".layui-laypage-btn").trigger("click");
+				   }else{
+					   parent.loadData();
+				   }
+				   if(parent.isMail=="false"){
+					   $(".layui-nav-tree", window.parent.document).find("li").removeClass("layui-nav-itemed");
+					   parent.tab.tabAdd({
+						  	href :'/tempMenu/indexPage',
+						  	icon :'fa-bell-o',
+						  	title : '首页'
+						});	
+					   $("a[data-url='mai/maiSendBox/maiSendBoxPage']",window.parent.document).parent().removeClass("layui-this");
+					   $("a[data-url='/tempMenu/indexPage']",window.parent.document).parent().addClass("layui-this");
+				   }else{
+					   parent.layer.closeAll();
+				   }
+					
+			   }
+			    
+
+			   function showDownload(path){
+				  
+				   strs = path.split("&");
+					var groupName = strs[0];
+					var fileName = strs[1];
+					$("#groupName").val(groupName);
+					$("#fileName").val(fileName);
+					$("#action_form").submit();
+		       }
+    	
+
+		/* function GetQueryString(name)
+		{
+		     var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+		     var r = window.location.search.substr(1).match(reg);
+		     if(r!=null)return  unescape(r[2]); return null;
+		} */
+		
+		$(document).ready(function(){
+			var id=$("#t_id").val();
+			var isImportant=$("#t_isImportant").val();
+			var isRead=$("#t_isRead").val();
+			showView(id,isImportant,isRead)
+			
+		});
+		
+	</script>
+</body>
+
+</html>

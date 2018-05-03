@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>通讯录</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<link rel="stylesheet" href="../../web/css/zhengls.css" media="all">
+</head>
+<body> 
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+     <!--名片管理tree-->
+		<div class="menuContentAndList admin-main">
+			<div id="menuContent" class="tree_left">
+				<div class="left" >
+					<input id="citySel" class="tree_search" type="text" value="" maxlength="30" onkeyup="AutoMatch(this)" placeholder="搜索"/>	
+			    </div>
+				<ul id="treeDemo" class="ztree"></ul> 
+			</div>
+			<!-- 岗位 -->
+			<div id="post_list" class="tree_right">
+			<blockquote class="layui-elem-quote" style="padding:5px;text-align: right;">
+			<form class="layui-form" action="../attSignInOut/export" method="post">
+			<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" name="deptId" id="deptTreeId"/>
+			<input type="hidden" name="deptName" id="deptTreeName"/>
+				<div>
+					
+					<div class="layui-input-inline">
+						<input type="text" class="layui-input" name="searchUserName" id="searchUserName" style="height: 30px;width:200px; line-height: 30px;" lay-verify="nameLength" maxlength="20" placeholder="请输入姓名或岗位">
+					</div>			
+					<span lay-submit=""><@a code="150501" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData()" iclass="layui-icon"
+						 icon="&#xe615;" text="查询"/>
+				    </span>
+				</div>
+
+				<!-- <div class="layui-input-inline m_r10">
+				 <span>姓名</span>
+				</div>
+				<div class="layui-input-inline">
+					 <input type="text" name=""  class="inp_w120px" id="">
+				</div>
+				<div class="layui-input-inline m_l20 m_r10">
+				 <span>岗位</span>
+				</div>
+				<div class="layui-input-inline">
+					  <input type="text" name="" class="inp_w120px" id="" >
+				</div>
+				<div style="float:right;">
+				 	<div class="layui-input-inline">
+					  <a class="btn_blue" onclick="detail()">查询</a>
+				    </div>	
+			    </div>		 -->
+	         </form>    
+	         </blockquote>
+	    <!--       <div class="thisMY" style="margin-bottom:20px;">
+			      <a class="btn_blue" onclick="newCard()">新增名片</a>
+			 </div> -->
+			<div class="">
+				<table class="layui-table admin-table" style="margin-bottom:50px;">
+				    <colgroup>
+					    <col width="7%">
+					    <col width="10%">
+					    <col width="20%">
+					    <col width="13%">
+					    <col width="12%">
+					    <col width="20%">
+					    <col width="18%">
+	 				 </colgroup>
+					<thead>
+						<tr>
+							<th style="display: none;">用户ID</th>
+							<th>序号</th>
+							<th>姓名</th>
+							<th>岗位</th>
+							<th>手机</th>
+							<th>电话</th>
+							<th>传真</th>
+							<th>个人邮箱</th>
+						</tr>
+						  
+					</thead>
+					<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+                         {{if records.length==0}}
+                          <tr>
+							<td colspan="7" style="text-align:center">
+                                                                                          暂无数据
+							</td>
+					 	 </tr>
+                        {{/if}}
+                        {{if records==null}}
+                          <tr>
+							<td colspan="7" style="text-align:center">
+                                                                                          暂无数据
+							</td>
+					 	 </tr>
+                        {{/if}}
+					    {{each records value index}}
+					  	<tr>
+							<td style="display: none;">{{value.autUser.id}}</td>
+							<td>{{(current-1)*size+index+1}}</td>						
+							<td onclick="detail('{{value.id}}',{{value}})" class="table_btn hand table_link">{{value.autUser.fullName}}</td>
+							<td>{{if value.autPosition.positionName!=null}}{{if value.autPosition.positionName.substr(value.autPosition.positionName.length-1,1)==";"}}{{value.autPosition.positionName.substr(0,value.autPosition.positionName.length-1)}}{{/if}}{{if value.autPosition.positionName.substr(value.autPosition.positionName.length-1,1)!=";"}}{{value.autPosition.positionName}}{{/if}} {{/if}}</td>
+							<td>{{if value.autUserPub!=null}} {{value.autUserPub.phoneNumber}} {{/if}}</td>
+							<td>{{if value.autUserPub!=null}} {{value.autUserPub.telNumber}} {{/if}}</td>
+							<td>{{if value.autUserPub!=null}} {{value.autUserPub.faxNumber}} {{/if}}</td>
+							<td>{{value.autUser.userEmail}}</td>
+						</tr>
+					{{/each}}
+					</script> 
+					</tbody>
+				</table>
+			</div>			
+			<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		    </div>
+		</div>
+	</div>	
+	<!-- 通讯录详情 -->
+	<div class="admin-main" style="display: none; z-index: 19940200;" id="win-detail-card">
+		<div id="win-newsms-object">
+			<form class="layui-form layui-form-pane" id="detail-card-form">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			
+				<div class="p_t10">
+					<span class="e6ed">姓名：</span>
+					<span id="cName"></span>
+				</div>
+				
+				<div class="p_t10">
+					<span class="e6ed">岗位：</span>
+					<span id="positionName"></span>
+				</div>
+				
+				<div class="p_t10">
+					<span class="e6ed">手机：</span>
+					<span id="phone"></span>
+				</div>
+				
+			 	<div class="p_t10">
+					<span class="e6ed">电话：</span>
+					<span id="tel"></span>
+				</div>
+			 	
+				 <div class="p_t10">
+					<span class="e6ed">传真：</span>
+					<span id="fax"></span>
+				</div>
+				
+				<div class="p_t10">
+					<span class="e6ed">个人邮箱：</span>
+					<span id="email"></span>
+				</div>
+				
+				<div class="btn_fixed">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+				</div>
+			</form>
+		</div>
+	</div>
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.exhide-3.5.min.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script>
+		//定义layui 
+		var pform;
+		layui.use(['form','element'], function() {
+			pform = layui.form;
+			pform.verify({
+				nameLength:function(value){
+			      		if(value.length>10){
+			      			return "输入内容超过10字"
+			      		}
+			      	}
+			 });
+			pform.verify({
+			positionLength:function(value){
+		      		if(value.length>10){
+		      			return "输入内容超过10字"
+		      		}
+		      	}
+			 })
+			 loadData();			
+		});
+
+		//生成树
+		var setting = {
+				data : {
+					simpleData : {
+						enable : true
+					}
+				},
+				callback : {
+					beforeClick : beforeClick
+				}
+			};
+		var param = new Object();
+		param._csrf = $("#_csrf").val();
+		redern();
+		function redern() {
+			tool.post("/aut/autDepartment/getDepartmentList", param, postCallBack_newtree);
+		}
+		var obj = [];
+		var zTreeObj; 
+		function postCallBack_newtree(data) {
+			for (var i = 0; i < data.length; i++) {
+				obj.push({
+					id : data[i].id,
+					pId : data[i].parentId,
+					name : data[i].deptName,
+					obj : {
+						deptCode : data[i].deptCode,
+						deptLevel : data[i].deptLevel,
+						isActive : data[i].isActive,
+						parentId : data[i].parentId,
+						parentCode : data[i].parentCode
+					}
+				}) 
+			}  
+			zTreeObj = $.fn.zTree.init($("#treeDemo"), setting, obj);
+		}
+
+		var hiddenNodes=[];	//用于存储被隐藏的结点
+		var targetParent = [];
+		function getParentByChild(node){
+			if(node.parentTId != null){
+				targetParent.push(node.getParentNode());
+				getParentByChild(node.getParentNode());
+			}
+		}
+		
+		//过滤ztree显示数据
+		function AutoMatch(){
+			//显示上次搜索后背隐藏的结点
+			zTreeObj.showNodes(hiddenNodes);
+			//查找不符合条件的叶子节点
+			targetParent = [];
+			function filterFunc(node){
+				var _keywords=$("#citySel").val();
+				if(node.name.indexOf(_keywords)!=-1) {
+					getParentByChild(node)
+					return false;
+				}
+				return true;		
+			};
+			//获取不符合条件的叶子结点
+			hiddenNodes=zTreeObj.getNodesByFilter(filterFunc);
+			//隐藏不符合条件的叶子结点
+			zTreeObj.hideNodes(hiddenNodes);
+			//显示满足条件的根节点
+			zTreeObj.showNodes(targetParent);
+			zTreeObj.expandAll(true);
+		};
+		
+	/* 	function loadDatas() {
+			var param = new Object();
+			alert(12222);
+			var id = $("#deptTreeId").val();		
+			var _csrf = $("#_csrf").val();
+			var searchUserName=$("#searchUserName").val();		
+			var fullName="autUser.fullName";
+			var positionName="autPosition.positionName";		
+			var deptId = "autDepartment.id";		 
+		 	param[fullName]=searchUserName;		
+		 	param[deptId]=id;
+		 	param._csrf=_csrf;
+			param.container = "paging-data";
+			param.pageSize = 10;
+			param.url = "/per/autUserPub/searchUserPubInf";					
+			tool.loadpage(param);
+		} */
+
+		//获取数节点加载岗位列表
+		function beforeClick(hh, treeNode) {
+			$("#deptTreeId").val(treeNode.id);
+			$("#deptTreeName").val(treeNode.name);
+			loadData();
+		}
+	 	/* function callBt(data){
+	 		var str={str:data}
+	 	 	var html = template('test', str);
+			document.getElementById('content').innerHTML = html;  
+	 	} */
+	 	// 个人中心-通讯录列表
+	/* 	function loadData() {	 		
+			var id = $("#deptTreeId").val();
+			var _csrf = $("#_csrf").val();
+			var deptId = "autDepartment.id";
+		 	var param=new Object();
+		 	alert(id);
+		 	param[deptId]=id;
+		 	param._csrf=_csrf;
+		 	tool.post("/per/autUserPub/getAutUserPubVOList",param,callBt,false);  	
+		}   */
+	 	//个人中心-我的部门通讯录-（默认显示）
+	/*  	//showList();
+	 	function showList(){
+	 		var _csrf = $("#_csrf").val();
+		 	var data = {
+					 _csrf:_csrf, 
+				}  	
+		 	tool.post("/per/autUserPub/getMyDeptAutUserPubVOList",data,callBt,false);  
+	 	} */
+	 	
+	 	//通讯录-查询
+	 	function loadData() {		 		
+			var param = new Object();		
+			var id = $("#deptTreeId").val();		
+			var _csrf = $("#_csrf").val();
+			var searchUserName=$("#searchUserName").val();		
+			var fullName="autUser.fullName";
+			var positionName="autPosition.positionName";		
+			var deptId = "autDepartment.id";		 
+		 	param[fullName]=searchUserName;		
+		 	param[deptId]=id;
+		 	param._csrf=_csrf;
+			param.container = "paging";
+			param.pageSize = 10;
+			param.num=1;
+			param.url = "/per/autUserPub/searchUserPubInfo";					
+			tool.loadpage(param);
+		}  
+	 	//通讯录详情
+	 	function detail(id,userVal){	 	
+	 		/* var object = tool.getById("/per/autCard/getById", id);
+	 		//console.log(object)
+			//赋值
+			for ( var key in object.autCard) {
+				if(key=='gender'){
+					if(object.autCard[key]=="0"){
+						$("#detail-card-form").find("#"+key).html("男");
+					}else{
+						$("#detail-card-form").find("#"+key).html("女");
+					}
+				}else{
+					$("#detail-card-form").find("#"+key).html(object.autCard[key]);
+				}				
+			} 
+			for ( var key in object.autCardCategory) {
+				if(key=="categoryName"){					
+					$("#detail-card-form").find("#cName").html(object.autCardCategory[key]);
+				}else if(key=="remark"){
+					$("#detail-card-form").find("#"+key).html(object.autCardCategory[key]);
+				}else{
+				//	alert(key+":"+object.autCardCategory[key]);
+					$("#datail-card-form").find("#"+key).html(object.autCardCategory[key]);
+				}	
+			}  */
+			$("#detail-card-form").find("#cName").html(userVal.autUser.fullName); 
+			$("#detail-card-form").find("#email").html(userVal.autUser.userEmail);
+		 	if(userVal.autUserPub!=null ){
+				$("#detail-card-form").find("#phone").html(userVal.autUserPub.phoneNumber);
+				$("#detail-card-form").find("#tel").html(userVal.autUserPub.telNumber);
+				$("#detail-card-form").find("#fax").html(userVal.autUserPub.faxNumber);
+			} 
+			 if(userVal.autPosition!=null){
+			   $("#detail-card-form").find("#positionName").html(userVal.autPosition.positionName);
+			}			
+			
+		 	var index = layer.open({
+				title : '通讯录详情',
+				maxmin : false,
+				type : 1,
+				content : $('#win-detail-card')
+			});
+			pform.render();
+			layer.full(index);
+	 	}
+	</script>
+</body>
+</html>

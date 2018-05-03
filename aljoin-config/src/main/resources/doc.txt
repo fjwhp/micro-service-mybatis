@@ -1,0 +1,86 @@
+启动项目命令(在jar的根目录下执行，windows环境)
+windows启动指定端口和编码(如果不指定则使用配置中的端口)
+java -Dserver.port=40004 -Dfile.encoding=utf-8 -jar auto-deploy-web-1.0.0-SNAPSHOT-exec.jar
+windows启动(使用配置中的端口)
+java -Dfile.encoding=utf-8 -jar auto-deploy-web-1.0.0-SNAPSHOT-exec.jar
+
+linux后台启动(Linux环境)
+linux启动指定端口
+nohup java -XX:+PrintClassHistogram -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/home/dev/jar/logback/text.dump -Dserver.port=8080 -jar aljoin-web-1.0.0-SNAPSHOT-exec.jar &
+linux启动(使用配置中的端口)
+nohup java -jar aljoin-web-1.0.0-SNAPSHOT-exec.jar &
+
+查出进程
+ps -ef | grep 40004
+kill -s 9 线程号
+
+部署打包：mvn clean package -Dmaven.test.skip=true
+部署打包发布：mvn clean deploy -Dmaven.test.skip=true
+
+-XX:+PrintClassHistogram -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/home/dev/jar/logback/text.dump
+
+最大堆内存
+-Xmx20m
+最少堆内存
+-Xms5m
+初始永久区
+-XX:PermSize=512m
+最大永久区
+-XX:MaxPermSize=1024m
+栈大小
+-Xss512k
+
+windows启动例子
+nohup java -Xmx3071m -Xms1024m -XX:PermSize=512m -XX:MaxPermSize=1024m -XX:+PrintClassHistogram -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/home/dev/jar/logback/text.dump -Dserver.port=8080 -jar aljoin-web-1.0.0-SNAPSHOT-exec.jar &
+
+linux启动例子
+java -Xmx3071m -Xms1024m -XX:PermSize=512m -XX:MaxPermSize=1024m -Dserver.port=8866 -Dfile.encoding=utf-8 -jar aljoin-web-1.0.0-SNAPSHOT-exec.jar
+
+指定配置文件（可以用户外置配置文件，文件和jar执行包放到同一个路径）
+--spring.profiles.active=develop-mysql
+
+
+nohup java -Xmx8192m -Xms8192m -XX:PermSize=512m -XX:MaxPermSize=1024m -XX:+PrintClassHistogram -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/home/dev/xmsoa-web/xmsoa-ioa-web.dump -Dserver.port=8080 -Dfile.encoding=utf-8 -jar xmsoa-ioa-web-1.0.0-SNAPSHOT-exec.jar &
+
+
+clean package -T 1C -Dmaven.test.skip=true -Dmaven.compile.fork=true
+
+eclipse虚拟机参数配置（JDK8）
+-Xmx1024m -Xms1024m -XX:+PrintClassHistogram -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=D:/text.dump
+
+
+#nginx配置
+upstream aljoin-a9 {
+      #1.轮询（默认），每个请求按时间顺序逐一分配到不同的后端服务器，如果后端服务器down掉，能自动剔除
+      server 192.168.0.123:8085; 
+      server 192.168.0.123:8086; 
+}
+upstream aljoin-a9 {
+	  #2.指定权重，指定轮询几率，weight和访问比率成正比，用于后端服务器性能不均的情况
+      server 192.168.0.123:8085 weight=10; 
+      server 192.168.0.123:8086 weight=5; 
+}
+upstream aljoin-a9 {
+	  #3.IP绑定 ip_hash，每个请求按访问ip的hash结果分配，这样每个访客固定访问一个后端服务器，可以解决session的问题
+	  ip_hash;
+      server 192.168.0.123:8085; 
+      server 192.168.0.123:8086; 
+}
+upstream aljoin-a9 {
+	  #4.fair（第三方），按后端服务器的响应时间来分配请求，响应时间短的优先分配
+      server 192.168.0.123:8085; 
+      server 192.168.0.123:8086; 
+      fair;
+}
+server {
+        listen       8888;
+        server_name  localhost;
+        location / {
+			proxy_pass http://aljoin-a9;  
+            proxy_redirect default;
+        }
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+}

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.veh.dao.mapper.VehUseMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.veh.dao.entity.VehUse">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="application_id" property="applicationId" />
+		<result column="use_user_id" property="useUserId" />
+		<result column="car_id" property="carId" />
+		<result column="list_code" property="listCode" />
+		<result column="destination" property="destination" />
+		<result column="title" property="title" />
+		<result column="process_name" property="processName" />
+		<result column="content" property="content" />
+		<result column="audit_status" property="auditStatus" />
+		<result column="audit_time" property="auditTime" />
+		<result column="process_id" property="processId" />
+		<result column="begin_time" property="beginTime" />
+		<result column="end_time" property="endTime" />
+		<result column="submit_time" property="submitTime" />
+		<result column="application_name" property="applicationName" />
+		<result column="use_user_name" property="useUserName" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name, application_id, use_user_id, car_id, list_code, destination, title, process_name, content, audit_status, audit_time, process_id, begin_time, end_time, submit_time
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM veh_use WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="VehUse">
+    	INSERT INTO veh_use(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{applicationId}, #{useUserId}, #{carId}, #{listCode}, #{destination}, #{title}, #{processName}, #{content}, #{auditStatus}, #{auditTime}, #{processId}, #{beginTime}, #{endTime}, #{submitTime})
+    </insert>
+
+</mapper>

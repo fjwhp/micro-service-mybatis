@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="../../web/js/jquery.js"></script>
+</head>
+<body>
+	<script type="text/javascript">
+		function sub(){
+			var title=$("#solr_title").val();
+			var url="/solr/quetyTitle";
+			
+			$.post(url,{
+				solr_title:title,
+				_csrf:$("#_csrf").val()
+			},function(result){
+				$("#solr_result").text(JSON.stringify(result));
+				//alert(JSON.stringify(result));
+			},"json");
+		}
+	</script>
+	<form action="/solr/quetyTitle">
+		标题:<input type="text" name="solr_title" id="solr_title"/>
+		<input type="hidden" id="${_csrf.parameterName}"
+		name="${_csrf.parameterName}" value="${_csrf.token}" />
+		<button type="button" onclick="sub()">提交</button>
+		<br>
+		<textarea rows="10" cols="90" id="solr_result">
+		
+		</textarea>
+	</form>
+</body>
+</html>

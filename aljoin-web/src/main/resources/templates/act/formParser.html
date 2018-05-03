@@ -1,0 +1,1616 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<!-- 去除响应式操作 -->
+<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+<title>表单解析器</title>
+<link rel="stylesheet"
+	href="../../aljoin-act/form-design/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="../../aljoin-act/form-design/css/font-awesome.min.css" />
+<link rel="stylesheet"
+	href="../../aljoin-act/form-design/dist/gridstack.css" />
+<link rel="stylesheet" type="text/css"
+	href="../../aljoin-act/form-design/css/default.css">
+<link rel="stylesheet" type="text/css"
+	href="../../aljoin-act/form-design/css/bootstrap-datetimepicker.css">
+<link media="all" rel="stylesheet" type="text/css" 
+    href="../../aljoin-act/form-design/inputfile/css/fileinput.css" />
+<link rel="stylesheet" type="text/css"
+	href="../../aljoin-act/form-design/css/formDesign.css">
+<style type="text/css">
+/*修改 */
+.form-top-container{
+  width:100%;
+  padding:0px 15px;
+  margin-top:15px;
+}
+.form-top-container>*{
+  width:100%;
+}
+/* 去除响应式操作 开始*/
+.container-fluid,.container{
+   width:1000px;
+}
+/* @media (max-width: 768px) {
+  .grid-stack-item {
+    position: relative !important;
+    width: auto !important;
+    left: 0 !important;
+    top: auto !important;
+    margin-bottom: 20px;
+  }
+  .grid-stack-item .ui-resizable-handle {
+    display: none;
+  }
+
+  .grid-stack {
+    height: auto !important;
+  }
+} */
+
+/* 去除响应式操作 结束*/
+
+
+.grid-stack-item-content {
+	/* 解析时隐藏滚动条 */
+	overflow-x: visible !important;
+    overflow-y: visible !important;
+}
+#form-content-div{
+    overflow-y: visible !important;
+}
+/*  pageoffice */
+.pobmodal-overlay{
+    display: none; 
+}
+/* 
+*整理以下代码请新建文件存放 
+*/
+
+*,.area-text-tyle{
+	font-size:14px;
+	color:#333333;
+}
+.i_show_aljoin_label_p{
+    width:100%;
+    height:auto;
+    min-height: 32px;
+    padding: 5px;
+    font-size: 12px;
+    border-radius: 3px;
+    margin: 0px;
+    position: absolute;
+    padding-right:13px;
+}
+input.text-style,
+select.select-style{
+	height:32px;
+	line-height:32px;
+	font-size:14px;
+	color:#333333;
+}
+.button-style{
+    color: #339bf1;
+    border-color: #339bf1;
+}
+.grid-stack-item-content{
+   border:solid 1px #9fa0a0;
+   box-sizing: border-box;
+   /* border-style: solid none none solid; */
+}
+textarea.area-text-style {
+    max-height: 114px;
+}
+
+/* 
+*整理以上代码请新建文件存放
+*/
+</style>
+<!--[if IE]>
+		<script src="../../aljoin-act/form-design/js/html5shiv.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+    <input type='hidden' name='${_csrf.parameterName}' id='${_csrf.parameterName}' value='${_csrf.token}' />
+    <input type="hidden" id="attachId" name="attachId" />
+	<div class="form-top-container" style="padding-bottom:25px;">
+		<div>
+			<div class="container-fluid" style="border: 1px solid;  padding:45px 120px;  width: 1240px;">
+				<div>
+					<div class="container-fluid" id="form-content-div"
+						style="padding-left: 0px; padding-right: 0px; overflow-y: scroll; margin-left: 0px;">
+						<form class="" id="form-content-div-form"></form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script src="../../aljoin-act/form-design/js/jquery.min.js"></script>
+<script src="../../aljoin-act/form-design/js/jquery-ui.min.js"></script>
+<script src="../../aljoin-act/form-design/inputfile/js/fileinput.js"></script>
+<script src="../../aljoin-act/form-design/inputfile/js/locales/zh.js"></script>
+<script src="../../aljoin-act/form-design/js/bootstrap.min.js"></script>
+<script src="../../aljoin-act/form-design/js/lodash.min.js"></script>
+<script src="../../aljoin-act/form-design/dist/gridstack.js"></script>
+<script src="../../aljoin-act/js/uuid.js"></script>
+<script
+	src="../../aljoin-act/form-design/js/bootstrap-datetimepicker.js"></script>
+<script
+	src="../../aljoin-act/form-design/datetimepicker-locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="../../aljoin-act/layer/layer.js"></script>
+<script src="../../aljoin-act/js/jquery.base64-2.js"></script>
+
+<script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/ueditor.all.min.js"> </script>
+<script type="text/javascript" charset="utf-8" src="../../aljoin-act/ueditor/lang/zh-cn/zh-cn.js"></script>
+<script type="text/javascript" src="../../web/js/tool_formtype.js"></script>
+<script type="text/javascript" src="../../pageoffice.js" id="po_js_main"></script>
+
+<script type="text/javascript">
+	$(function() {
+		var htmlCode = $.base64.decode("${html}");
+		 $(htmlCode).appendTo("#form-content-div-form");
+		 //区分浏览模式 
+		 var strUrl = location.href;
+		 var seeMode = strUrl.indexOf("seeMode"); 
+		 var logcicNum = strUrl.substring(seeMode+8,seeMode+9);
+		 if(logcicNum == "1"){
+			 //查看模式
+			 seeModeSetUpFun();
+		 }
+		//禁止移动
+		$("#form-content-div-form").children(".grid-stack").children().attr("data-gs-no-move","data-gs-no-move");
+		//设置自动位置属性为no
+		$(".form-top-container").find('div[data-gs-auto-position="yes"]').attr(
+				"data-gs-auto-position", "no");
+		//删除"删除"标签
+		$(".form-top-container").find(".delete_widget_").remove();
+		//删除背景色
+		$(".grid-stack-item-content").css("background-color", "");
+		$(".grid-stack").css("background-color", "white");
+		var options = {
+			float : true,
+			cell_height : 44,
+			vertical_margin : 0
+		};
+		$('.grid-stack').gridstack(options);
+		//去除大小大小拖拽图标
+		$(".ui-icon-gripsmall-diagonal-se").remove();
+		//解析表单控件
+		bindContactSelectJson();
+		//去除控件右上角的标签名
+		deleteRightWidgetFlag();
+		//解析日期(时间)区间
+		parserDateTimePeriod();
+		//解析图片控件
+		parserImageWidget();
+		//解析附件控件
+		parserAttachWidget();
+		//解析表格控件
+		parserDatagridWidget();
+		//解析文本编辑器
+		parserUeditorWidget();
+		//解析标签
+		parserWidget_label();
+		//数据源解析
+		systemDataSource();
+		//文件正文
+		parserTextOfficeWidget();
+		//边框设置
+		borderTypeSepUp();
+		//多个控件弹窗
+		popupDomElementAllFunc();
+		//常用字典数据单选读取
+		commonDictDataAllFunc();
+		//岗位选择
+		popupChoicetWidFunc();
+		//图片和附件样式加载之后在设置  
+  	    $(".file-caption-main").children().remove();  //查看模式隐藏
+	});
+	//查看模式
+	function seeModeSetUpFun(){
+	    //表单内容不可编辑
+     	 $("div[id*='-template_']").each(function(index){
+	   	     $(this).find("input").attr("disabled","disabled");
+	   	     $(this).find("input").css({
+	   	    	 "border":"none",
+	   	    	 "background":"none",
+	   	    	 "box-shadow":"none",
+	   	     });
+	   	     $(this).find("textarea").attr("disabled","disabled");
+	   	     $(this).find("textarea").css({
+	   	    	 "border":"none",
+	   	    	 "background":"none",
+	   	    	 "box-shadow":"none",
+	   	     });
+	   	     $(this).find("select").attr("disabled","disabled");
+	   	     $(this).find("select").css({
+	   	    	 "border":"none",
+	   	    	 "background":"none",
+	   	    	 "box-shadow":"none",
+	   	    	 "-webkit-appearance":"none",
+	   	     });
+	   	     $(this).find(".date-span-style").remove();
+	   	     $(this).find(".input-group-addon").remove();
+	   	     //图片和附件样式加载之后在设置  
+   	     });
+	}
+	//边框设置
+	function borderTypeSepUp(){
+		var elmeObject= {};
+		var elmeArrayId = [];
+		var elmeArrayX = []; //存放X轴数组
+		var elmeArrayY = [];  //存放Y轴数组
+		var contentElem = $("#form-content-div-form").children().children("div");
+		contentElem.each(function(){
+			var elmeX = $(this).attr("data-gs-x");
+			var elmeY = $(this).attr("data-gs-y");
+			if(elmeX != undefined){
+				$(this).attr("id","dataIdXY-"+elmeX+"-"+elmeY);
+				elmeArrayX.push(elmeX);
+				elmeArrayY.push(elmeY);
+				elmeArrayId.push($(this).attr("id"));
+		    }
+			elmeObject.elmeX = elmeArrayX;
+			elmeObject.elmeY = elmeArrayY;
+			elmeObject.elmeArrayId = elmeArrayId;
+		});
+		//右边框设置
+		//borderFunWidget(elmeArrayY,elmeArrayId,"y");
+		//下边框设置 
+	    borderFunWidget(elmeArrayX,elmeArrayId,"x");
+		//设置外层边框颜色
+	    var colorBor= $("#form-content-div-form").children().attr("aljoin-border-all-color");
+	    $("#form-content-div-form").parent().parent().parent().css("border-color","#"+colorBor);
+	    
+		
+	}
+	//边框获取
+	function borderFunWidget(XYArr,widgIdArr,axisType){
+		//去除重复
+ 		var XYRmRt = [];
+		for(var i=0; i<XYArr.length; i++){
+		  if(XYRmRt.indexOf(XYArr[i])==-1){
+		    XYRmRt.push(XYArr[i]);
+		  }		    
+		}	
+		var buildNewIdArr = [];  //构建新的数组
+		var buildArr = []; //已有构建新的数组
+		//保存数据 
+		var XYaxisObj = {}; //定义对象来保存元素
+		var XYaxisArr = [];  //定义数组来保存元素Id
+		for(var i=0; i<XYRmRt.length; i++){
+			var XYaxisArrChi = [];
+			for(var y=0; y<widgIdArr.length; y++){
+				var dataGsX = $("#"+widgIdArr[y]).attr("data-gs-x");
+				var dataGsY = $("#"+widgIdArr[y]).attr("data-gs-y");
+				if(axisType == "y"){
+					if(dataGsY == XYRmRt[i]){
+						XYaxisArrChi.push(widgIdArr[y]);
+					}
+				}else{
+					if(dataGsX == XYRmRt[i]){
+						XYaxisArrChi.push(widgIdArr[y]);
+					}
+				}
+			}
+			XYaxisArr.push(XYaxisArrChi);
+			XYaxisObj.XYaxisArr = XYaxisArr;
+			//过滤
+			var XaxisMax = 0; 
+			var YaxisMax = 0; 
+			for(var z=0; z<widgIdArr.length;z++){
+				var elemIdArr = XYaxisArr[i][z]; //坐标元素id字符串
+				var thisXAxis = $("#"+elemIdArr).attr("data-gs-x");  //根据id获取元素属性X轴坐标
+				thisXAxis = parseInt(thisXAxis);
+				var thisYAxis = $("#"+elemIdArr).attr("data-gs-y");  //根据id获取元素属性Y轴坐标
+				thisYAxis = parseInt(thisYAxis);
+				var thisWi = $("#"+elemIdArr).attr("data-gs-width");  //根据id获取元素宽度
+				thisWi = parseInt(thisWi);
+				var thisHi = $("#"+elemIdArr).attr("data-gs-height");  //根据id获取元素高度
+				thisHi = parseInt(thisHi);
+				var bmRiId = "";  //构建获取相邻的元素
+				var locigNum = "";
+				//最大的Y坐标
+/*  				if(parseInt(thisYAxis) > parseInt(YaxisMax)){
+					YaxisMax = thisYAxis;
+				}   */
+				//宽度大于1的再次构建成新的Id字符串
+ 				if(thisWi > 1){
+				  	for(var t=1;t<thisWi;t++ ){
+				  		var NewElem = "dataIdXY-"+t+"-"+thisYAxis;
+				  		widgIdArr.push(NewElem);
+				  	}
+				} 
+				if(axisType == "y"){
+					var thisObj = $("#dataIdXY-"+thisXAxis+"-"+XYRmRt[i]); //构建当前元素
+					bmRiId = "dataIdXY-"+(thisWi+thisXAxis)+"-"+XYRmRt[i]; //构建获取相邻的元素
+					locigNum = $.inArray(bmRiId,widgIdArr);
+					if(locigNum != -1){
+						thisObj.children(".grid-stack-item-content").css("border-right-style","none");
+					}else{
+						thisObj.children(".grid-stack-item-content").css("border-right-style","solid");
+					}
+
+				}else{
+					var thisObj = $("#dataIdXY-"+XYRmRt[i]+"-"+thisYAxis); //构建当前元素
+					bmRiId = "dataIdXY-"+XYRmRt[i]+"-"+(thisYAxis+thisHi); //构建获取相邻的元素
+					locigNum = $.inArray(bmRiId,widgIdArr);
+					if(locigNum != -1){
+/* 						var thisObjWidth = $(thisObj).attr("data-gs-width");   //当前元素的宽度
+						parseInt(thisObjWidth);
+						//console.log(thisObjWidth);
+						var bmRiIdWidth = $("#"+bmRiId).attr("data-gs-width");  //相邻元素的宽度
+						parseInt(bmRiIdWidth);
+						if(thisObjWidth > bmRiIdWidth){
+							$(thisObj).children(".grid-stack-item-content").css("border-bottom-style","solid");
+							$("#"+bmRiId).children(".grid-stack-item-content").css("border-top-style","none");
+						}else if(thisObjWidth < bmRiIdWidth){
+							$(thisObj).children(".grid-stack-item-content").css("border-bottom-style","none");
+							$("#"+bmRiId).children(".grid-stack-item-content").css("border-top-style","solid");
+						}else{
+							$(thisObj).children(".grid-stack-item-content").css("border-bottom-style","none");
+						} */
+						$(thisObj).children(".grid-stack-item-content").css("border-bottom-style","none");
+					}else{
+						thisObj.children(".grid-stack-item-content").css("border-bottom-style","solid");
+					}
+				}
+			}	
+			//根据最大值是在最右边所以在赋值一遍
+ 			if(axisType == "y"){
+				$("#dataIdXY-"+YaxisMax+"-"+XYRmRt[i]).children().css("border-right-style","solid");
+			} 
+		}; 
+		
+		//console.log(buildNewIdArr);
+		//console.log(buildArr);
+		//大小重叠
+/* 		for(var i=0;i<buildNewIdArr.length;i++){
+			var lacg = $.inArray(buildArr[i],buildNewIdArr);
+			var elWi = $("#"+buildNewIdArr[i]).attr("data-gs-width");
+			if(elWi == undefined){
+				console.log();
+				//$("#"+buildNewIdArr[i]).children().css("disp","solid");
+			}
+			
+			var elX = $("#"+buildNewIdArr[i]).attr("data-gs-x");
+			var elY = $("#"+buildNewIdArr[i]).attr("data-gs-y");
+			if(lacg != -1){
+			}else{
+			} 
+		} */
+	}
+	//解析数据源
+	function systemDataSource(){
+		$("div[id*='-template_']").each(function(index){
+			var thisObj = $(this);
+			var type = thisObj.parent().attr("type");
+			var sourceFT = thisObj.attr("aljoin-data-source"); //是否右数据来源
+			if(sourceFT == 2){
+		    	var param = new Object();
+		    	param.type = thisObj.attr("aljoin-sys-data-source");
+		    	param._csrf = $("#_csrf").val();
+		    	if(param.type == "") return false;
+				thisObj.children("label").remove(); //去除radio和checkbox...
+				thisObj.children("select").children().remove(); //去除select
+				var radioChecId = $(this).children("input").val(); //获取单选多选控件id
+				var selectWidId = $(this).children("select").attr("id"); //获取下拉控件id
+		 		tool.post("../actAljoinForm/getAllSource", param,function(retMsg) {
+					for(var i=0; i<retMsg.length;i++){
+						var radioChecIdUu = Math.uuid(10);
+						if(type == "text"){
+							thisObj.children().val(retMsg[i].value);
+						}else if(type == "radio"){
+							var valueHtml = "<input type=\"radio\" value="+retMsg[i].value+" id="+radioChecId+ "_" + Math.uuid(10)+" name="+radioChecId+">";
+							var spanHtml = "<span>"+retMsg[i].text+"</span>";
+							var labelHtml ="<label class=\"radio-inline\" id=l_"+radioChecId+'_'+radioChecIdUu+">"+valueHtml+spanHtml+"</label>";
+							thisObj.append(labelHtml);
+						}else if(type == "checkbox"){
+							var valueHtml = "<input type=\"checkbox\" value="+retMsg[i].value+" id="+radioChecId+ "_" + Math.uuid(10)+" name="+radioChecId+">";
+							var spanHtml = "<span>"+retMsg[i].text+"</span>";
+							var labelHtml ="<label class=\"checkbox-inline\" id=l_"+radioChecId+'_'+radioChecIdUu+">"+valueHtml+spanHtml+"</label>";
+							thisObj.append(labelHtml);
+						}else if(type == "select"){
+							var optionHtml = "<option value="+retMsg[i].value+" id="+selectWidId+"_"+radioChecIdUu+">"+retMsg[i].text+"</option>";
+							thisObj.children("select").append(optionHtml);
+						}else if(type == "label"){
+							thisObj.children("p").text(retMsg[i].value);
+						}
+					}
+		 		});
+			}
+		});
+	}
+	
+	//解析文本编辑器
+	function parserUeditorWidget(){
+		$("div[id^='editor-template_']").each(function(){
+			var input = $(this).find("input");
+			var inputId =input.attr("id");
+			var editor = "<script id=\""+inputId+"\" name=\""+inputId+"\" type=\"text/plain\" style=\"height:220px;\"><\/script>";
+			//input.parent().empty();
+			input.parent().append(editor);
+			var ue = UE.getEditor(inputId);
+			input.parent().find("span").remove();
+			input.remove();
+		});
+	}
+	//解析表格控件
+	function parserDatagridWidget() {
+		$("div[id^='datagrid-template_']").each(function(){
+			//数据来源
+			var aljoin_data_source = $(this).attr("aljoin-data-source");
+			//系统数据源
+			var aljoin_sys_data_source = $(this).attr("aljoin-sys-data-source");
+			//允许增加列
+			var aljoin_allow_add_column = $(this).attr("aljoin-allow-add-column");
+			//允许删除列
+			var aljoin_allow_del_column = $(this).attr("aljoin-allow-del-column");
+			//允许增加行
+			var aljoin_allow_add_row = $(this).attr("aljoin-allow-add-row");
+			//允许删除行
+			var aljoin_allow_del_row = $(this).attr("aljoin-allow-del-row");
+			//显示边框
+			var aljoin_show_border = $(this).attr("aljoin-show-border");
+			
+			
+			//总行平均
+			var aljoin_show_total_row_average = $(this).attr("aljoin-show-total-row-average");
+			//总行平均合计
+			var aljoin_show_total_row_average_sum = $(this).attr("aljoin-show-total-row-average-sum"); 
+			//行总合计
+			var aljoin_show_total_row_statistics_sum = $(this).attr("aljoin-show-total-row-statistics-sum");
+			//数据来源
+			if(aljoin_data_source == 1){
+				//数据来源:自定义				
+				//删除input的setting div
+				$(this).find("div[id^='ldis_']").remove();
+				aljsonTdAttribute(this); //属性设置
+
+			}else{
+				//系统数据源
+				//清空原有数据源，已第一行数据的数据格式对服务器的数据进行渲染
+				//删除非第一个tr元素
+				$(this).find("tbody").find("tr:not(:first)").remove();
+				var trDom = $(this).find("tbody").children("tr:first").clone();
+				var temData=new Array();
+				//根据选择的系统数据源获取数据,构造表格数据
+				var param = new Object();
+		    	param.type = $(this).attr("aljoin-sys-data-source");
+		    	param._csrf = $("#_csrf").val();
+		    	var theadTrObj = $(this).find("thead").find("tr");
+		    	var tbodyTrObj =$(this).find("tbody");
+				tool.post("../actAljoinForm/getAllSource", param,function(retMsg) {
+					var colNum = 0; //列数
+					var rowNum = retMsg.length; //行数					
+					for(temp in retMsg[0]){
+						colNum++;
+					}
+					for(var y=0;y<rowNum-1;y++){
+						tbodyTrObj.append("<tr class=\"i_am_data_tr\">"+trDom.html()+"</tr>");
+					}
+					//遍历后台数据
+					tbodyTrObj.children("tr").each(function(index){
+						for(var y in retMsg[index]){
+							temData.push(retMsg[index][y]);
+						}
+					});
+					
+					//分割数组
+					 var arrayData = temData;
+					 var dataParen = new Array();
+					 for(var i=0;i<arrayData.length;i=i+colNum){
+						 dataParen.push(arrayData.slice(i,i+colNum));
+					 }
+					  for(var i=0;i<dataParen.length;i++){
+						  tbodyTrObj.children("tr").eq(i).find("input.i_am_data").each(function(index){
+							  $(this).val(dataParen[i][index]);
+						  });
+					  }					
+				},false);
+				aljsonTdAttribute(this); //属性设置
+			}
+			//input属性函数
+			function aljsonTdAttribute(thisObj){
+				//解析具体数据（input）,先遍历行，在遍历行里面的input
+				var rowTotalAvg = 0;//总行平均
+				var rowTotalAvgSum = 0;//总行平均合计
+				var rowTotalSum = 0;//行总合计
+				var j = 0;//总行平均个数
+				var hasRowStatistics = $(thisObj).find("input[aljoin-ginput-is-statistics-result=1]").length;//是否有行小计
+				var hasRowAvg = $(thisObj).find("input[aljoin-ginput-is-average-result=1]").length;//是否有行平均
+				//列小计
+				var trIndex = 0;
+				var colTotalArr = new Array();
+				var colFirstHasStatistics = new Array(); 
+				$(thisObj).find(".i_am_data_tr").each(function(){
+					var rowStatistics = 0;//行小计
+					var rowAvg = 0;//行平均
+					var n = 0;
+					var rowStatisticsElement;
+					var rowAvgElement;
+					var tdIndex = 0; //列小计					
+					$(this).find(".i_am_data").each(function(){
+						var aljoin_ginput_is_edit = $(this).attr("aljoin-ginput-is-edit");
+						var aljoin_ginput_is_label = $(this).attr("aljoin-ginput-is-label");
+						var aljoin_ginput_is_bold = $(this).attr("aljoin-ginput-is-bold");
+						var aljoin_ginput_text_position = $(this).attr("aljoin-ginput-text-position");
+						var aljoin_ginput_text_color = $(this).attr("aljoin-ginput-text-color");
+						var aljoin_ginput_text_size = $(this).attr("aljoin-ginput-text-size");
+						
+						//行小计（小计）
+						var aljoin_ginput_is_row_statistics = $(this).attr("aljoin-ginput-is-row-statistics");
+						//行小计结果（小计）
+						var aljoin_ginput_is_statistics_result = $(this).attr("aljoin-ginput-is-statistics-result");
+						//列小计（小计）
+						var aljoin_ginput_is_column_statistics = $(this).attr("aljoin-ginput-is-column-statistics");
+						//行小计权重（小计）
+						var aljoin_ginput_row_statistics_weight = $(this).attr("aljoin-ginput-row-statistics-weight");
+						//列小计权重（小计）
+						var aljoin_ginput_column_statistics_weight = $(this).attr("aljoin-ginput-column-statistics-weight");
+						//行字体颜色（小计）
+						var aljoin_ginput_row_statistics_color = $(this).attr("aljoin-ginput-row-statistics-color");
+						//行字号大小（小计）
+						var aljoin_ginput_row_statistics_size = $(this).attr("aljoin-ginput-row-statistics-size");
+						//列字体颜色（小计）
+						var aljoin_ginput_column_statistics_color = $(this).attr("aljoin-ginput-column-statistics-color");
+						//列字号大小（小计）
+						var aljoin_ginput_column_statistics_size = $(this).attr("aljoin-ginput-column-statistics-size");
+						
+						//行平均（平均）
+						var aljoin_ginput_is_row_average = $(this).attr("aljoin-ginput-is-row-average");
+						//行平均结果（平均）
+						var aljoin_ginput_is_average_result = $(this).attr("aljoin-ginput-is-average-result");
+						//列平均（平均）
+						var aljoin_ginput_is_column_average = $(this).attr("aljoin-ginput-is-column-average");
+						//行平均权重（平均）
+						var aljoin_ginput_row_average_weight = $(this).attr("aljoin-ginput-row-average-weight");
+						//列平均权重（平均）
+						var aljoin_ginput_column_average_weight = $(this).attr("aljoin-ginput-column-average-weight");
+						//行字体颜色（平均）
+						var aljoin_ginput_row_average_color = $(this).attr("aljoin-ginput-row-average-color");
+						//行字号大小（平均）
+						var aljoin_ginput_row_average_size = $(this).attr("aljoin-ginput-row-average-size");
+						//列字体颜色（平均）
+						var aljoin_ginput_column_average_color = $(this).attr("aljoin-ginput-column-average-color");
+						//列字号大小（平均）
+						var aljoin_ginput_column_average_size = $(this).attr("aljoin-ginput-column-average-size");
+						
+						//行小计
+						if(hasRowStatistics > 0){
+							//有行小计
+							if(aljoin_ginput_is_row_statistics == 1){
+								//判断是否数值类型
+								if(!isNaN($(this).val()) && !isNaN(aljoin_ginput_row_statistics_weight)){
+									//数据*权重
+									rowStatistics += $(this).val()*aljoin_ginput_row_statistics_weight;
+								}
+								
+							}
+							
+						}
+						//行总合计
+						if(aljoin_ginput_is_row_statistics == 1){
+							//判断是否数值类型
+							if(!isNaN($(this).val()) && !isNaN(aljoin_ginput_row_statistics_weight)){
+								//数据*权重
+								rowTotalSum += $(this).val()*aljoin_ginput_row_statistics_weight;
+							}
+							
+						}
+						//行平均
+						if(hasRowAvg > 0){
+							//有行平均
+							if(aljoin_ginput_is_row_average == 1){
+								if(!isNaN($(this).val()) && !isNaN(aljoin_ginput_row_average_weight)){
+									//数据*权重
+									rowAvg += $(this).val()*aljoin_ginput_row_average_weight;
+									n++;
+									
+								}
+							}
+						}
+	                    //列小计
+						if(trIndex == 0){
+							if(aljoin_ginput_is_column_statistics == 1){
+								colFirstHasStatistics.push(1);
+								if(!isNaN($(this).val()) && !isNaN(aljoin_ginput_column_statistics_weight)){
+									//数据*权重
+								    colTotalArr.push($(this).val()*aljoin_ginput_column_statistics_weight);
+								}
+							}else{
+								colFirstHasStatistics.push(0);
+								colTotalArr.push("不统计");
+							}
+						}else{
+							if(colFirstHasStatistics[tdIndex] == 1){
+								//（列）加入统计
+								if(!isNaN($(this).val()) && !isNaN(aljoin_ginput_column_statistics_weight)){
+									//数据*权重
+								    colTotalArr[tdIndex] = colTotalArr[tdIndex] + $(this).val()*aljoin_ginput_column_statistics_weight;
+								}
+							}else{
+								//（列）不加入统计
+							}
+						}						
+						
+						var tdObj = $(this).parent();
+						if(aljoin_ginput_is_edit == 0){
+							$(this).attr("disabled","disabled");
+						}
+						var targetObj = tdObj;
+						if(aljoin_ginput_is_label == 1){
+							tdObj.text($(this).val());
+							//$(this).remove();
+						}else{
+							targetObj = $(this);
+						}
+						if(aljoin_ginput_is_bold == 1){
+							targetObj.css("font-weight","bold");
+						}
+						targetObj.css("font-size",aljoin_ginput_text_size+"px");
+						targetObj.css("color",aljoin_ginput_text_color);
+						if(aljoin_ginput_text_position == 1){
+							targetObj.css("text-align","left");
+						}else if(aljoin_ginput_text_position == 2){
+							targetObj.css("text-align","center");
+						}else{
+							targetObj.css("text-align","right");
+						}
+						
+						if(aljoin_ginput_is_statistics_result == 1){
+							//显示结果的元素
+							rowStatisticsElement = targetObj;
+						}
+						if(aljoin_ginput_is_average_result == 1){
+							//显示结果的元素
+							rowAvgElement = targetObj;
+						}
+						tdIndex++;
+						
+					});
+					//显示行小计和行平均
+					if(hasRowStatistics > 0){
+						if(rowStatisticsElement.is("input")){
+							rowStatisticsElement.val(rowStatistics);
+						}else{
+							rowStatisticsElement.text(rowStatistics);	
+						}
+					}
+					if(hasRowAvg > 0){
+						if(rowAvgElement.is("input")){
+							rowAvgElement.val((rowAvg/n).toFixed(2));
+						}else{
+							rowAvgElement.text((rowAvg/n).toFixed(2));
+						}
+					}			
+                    //总行平均合计                 
+                        rowTotalAvgSum += rowAvg/n; 
+                        j++;
+                        trIndex++;
+                				
+				});
+				 //列小计显示 
+				var colTotalDiv="<div class='i_coltotal_wrap'></div>";
+				$(thisObj).append(colTotalDiv);
+				for(var coli=0;coli<colTotalArr.length;coli++){
+					var colTotalAvg = (colTotalArr[coli]/trIndex).toFixed(2);
+					if(colTotalAvg=='NaN'){
+						colTotalAvg='无';
+					}
+					var colToli;
+					if(colFirstHasStatistics[coli]=='0'){
+						colToli = "<p></p>";
+					}else{
+						colToli = "<p><span>列合计："+colTotalArr[coli]+"</span><span>列平均："+colTotalAvg+"</span></p>";
+					}					    
+					$('.i_coltotal_wrap').append(colToli)
+					$('.i_coltotal_wrap p').css("width",100/colTotalArr.length+"%");
+										
+				}
+
+			   //总行平均,总行平均合计,行总合计
+			  if(aljoin_show_total_row_average == '1' ||  aljoin_show_total_row_average_sum == '1' ||  aljoin_show_total_row_statistics_sum == '1'){
+	               var div_All_Row='<div class=i_show_total_row></div>';
+	               $(thisObj).append(div_All_Row);	
+		   			 //总行平均合计
+		   			if(aljoin_show_total_row_average_sum == '1'){
+		   				var rowAverageSum = (rowTotalAvgSum).toFixed(2);
+		   				if(rowAverageSum = isNaN){
+		   					rowAverageSum = 0;
+		   				}
+		   				$('.i_show_total_row').append('<p><span>总行平均合计:</span>'+rowAverageSum+'</p>');	
+		   			}
+		  		     //总行平均
+		   			if(aljoin_show_total_row_average == '1'){
+		   				var rowAverage = (rowTotalAvgSum/j).toFixed(2);
+		   				if(rowAverage = isNaN){
+		   					rowAverage = 0;
+		   				}
+		   				$('.i_show_total_row').append('<p><span>总行平均:</span>'+rowAverage+'</p>');	
+		                   
+		   		    }
+		   			  //行总合计
+		   			if(aljoin_show_total_row_statistics_sum == '1'){ 
+		   				var rowStatisticsSum = rowTotalSum;
+		   				if(rowStatisticsSum = isNaN){
+		   					rowStatisticsSum = 0;
+		   				}
+		   				$('.i_show_total_row').append('<p><span>行总合计:</span>'+rowTotalSum+'</p>');	
+		   			}
+			  }
+			};
+			//允许增加列
+			if(aljoin_allow_add_column == 0){
+				$(this).find(".aljoin-allow-add-column_c").remove();
+			}
+			//允许删除列
+			if(aljoin_allow_del_column == 0){
+				$(this).find(".aljoin-allow-del-column_c").remove();
+			}
+			//允许增加行
+			var flag = 0;
+			if(aljoin_allow_add_row == 0){
+				$(this).find(".aljoin-allow-add-row_c").remove();
+				flag = 1;
+			}
+			//允许删除行
+			if(aljoin_allow_del_row == 0){
+				$(this).find(".aljoin-allow-del-row_c").remove();
+				if(flag == 1){
+					//如果新增和删除行都没有放出来，则删除最后一列
+					$(this).find("table").find(".last_column").remove();
+				}
+			}
+			//显示边框
+			if(aljoin_show_border == 1){
+				$(this).find("table").addClass("table-bordered");
+			}
+			//去掉设置按钮
+			$(this).find(".aljoin-ginput_setting_c").remove();
+			
+		});
+	}
+	//解析图片控件
+	function parserImageWidget() {
+		$("div[id^='image-template_']").each(function(){
+			var attachObj = $(this);
+			var maxFileSize = $(this).attr("aljoin-allow-file-size");
+			var maxFileCount = $(this).attr("aljoin-allow-file-count");
+			var _csrf = $("#_csrf").val();
+			var ctrlName = $(this).find("input[id^='aljoin_form_image_']").attr("name");
+			//$(this).find("input[id^='aljoin_form_image_']").attr("data-upload-url","../../ioa/ioaWaitWork/upload");
+			//alert("ctrlName:"+ctrlName);
+			$(this).find("input[id^='aljoin_form_image_']").fileinput({
+				uploadExtraData:{"_csrf": _csrf,"name":ctrlName},
+				maxFileCount: maxFileCount,
+				maxFileSize: maxFileSize, 				
+                uploadAsync:false,
+				dropZoneEnabled: false,
+				showPreview : false,
+				allowedFileTypes: ['image'], //上传图类型
+			    allowedFileExtensions: ['jpg', 'gif', 'png'],  //限制上传图片格式
+			    msgFilesTooMany: "选择上传的文件数量({"+maxFileCount+"}) 超过允许的最大数值{"+maxFileSize+"}！",
+				language: 'zh'
+			}).on("filebatchuploadsuccess", function (event, data, previewId, index) {			
+				  var nameArray = data.files;	//名称数组
+				  var srcArray = data.response.object; //路径数组
+             	  $(attachObj).append("<div id='attach_imgsrc_push'></div>");
+             	  for(var i = 0; i < srcArray.length;i++ ){
+             		 $(attachObj).children("#attach_imgsrc_push").append("<p><a href="+srcArray[i].relativePath+" title='"+nameArray[i].name+"' target='_blank'>"+nameArray[i].name+"</a></p>");             		  
+             	  }
+		    });	
+		});	
+	}
+	
+	//解析附件控件
+	function parserAttachWidget() {
+		$("div[id^='attach-template_']").each(function(){
+			var attachObj = $(this);
+			var maxFileSize = $(this).attr("aljoin-allow-file-size");
+			var maxFileCount = $(this).attr("aljoin-allow-file-count");
+			var _csrf = $("#_csrf").val();
+			var ctrlName = $(this).find("input[id^='aljoin_form_attach_']").attr("name");
+			//$(this).find("input[id^='aljoin_form_attach_']").attr("data-upload-url","../../ioa/ioaWaitWork/upload");
+			$(this).find("input[id^='aljoin_form_attach_']").fileinput({
+				uploadExtraData:{"_csrf": _csrf,"name":ctrlName},
+				maxFileCount: maxFileCount,
+				maxFileSize: maxFileSize, 				
+                uploadAsync:false,
+				dropZoneEnabled: false,
+				showPreview : false,
+				allowedFileTypes: ['image','text','pdf', 'object'],
+				//showPreview: false,
+				language: 'zh'
+			}).on("filebatchuploadsuccess", function (event, data, previewId, index) {
+ 				//console.log(event);
+				//console.log(data);
+				//console.log(previewId);
+				//console.log(index); 
+				//console.log(data.filenames);
+				  var nameArray = data.files;	//名称数组
+				  var srcArray = data.response.object; //路径数组
+             	  $(attachObj).append("<div id='attach_attasrc_push'></div>");
+             	  for(var i = 0; i < srcArray.length;i++ ){
+             		 $(attachObj).children("#attach_attasrc_push").append("<p><a href="+srcArray[i].relativePath+" title='"+nameArray[i].name+"' target='_blank'>"+nameArray[i].name+"</a></p>");             		  
+             	  }
+			});
+		});
+	}
+	
+	//解析文件正文
+	function parserTextOfficeWidget() {
+		$("div[id^='biz_text_office-template_']").each(function(){
+			//var onButtonText = "文件正文";
+			//var onButtonEvent = "newWord()";
+			//$(this).children("input[type='button']").val(onButtonText);
+			//$(this).children("input[type='button']").attr("onclick",onButtonEvent);
+		});		
+	}	
+	//查看word
+	function viewWord(wordUrl){
+		POBrowser.openWindow('/pag/pageOffice/poBrowser?openModeType=1&attachId='+ $("#attachId").val()+'&isNewWord=0&resourceId=123', 'width=1200px;height=800px;');
+	}
+	//编辑
+	function editWord(wordUrl){
+		POBrowser.openWindow('/pag/pageOffice/poBrowser?openModeType=2&attachId='+ $("#attachId").val() +'&isNewWord=0&resourceId=123', 'width=1200px;height=800px;');
+	}
+	//痕迹保留
+	function revisionWord(wordUrl){
+		POBrowser.openWindow('/pag/pageOffice/poBrowser?openModeType=3&attachId='+ $("#attachId").val() +'&isNewWord=0&resourceId=123', 'width=1200px;height=800px;');
+	}
+	//新建页面
+	function newWord(){
+		POBrowser.openWindow('/pag/pageOffice/poBrowser?openModeType=3&isNewWord=1&resourceId=123', 'width=1200px;height=800px;');
+	}
+	//给子窗调用，返回附件id
+	function setAttachId(attachId){
+		if(attachId!=''){  
+			$("#attachId").val(attachId.replace("_Str",""));
+		}
+	}
+	
+	
+	//解析日期(时间)区间
+	function parserDateTimePeriod(){
+		//解析日期
+		$("div[id^='date-template_']").each(function(){
+			var divObj = $(this);
+			$(this).find("input[type='text']").each(function(){
+				$("#"+$(this).attr("id")).datetimepicker({
+					language:  'zh-CN',
+					todayBtn:  1,
+					autoclose: 1,
+					format: 'yyyy-mm-dd',
+					startView: 2,
+					minView: 2,
+					//startDate: '2017-07-24',
+					forceParse: 0
+				});
+				if(divObj.attr("aljoin-default-now") == 1){
+					$("#"+$(this).attr("id")).datetimepicker("setValue",'${currentTime}');
+				}
+			});
+		});
+		//解析日期区间
+		$("div[id^='date_period-template_']").each(function(){
+			var n = 1;
+			var divObj = $(this);
+			$(this).find("input[type='text']").each(function(){
+				$("#"+$(this).attr("id")).datetimepicker({
+					language:  'zh-CN',
+					todayBtn:  1,
+					autoclose: 1,
+					format: 'yyyy-mm-dd',
+					startView: 2,
+					minView: 2,
+					//startDate: '2017-07-24',
+					forceParse: 0
+				});
+				if(n == 1){
+					//限定第二个时间控件的时间选择
+					$(this).change(function(){
+						var currentDate = $(this).val();
+						var nextDateWidgetId = $(this).parent().siblings("div").find("input[type='text']").attr("id");
+						if(currentDate != ""){
+							$("#"+nextDateWidgetId).val("");
+							$("#"+nextDateWidgetId).datetimepicker("setStartDate",currentDate);
+						}
+					});
+				}
+				n++;
+				if(divObj.attr("aljoin-default-now") == 1){
+					$("#"+$(this).attr("id")).datetimepicker("setValue",'${currentTime}');
+				}
+			});
+		});
+		//解析时间
+		$("div[id^='time-template_']").each(function(){
+			var divObj = $(this);
+			$(this).find("input[type='text']").each(function(){
+				$("#"+$(this).attr("id")).datetimepicker({
+					language:  'zh-CN',
+					todayBtn:  1,
+					autoclose: 1,
+					format: 'hh:ii',
+					startView: 1,
+					minView: 0,
+					maxView: 1,
+					forceParse: 0
+				});
+				if(divObj.attr("aljoin-default-now") == 1){
+					$("#"+$(this).attr("id")).datetimepicker("setValue",'${currentTime}');
+				}
+			});
+		});
+		//解析日期时间
+		$("div[id^='datetime-template_']").each(function(){
+			var divObj = $(this);
+			$(this).find("input[type='text']").each(function(){
+				$("#"+$(this).attr("id")).datetimepicker({
+					language:  'zh-CN',
+					todayBtn:  1,
+					autoclose: 1,
+					format: 'yyyy-mm-dd hh:ii',
+					startView: 2,
+					minView: 0,
+					maxView: 1,
+					forceParse: 0
+				});
+				if(divObj.attr("aljoin-default-now") == 1){
+					$("#"+$(this).attr("id")).datetimepicker("setValue",'${currentTime}');
+				}
+			});
+		});
+		//解析日期时间区间
+		$("div[id^='datetime_period-template_']").each(function(){
+			var n = 1;
+			var divObj = $(this);
+			$(this).find("input[type='text']").each(function(){
+				$("#"+$(this).attr("id")).datetimepicker({
+					language:  'zh-CN',
+					todayBtn:  1,
+					autoclose: 1,
+					format: 'yyyy-mm-dd hh:ii',
+					startView: 2,
+					minView: 0,
+					maxView: 1,
+					forceParse: 0
+				});
+				if(n == 1){
+					//限定第二个时间控件的时间选择
+					$(this).change(function(){
+						var currentDate = $(this).val();
+						var nextDateWidgetId = $(this).parent().siblings("div").find("input[type='text']").attr("id");
+						if(currentDate != ""){
+							$("#"+nextDateWidgetId).val("");
+							$("#"+nextDateWidgetId).datetimepicker("setStartDate",currentDate);
+						}
+					});
+				}
+				n++;
+				if(divObj.attr("aljoin-default-now") == 1){
+					$("#"+$(this).attr("id")).datetimepicker("setValue",'${currentTime}');
+				}
+			});
+		});
+		//解析办结时间
+		$("div[id^='biz_finish_time-template_']").each(function(){
+			var n = 1;
+			var divObj = $(this);
+			$(this).find("input[type='text']").each(function(){
+				$("#"+$(this).attr("id")).datetimepicker({
+					language:  'zh-CN',
+					todayBtn:  1,
+					autoclose: 1,
+					format: 'yyyy-mm-dd hh:ii',
+					startView: 2,
+					minView: 0,
+					maxView: 1,
+					forceParse: 0
+				});
+				if(n == 1){
+					//限定第二个时间控件的时间选择
+					$(this).change(function(){
+						var currentDate = $(this).val();
+						var nextDateWidgetId = $(this).parent().next().find("input[type='text']").attr("id");
+						if(currentDate != ""){
+							$("#"+nextDateWidgetId).val("");
+							$("#"+nextDateWidgetId).datetimepicker("setStartDate",currentDate);
+						}
+					});
+				}
+				n++;
+				if(divObj.attr("aljoin-default-now") == 1){
+					$("#"+$(this).attr("id")).datetimepicker("setValue",'${currentTime}');
+				}
+			});
+		});		
+		//解析收文日期
+		$("div[id^='in_date-template_']").each(function(){
+			var divObj = $(this);
+			$(this).find("input[type='text']").each(function(){
+				$("#"+$(this).attr("id")).datetimepicker({
+					language:  'zh-CN',
+					todayBtn:  1,
+					autoclose: 1,
+					format: 'yyyy-mm-dd',
+					startView: 2,
+					minView: 2,
+					//startDate: '2017-07-24',
+					forceParse: 0
+				});
+				if(divObj.attr("aljoin-default-now") == 1){
+					$("#"+$(this).attr("id")).datetimepicker("setValue",'${currentTime}');
+				}
+			});
+		});	
+		//解析发文日期
+		$("div[id^='dispatch_date-template_']").each(function(){
+			var divObj = $(this);
+			$(this).find("input[type='text']").each(function(){
+				$("#"+$(this).attr("id")).datetimepicker({
+					language:  'zh-CN',
+					todayBtn:  1,
+					autoclose: 1,
+					format: 'yyyy-mm-dd',
+					startView: 2,
+					minView: 2,
+					//startDate: '2017-07-24',
+					forceParse: 0
+				});
+				if(divObj.attr("aljoin-default-now") == 1){
+					$("#"+$(this).attr("id")).datetimepicker("setValue",'${currentTime}');
+				}
+			});
+		});			
+		
+		
+	}
+	//去除控件右上角的标签名
+	function deleteRightWidgetFlag(){
+		$('.right-widget-flag').remove();
+	}
+	//解析标签
+	function parserWidget_label() {		
+		$("div[id^='label-template_']").each(function() {
+			//获取文本
+			var aljoin_label_input_data = $(this).children('input').val();
+			//加粗
+			var aljoin_label_is_bold = $(this).attr("aljoin-label-is-bold");
+			//水平
+			var Xaxis = $(this).attr("aljoin-label-text-position");
+			//垂直
+			var Yaxis = $(this).attr("aljoin-label-text-yaxis"); 
+			//文字方向
+			var textFx = $(this).attr("aljoin-text-direction");
+			//字体颜色
+			var aljoin_label_text_color = $(this).attr("aljoin-label-text-color");	
+			//字体大小
+			var aljoin_label_text_size = $(this).attr("aljoin-label-text-size");
+			var thisChLabel = '<p class=i_show_aljoin_label_p>'+aljoin_label_input_data+'</p>';
+			$(this).append(thisChLabel);			
+			$(this).children('p').css({
+				'font-size':aljoin_label_text_size+'px', 
+				'font-weight':aljoin_label_is_bold,
+				'text-align':Xaxis,
+				'color':'#'+aljoin_label_text_color,
+			});
+			$(this).children('p').css(Yaxis,"5px");
+			if(Yaxis == "center"){
+				var heiChild = $(this).children('p').height()+10;
+ 				$(this).children('p').css({
+					'top':"50%",
+				    'margin-top':-(heiChild/2).toFixed(2)+"px"
+				});
+			}
+			//文字方向
+			if(textFx == "1"){
+				$(this).children('p').css({
+					'width':aljoin_label_text_size+"px",
+				});
+				if(Xaxis == "right"){
+					$(this).children('p').css("right","10px");
+				}else if(Xaxis == "center"){
+					$(this).children('p').css({
+						'left':"50%",
+					    'margin-left':-aljoin_label_text_size+"px"
+					});
+				}
+			}
+			$(this).children('input').css("display","none");
+		});
+	}
+	//联动绑定数据源
+	function bindContactSelectJson(){
+		$("div[id^='contact_select']").each(function(){
+			//获取数据源
+			var dataSource = $(this).attr("aljoin-data-source");
+			var json;
+			if(dataSource == 1){
+				//自动以数据源
+				var jsonStr = $.base64.decode($(this).attr("aljoin-select-json"));
+				if(jsonStr == ""){
+					return;
+				}
+				json = JSON.parse(jsonStr);
+			}else{
+				//系统数据源，需要调用系统接口获取数据@TODO
+				var param = new Object();
+		    	param.type = $(this).attr("aljoin-sys-data-source");
+		    	param._csrf = $("#_csrf").val();
+				tool.post("../actAljoinForm/getAllSource", param,function(retMsg) {	
+					json = retMsg;
+				},false); 
+				
+			}
+			//清空数据
+			var selectObjArr = new Array();
+			$(this).find("select").each(function(){
+				$(this).empty();
+				selectObjArr.push($(this));
+			});
+			//alert(selectObjArr.length);
+			//设置第一级联动数据
+			//console.log(json);
+			var n = 1;
+			//alert($(this).find("select").length);
+			$(this).find("select").each(function(){
+				//alert(n);
+				if(n == 1){
+					//一级，构造一级数据，添加onchange事件触发构造二级数据，如果是有默认值，需要马上构造二级数据
+					$(this).append(makeOptionByJson(json,null,1));
+					//如果有默认选中，要带出下级数据
+					if($(this).val() != "" & $(this).val() != null){
+						$(selectObjArr[1]).empty();
+						$(selectObjArr[1]).append(makeOptionByJson(json,$(this).val(),2));
+					}
+					$(this).change(function(n){
+						$(selectObjArr[1]).empty();
+						$(selectObjArr[1]).append(makeOptionByJson(json,$(this).val(),2));
+					});
+				}else if(n == 2){
+					//二级，由于二级数是又一级触发的，所以这里不需要直接构造二级数据，但是需要给二级数据添加onchange事件,同理如果是有默认值，需要马上构造三级数据
+					if($(this).val() != "" & $(this).val() != null){
+						$(selectObjArr[2]).empty();
+						$(selectObjArr[2]).append(makeOptionByJson(json,$(this).val(),3));
+					}
+					$(this).change(function(n){
+						$(selectObjArr[2]).empty();
+						$(selectObjArr[2]).append(makeOptionByJson(json,$(this).val(),3));
+					});
+				}else if(n == 3){
+					//三级，和构造二级同理
+					if($(this).val() != "" & $(this).val() != null){
+						$(selectObjArr[3]).empty();
+						$(selectObjArr[3]).append(makeOptionByJson(json,$(this).val(),4));
+					}
+					$(this).change(function(n){
+						$(selectObjArr[3]).empty();
+						$(selectObjArr[3]).append(makeOptionByJson(json,$(this).val(),4));
+					});
+				}else if(n == 4){
+					//三级，和构造二级同理
+					if($(this).val() != "" & $(this).val() != null){
+						$(selectObjArr[4]).empty();
+						$(selectObjArr[4]).append(makeOptionByJson(json,$(this).val(),5));
+					}
+					$(this).change(function(n){
+						$(selectObjArr[4]).empty();
+						$(selectObjArr[4]).append(makeOptionByJson(json,$(this).val(),5));
+					});
+				}
+				//添加onchange事件
+				n++;
+			});
+			
+		});
+		
+	}
+	function makeOptionByJson(json,parent,level){
+		var option = "<option value=\"\"></option>";
+		for(var i=0;i<json.length;i++){
+			if(json[i].level == level){
+				if(parent != null){
+					if(json[i].parent == parent){
+						if(json[i].check){
+							option += "<option value=\""+json[i].id+"\" selected>"+json[i].text+"</option>";
+						}else{
+							option += "<option value=\""+json[i].id+"\">"+json[i].text+"</option>";
+						}
+					}
+				}else{
+					if(json[i].check){
+						option += "<option value=\""+json[i].id+"\" selected>"+json[i].text+"</option>";
+					}else{
+						option += "<option value=\""+json[i].id+"\">"+json[i].text+"</option>";
+					}
+				}
+			}
+		}
+		return option;
+	}
+	function tableOperate(optype,thisObj){
+		if(optype == 'edit'){
+			var text = $(thisObj).text();
+			$(thisObj).hide();
+			$(thisObj).next().val(text);
+			$(thisObj).next().show();
+			$(thisObj).next().focus();
+		}else if(optype == 'hideMe'){
+			var text = $(thisObj).prev().text($(thisObj).val());
+			$(thisObj).prev().show();
+			$(thisObj).hide();
+		}else if(optype == 'add'){
+			var i = $(thisObj).parent().parent().find("th").index($(thisObj).parent());
+			var th = "<th class=\"form-inline\"><span ondblclick=\"tableOperate('edit',this)\">新增属性</span><input type=\"text\" class=\"form-control input-sm\" style=\"width: 50px;display: none;height: 23px;font-size: 14px;\" onblur=\"tableOperate('hideMe',this)\"/><button class=\"btn btn-default btn-xs aljoin-allow-add-column_c\" onclick=\"tableOperate('add',this);return false;\"><span style=\"color: green;\" class=\"glyphicon glyphicon-plus-sign\"></span></button><button class=\"btn btn-default btn-xs aljoin-allow-del-column_c\" onclick=\"tableOperate('del',this);return false;\"><span style=\"color: red;\" class=\"glyphicon glyphicon-minus-sign\"></span></button></th>";
+			//插入列头
+			$(thisObj).parent().after(th);
+			$(thisObj).parent().parent().parent().parent().find("tbody").find("tr").each(function(){
+				//遍历每行增加数据列
+				var newTd = $(this).find("td:eq("+i+")").clone();
+				//修改id和name
+				newTd.find("div[id^='ldis_']").attr("id","ldis_"+Math.uuid(15));
+				var radioId = Math.uuid(15);
+				newTd.find("div[id^='ldis_']").find("input").each(function(){
+					var id = Math.uuid(15);
+					if($(this).attr("type") == "radio"){
+						$(this).attr("id",$(this).attr("id").substring(0,$(this).attr("id").lastIndexOf('_'))+"_"+id);
+						$(this).attr("name",$(this).attr("name").substring(0,$(this).attr("name").lastIndexOf('_'))+"_"+radioId);
+					}else{
+						$(this).attr("id",$(this).attr("id").substring(0,$(this).attr("id").lastIndexOf('_'))+"_"+id);
+						$(this).attr("name",$(this).attr("name").substring(0,$(this).attr("name").lastIndexOf('_'))+"_"+id);
+					}
+				});
+				$(this).find("td:eq("+i+")").after(newTd);
+			});
+		}else if(optype == 'del'){
+			//至少要剩下一列
+			if($(thisObj).parent().parent().find("th").length <= 2){
+				return;
+			}
+			var i = $(thisObj).parent().parent().find("th").index($(thisObj).parent());
+			$(thisObj).parent().parent().parent().parent().find("tbody").find("tr").each(function(){
+				//遍历每行删除数据列
+				$(this).find("td:eq("+i+")").remove();
+			});
+			//删除列头
+			$(thisObj).parent().remove();
+		}else if(optype == 'add-row'){
+			//新增行
+			var newRow = $(thisObj).parent().parent().clone();
+			//修改行内元素id和name
+			//修改id和name
+			newRow.find("div[id^='ldis_']").each(function(){
+				$(this).attr("id","ldis_"+Math.uuid(15));
+				var radioId = Math.uuid(15);
+				$(this).find("input").each(function(){
+					var id = Math.uuid(15);
+					if($(this).attr("type") == "radio"){
+						$(this).attr("id",$(this).attr("id").substring(0,$(this).attr("id").lastIndexOf('_'))+"_"+id);
+						$(this).attr("name",$(this).attr("name").substring(0,$(this).attr("name").lastIndexOf('_'))+"_"+radioId);
+					}else{
+						$(this).attr("id",$(this).attr("id").substring(0,$(this).attr("id").lastIndexOf('_'))+"_"+id);
+						$(this).attr("name",$(this).attr("name").substring(0,$(this).attr("name").lastIndexOf('_'))+"_"+id);
+					}
+				});
+			});
+			$(thisObj).parent().parent().after(newRow);
+		}else if(optype == 'del-row'){
+			if($(thisObj).parent().parent().parent().find("tr").length <= 1){
+				return;
+			}
+			//删除行
+			$(thisObj).parent().parent().remove();
+		}
+	}
+	//图片保存
+	function initFileInput(ctrlName, uploadUrl) {  
+		var _csrf = $("#_csrf").val();
+	    var control = $('#' + ctrlName); 
+	    control.fileinput({
+	        language: 'zh', //设置语言
+			uploadExtraData:{"_csrf": _csrf,},
+	        uploadUrl: uploadUrl, //上传的地址
+	        allowedFileExtensions : ['jpg', 'png','gif'],//接收的文件后缀
+	        showUpload: false, //是否显示上传按钮
+	        showCaption: false,//是否显示标题
+	        browseClass: "btn btn-primary", //按钮样式             
+	        previewFileIcon: "<i class='glyphicon glyphicon-king'></i>", 
+	    });
+	}
+	//弹窗点击获得文号
+	function obtainPopupText(thisObj){
+		$(thisObj).addClass("on");
+		$(thisObj).siblings().removeClass("on");
+		var widgetId = $(thisObj).parents(".popup-gy-style").attr("id").substring(6); //控件Id
+		var thiswhId = $(thisObj).attr("id");  //列表Id
+		var widgType = $("#"+widgetId).parent().parent().attr("type"); //控件类型
+		var listIdJson =""; //列表id属性
+		var textValJson =""; //文本值
+		var textUrl ="";   //接口地址
+		if(widgType == "writing"){
+			listIdJson = "popup-whid-json"; 
+			textValJson = "popup-whtext-json";
+			textUrl = "../actAljoinForm/getDocumentNumber";
+		}else if(widgType == "waternum"){
+			listIdJson = "popup-lshid-json"; 
+			textValJson = "popup-lshtext-json";
+			textUrl = "../actAljoinForm/getSerialNumber";
+		}
+		var lisIdAr = $(thisObj).parents(".popup-gy-style").attr(listIdJson);  //列表Id数组
+		lisIdAr = lisIdAr.split(",");
+		var isArr = $.inArray(thiswhId,lisIdAr);
+		if(isArr == -1){
+			lisIdAr.push(thiswhId);
+			$(thisObj).parents(".popup-gy-style").attr(listIdJson,lisIdAr);
+		}else{
+			var whText = $(thisObj).parents(".popup-gy-style").attr(textValJson);  //文本值
+			whText = $.base64.decode(whText);
+			whText = whText.split(",");
+			$(".grid-stack-item-content").find("#"+widgetId).val(whText[isArr]);
+			return false;
+		}
+		var param = {};
+		param.id = thiswhId;
+		param._csrf = $("#_csrf").val();
+		tool.post(textUrl, param,function(retMsg) {
+			if(retMsg.code == 0){
+				$(".grid-stack-item-content").find("#"+widgetId).val(retMsg.object);
+			}else{
+				 layer.msg(retMsg.message+'！', {
+					  icon: 0,
+						  time: 1500 //2秒关闭（如果不配置，默认是3秒）
+				 }); 
+			}
+			var whText = $(thisObj).parents(".popup-gy-style").attr(textValJson); //文本值
+			whText = $.base64.decode(whText);
+			whText = whText.split(",");
+			whText.push(retMsg.object);
+			$(thisObj).parents(".popup-gy-style").attr(textValJson,$.base64.encode(whText));
+		});
+	}
+	//公文文号和流水号获取数据
+	function obtainNameAddElement(thisObj){
+		var thisObj = $(thisObj);
+		var popupObj = "#popup-"+thisObj.children().attr("id");
+		var widgType = thisObj.parent().attr("type"); //获取控件类型
+		var attr0 ="";  //分类名称属性
+		var textUrl0 ="";  //文本值接口
+		var attr1 =""; //分类列表属性
+		var textUrl1 =""; //分类列表接口
+		if(widgType == "writing"){
+			attr0 = "aljoin-sys-data-whlist";
+			textUrl0 = "../actAljoinForm/getDocumentNumber";
+			attr1 = "aljoin-data-whclass";
+			textUrl1 = "../actAljoinForm/getDocumentNumberList";
+		}else if(widgType == "waternum"){
+			attr0 = "aljoin-sys-data-lshlist";
+			textUrl0 = "../actAljoinForm/getSerialNumber";
+			attr1 = "aljoin-data-lshclass";
+			textUrl1 = "../actAljoinForm/getSerialNumberList";
+		}
+		var isListAttr = thisObj.attr(attr0);
+		if(isListAttr.length > 0){
+			var param = {};
+			param.id = isListAttr;
+			param._csrf = $("#_csrf").val();
+			tool.post(textUrl0, param,function(retMsg) {
+				if(retMsg.code == 0){
+					thisObj.children("input").val(retMsg.object); //文号
+				}else{
+					 thisObj.children("input").css("border-color","#ff5722")
+					 layer.msg(retMsg.message+'！', {
+						  icon: 0,
+							  time: 1500 //2秒关闭（如果不配置，默认是3秒）
+					 }); 
+				}
+			});
+		}else{
+			thisObj.children("input").click(function(){
+				var param = {};
+				param.categoryId = thisObj.attr(attr1);
+				param._csrf = $("#_csrf").val();
+				tool.post(textUrl1, param,function(retMsg) {
+					$("#all-popup-wrap").children(".popup-gy-style").hide();
+					$("#all-popup-wrap").children(popupObj).show();
+					var elemP = "";
+					for(var i = 1;i < retMsg.length;i++){
+						var listId ="";
+						var listText ="";
+						if(widgType == "writing"){
+							listId= retMsg[i].id;
+							listText= retMsg[i].documentNumName;
+						}else if(widgType == "waternum"){
+							listId= retMsg[i].id;
+							listText= retMsg[i].serialNumName;
+						}
+						elemP += "<p id="+listId+" onclick=obtainPopupText(this)>"+listText+"</p>";
+					}
+					$("#all-popup-wrap").children(popupObj).find(".edit-che-lt").empty();
+					$("#all-popup-wrap").children(popupObj).find(".edit-che-lt").append(elemP);
+				});
+			});
+		}		
+	}
+	//弹窗方法
+	function popupDomElementAllFunc(){
+		//多选编辑操作
+		$("div[id^='multiselect_edit-template_']").each(function(){
+			multiselectOperation(this);
+		});
+		//多选操作
+		$("div[id^='multiselect-template_']").each(function(){
+			multiselectOperation(this);
+		});
+		//公文文号获取操作
+		$("div[id^='writing-template_']").each(function(){
+			obtainNameAddElement(this);
+		});
+		//流水号获取操作
+		$("div[id^='waternum-template_']").each(function(){
+			obtainNameAddElement(this);
+		});
+		//单位
+		$("div[id^='company-template_']").each(function(){
+			multiselectOperation(this);
+		});
+	}
+	//多选方法
+	function multiselectOperation(thisObj){
+		var popupObj = "popup-"+$(thisObj).children("input").attr("id"); //弹窗
+		$(thisObj).click(function(){
+			var isDict = $(thisObj).attr("aljoin-commonzd-source"); //判断是字典名称：1是
+			var pObjLe="";
+			var pObjRe ="";
+			if(isDict == "1"){
+				var loadJson = $("#"+popupObj).attr("aljoin-datazd-json"); //二次编辑数据
+				if(loadJson.length == 0){
+					$("#"+popupObj).find(".edit-che-lt").empty();
+					$("#"+popupObj).find(".edit-che-rt").empty();
+					var param = {};
+					param.dictCode = $(thisObj).attr("aljoin-datazd-name");
+					param._csrf = $("#_csrf").val();
+					tool.post("../actAljoinForm/getCommonContent", param,function(retMsg) {
+						var popupType = $("#"+popupObj).attr("type"); //弹窗类型。如果是多选编辑框多参数
+						for(var i = 0;i < retMsg.length;i++){
+							var pHtml = "<p onclick='thisTextClick(this)' ondblclick='dblThisTextClick(this)' id="+retMsg[i].id+">"+retMsg[i].dictContent+"</p>";
+							if(popupType == "multiselect_edit-popup" || popupType == "company-popup"){
+								pHtml = "<p onclick='thisTextClick(this)' ondblclick='dblThisTextClick(this)' add-type='0' id="+retMsg[i].id+">"+retMsg[i].dictContent+"</p>"
+							}
+							pObjLe += pHtml;
+						}
+						$("#"+popupObj).find(".edit-che-lt").append(pObjLe);
+						$("#"+popupObj).find(".edit-che-rt").append(pObjRe);
+					});
+				}else{
+					var dataJson = $("#"+popupObj).attr("aljoin-datazd-json");
+					if(dataJson != ""){
+					   analysisJsonArr(popupObj,dataJson); //保存数据后编辑
+					}
+				}
+			}else{
+				var dataJson = $("#"+popupObj).attr("aljoin-datazd-json");
+				if(dataJson != ""){
+					analysisJsonArr(popupObj,dataJson); //读取用户自定义
+				}
+			}
+			$("#all-popup-wrap").children().hide();
+			$("#"+popupObj).show();
+		});
+	}
+	function popupChoicetWidFunc(){
+		//岗位选择
+		$("div[id^='choice_gw-template_']").each(function(){
+			$(this).click(function(){
+				var popupObj = "popup-"+$(this).children("input").attr("id"); //弹窗
+				var dataJson = $("#all-popup-wrap").children("#"+popupObj).attr("aljoin-datazd-json"); //是否有获取数据
+				if(dataJson != ""){
+					var dataJsonArr = $.base64.decode(dataJson);
+					dataJsonArr = JSON.parse(dataJsonArr);
+					var pObjLt = "";
+					var pObjRt = "";
+					for(var i = 0;i < dataJsonArr.length;i++){
+						if(dataJsonArr[i].cheche == false){
+							pObjLt += "<p id="+dataJsonArr[i].id+" onclick='thisTextClick(this)' ondblclick='dblThisTextClick(this)'>"+dataJsonArr[i].text+"</p>";
+						}else{
+							pObjRt += "<p id="+dataJsonArr[i].id+" onclick='thisTextClick(this)' ondblclick='dblThisTextClick(this)'>"+dataJsonArr[i].text+"</p>";
+						}
+					}
+					$("#"+popupObj).find(".edit-che-gy").empty();
+					$("#"+popupObj).find(".edit-che-lt").append(pObjLt);
+					$("#"+popupObj).find(".edit-che-rt").append(pObjRt);
+				}else{
+					var param = {};
+					param._csrf = $("#_csrf").val();
+					tool.post("../actAljoinForm/getPostList", param,function(retMsg) {
+						var pObjLe="";
+						for(var i = 0;i < retMsg.length;i++){
+							pObjLe += "<p onclick='thisTextClick(this)' ondblclick='dblThisTextClick(this)' id="+retMsg[i].id+">"+retMsg[i].postName+"</p>";
+						}
+						$("#"+popupObj).find(".edit-che-lt").empty();
+						$("#"+popupObj).find(".edit-che-lt").append(pObjLe);
+					})
+				}
+			$("#"+popupObj).show();
+			});
+		});
+	}
+	function analysisJsonArr(popupObj,dataJson){
+		var pObjLe=""; //左边数据。没选中
+		var pObjRe ="";//右边数据。有选中
+		var dataJson = $.base64.decode(dataJson);	
+		var dataArr= JSON.parse(dataJson);
+		var popupType = $("#"+popupObj).attr("type"); //判断类型。
+		for(var i = 0;i < dataArr.length;i++){
+			var cheche = dataArr[i].cheche;
+			var pId = dataArr[i].id;
+			pId = pId.substring(3)
+			var pText = dataArr[i].text;
+			if(cheche == false){
+				var pLeftHtml = "<p onclick='thisTextClick(this)' ondblclick='dblThisTextClick(this)' id=p_"+pId+">"+pText+"</p>";
+				//多加参数add-type
+				if(popupType == "multiselect_edit-popup" || popupType == "company-popup"){
+					pLeftHtml = "<p onclick='thisTextClick(this)' ondblclick='dblThisTextClick(this)' add-type="+dataArr[i].addType+" id=p_"+pId+">"+pText+"</p>";
+				}
+				pObjLe += pLeftHtml;
+			}else{
+				var pRightHtml = "<p onclick='thisTextClick(this)' ondblclick='dblThisTextClick(this)' id=p_"+pId+">"+pText+"</p>";
+				//多加参数add-type
+				if(popupType == "multiselect_edit-popup" || popupType == "company-popup"){
+					pRightHtml = "<p onclick='thisTextClick(this)' ondblclick='dblThisTextClick(this)' add-type="+dataArr[i].addType+" id=p_"+pId+">"+pText+"</p>"
+				}
+				pObjRe += pRightHtml;
+			}
+
+		}
+		$("#"+popupObj).find(".edit-che-lt").empty();
+		$("#"+popupObj).find(".edit-che-rt").empty();
+		$("#"+popupObj).find(".edit-che-lt").append(pObjLe);
+		$("#"+popupObj).find(".edit-che-rt").append(pObjRe);
+	}
+	//弹窗.关闭 
+	function tiggerDom(thisObj){
+		$(thisObj).parents(".popup-writing-wrap").hide();
+	}
+	//常用字典数据单选读取
+	function commonDictDataAllFunc(){
+		$("div[id^='select_file_type-template_']").each(function(){
+			commonDictDataAllFuncVice(this);
+		});
+		$("div[id^='select_rank-template_']").each(function(){
+			commonDictDataAllFuncVice(this);
+		});
+		$("div[id^='select_urgency-template_']").each(function(){
+			commonDictDataAllFuncVice(this);
+		});
+	}
+	//常用字典数据单选读取方法
+	function commonDictDataAllFuncVice(thisObj){
+		var dictIs = $(thisObj).attr("aljoin-commonzd-source");
+		var classId = $(thisObj).attr("aljoin-datazd-classid");
+		var zdName = $(thisObj).attr("aljoin-datazd-name");
+		if(dictIs == 1){
+			var param = {};
+			param.categoryId = classId;
+			param.dictCode = zdName;
+			param._csrf = $("#_csrf").val();
+			tool.post("../actAljoinForm/getCommonContent", param,function(retMsg) {
+				var optionElem ="";
+				for(var i = 0;i < retMsg.length;i++){
+					optionElem += "<option value="+retMsg[i].id+" id="+retMsg[i].id+">"+retMsg[i].dictContent+"</option>"
+				}
+				$(thisObj).children("select").empty();
+				$(thisObj).children("select").append(optionElem);
+			});
+		}
+	}
+
+</script>
+<script type="text/javascript" src="../../web/js/formDesignefFect.js"></script>
+</html>

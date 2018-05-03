@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>固定资产分类管理</title> 
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css"
+	media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet"
+	href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+</head>
+<style>
+/* tree超过一定的宽度出现省略号 */
+#treeDemo a{width:170px;height:20px;overflow:hidden;text-overflow : ellipsis;}
+/* 页签  */
+.title_tab{font-size:14px;padding: 6px 6px 6px 10px;color:#444a54;border-bottom:solid 1px #9ec8ea;font-weight:bold;}
+.title_tab i{color: #54abf2;font-size:16px;} 
+.font_icon{margin-right:6px;}
+</style>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}"
+		id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main" style="margin: 10px;">
+		<blockquote class="layui-elem-quote" style="padding: 5px;">
+			<form class="layui-form" action="">
+				<span><@a code="200101" href="javascript:void(0)"
+					class="layui-btn layui-btn-small" id="" onclick="createDept1(this)"
+					iclass="layui-icon" icon="&#xe608;" text="新增一级固定资产"/> </span>
+			</form>
+		</blockquote>
+	</div>
+	<!-- tree -->
+	<div style="width: 30%; float: left; margin-bottom: 100px;">
+		<ul id="treeDemo" class="ztree"></ul>
+	</div>
+	
+	<!-- 新增树一级分类窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 40px; z-index: 19940200;"
+		id="win-add-object1">
+		<form class="layui-form layui-form-pane" id="add-object-form">
+			<input type="hidden" name="${_csrf.parameterName}"
+				value="${_csrf.token}" />
+
+		    <input type="hidden" id="parentId" name="parentId" value=" " />
+		    <input type="hidden" id="categoryLevel" name="categoryLevel" value="1" />
+			
+			<div class="layui-form-item">
+				<label class="layui-form-label">类别名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="name" id="name"
+						lay-verify="required" maxlength="50" autocomplete="off" placeholder="分类名称"
+						class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="categoryRank" id="categoryRank"
+						lay-verify="required|number" autocomplete="off"
+						placeholder="分类(同级)排序"  maxlength="5"  onkeyup="value=value.replace(/[^\d]/g,'')" value="" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label> <@select
+				dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive"
+				class="layui-input-block" def="1"/>
+			</div>
+		
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();redern();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit">
+						<i class="fa fa-save"></i> 提交
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 新增树子分类窗口 -->
+	<div
+		style="padding: 10px; display: none; padding-right: 40px; z-index: 19940200;"
+		id="win-add-object">
+		<form class="layui-form layui-form-pane" id="add-object-form2">
+			<input type="hidden" name="${_csrf.parameterName}"
+				value="${_csrf.token}" />
+
+		    <input type="hidden" id="parentId_one" name="parentId" value="" />
+			<input type="hidden" id="categoryLevel_one" name="categoryLevel" value="" />
+			
+			<div class="layui-form-item">
+				<label class="layui-form-label">类别名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="name" maxlength="50" id="name_one"
+						lay-verify="required" autocomplete="off" placeholder="分类名称"
+						class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="categoryRank" id="categoryRank_one"
+						lay-verify="required|number" autocomplete="off"
+						placeholder="分类(同级)排序" maxlength="5"  onkeyup="value=value.replace(/[^\d]/g,'')" value="" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label> <@select
+				dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive"
+				class="layui-input-block" def="1"/>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();redern();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit2">
+						<i class="fa fa-save"></i> 提交
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 树编辑对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 40px;"
+		id="win-update-object">
+		<form class="layui-form layui-form-pane" id="update-object-form">
+			<input type="hidden" name="id" id="id_edit"> <input
+				type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">分类名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="name" id="name_edit"
+						lay-verify="required" autocomplete="off" placeholder="分类名称"
+						class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">分类排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="categoryRank" id="categoryRank_edit"
+						lay-verify="required" maxlength="5"  onkeyup="value=value.replace(/[^\d]/g,'')" autocomplete="off" placeholder="分类排序"
+						class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label> <@select
+				dict="IS_ACTIVE" layVerify="required" id="isActive_edit"
+				name="isActive" class="layui-input-block" def=""/>
+			</div>
+	
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit=""
+						lay-filter="form-update-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	
+	<script type="text/javascript" src="../../web/plugins/layui/layui.js"></script>
+	<script type="text/javascript"
+		src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript"
+		src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript" src="../../web/js/tool.js"></script>
+
+	<script>
+		//生成树
+		var param = new Object();
+		param._csrf = $("#_csrf").val();
+		/* param.pageNum = 1;
+		param.pageSize = 100;  */
+		redern();
+		function redern() {
+			tool.post("../assCategory/list", param, postCallBack_newtree);
+		}
+		function postCallBack_newtree(data) {
+			var setting = {
+				view : {
+					addDiyDom : addDiyDom
+				},
+		/* 		check : {
+					enable : true
+				}, */
+				data : {
+					simpleData : {
+					enable : true
+					}
+				},
+	
+			};
+			var obj = [];
+			for (var i = 0; i < data.length; i++) {
+				obj.push({
+					id : data[i].id,
+					pId : data[i].parentId,
+					name : data[i].name,
+					obj : {
+						categoryLevel : data[i].categoryLevel,
+						isActive : data[i].isActive,
+						parentId : data[i].parentId,
+						categoryRank : data[i].categoryRank
+					}
+				})
+			}
+			$.fn.zTree.init($("#treeDemo"), setting, obj);
+		}
+		//树的功能键
+		IDMark_A = "_a";
+		function addDiyDom(treeId, treeNode) {
+			var editStr = "";
+			var aObj = $("#" + treeNode.tId + IDMark_A);
+			if (treeNode.check_Child_State == 0 || -1) {
+				editStr += "<span id='diyBtn_space_" +treeNode.id+ "' >&nbsp;</span>"
+				var treeNodeId = "'" + treeNode.id + "'";
+				var treeNodeLevel = "'" + treeNode.obj.categoryLevel + "'";
+				if(treeNode.obj.parentId=="0"){	
+				editStr += '<@span code="200102"  class="button add"      id="diyBtn_'
+						+ treeNode.id
+						+ '" onclick="createDept('
+						+ treeNodeId
+						+ ','
+						+ treeNodeLevel
+						+ ')" title="新增子分类"/>';
+				}		
+				editStr += '<@span code="200103"  class="button remove"   id="diyBtn_'
+						+ treeNode.id
+						+ '" onclick="deletes('
+						+ treeNodeId
+						+ ')" title="删除"/>';
+				editStr += '<@span code="200104"  class="button edit"     id="diyBtn_'
+						+ treeNode.id
+						+ '" onclick="edit('
+						+ treeNodeId
+						+ ')" title="编辑"/>';
+			}
+			aObj.after(editStr);
+		}
+		//新增一级部门
+		function createDept1() {
+			$("#win-add-object1").find("#name").val("");
+			$("#win-add-object1").find("#categoryRank").val("");
+			var index = layer.open({
+				title : '新增',
+				maxmin : false,
+				type : 1,
+				content : $('#win-add-object1')
+			});
+			layer.full(index);
+		}
+
+		//新增子部门
+		function createDept(Id, categoryLevel) {
+			$("#name_one").val("");
+			$("#categoryRank_one").val("");
+			categoryLevel = String(Number(categoryLevel) + 1)
+			/*  console.log(Id)  */
+			var object = {
+				categoryLevel : categoryLevel,
+				parentId : Id,
+			}
+			for ( var key in object) {
+				$("#" + key + "_one").val(object[key])
+			}
+
+			var index = layer.open({
+				title : '新增',
+				maxmin : false,
+				type : 1,
+				content : $('#win-add-object')
+			});
+			layer.full(index);
+		
+		
+
+		}
+		//删除部门
+		function deletes(treeNodeId) {
+			layer.confirm('确定删除 ?', {
+				icon : 3,
+				title : '提示'
+			}, function() {
+				var retMsg = tool.deleteById("../assCategory/delete", treeNodeId);
+				if (retMsg.code == 0) {
+					redern();
+					tool.success(retMsg.message);
+				} else {
+					tool.error(retMsg.message);
+				}
+			})
+		}
+		//编辑部门
+		function edit(id) {
+			var object = tool.getById("../assCategory/getById", id);
+			for ( var key in object) {
+				$("#update-object-form").find("#" + key + "_edit").val(object[key]);
+			}
+			var index = layer.open({
+				title : '编辑',
+				maxmin : false,
+				type : 1,
+				content : $('#win-update-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+	
+
+		var pform;
+		//添加layui事件
+		layui.use('form', function() {
+			pform = layui.form();
+			//监听tree一级部门新增提交
+			pform.on('submit(form-add-submit)', function(data) {
+				/* console.log($("#add-object-form").serialize()); */
+				layer.confirm('确定提交吗 ?', {
+                    icon: 3,
+                    title: '提示'
+                },function(index){
+				tool.post("../assCategory/add", $("#add-object-form")
+						.serialize(), postCallBack_add, false);
+                })
+				return false;
+			});
+			//监听tree子部门新增提交
+			pform.on('submit(form-add-submit2)', function(data) {
+				/* console.log($("#add-object-form2").serialize()) */
+				layer.confirm('确定提交吗 ?', {
+                    icon: 3,
+                    title: '提示'
+                },function(index){
+				tool.post("../assCategory/add", $("#add-object-form2")
+						.serialize(), postCallBack_add, false);
+                })
+				return false;
+			});
+			//新增tree对象回调
+			function postCallBack_add(retMsg) {
+				if (retMsg.code == 0) {
+					redern();
+					tool.success(retMsg.message);
+				} else {
+					tool.error(retMsg.message);
+				}
+			}
+			//监听tree编辑提交
+			pform.on('submit(form-update-submit)', function(data) {
+				/* console.log($("#update-object-form").serialize()) */
+				tool.post("../assCategory/update", $(
+						"#update-object-form").serialize(), postCallBack_edit,
+						false);
+				return false;
+			});
+			//编辑tree对象回调
+			function postCallBack_edit(retMsg) {
+				if (retMsg.code == 0) {
+					redern();
+					tool.success(retMsg.message);
+				} else {
+					tool.error(retMsg.message);
+				}
+			}
+		});
+	</script>
+</body>
+
+</html>

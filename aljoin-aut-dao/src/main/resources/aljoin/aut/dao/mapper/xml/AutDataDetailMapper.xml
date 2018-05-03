@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.aut.dao.mapper.AutDataDetailMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.aut.dao.entity.AutDataDetail">
+		<id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="data_count" property="dataCount" />
+		<result column="data_type" property="dataType" />
+	</resultMap>
+
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+		id, user_id, data_count, data_type
+	</sql>
+
+	<!-- 根据ID删除对象(物理删除) -->
+	<delete id="physicsDeleteById" parameterType="Long">
+		DELETE FROM aut_data_detail WHERE id = #{value}
+	</delete>
+
+	<!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+	<insert id="copyObject" parameterType="AutDataDetail">
+		INSERT INTO aut_data_detail(
+		<include refid="Base_Column_List"></include>
+		)
+		VALUES(#{id}, #{userId}, #{dataCount}, #{dataType})
+	</insert>
+
+	<!-- 根据ID批量删除对象(物理删除) -->
+	<delete id="physicsDeleteBatchById" parameterType="Long">
+		DELETE FROM aut_data_detail WHERE id in
+		<foreach item="item" collection="list" open="(" separator=","
+			close=")">
+			#{item}
+		</foreach>
+	</delete>
+	
+	<!-- 批量新增 -->
+	<insert id="insertBatch" parameterType="java.util.List">
+		INSERT INTO aut_data_detail(id, user_id, data_count, data_type)
+		VALUES
+		<foreach collection="list" item="item" separator=",">
+			(#{item.id}, #{item.userId}, #{item.dataCount}, #{item.dataType})
+		</foreach>
+	</insert>
+	
+	<!-- 新增 -->
+	<insert id="add" parameterType="AutDataDetail">
+		INSERT INTO aut_data_detail(id, user_id, data_count, data_type)
+		VALUES(#{id}, #{userId}, #{dataCount}, #{dataType})
+	</insert>
+	
+	<!-- 取数据 -->
+	<select id="getList" resultMap="BaseResultMap">
+    	SELECT <include refid="Base_Column_List"></include> 
+    	FROM aut_data_detail
+    	limit 0,1000
+    </select>
+</mapper>

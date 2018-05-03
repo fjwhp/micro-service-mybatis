@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="x-ua-compatible" content="IE=9,10,chrome=1" />
+	<title>流程编辑</title>
+	<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+	<link rel="stylesheet" href="../../web/css/global.css" media="all">
+	<link rel="stylesheet"
+		  href="../../aljoin-act/bpmn-property-js/css/diagram-js.css" />
+	<link rel="stylesheet"
+		  href="../../aljoin-act/bpmn-property-js/vendor/bpmn-font/css/bpmn-embedded.css" />
+	<link rel="stylesheet"
+		  href="../../aljoin-act/bpmn-property-js/css/app.css" />
+	<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+	<style>
+		.layui-table td, .layui-table th{padding: 2px 15px;}
+		/* 按钮浮动 */ 
+		#selectsId{float:left}
+		/* 人员选择树模糊搜索 */
+		.tree_search1{ margin-left:7px;padding-left:3px;margin-top:11px;height: 28px;width: 17%;line-height: 28px;text-align: left;border-radius: 4px;border: solid 1px #b1b1b1;}
+		/* 人员选择树up/down/number */
+		.tree_father{position:relative;}
+		.tree_up{position: absolute;left: 16%;top: -30px;cursor:pointer;}
+		.tree_down{position: absolute;left: 16%;top: -18px;cursor:pointer;}
+		.tree_number{position: absolute;left: 13%;font-size:12px; top: -23px;color: #ababab;}
+		#treeDemo a{height:20px;}
+		.btn_fixed_top{width: 98%;position: fixed;top: 32px;z-index: 1994;background: #fff;height:45px;}
+	</style>
+</head>
+<body style="padding: 0px;">
+<input type="hidden" name="isEdit" id="isEdit" value="${isEdit}" />
+<input type="hidden" name="selectFormWidgets" id="selectFormWidgets" value="" />
+<input type="hidden" name="orgnlId" id="orgnlId" value="${orgnlActAljoinBpmn.id?c}" />
+<input type="hidden" name="categoryIdsArrStr" id="categoryIdsArrStr" value="${categoryIdsArrStr}" />
+<input type="hidden" name="actAljoinBpmnXmlCode" id="actAljoinBpmnXmlCode" value='${orgnlActAljoinBpmn.xmlCode}' />
+<input type="hidden" name="actAljoinBpmnHtmlCode" id="actAljoinBpmnHtmlCode" value='${orgnlActAljoinBpmn.htmlCode}' />
+<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+<div class="content" id="js-drop-zone"
+	 style="">
+		<span
+				style="position: absolute; top: 0px; right: 18px; z-index: 1000; font-weight: bold; font-size: 15px; color: #5f5e5e; cursor: pointer;"
+				onclick="showOrHide()">&equiv;</span>
+	<div class="canvas" id="js-canvas"></div>
+	<div id="js-properties-panel" style="background-color: #f8f8f8;"></div>
+	<!-- <ul class="buttons"
+        style="position: absolute; bottom: 5px; left: 100px; padding: 0; margin: 0;">
+        <li><a id="js-download-diagram" href="javascript:void(0)">下载流程</a></li>
+        <li><a id="js-download-svg" href="javascript:void(0)">下载SVG图片</a></li>
+        <li><a id="js-save-diagram" href="javascript:void(0)">保存流程</a></li>
+    </ul> -->
+	<form class="layui-form" style="margin-left: 110px;">
+		<div class="layui-input-inline">
+			<@a code="" href="javascript:void(0)" class="layui-btn layui-btn-small" id="getCurrentXmlCodeBtn" onclick="" iclass="layui-icon"
+			icon="" text="保存流程"/>
+		</div>
+	</form>
+</div>
+<div id="custom-jbpm-prop" style="display: none;">
+	<label>流程分类</label>
+	<select class="aljoin-process-category" id="category_level_top" onchange="setProcessCategory(this)">
+		<option value=""></option>
+		<#list categoryList as category>
+			{
+			<option value="${category.id?c}" <#if categoryIds[0] == category.id?c>selected="selected"</#if>>${category.categoryName}</option>
+			}
+		</#list>
+	</select>
+	<label>是否固定表单</label>
+	<select class="aljoin-process-isfixed" id="aljoin-process-isfixed" onchange="setProcessIsFixed(this)">
+		<option value="0" <#if orgnlActAljoinBpmn.isFixed == 0>selected="selected"</#if>>否</option>
+		<option value="1" <#if orgnlActAljoinBpmn.isFixed == 1>selected="selected"</#if>>是</option>
+	</select>
+	<label>是否自由流程</label>
+	<select class="aljoin-process-isfree" id="aljoin-process-isfree" onchange="setProcessIsFree(this)">
+		<option value="0" <#if orgnlActAljoinBpmn.isFree == 0>selected="selected"</#if>>否</option>
+		<option value="1" <#if orgnlActAljoinBpmn.isFree == 1>selected="selected"</#if>>是</option>
+	</select>
+	<label>流程描述</label>
+	<input type="text" name="process_desc" value="${orgnlActAljoinBpmn.processDesc}" id="process_desc" onchange="setProcessDesc(this)">
+</div>
+<div id="custom-jbpm-form" style="display: none;">
+	<label>表单分类</label>
+	<select class="aljoin-form-category" onchange="setFormCategory(this)">
+		<option value=""></option>
+		<#list formCategoryList as category>
+			{
+			<option value="${category.id?c}">${category.categoryName}</option>
+			}
+		</#list>
+	</select>
+	<label>选择表单</label>
+	<select class="aljoin-form-id" onchange="setMyFormDataAttr(this)">
+		<option value=""></option>
+	</select>
+</div>
+<div id="custom-jbpm-detail-assignee" style="display: none;">
+	<div id="aljoin-assigneeDepartment_div" order="1">
+		<label>候选部门<a href="javascript:void(0);" style="color:blue;" onclick="selectAssignee(this,4)">选择</a></label>
+		<textarea id="aljoin-assigneeDepartment" name="aljoin-assigneeDepartment"></textarea>
+		<input type="hidden" id="aljoin-assigneeDepartment_inp" name="">
+	</div>
+	<div id="aljoin-assigneePosition_div" order="2">
+		<label>候选岗位<a href="javascript:void(0);" style="color:blue;" onclick="selectAssignee(this,5)">选择</a></label>
+		<textarea id="aljoin-assigneePosition" name="aljoin-assigneePosition"></textarea>
+		<input type="hidden" id="aljoin-assigneePosition_inp" name="">
+	</div>
+	<div id="aljoin-assignee_div" order="3">
+		<label>受理人<a href="javascript:void(0);" style="color:blue;" onclick="selectAssignee(this,1)">选择</a></label>
+		<textarea id="aljoin-assignee" name="aljoin-assignee"></textarea>
+		<input type="hidden" id="aljoin-assignee_inp" name="">
+	</div>
+	<div id="aljoin-candidateUsers_div" order="4">
+		<label>候选用户<a href="javascript:void(0);" style="color:blue;" onclick="selectAssignee(this,2)">选择</a></label>
+		<textarea id="aljoin-candidateUsers" name="aljoin-candidateUsers"></textarea>
+		<input type="hidden" id="aljoin-candidateUsers_inp" name="">
+	</div>
+	<div id="aljoin-candidateGroups_div" order="5">
+		<label>候选组(角色)<a href="javascript:void(0);" style="color:blue;" onclick="selectAssignee(this,3)">选择</a></label>
+		<textarea id="aljoin-candidateGroups" name="aljoin-candidateGroups"></textarea>
+		<input type="hidden" id="aljoin-candidateGroups_inp" name="">
+	</div>
+	<div id="aljoin-isReturnCreater_div" order="5.1">
+		<label>返回流程发起人<input type="checkbox" id="aljoin-isReturnCreater" onchange="setIsReturnCreater(this)"/></label>
+	</div>
+
+	<!-- 保存可显示,可编辑控件ID，不允许为空控件ID，逗号分隔 -->
+	<div id="aljoin-task-showWidgetIds_div" order="6">
+		<input type="hidden" id="aljoin-task-showWidgetIds" name="">
+	</div>
+	<div id="aljoin-task-editWidgetIds_div" order="7">
+		<input type="hidden" id="aljoin-task-editWidgetIds" name="">
+	</div>
+	<div id="aljoin-task-notNullWidgetIds_div" order="8">
+		<input type="hidden" id="aljoin-task-notNullWidgetIds" name="">
+	</div>
+	<div id="aljoin-task-commentWidgetIds_div" order="9">
+		<input type="hidden" id="aljoin-task-commentWidgetIds" name="">
+	</div>
+	<div id="aljoin-task-redHeadWidgetIds_div" order="10">
+		<input type="hidden" id="aljoin-task-redHeadWidgetIds" name="">
+	</div>
+	<div id="aljoin-task-saveMarkWidgetIds_div" order="11">
+		<input type="hidden" id="aljoin-task-saveMarkWidgetIds" name="">
+	</div>
+	<div id="aljoin-task-addSignWidgetIds_div" order="11.1">
+		<input type="hidden" id="aljoin-task-addSignWidgetIds" name="">
+	</div>
+	<!-- 办理权限，逗号分隔 -->
+	<div id="aljoin-task_div" order="10">
+		<label>办理权限</label><br>
+		<span id="aljoin-task-save_div" order="1">
+				<input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-save" onchange="setOperateAuth(this)"/>存稿&nbsp;&nbsp;
+			</span>
+		<span id="aljoin-task-submit_div" order="2">
+				<input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-submit" onchange="setOperateAuth(this)"/>提交&nbsp;&nbsp;
+			</span>
+		<!-- <input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-pass" onchange="setOperateAuth(this)"/>通过&nbsp;&nbsp;
+        <input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-back" onchange="setOperateAuth(this)"/>退回&nbsp;&nbsp;<br> -->
+		<span id="aljoin-task-print_div" order="3">
+				<input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-print" onchange="setOperateAuth(this)"/>打印&nbsp;&nbsp;
+			</span>
+		<!-- <input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-distribute" onchange="setOperateAuth(this)"/>分发&nbsp;&nbsp; -->
+		<span id="aljoin-task-circulation_div" order="4">
+				<input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-circulation" onchange="setOperateAuth(this)"/>传阅&nbsp;&nbsp;<br>
+			</span>
+		<!-- <input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-addsign" onchange="setOperateAuth(this)"/>加签&nbsp;&nbsp;<br> -->
+		<span id="aljoin-task-urgent1_div" order="5">
+				<input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-urgent1" onchange="setOperateAuth(this)"/>一般&nbsp;&nbsp;
+			</span>
+		<span id="aljoin-task-urgent2_div" order="6">
+				<input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-urgent2" onchange="setOperateAuth(this)"/>紧急&nbsp;&nbsp;
+			</span>
+		<span id="aljoin-task-urgent3_div" order="7">
+				<input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-urgent3" onchange="setOperateAuth(this)"/>加急&nbsp;&nbsp;
+			</span>
+		<span id="aljoin-task-opinion_div" order="8">
+				<input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-opinion" onchange="setOperateAuth(this)"/>填写意见&nbsp;&nbsp;<br>
+			</span>
+		<span id="aljoin-task-close_div" order="9">
+				<input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-close" onchange="setOperateAuth(this)"/>作废&nbsp;&nbsp;
+			</span>
+		<span id="aljoin-task-claim_div" order="10">
+				<input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-claim" onchange="setOperateAuth(this)"/>签收&nbsp;&nbsp;
+			</span>
+		<span id="aljoin-task-tasksave_div" order="11">
+				<input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-tasksave" onchange="setOperateAuth(this)"/>保存&nbsp;&nbsp;
+		    </span>
+		<span id="aljoin-task-addsign1_div" order="11.1">
+		    	<input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-addsign1" onchange="setOperateAuth(this)"/>加签提交下一环节&nbsp;&nbsp;
+		    </span>
+		<span id="aljoin-task-addsign2_div" order="11.2">
+		    	<input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-addsign2" onchange="setOperateAuth(this)"/>加签返回原办理人&nbsp;&nbsp;
+		    </span>
+		<span id="aljoin-task-distribute_div" order="11.3">
+				<input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-distribute" onchange="setOperateAuth(this)"/>分发&nbsp;&nbsp;
+			</span>
+		<span id="aljoin-task-dispatchRegistration_div" order="11.4">
+				<input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-dispatchRegistration" onchange="setOperateAuth(this)"/>发文登记&nbsp;&nbsp;
+			</span>
+		<span id="aljoin-task-receivingRegistration_div" order="11.5">
+				<input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-receivingRegistration" onchange="setOperateAuth(this)"/>收文登记&nbsp;&nbsp;
+			</span>
+		<span id="aljoin-task-operate-auth-ids_div" order="12">
+				<input type="hidden" id="aljoin-task-operate-auth-ids" name="">
+		    </span>
+	</div>
+	<!-- 选择对象范围条件，逗号分隔 -->
+	<div id="aljoin-task-obj-range_div" order="13">
+		<label>选择对象范围条件</label><br>
+
+		<span id="aljoin-task-founder-dept_div" order="1">
+			<input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-founder-dept" onchange="setObjRange(this)"/>创建人所在部门人员<br/>
+		</span>
+
+		<span id="aljoin-task-lastlink-dept_div" order="2">
+				<input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-lastlink-dept" onchange="setObjRange(this)"/>上一个环节办理人人所在部门人<br/>
+		</span>
+
+
+		<span id="aljoin-task-personjob_div" order="3">
+			<input type="checkbox" class="aljoin-task-operate-auth-check" id="aljoin-task-personjob" onchange="setObjRange(this)"/>创建人所在岗位人员办理<br/>
+		</span>
+
+	</div>
+</div>
+<!-- tree部门-->
+<div class="admin-main" style="display: none;" id="tree_one">
+	<form class="layui-form" id="tree_one-form">
+		<div class="btn_fixed_top">
+			<input id="peopelSel" class="tree_search1 reset" type="text" value="" placeholder="搜索">
+			<a class="layui-btn layui-btn-small" id="" onclick="searchNodes()"><i class="layui-icon">&#xe615;</i>搜索</a>
+			<a class="layui-btn layui-btn-small layui-btn-primary" style="margin-left:2px;" type="reset" onclick="reset_tree()"><li class="fa fa-eraser"></li> 重置</a>
+			<label type="text"  id="resultKey" class="form-control">
+				<div class="tree_father">
+					<a id="clickUp" class="tree_up" onclick="clickUp()"><i class="layui-icon">&#xe619;</i></a>
+					<a id="clickDown" class="tree_down" onclick="clickDown()"><i class="layui-icon">&#xe61a;</i></a>
+					<label id="number" class="tree_number"></label>
+				</div>
+
+			</label>
+		</div>
+		<ul id="treeDemo" class="ztree" style="padding-top:35px;"></ul>
+		<div class="btn_fixed">
+			<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+			<div style="float: right;">
+				<button class="layui-btn" lay-submit="" lay-filter="form-add-submit2" id="btnc" onclick="layer.closeAll();">
+					<i class="fa fa-save"></i> 保存
+				</button>
+			</div>
+		</div>
+	</form>
+</div>
+<!-- 岗位 -->
+<div id="post_list" style="display:none;padding-right: 30px;">
+	<div class="layui-field-box layui-form"
+		 style="padding: 0 0 20px 0; margin-left: 30px;">
+		<div style="margin-top:15px;">
+			<div class="layui-form-item"  id="selectsId" class="selectsId_float">
+				<@selectLink table="aut_department" layVerify="required"  id="dept_id"  name="dept_id" class="layui-input-inline" def="" key="id" text="dept_name" level="1" levelName="dept_level" rankName="dept_rank" where=" and is_active=1"/>
+				<input id="deptId" type="hidden" />
+			</div>
+			<div class="layui-input-inline">
+				<input type="text" name="searchKey" id="searchKey5" placeholder="输入岗位名称查询" autocomplete="off" class="layui-input"
+					   style="height: 30px; line-height: 30px;">
+			</div>
+			<span style="margin-right: 15px;">
+					<@a code="" href="javascript:void(0)" class="layui-btn layui-btn-small" id=""
+					onclick="loadData5()" iclass="layui-icon" icon="&#xe615;" text="搜索"/>
+				</span>
+		</div>
+		<table class="layui-table admin-table">
+			<thead>
+			<tr>
+				<!-- <th style="width: 20px;"><input type="checkbox"
+                    lay-skin="primary" lay-filter="paging5_check-all"></th>
+                <th style="display: none;">用户ID</th> -->
+				<th>岗位名称</th>
+				<th>排序</th>
+				<th>部门编号</th>
+				<th>操作</th>
+			</tr>
+			</thead>
+			<tbody id="paging5-data">
+			<script id="paging5-script" type="text/html">
+				{{each records value index}}
+				<tr>
+					<td style="display: none;">{{value.autPosition.id}}</td>
+					<td>{{value.autPosition.positionName}}</td>
+					<td>{{value.autPosition.positionRank}}</td>
+					<td>{{value.autPosition.deptCode}}</td>
+					<td>
+						{{if value.isCheck == 0}}<a href="javascript:void(0)" class="layui-btn layui-btn-mini" id="show-post" onclick="post('{{value.autPosition.id}}','{{value.autPosition.positionName}}')">添加</a>{{/if}}
+						{{if value.isCheck == 1}}<a href="javascript:void(0)" class="layui-btn layui-btn-primary layui-btn-mini" id="show-post_c" onclick="post_c('{{value.autPosition.id}}','{{value.autPosition.positionName}}')">取消</a>{{/if}}
+					</td>
+				</tr>
+				{{/each}}
+			</script>
+			</tbody>
+		</table>
+	</div>
+	<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+		<div id="paging5-footer" class="page"
+			 style="background-color: white; text-align: center;"></div>
+	</div>
+</div>
+<!-- 候选用户 -->
+<div id="user_list" style="display:none;padding-right: 30px;">
+	<div class="layui-field-box layui-form"
+		 style="padding: 0 0 20px 0; margin-left: 30px;">
+		<div style="margin-top:15px;">
+			<div class="layui-form-item"  id="selectsId" class="selectsId_float">
+				<@selectLink table="aut_department" layVerify="required"  id="user_id"  name="user_id" class="layui-input-inline" def="" key="id" text="dept_name" level="1" levelName="dept_level" rankName="dept_rank" where=" and is_active=1"/>
+				<input id="deptId" type="hidden" />
+			</div>
+			<div class="layui-input-inline">
+				<input type="text" name="searchKey" id="searchKey2" placeholder="输入用户名称查询" autocomplete="off" class="layui-input"
+					   style="height: 30px; line-height: 30px;">
+			</div>
+			<span style="margin-right: 15px;">
+					<@a code="" href="javascript:void(0)" class="layui-btn layui-btn-small" id=""
+					onclick="loadData2()" iclass="layui-icon" icon="&#xe615;" text="搜索"/>
+				</span>
+		</div>
+		<table class="layui-table admin-table">
+			<thead>
+			<tr>
+				<!-- <th style="width: 20px;"><input type="checkbox"
+                    lay-skin="primary" lay-filter="paging2_check-all"></th> -->
+				<th style="display: none;">用户ID</th>
+				<th>用户账号</th>
+				<th>用户名</th>
+				<th>操作</th>
+			</tr>
+			</thead>
+			<tbody id="paging2-data">
+			<script id="paging2-script" type="text/html">
+				{{each records value index}}
+				<tr>
+					<td style="display: none;">{{value.autUser.id}}</td>
+					<td>{{value.autUser.userName}}</td>
+					<td>{{value.autUser.fullName}}</td>
+					<td>
+						{{if value.isCheck == 0}}<a href="javascript:void(0)" class="layui-btn layui-btn-mini" id="show-user" onclick="user('{{value.autUser.id}}','{{value.autUser.fullName}}',this)">添加</a></font>{{/if}}
+						{{if value.isCheck == 1}}<a href="javascript:void(0)" class="layui-btn layui-btn-primary layui-btn-mini" id="show-user_c" onclick="user_c('{{value.autUser.id}}','{{value.autUser.fullName}}',this)">取消</a>{{/if}}
+					</td>
+				</tr>
+				{{/each}}
+			</script>
+			</tbody>
+		</table>
+	</div>
+	<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+		<div id="paging2-footer" class="page"
+			 style="background-color: white; text-align: center;"></div>
+	</div>
+</div>
+<!-- 受理人 -->
+<div id="tax_list" style="display:none;padding-right: 30px;">
+	<div class="layui-field-box layui-form"
+		 style="padding: 0 0 20px 0; margin-left: 30px;">
+		<div style="margin-top:15px;">
+			<div class="layui-form-item"  id="selectsId" class="selectsId_float">
+				<@selectLink table="aut_department" layVerify="required"  id="tax_id"  name="tax_id" class="layui-input-inline" def="" key="id" text="dept_name" level="1" levelName="dept_level" rankName="dept_rank" where=" and is_active=1"/>
+				<input id="deptId" type="hidden" />
+			</div>
+			<div class="layui-input-inline">
+				<input type="text" name="searchKey" id="searchKey1" placeholder="输入受理人查询" autocomplete="off" class="layui-input"
+					   style="height: 30px; line-height: 30px;">
+			</div>
+			<span style="margin-right: 15px;">
+					<@a code="" href="javascript:void(0)" class="layui-btn layui-btn-small" id=""
+					onclick="loadData1()" iclass="layui-icon" icon="&#xe615;" text="搜索"/>
+				</span>
+		</div>
+		<table class="layui-table admin-table">
+			<thead>
+			<tr>
+				<!-- <th style="width: 20px;"><input type="checkbox"
+                    lay-skin="primary" lay-filter="paging1_check-all"></th> -->
+				<th style="display: none;">用户ID</th>
+				<th>受理人</th>
+				<th>用户名</th>
+				<th>操作</th>
+			</tr>
+			</thead>
+			<tbody id="paging1-data">
+			<script id="paging1-script" type="text/html">
+				{{each records value index}}
+				<tr>
+					<td style="display: none;">{{value.id}}</td>
+					<td>{{value.autUser.fullName}}</td>
+					<td>{{value.autUser.userName}}</td>
+					<td>
+						{{if value.isCheck == 0}}<a href="javascript:void(0)" class="layui-btn layui-btn-mini" id="show-tax" onclick="tax('{{value.autUser.id}}','{{value.autUser.fullName}}',this)">添加</a></font>{{/if}}
+						{{if value.isCheck == 1}}<a href="javascript:void(0)" class="layui-btn layui-btn-primary layui-btn-mini" id="show-tax_c" onclick="tax_c('{{value.autUser.id}}','{{value.autUser.fullName}}',this)">取消</a>{{/if}}
+					</td>
+				</tr>
+				{{/each}}
+			</script>
+			</tbody>
+		</table>
+	</div>
+	<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+		<div id="paging1-footer" class="page"
+			 style="background-color: white; text-align: center;"></div>
+	</div>
+</div>
+<!--候选组（角色） -->
+<div id="role_list" style="display:none;padding-right: 30px;">
+	<div class="layui-field-box layui-form"
+		 style="padding: 0 0 20px 0; margin-left: 30px;">
+		<div style="margin-top:15px;">
+			<div class="layui-input-inline">
+				<input type="text" name="searchKey" id="searchKey3" placeholder="输入角色名称查询" autocomplete="off" class="layui-input"
+					   style="height: 30px; line-height: 30px;">
+			</div>
+			<span style="margin-right: 15px;">
+					<@a code="" href="javascript:void(0)" class="layui-btn layui-btn-small" id=""
+					onclick="loadData3()" iclass="layui-icon" icon="&#xe615;" text="搜索"/>
+				</span>
+		</div>
+		<table class="layui-table admin-table">
+			<thead>
+			<tr>
+				<!-- <th style="width: 20px;"><input type="checkbox"
+                    lay-skin="primary" lay-filter="paging3_check-all"></th> -->
+				<th style="display: none;">用户ID</th>
+				<th>角色名称</th>
+				<th>角色代码</th>
+				<th>操作</th>
+			</tr>
+			</thead>
+			<tbody id="paging3-data">
+			<script id="paging3-script" type="text/html">
+				{{each records value index}}
+				<tr>
+					<td style="display: none;">{{value.id}}</td>
+					<td>{{value.autRole.roleName}}</td>
+					<td>{{value.autRole.roleCode}}</td>
+					<td>
+						{{if value.isCheck == 0}}<a href="javascript:void(0)" class="layui-btn layui-btn-mini" id="show-role" onclick="role('{{value.autRole.id}}','{{value.autRole.roleName}}',this)">添加</a></font>{{/if}}
+						{{if value.isCheck == 1}}<a href="javascript:void(0)" class="layui-btn layui-btn-primary layui-btn-mini" id="show-role_c" onclick="role_c('{{value.autRole.id}}','{{value.autRole.nickName}}',this)">取消</a>{{/if}}
+					</td>
+				</tr>
+				{{/each}}
+			</script>
+			</tbody>
+		</table>
+	</div>
+	<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+		<div id="paging3-footer" class="page"
+			 style="background-color: white; text-align: center;"></div>
+	</div>
+</div>
+<form class="layui-form" action=""  id="open_form_div"  style="display:none;">
+		<div class="p10">
+	      <input name="" value="手动选择" title="手动选择" checked="" type="radio">
+	      <input name="" value="自动选择" title="自动选择" type="radio"> 
+	    </div> 
+	    <div class="bgccc">
+	    	<div class="clon-row">
+	    	 <div class="layui-inline"> 
+			      <label class="layui-form-label">域名城：</label>
+			      <div class="layui-input-inline">
+			        <select name="" lay-verify="required" >
+			          <option >标题</option>
+			          <option >出发时间</option>
+			          <option >天数</option>
+			          <option >签发时间</option>
+			        </select>
+			      </div>
+			    </div>
+			    <div class="layui-inline">
+			      <label class="layui-form-label">比较符：</label>
+			      <div class="layui-input-inline">
+			        <select name="" lay-verify="required" >
+			          <option >大于</option>
+			          <option >大于或等于</option>
+			          <option >等于</option>
+			          <option >小于</option>
+			          <option >小于或等于</option>
+			          <option >包含</option>
+			          <option >不包含</option>
+			        </select>
+			      </div>
+			    </div>
+			    <div class="layui-inline">
+			      <label class="layui-form-label">比较值：</label>
+			      <div class="layui-input-inline">
+			         <input name="number" lay-verify="required|number"  class="layui-input" type="text">
+			      </div>
+			    </div>
+			    <div class="layui-inline">
+			      <label class="layui-form-label">关系：</label>
+			      <div class="layui-input-inline">
+			        <select >
+			          <option >或者</option>
+			          <option >并且</option> 
+			        </select>
+			      </div>
+			    </div>
+			    <div class="layui-inline">
+				    <a href="javascript:void(0)" class="add" onclick="operate2(1,this)">+</a>
+				    <a href="javascript:void(0)" class="minus" onclick="operate2(2,this)">-</a> 
+			    </div>
+	    	</div>
+	    </div> 
+		<div class="layui-layer-btn layui-layer-btn-">
+			<a class="layui-layer-btn0">确认</a>
+			<a class="layui-layer-btn1">取消</a>
+		</div>
+</form>
+<!-- <div id="open_form_div" style="display:none;padding-right: 10px;padding-left: 10px;">
+	<table class="layui-table admin-table">
+		<tr><td>属性类型</td><td>属性名称</td><td>属性KEY</td></tr>
+		<tbody id="open_form_div_script_data">
+		<script id="open_form_div_script" type="text/html">
+			{{each records value index}}
+			<tr>
+				<td>{{value.widgetType}}</td>
+				<td>{{value.widgetName}}</td>
+				<td>{{value.widgetId}}</td>
+			</tr>
+			{{/each}}
+		</script>
+		</tbody>
+	</table>
+</div> -->
+<div id="openCompletedConditionDiv_div" style="display:none;padding-right: 10px;padding-left: 10px;">
+	<table class="layui-table admin-table">
+		<tr style="font-weight: bold;"><td>变量值</td><td>变量说明</td></tr>
+		<tr><td>nrOfInstances</td><td>实例总数，如果使用循环基数（次数），则总数是循环基数，如果使用集合，则总数是集合的大小。</td></tr>
+		<tr><td>nrOfCompletedInstances</td><td>已经完成的实例数。</td></tr>
+		<tr><td>nrOfActiveInstances</td><td>当前正在执行的实例数，如果是顺序（串行）执行，则该值总是1，如果是并行，则没执行完一个实例，该值减1。</td></tr>
+		<tr><td>loopCounter</td><td>当前循环的索引。</td></tr>
+	</table>
+	<table class="layui-table admin-table">
+		<tr style="font-weight: bold;"><td>配置例子</td><td>例子说明</td></tr>
+		<tr><td>${"$"}{nrOfCompletedInstances/nrOfInstances == 1}</td><td>全数通过，进入下一节点（按比例，默认情况）。</td></tr>
+		<tr><td>${"$"}{nrOfCompletedInstances/nrOfInstances == 0.3}</td><td>30%通过，进入下一节点（按比例）。</td></tr>
+		<tr><td>${"$"}{nrOfCompletedInstances == 3}</td><td>3个通过，进入下一节点（按数量）。</td></tr>
+		<tr><td>${"$"}{nrOfActiveInstances == 3}</td><td>剩余3个没通过（正在执行），进入下一节点（按没完成数量）。</td></tr>
+	</table>
+</div>
+
+<script src="../../web/plugins/layui/layui.js"></script>
+<script src="../../aljoin-act/js/uuid.js"></script>
+<script src="../../aljoin-act/bpmn-property-js/index2_20180206.js"></script>
+<script src="../../aljoin-act/js/jquery.min.js"></script>
+<script src="../../aljoin-act/js/jquery.base64-2.js"></script>
+<script type="text/javascript" src="../../web/js/template-web.js"></script>
+<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+<script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+<script type="text/javascript" src="../../web/js/tool.js"></script>
+<script type="text/javascript">
+    function setIsReturnCreater(thisObj){
+        if($(thisObj).is(':checked')){
+            $(thisObj).attr("checked","checked");
+        }else{
+            $(thisObj).removeAttr("checked");
+        }
+        var nowid = $(thisObj).parent().parent().parent().attr("id");
+        var oldid = nowid.substring(0,nowid.length-2);
+        $("#"+oldid).empty();
+        $("#"+oldid).append($("#"+nowid).html());
+    }
+    function setOperateAuth(thisObj){
+        if($(thisObj).is(':checked')){
+            $(thisObj).attr("checked","checked");
+        }else{
+            $(thisObj).removeAttr("checked");
+        }
+        var nowid = $(thisObj).parent().parent().parent().attr("id");
+        var oldid = nowid.substring(0,nowid.length-2);
+        //获取所有有选中的checkbox的ID
+        var checkIds="";
+        $("#"+nowid).find(".aljoin-task-operate-auth-check").each(function(){
+            if($(this).is(':checked')){
+                checkIds += $(this).attr("id")+",";
+            }
+        });
+        if(checkIds != ""){
+            checkIds = checkIds.substring(0,checkIds.length-1);
+        }
+        $("#"+nowid).find("#aljoin-task-operate-auth-ids").val(checkIds);
+        $("#"+oldid).empty();
+        $("#"+oldid).append($("#"+nowid).html());
+
+    }
+    function setMyFormDataAttr(thisObj){
+        var sv = $(thisObj).val();
+        $(thisObj).find("option:not(:selected)").attr("selected",false);
+        $(thisObj).find("option[value="+sv+"]").attr("selected",true);
+
+        /* console.log("kdjfals"+thisObj) */
+        var nowid = $(thisObj).parent().attr("id");
+        var oldid = nowid.substring(0,nowid.length-2);
+        $("#"+oldid).empty();
+        $("#"+oldid).append($("#"+nowid).html());
+        //获取表单的所有控件
+        var param = new Object();
+        param._csrf = $("#_csrf").val();
+        param.id = sv;
+        tool.post("../actAljoinFormWidget/getWidgetByFormId", param, function(list) {
+            if(list.length>0){
+                var selectFormWidgetIds = "";
+                for(var i=0;i < list.length;i++){
+                    if(i == 0){
+                        selectFormWidgetIds = list[i].widgetId;
+                    }else{
+                        selectFormWidgetIds += ","+list[i].widgetId;
+                    }
+                }
+                //保存在隐藏域中
+                $("#selectFormWidgets").val(selectFormWidgetIds);
+                //已经存在的节点需要重新赋予默认具有所有控件的权限
+                $("div[id^=custom-jbpm-detail-assignee_]").each(function(){
+                    $(this).find("#aljoin-task-showWidgetIds").val(selectFormWidgetIds);
+                    $(this).find("#aljoin-task-editWidgetIds").val(selectFormWidgetIds);
+                    /* $(this).find("#aljoin-task-editWidgetIds").val(aljoin-task-notNullWidgetIds); */
+                });
+            }
+        }, false);
+    }
+    function setProcessDesc(thisObj){
+        $(thisObj).attr("value",$(thisObj).val());
+        $("#custom-jbpm-prop").empty();
+        $("#custom-jbpm-prop").append($("#custom-jbpm-prop_1").html());
+
+        setMyData2Hide();
+    }
+    function setFormIsActive(thisObj){
+        //设置本级选中属性
+        var sv = $(thisObj).val();
+        $(thisObj).find("option:not(:selected)").attr("selected",false);
+        $(thisObj).find("option[value="+sv+"]").attr("selected",true);
+
+        $("#custom-jbpm-prop").empty();
+        $("#custom-jbpm-prop").append($("#custom-jbpm-prop_1").html());
+    }
+    function setProcessIsFixed(thisObj){
+        //设置本级选中属性
+        var sv = $(thisObj).val();
+        $(thisObj).find("option:not(:selected)").attr("selected",false);
+        $(thisObj).find("option[value="+sv+"]").attr("selected",true);
+        $("#custom-jbpm-prop").empty();
+        $("#custom-jbpm-prop").append($("#custom-jbpm-prop_1").html());
+
+        setMyData2Hide();
+    }
+    function setProcessIsFree(thisObj){
+        //设置本级选中属性
+        var sv = $(thisObj).val();
+        $(thisObj).find("option:not(:selected)").attr("selected",false);
+        $(thisObj).find("option[value="+sv+"]").attr("selected",true);
+        $("#custom-jbpm-prop").empty();
+        $("#custom-jbpm-prop").append($("#custom-jbpm-prop_1").html());
+
+        setMyData2Hide();
+    }
+    function setProcessCategory(thisObj){
+        //获取前面兄弟节点的个数
+        var plen = $(thisObj).prevAll(".aljoin-process-category").length;
+        var categoryIdsArrStr = $("#categoryIdsArrStr").val().split(",");
+        //设置本级选中属性
+        var sv = $(thisObj).val();
+        $(thisObj).find("option:not(:selected)").attr("selected",false);
+        $(thisObj).find("option[value="+sv+"]").attr("selected",true);
+        //构造下一级(删除所有select的子分类重新构造)
+        $(thisObj).nextAll(".aljoin-process-category").remove();
+        var param = new Object();
+        param._csrf = $("#_csrf").val();
+        param.parentId = sv;
+        tool.post("../actAljoinCategory/getByParentId", param, function(list) {
+            if(list.length>0){
+                var selectStr = "<select style=\"margin-top:3px;\" class=\"aljoin-process-category\" onchange=\"setProcessCategory(this)\">";
+                selectStr += "<option value=\"\"></option>";
+                for(var i=0;i < list.length;i++){
+                    var categoryName = list[i].categoryName;
+                    var id = list[i].id;
+                    //selectStr += "<option value=\""+id+"\">"+categoryName+"</option>";
+                    if(categoryIdsArrStr[plen+1] == id){
+                        selectStr += "<option selected=\"selected\" value=\""+id+"\">"+categoryName+"</option>";
+                    }else{
+                        selectStr += "<option value=\""+id+"\">"+categoryName+"</option>";
+                    }
+                }
+                selectStr += "</select>";
+                $(selectStr).insertAfter(thisObj);
+                $(thisObj).next().trigger("change");
+            }
+        }, false);
+
+        $("#custom-jbpm-prop").empty();
+        $("#custom-jbpm-prop").append($("#custom-jbpm-prop_1").html());
+
+        setMyData2Hide();
+    }
+    function setFormCategory(thisObj){
+        //设置本级选中属性
+        var sv = $(thisObj).val();
+        $(thisObj).find("option:not(:selected)").attr("selected",false);
+        $(thisObj).find("option[value="+sv+"]").attr("selected",true);
+
+        //构造下一级(删除所有select的子分类重新构造)
+        $(thisObj).nextAll(".aljoin-form-category").remove();
+        var param = new Object();
+        param._csrf = $("#_csrf").val();
+        param.parentId = sv;
+        //选择的不等于空在构造下一级
+        if(sv != ""){
+            tool.post("../actAljoinFormCategory/getList", param, function(list) {
+                if(list.length>0){
+                    var selectStr = "<select style=\"margin-top:3px;\" class=\"aljoin-form-category\" onchange=\"setFormCategory(this)\">";
+                    selectStr += "<option value=\"\"></option>";
+                    for(var i=0;i < list.length;i++){
+                        var categoryName = list[i].categoryName;
+                        var id = list[i].id;
+                        selectStr += "<option value=\""+id+"\">"+categoryName+"</option>";
+                    }
+                    selectStr += "</select>";
+                    $(selectStr).insertAfter(thisObj);
+                }
+            }, false);
+        }
+        //根据当前表单分类获取表单(根据所选的最后一个有值的表单类型进行获取)
+        var categoryIds_ = "";
+        $(thisObj).parent().find(".aljoin-form-category").each(function(){
+            if($(this).val() != ""){
+                categoryIds_ += $(this).val() + ",";
+            }
+        });
+        if(categoryIds_ != ""){
+            categoryIds_ = categoryIds_.substring(0,categoryIds_.length - 1);
+            var categoryIds_Arr = categoryIds_.split(",");
+            param.categoryId = categoryIds_Arr[categoryIds_Arr.length - 1];
+            //param.categoryId = sv;
+            tool.post("../actAljoinForm/getAllForm", param, function(list) {
+                var selectStr = "<option value=\"\"></option>";
+                if(list.length>0){
+                    for(var i=0;i < list.length;i++){
+                        var formName = list[i].formName;
+                        var id = list[i].id;
+                        selectStr += "<option value=\""+id+"\">"+formName+"</option>";
+                    }
+                }
+                var obj = $(thisObj).nextAll(".aljoin-form-id");
+                obj.empty();
+                $(selectStr).appendTo(obj);
+            }, false);
+        }else{
+            //清空表单下拉列表
+            var selectStr = "<option value=\"\"></option>";
+            var obj = $(thisObj).nextAll(".aljoin-form-id");
+            obj.empty();
+            $(selectStr).appendTo(obj);
+        }
+
+
+        var nowid = $(thisObj).parent().attr("id");
+        var oldid = nowid.substring(0,nowid.length-2);
+        $("#"+oldid).empty();
+        $("#"+oldid).append($("#"+nowid).html());
+    }
+
+    layui.use('form', function() {
+        $("#getCurrentXmlCodeBtn").click(function(){
+            getCurrentXmlCode();
+        });
+        //触发以及流程分类，构造二级流程分类
+        $("#category_level_top").trigger("change");
+        //设置备份div
+        var divHtmlCode = $.base64.decode($("#actAljoinBpmnHtmlCode").val())
+        $(divHtmlCode).appendTo(".process_backup_div");
+        //初始化currentXmlCode变量内容
+        currentXmlCode = $("#actAljoinBpmnXmlCode").val();
+    });
+    //存放当前xml
+    //var currentXmlCode = "";
+    function showOrHide() {
+        if ($("#js-properties-panel").css("display") == "none") {
+            $("#js-properties-panel").show(500);
+        } else {
+            $("#js-properties-panel").hide(500);
+        }
+    }
+    function getCurrentXmlCode() {
+
+        // 表单---表单ID
+        var formIds = "";
+        // 表单---元素类型
+        var elementTypes = "";
+        // 表单---元素id
+        var elementIds = "";
+
+        // 授权---任务id，逗号分隔
+        var taskIds = "";
+        // 授权---部门id，逗号&分号分隔
+        var assigneeDepartmentIds = "";
+        // 授权---岗位id，逗号&分号分隔
+        var assigneePositionIds = "";
+        // 授权---受理人用户id，逗号&分号分隔
+        var assigneeUserIds = "";
+        // 授权---候选用户id，逗号&分号分隔
+        var assigneeCandidateIds = "";
+        // 授权---候选组id，逗号&分号分隔
+        var assigneeGroupIds = "";
+        // 授权---可视控件ID，逗号&分号分隔
+        var showWidgetIds = "";
+        // 授权---可编辑控件ID，逗号&分号分隔
+        var editWidgetIds = "";
+        // 授权---不允许为空控件ID，逗号&分号分隔
+        var notNullWidgetIds = "";
+        // 授权---意见域控件ID，逗号&分号分隔
+        var commentWidgetIds = "";
+        // 授权---办理权限ID，逗号&分号分隔
+        var aljoinTaskOperateAuthIds = "";
+        // 授权---红头文件ID，逗号&分号分隔
+        var redHeadWidgetIds = "";
+        // 授权---痕迹保留ID，逗号&分号分隔
+        var saveMarkWidgetIds = "";
+        // 授权---是否返回流程发起人，分号分割
+        var isReturnCreaters = "";
+        // 授权---任务表单权限（加签意见域控件ID）
+        var addSignCommentWidgetIds = "";
+        // 授权---创建人所在部门人员，分号分割
+        var staffMembersDepartments = "";
+        // 授权---上一个环节办理人人所在部门人员，分号分割
+        var lastlinkDepartments = "";
+        // 授权---创建人所在岗位人员办理，分号分割
+        var createPersonsJobs = "";
+        // 备份div的html(64编码)
+        var backupHtml = $(".process_backup_div").html();
+        backupHtml = $.base64.encode(backupHtml);
+
+        //获取隐藏div表单元素，构造表单相关参数custom-jbpm-form
+        $("div[id^=custom-jbpm-form_]").each(function(){
+            //隐藏的div是选择后的备份的最新数据
+            if($(this).css("display") == "none"){
+                //获取选择的表单ID
+                var formId = $(this).find(".aljoin-form-id option:selected").val();
+                if(formId != ""){
+                    if(formIds == ""){
+                        // 表单---表单ID
+                        formIds = formId;
+                        // 表单---元素类型
+                        elementTypes = $(this).attr("etype");
+                        // 表单---元素id
+                        elementIds = $(this).attr("id").substring(17);
+                    }else{
+                        formIds += ","+formId;
+                        elementTypes += ","+$(this).attr("etype");
+                        elementIds += ","+ $(this).attr("id").substring(17);
+                    }
+                }
+            }
+        });
+        //console.log(formIds);
+        //console.log(elementTypes);
+        //console.log(elementIds);
+        //获取隐藏div表单元素，构造表单相关参数custom-jbpm-detail-assignee
+        $("div[id^=custom-jbpm-detail-assignee_]").each(function(){
+            //隐藏的div是选择后的备份的最新数据
+            if($(this).css("display") == "none"){
+                if(taskIds == ""){
+                    // 授权---任务id，分号分隔
+                    taskIds = $(this).attr("id").substring(28)==""?"null":$(this).attr("id").substring(28);
+                    // 授权---部门id，分号分隔
+                    assigneeDepartmentIds = $(this).find("#aljoin-assigneeDepartment_inp").val()==""?"null":$(this).find("#aljoin-assigneeDepartment_inp").val();
+                    // 授权---岗位id，分号分隔
+                    assigneePositionIds = $(this).find("#aljoin-assigneePosition_inp").val()==""?"null":$(this).find("#aljoin-assigneePosition_inp").val();
+                    // 授权---受理人用户id，分号分隔
+                    assigneeUserIds = $(this).find("#aljoin-assignee_inp").val()==""?"null":$(this).find("#aljoin-assignee_inp").val();
+                    // 授权---候选用户id，分号分隔
+                    assigneeCandidateIds = $(this).find("#aljoin-candidateUsers_inp").val()==""?"null":$(this).find("#aljoin-candidateUsers_inp").val();
+                    // 授权---候选组id，分号分隔
+                    assigneeGroupIds = $(this).find("#aljoin-candidateGroups_inp").val()==""?"null":$(this).find("#aljoin-candidateGroups_inp").val();
+                    // 授权---可视控件ID，逗号&分号分隔
+                    showWidgetIds = $(this).find("#aljoin-task-showWidgetIds").val()==""?"null":$(this).find("#aljoin-task-showWidgetIds").val();
+                    // 授权---可编辑控件ID，逗号&分号分隔
+                    editWidgetIds = $(this).find("#aljoin-task-editWidgetIds").val()==""?"null":$(this).find("#aljoin-task-editWidgetIds").val();
+                    // 授权---不允许为空控件ID，逗号&分号分隔
+                    notNullWidgetIds = $(this).find("#aljoin-task-notNullWidgetIds").val()==""?"null":$(this).find("#aljoin-task-notNullWidgetIds").val();
+                    // 授权---是否意见域控件，逗号&分号分隔
+                    commentWidgetIds = $(this).find("#aljoin-task-commentWidgetIds").val()==""?"null":$(this).find("#aljoin-task-commentWidgetIds").val();
+                    // 授权---办理权限ID，逗号&分号分隔
+                    aljoinTaskOperateAuthIds = $(this).find("#aljoin-task-operate-auth-ids").val()==""?"null":$(this).find("#aljoin-task-operate-auth-ids").val();
+                    // 授权---红头文件ID，逗号&分号分隔
+                    redHeadWidgetIds = $(this).find("#aljoin-task-redHeadWidgetIds").val()==""?"null":$(this).find("#aljoin-task-redHeadWidgetIds").val();
+                    // 授权---痕迹保留ID，逗号&分号分隔
+                    saveMarkWidgetIds = $(this).find("#aljoin-task-saveMarkWidgetIds").val()==""?"null":$(this).find("#aljoin-task-saveMarkWidgetIds").val();
+                    // 授权---是否返回流程发起人，分号分割
+                    isReturnCreaters = $(this).find("#aljoin-isReturnCreater").is(':checked')?"1":"0";
+                    // 授权---加签意见域，分号分割
+                    addSignCommentWidgetIds = !$(this).find("#aljoin-task-addSignWidgetIds").val()?"null":$(this).find("#aljoin-task-addSignWidgetIds").val();
+                    // 授权---创建人所在部门人员，分号分割
+                    staffMembersDepartments = $(this).find("#aljoin-task-founder-dept").is(':checked')?"1":"0";
+                    // 授权---上一个环节办理人人所在部门人员，分号分割
+                    lastlinkDepartments = $(this).find("#aljoin-task-lastlink-dept").is(':checked')?"1":"0";
+                    // 授权---创建人所在岗位人员办理，分号分割
+                    createPersonsJobs = $(this).find("#aljoin-task-personjob").is(':checked')?"1":"0";
+                }else{
+                    // 授权---任务id，分号分隔
+                    taskIds += ";"+($(this).attr("id").substring(28)==""?"null":$(this).attr("id").substring(28));
+                    // 授权---部门id，分号分隔
+                    assigneeDepartmentIds += ";"+($(this).find("#aljoin-assigneeDepartment_inp").val()==""?"null":$(this).find("#aljoin-assigneeDepartment_inp").val());
+                    // 授权---岗位id，分号分隔
+                    assigneePositionIds += ";"+($(this).find("#aljoin-assigneePosition_inp").val()==""?"null":$(this).find("#aljoin-assigneePosition_inp").val());
+                    // 授权---受理人用户id，分号分隔
+                    assigneeUserIds += ";"+($(this).find("#aljoin-assignee_inp").val()==""?"null":$(this).find("#aljoin-assignee_inp").val());
+                    // 授权---候选用户id，分号分隔
+                    assigneeCandidateIds += ";"+($(this).find("#aljoin-candidateUsers_inp").val()==""?"null":$(this).find("#aljoin-candidateUsers_inp").val());
+                    // 授权---候选组id，分号分隔
+                    assigneeGroupIds += ";"+($(this).find("#aljoin-candidateGroups_inp").val()==""?"null":$(this).find("#aljoin-candidateGroups_inp").val());
+                    // 授权---可视控件ID，逗号&分号分隔
+                    showWidgetIds += ";"+($(this).find("#aljoin-task-showWidgetIds").val()==""?"null":$(this).find("#aljoin-task-showWidgetIds").val());
+                    // 授权---可编辑控件ID，逗号&分号分隔
+                    editWidgetIds += ";"+($(this).find("#aljoin-task-editWidgetIds").val()==""?"null":$(this).find("#aljoin-task-editWidgetIds").val());
+                    // 授权---不允许为空控件ID，逗号&分号分隔
+                    notNullWidgetIds += ";"+($(this).find("#aljoin-task-notNullWidgetIds").val()==""?"null":$(this).find("#aljoin-task-notNullWidgetIds").val());
+                    // 授权---是否意见域控件，逗号&分号分隔
+                    commentWidgetIds += ";"+($(this).find("#aljoin-task-commentWidgetIds").val()==""?"null":$(this).find("#aljoin-task-commentWidgetIds").val());
+                    // 授权---办理权限ID，逗号&分号分隔
+                    aljoinTaskOperateAuthIds += ";"+($(this).find("#aljoin-task-operate-auth-ids").val()==""?"null":$(this).find("#aljoin-task-operate-auth-ids").val());
+                    // 授权---红头文件ID，逗号&分号分隔
+                    redHeadWidgetIds += ";"+($(this).find("#aljoin-task-redHeadWidgetIds").val()==""?"null":$(this).find("#aljoin-task-redHeadWidgetIds").val());
+                    // 授权---痕迹保留ID，逗号&分号分隔
+                    saveMarkWidgetIds += ";"+($(this).find("#aljoin-task-saveMarkWidgetIds").val()==""?"null":$(this).find("#aljoin-task-saveMarkWidgetIds").val());
+                    // 授权---是否返回流程发起人，分号分割
+                    isReturnCreaters += ";"+($(this).find("#aljoin-isReturnCreater").is(':checked')?"1":"0");
+                    // 授权---加签意见域，分号分割
+                    addSignCommentWidgetIds += ";"+(!$(this).find("#aljoin-task-addSignWidgetIds").val()?"null":$(this).find("#aljoin-task-addSignWidgetIds").val());
+                    // 授权---创建人所在部门人员，分号分割
+                    staffMembersDepartments += ";"+($(this).find("#aljoin-task-founder-dept").is(':checked')?"1":"0");
+                    // 授权---上一个环节办理人人所在部门人员，分号分割
+                    lastlinkDepartments += ";"+($(this).find("#aljoin-task-lastlink-dept").is(':checked')?"1":"0");
+                    // 授权---创建人所在岗位人员办理，分号分割
+                    createPersonsJobs += ";"+($(this).find("#aljoin-task-personjob").is(':checked')?"1":"0");
+                }
+            }
+        });
+
+        //流程ID
+        var processId = processId_hide_;
+        //流程名称
+        var processName = processName_hide_;
+        //流程分类
+        var processCategory = processCategory_hide_;
+        //流程描述
+        var process_desc = process_desc_hide_;
+        //是否固定表单（固定流程）
+        var aljoin_process_isfixed = aljoin_process_isfixed_hide_;
+        //是否自由流程
+        var aljoin_process_isfree = aljoin_process_isfree_hide_;
+        //bpmn表主键ID
+        var orgnlId = $("#orgnlId").val();
+
+        if ($.trim(processCategory) == "") {
+            tool.error("流程分类不能为空");
+            return;
+        } else if (process_desc == "") {
+            tool.error("流程描述不能为空");
+            return;
+        } else if ($.trim(processId) == "") {
+            tool.error("标识符不能为空");
+            return;
+        } else if ($.trim(processName) == "") {
+            tool.error("名称不能为空");
+            return;
+        } else if ($.trim(aljoin_process_isfixed) == "") {
+            tool.error("是否固定表单不能为空");
+            return;
+        } else if ($.trim(aljoin_process_isfree) == "") {
+            tool.error("是否自由流程不能为空");
+            return;
+        }
+        processCategory = processCategory.substring(0,processCategory.length-1);
+        var _csrf = $("#_csrf").val();
+
+        var data = new Object();
+        data._csrf = _csrf;
+        data.processDesc = process_desc;
+        data.processCategory = processCategory;
+        data.processId = processId;
+        data.processName = processName;
+        data.xmlCode = currentXmlCode;
+        data.formIds = formIds;
+        data.elementTypes = elementTypes;
+        data.elementIds = elementIds;
+        data.taskIds = taskIds;
+        data.assigneeDepartmentIds = assigneeDepartmentIds;
+        data.assigneePositionIds = assigneePositionIds;
+        data.assigneeUserIds = assigneeUserIds;
+        data.assigneeCandidateIds = assigneeCandidateIds;
+        data.assigneeGroupIds = assigneeGroupIds;
+        data.backupHtml = backupHtml;
+        data.id = orgnlId;
+        data.showWidgetIds = showWidgetIds;
+        data.editWidgetIds = editWidgetIds;
+        data.notNullWidgetIds = notNullWidgetIds;
+        data.commentWidgetIds = commentWidgetIds;
+        data.aljoinTaskOperateAuthIds = aljoinTaskOperateAuthIds;
+        data.aljoinProcessIsfixed = aljoin_process_isfixed;
+        data.aljoinProcessIsfree = aljoin_process_isfree;
+        data.redHeadWidgetIds = redHeadWidgetIds;
+        data.saveMarkWidgetIds = saveMarkWidgetIds;
+        data.isReturnCreaters = isReturnCreaters;
+        data.addSignCommentWidgetIds = addSignCommentWidgetIds;
+        data.staffMembersDepartments = staffMembersDepartments;
+        data.lastlinkDepartments = lastlinkDepartments;
+        data.createPersonsJobs = createPersonsJobs;
+        $.ajax({
+            /* 发送请求的地址 */
+            url : "updateXmlCode",
+            /* 默认为true异步，如果设置为false则同步 */
+            async : false,
+            /* 请求类型 */
+            type : "post",
+            /* 服务器返回的数据类型 */
+            dataType : "json",
+            /* 发送到服务器的数据，键值对 */
+            data : data,
+            // 回调函数
+            success : function(retMsg) {
+                if(retMsg.code == 0){
+                    layer.alert(retMsg.message, {
+                        title : "操作提示",
+                        icon : 1,
+                        closeBtn:0
+                    }, function(index) {
+                        parent.layer.closeAll();
+                    });
+                    parent.loadData();
+                }else{
+                    tool.error(retMsg.message);
+                }
+            }
+        });
+    }
+    var pform;
+    function overCopy(){
+        //重新copy
+        var nowid =$(obj1).parent().parent().parent().attr("id");
+        var oldid = nowid.substring(0,nowid.length-2);
+        $("#"+oldid).empty();
+        $("#"+oldid).append($("#"+nowid).html());
+    }
+    layui.use('form',function(){
+        pform = layui.form();
+        //部门回填数据
+        pform.on('submit(form-add-submit2)', function(data) {
+            var mytree = $.fn.zTree.getZTreeObj("treeDemo");
+            var nodes = mytree.getCheckedNodes(true);
+            var dept_info = "";
+            var dept_inp  = "";
+            idList_dept = [];
+            $.each(nodes,function(index,value){
+                dept_info += ""+value.name+""+",";
+                dept_inp += ""+value.id+""+",";
+                idList_dept.push(value.id);
+
+            })
+            /*  console.log(idList_dept) */
+            $(obj1).parent().parent().find("#aljoin-assigneeDepartment").text(dept_info.substr(0,dept_info.length-1));
+            $(obj1).parent().parent().find("#aljoin-assigneeDepartment_inp").val(dept_inp.substr(0,dept_inp.length-1));
+            //重新copy
+            overCopy();
+            return false;
+        });
+        //岗位下拉框部门搜索条件
+        pform.on('select(dept_id)', function(data) {
+            $("#deptId").val(data.value);
+            tool.selectLinkTagByPid("dept_id","post_list",data)
+        });
+        //受理人下拉框部门搜索条件
+        pform.on('select(user_id)', function(data) {
+            $("#userId").val(data.value);
+            tool.selectLinkTagByPid("user_id","user_list",data)
+        });
+        //候选用户下拉框部门搜索条件
+        pform.on('select(tax_id)', function(data) {
+            $("#taxId").val(data.value);
+            tool.selectLinkTagByPid("tax_id","tax_list",data)
+        });
+    })
+    //岗位数据回填
+    var post_info_arr = [];
+    var post_inp_arr  = [];
+    function post(id,name,post_obj){
+        if($(obj1).parent().parent().find("#aljoin-assigneePosition").text() != ""){
+            post_info_arr = $(obj1).parent().parent().find("#aljoin-assigneePosition").text().split(",");
+        }
+        if($(obj1).parent().parent().find("#aljoin-assigneePosition_inp").val() != ""){
+            post_inp_arr = $(obj1).parent().parent().find("#aljoin-assigneePosition_inp").val().split(",");
+        }
+
+        post_info_arr.push(name);
+        post_inp_arr.push(id);
+
+        $(obj1).parent().parent().find("#aljoin-assigneePosition").text(post_info_arr.join(","));
+        $(obj1).parent().parent().find("#aljoin-assigneePosition_inp").val(post_inp_arr.join(","));
+        overCopy();
+        loadData5();
+    }
+    function post_c(id,name){
+        if($(obj1).parent().parent().find("#aljoin-assigneePosition").text() != ""){
+            post_info_arr = $(obj1).parent().parent().find("#aljoin-assigneePosition").text().split(",");
+        }
+        if($(obj1).parent().parent().find("#aljoin-assigneePosition_inp").val() != ""){
+            post_inp_arr = $(obj1).parent().parent().find("#aljoin-assigneePosition_inp").val().split(",");
+        }
+        var delIndex = $.inArray(id,post_inp_arr);
+        post_inp_arr.splice(delIndex,1);
+        post_info_arr.splice(delIndex,1);
+
+        $(obj1).parent().parent().find("#aljoin-assigneePosition").text(post_info_arr.join(","));
+        $(obj1).parent().parent().find("#aljoin-assigneePosition_inp").val(post_inp_arr.join(","));
+        overCopy();
+        loadData5();
+    }
+    //受理人数据回填
+    var tax_info_arr = [];
+    var tax_inp_arr  = [];
+    function tax(id,name){
+        /* if(tax_info_arr==null||tax_info_arr.length==0){ */
+        tax_info_arr = [];
+        tax_inp_arr  = [];
+        tax_info_arr.push(name);
+        tax_inp_arr.push(id);
+
+        $(obj1).parent().parent().find("#aljoin-assignee").text(tax_info_arr.join(","));
+        $(obj1).parent().parent().find("#aljoin-assignee_inp").val(tax_inp_arr.join(","));
+        overCopy();
+        loadData1();
+        /* 	}else{
+               tool.error("只能添加一个受理人")
+           }   */
+    }
+    function tax_c(id,name){
+        var delIndex = $.inArray(id,tax_inp_arr);
+        tax_inp_arr.splice(delIndex,1);
+        tax_info_arr.splice(delIndex,1);
+
+        $(obj1).parent().parent().find("#aljoin-assignee").text(tax_info_arr.join(","));
+        $(obj1).parent().parent().find("#aljoin-assignee_inp").val(tax_inp_arr.join(","));
+        overCopy();
+        loadData1();
+    }
+    //候选用户数据回填
+    var user_info_arr = [];
+    var user_inp_arr = [];
+    function user(id,name){
+        if($(obj1).parent().parent().find("#aljoin-candidateUsers").text() != ""){
+            user_info_arr = $(obj1).parent().parent().find("#aljoin-candidateUsers").text().split(",");
+        }
+        if($(obj1).parent().parent().find("#aljoin-candidateUsers_inp").val() != ""){
+            user_inp_arr = $(obj1).parent().parent().find("#aljoin-candidateUsers_inp").val().split(",");
+        }
+        user_info_arr.push(name);
+        user_inp_arr.push(id);
+
+        $(obj1).parent().parent().find("#aljoin-candidateUsers").text(user_info_arr.join(","));
+        $(obj1).parent().parent().find("#aljoin-candidateUsers_inp").val(user_inp_arr.join(","));
+        overCopy();
+        loadData2();
+    }
+    function user_c(id,name){
+        if($(obj1).parent().parent().find("#aljoin-candidateUsers").text() != ""){
+            user_info_arr = $(obj1).parent().parent().find("#aljoin-candidateUsers").text().split(",");
+        }
+        if($(obj1).parent().parent().find("#aljoin-candidateUsers_inp").val() != ""){
+            user_inp_arr = $(obj1).parent().parent().find("#aljoin-candidateUsers_inp").val().split(",");
+        }
+        var delIndex = $.inArray(id,user_inp_arr);
+        user_inp_arr.splice(delIndex,1);
+        user_info_arr.splice(delIndex,1);
+
+        $(obj1).parent().parent().find("#aljoin-candidateUsers").text(user_info_arr.join(","));
+        $(obj1).parent().parent().find("#aljoin-candidateUsers_inp").val(user_inp_arr.join(","));
+        overCopy();
+        loadData2();
+    }
+
+    //候选组（角色）数据回填
+    var role_info_arr = [];
+    var role_inp_arr = [];
+    function role(id,name,obj){
+        if($(obj1).parent().parent().find("#aljoin-candidateGroups").text() != ""){
+            role_info_arr = $(obj1).parent().parent().find("#aljoin-candidateGroups").text().split(",");
+        }
+        if($(obj1).parent().parent().find("#aljoin-candidateGroups_inp").val() != ""){
+            role_inp_arr = $(obj1).parent().parent().find("#aljoin-candidateGroups_inp").val().split(",");
+        }
+        role_info_arr.push(name);
+        role_inp_arr.push(id);
+        $(obj1).parent().parent().find("#aljoin-candidateGroups").text(role_info_arr.join(","));
+        $(obj1).parent().parent().find("#aljoin-candidateGroups_inp").val(role_inp_arr.join(","));
+        overCopy();
+        loadData3();
+    }
+    function role_c(id,name,obj2){
+        if($(obj1).parent().parent().find("#aljoin-candidateGroups").text() != ""){
+            role_info_arr = $(obj1).parent().parent().find("#aljoin-candidateGroups").text().split(",");
+        }
+        if($(obj1).parent().parent().find("#aljoin-candidateGroups_inp").val() != ""){
+            role_inp_arr = $(obj1).parent().parent().find("#aljoin-candidateGroups_inp").val().split(",");
+        }
+        var delIndex = $.inArray(id,user_inp_arr);
+        role_inp_arr.splice(delIndex,1);
+        role_info_arr.splice(delIndex,1);
+
+        $(obj1).parent().parent().find("#aljoin-candidateGroups").text(role_info_arr.join(","));
+        $(obj1).parent().parent().find("#aljoin-candidateGroups_inp").val(role_inp_arr.join(","));
+        overCopy();
+        loadData3();
+    }
+
+    //弹窗受理人
+    function loadData1() {
+        var param = new Object();
+        param.container = "paging1";
+        param.pageSize = 10;
+        param.pageNum = 1;
+        param.isActive = 1;
+        param.userName = $("#searchKey1").val();
+        param.deptId = $("#taxId").val();
+        var a = $(obj1).parent().parent().parent().attr("id");
+        var b = a.substring(0,a.length - 2);
+        var c = $("#"+b+"").find('#aljoin-assignee_inp').val();
+        param.idList = c;
+        param.url = "/pub/public/userList";
+        /* 	console.log(param) */
+        tool.loadpage(param);
+    }
+    //弹窗候选用户
+    function loadData2() {
+        var param = new Object();
+        param.container = "paging2";
+        param.pageSize = 10;
+        param.pageNum = 1;
+        param.isActive = 1;
+        param.userName = $("#searchKey2").val();
+        param.deptId = $("#userId").val();
+        var a = $(obj1).parent().parent().parent().attr("id");
+        var b = a.substring(0,a.length - 2);
+        var c = $("#"+b+"").find('#aljoin-candidateUsers_inp').val();
+        param.idList = c;
+        param.url = "/pub/public/userList";
+        /* console.log(param) */
+        tool.loadpage(param);
+    }
+    //弹窗候选组(角色)
+    function loadData3() {
+        var param = new Object();
+        param.container = "paging3";
+        param.pageSize = 10;
+        param.pageNum = 1;
+        param.isActive = 1;
+        param.roleName = $("#searchKey3").val();
+        var a = $(obj1).parent().parent().parent().attr("id");
+        var b = a.substring(0,a.length - 2);
+        var c = $("#"+b+"").find('#aljoin-candidateGroups_inp').val();
+        param.idList = c;
+        param.url = "/pub/public/roleList";
+        /* console.log(param.idList) */
+        tool.loadpage(param);
+    }
+    //弹窗候选岗位
+    function loadData5() {
+        var param = new Object();
+        param.container = "paging5";
+        param.pageSize = 10;
+        param.pageNum = 1;
+        param.isActive = 1;
+        param.positionName = $("#searchKey5").val();
+        param.deptId = $("#deptId").val();
+        var a = $(obj1).parent().parent().parent().attr("id");
+        var b = a.substring(0,a.length - 2);
+        var c = $("#"+b+"").find('#aljoin-assigneePosition_inp').val();
+        param.idList = c;
+        param.url = "/pub/public/positionList";
+        /* console.log(param)  */
+        tool.loadpage(param);
+    }
+    //部门
+    function dep() {
+        var param = new Object();
+        param._csrf = $("#_csrf").val();
+        param.isActive = 1;
+        var a = $(obj1).parent().parent().parent().attr("id");
+        var b = a.substring(0,a.length - 2);
+        var c = $("#"+b+"").find('#aljoin-assigneeDepartment_inp').val();
+        param.idList =  c;
+        tool.post("/pub/public/deptList", param, postCallBack_newtree);
+    }
+    function postCallBack_newtree(data) {
+        var setting = {
+            data : {
+                simpleData : {
+                    enable : true,
+                }
+            },
+            check: {
+                enable: true,
+            }
+
+        };
+        setting.check.chkboxType = { "Y" : "s", "N" : "s" };
+        var obj = [];
+        for (var i = 0; i < data.length; i++) {
+            obj.push({
+                id : data[i].autDepartment.id,
+                pId : data[i].autDepartment.parentId,
+                name : data[i].autDepartment.deptName,
+                obj : {
+                    deptCode : data[i].autDepartment.deptCode,
+                    deptLevel : data[i].autDepartment.deptLevel,
+                    isActive : data[i].autDepartment.isActive,
+                    parentId : data[i].autDepartment.parentId,
+                    parentCode : data[i].autDepartment.parentCode,
+                    isCheck : data[i].isCheck
+                }
+            })
+        }
+        $.fn.zTree.init($("#treeDemo"), setting, obj);
+
+        var  treeObj= $.fn.zTree.getZTreeObj("treeDemo");
+        var nodes = treeObj.getNodes();
+        var nodesall = treeObj.transformToArray(nodes);
+
+        for(var i=0;i<nodesall.length;i++){
+            /* 	console.log(nodesall[i].obj.isCheck) */
+            if(nodesall[i].obj.isCheck==1){
+                nodesall[i].checked=true;
+                treeObj.updateNode(nodesall[i])
+                treeObj.expandNode(nodesall[i],true);//指定选中ID节点展
+            }
+        }
+    }
+    //弹窗
+    var obj1;
+    function selectAssignee(thisObj,flag){
+        obj1 = thisObj;
+        post_info_arr = [];
+        post_inp_arr  = [];
+        /*     tax_info_arr  = [];
+            tax_inp_arr   = []; */
+        user_info_arr = [];
+        user_inp_arr  = [];
+        role_info_arr = [];
+        role_inp_arr  = [];
+        /* alert(flag);  */
+        if(flag == 1){
+            //受理人
+            loadData1();
+            var index = layer.open({
+                title : '受理人',
+                maxmin : false,
+                type : 1,
+                content : $('#tax_list')
+            });
+            layer.full(index);
+        }else if(flag == 2){
+            //候选用户
+            loadData2();
+            var index = layer.open({
+                title : '候选用户',
+                maxmin : false,
+                type : 1,
+                content : $('#user_list')
+            });
+            layer.full(index);
+        }else if(flag == 3){
+            //候选组(角色)
+            loadData3();
+            var index = layer.open({
+                title : '候选组',
+                maxmin : false,
+                type : 1,
+                content : $('#role_list')
+            });
+            layer.full(index);
+        }else if(flag == 4){
+            //候选部门
+            dep();
+            var index = layer.open({
+                title : '部门',
+                maxmin : false,
+                type : 1,
+                content : $('#tree_one')
+            });
+            layer.full(index);
+        }else if(flag == 5){
+            //候选岗位
+            loadData5();
+            var index = layer.open({
+                title : '岗位',
+                maxmin : false,
+                type : 1,
+                content : $('#post_list'),
+                /* 		cancel: function(){
+                            post_info_arr = [];
+                            post_inp_arr  = [];
+                        } */
+            });
+
+            layer.full(index);
+        }
+    }
+    //删除备份数据(表单和权限信息的备份div),在index.js中调用
+    function deleteBackupData(elementId,elementType){
+        $("#custom-jbpm-form_"+elementId).remove();
+        $("#custom-jbpm-detail-assignee_"+elementId).remove();
+    }
+    //设置全局表单全新
+    var elementId1;
+    var edit,show,nuls,commen,redhead,savemark,addsign;
+    function setGlobalFormAuth(elementId){
+        elementId1 =elementId;
+        edit = $("#custom-jbpm-detail-assignee_"+elementId1).find("#aljoin-task-editWidgetIds").val();
+        show = $("#custom-jbpm-detail-assignee_"+elementId1).find("#aljoin-task-showWidgetIds").val();
+        nuls = $("#custom-jbpm-detail-assignee_"+elementId1).find("#aljoin-task-notNullWidgetIds").val();
+        commen = $("#custom-jbpm-detail-assignee_"+elementId1).find("#aljoin-task-commentWidgetIds").val();
+        redhead = $("#custom-jbpm-detail-assignee_"+elementId1).find("#aljoin-task-redHeadWidgetIds").val();
+        savemark = $("#custom-jbpm-detail-assignee_"+elementId1).find("#aljoin-task-saveMarkWidgetIds").val();
+        addsign = $("#custom-jbpm-detail-assignee_"+elementId1).find("#aljoin-task-addSignWidgetIds").val();
+
+        var id = $(".process_backup_div").find("div[id^=custom-jbpm-form_StartEvent_]").find(".aljoin-form-id").val();
+        if(id==""){
+            layer.confirm("请选择全局表单");
+            return false;
+        }else{
+            var index = layer.open({
+                title : '全局表单授权',
+                maxmin : false,
+                type : 2,
+                content : '../modeler/showForm?id='+id,
+            });
+            layer.full(index);
+        }
+    }
+
+    //回填可显示隐藏域
+    function setCheckWidgets(checkIdsArr1,checkIdsArr2,checkIdsArr3,checkIdsArr4,checkIdsArr5,checkIdsArr6,checkIdsArr7){
+        $("#custom-jbpm-detail-assignee_"+elementId1).find("#aljoin-task-editWidgetIds").val(checkIdsArr2);
+        $("#custom-jbpm-detail-assignee_"+elementId1).find("#aljoin-task-showWidgetIds").val(checkIdsArr1);
+        $("#custom-jbpm-detail-assignee_"+elementId1).find("#aljoin-task-notNullWidgetIds").val(checkIdsArr3);
+        $("#custom-jbpm-detail-assignee_"+elementId1).find("#aljoin-task-commentWidgetIds").val(checkIdsArr4);
+        $("#custom-jbpm-detail-assignee_"+elementId1).find("#aljoin-task-redHeadWidgetIds").val(checkIdsArr5);
+        $("#custom-jbpm-detail-assignee_"+elementId1).find("#aljoin-task-saveMarkWidgetIds").val(checkIdsArr6);
+        $("#custom-jbpm-detail-assignee_"+elementId1).find("#aljoin-task-addSignWidgetIds").val(checkIdsArr7);
+    }
+    function openFormPropDiv(thisObj){
+    	console.log(thisObj)
+    	var index=layer.open({
+    		title:'条件设置',
+    		maxmin:false,
+    		type:1,
+    		content: $('#open_form_div')
+    	})
+    	layer.full(index) 
+    }
+    
+
+    /* function openFormPropDiv(thisObj){
+        var id = $(".process_backup_div").find("div[id^=custom-jbpm-form_StartEvent_]").find(".aljoin-form-id").val();
+        if(id==""){
+            layer.confirm("请选择全局表单");
+            return false;
+        }else{
+            var index = layer.open({
+                title : '全局表单属性',
+                maxmin : false,
+                type : 1,
+                content : $('#open_form_div')
+            });
+            layer.full(index);
+            var param = new Object();
+            param.id = id;
+            param._csrf = $("#_csrf").val();
+            tool.post("../modeler/getFormWidget", param, function(formObj) {
+                var obj = new Object();
+                obj.records = formObj;
+                document.getElementById("open_form_div_script_data").innerHTML = template("open_form_div_script",obj);
+            }, false);
+        }
+
+    } */
+
+    function openCompletedConditionDiv(thisObj){
+        var index = layer.open({
+            title : '完成条件配置说明',
+            maxmin : false,
+            type : 1,
+            content : $('#openCompletedConditionDiv_div'),
+            area: ['700px', '430px']
+        });
+        //layer.full(index);
+    }
+    //设置到全局变量中，因为如果焦点灭有移除无法获取到这些信息
+    function setMyData2Hide(){
+        //流程ID
+        var processId = $("div[data-tab='general']").find("#camunda-id")
+            .val();
+        processId_hide_ = processId;
+
+        //流程名称
+        var processName = $("div[data-tab='general']")
+            .find("#camunda-name").text();
+        processName_hide_ = processName;
+
+        //流程分类
+        var processCategory = "";
+        $("#custom-jbpm-prop_1 .aljoin-process-category").each(function() {
+            if($(this).val() != ""){
+                processCategory = processCategory + $(this).val() + "-";
+            }
+        });
+        processCategory_hide_ = processCategory;
+
+        //流程描述
+        var process_desc = $("#process_desc").val();
+        process_desc_hide_ = process_desc;
+
+        //是否固定表单（固定流程）
+        var aljoin_process_isfixed = $("#aljoin-process-isfixed").val();
+        aljoin_process_isfixed_hide_ = aljoin_process_isfixed;
+
+        //是否自由流程
+        var aljoin_process_isfree = $("#aljoin-process-isfree").val();
+        aljoin_process_isfree_hide_ = aljoin_process_isfree;
+    }
+
+    //用按钮查询节点
+    /*  function searchNodes(){
+         var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+         var keywords=$("#peopelSel").val();
+         var nodes = treeObj.getNodesByParamFuzzy("name", keywords, null);
+         if (nodes.length>0) {
+             treeObj.selectNode(nodes[0]);
+         }
+     } */
+
+    //重置树
+    function reset_tree(){
+        var mytree = $.fn.zTree.getZTreeObj("treeDemo");
+        //打开弹窗前重置节点以及关闭展开状态，避免叠加
+        $('.reset').val("");
+        $("#number").html("");
+        mytree.checkAllNodes(false)
+        mytree.expandAll(false);
+    }
+    function setObjRange(thisObj){
+        if($(thisObj).is(':checked')){
+            $(thisObj).attr("checked","checked");
+        }else{
+            $(thisObj).removeAttr("checked");
+        }
+        var nowid = $(thisObj).parent().parent().parent().attr("id");
+        var oldid = nowid.substring(0,nowid.length-2);
+        $("#"+oldid).empty();
+        $("#"+oldid).append($("#"+nowid).html());
+    }
+</script>
+<div class="process_backup_div"></div>
+</body>
+</html>

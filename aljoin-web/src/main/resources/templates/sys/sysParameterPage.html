@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>系统参数</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" />
+</head> 
+<body>
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main" style="margin: 10px;">
+		<blockquote class="layui-elem-quote" style="padding: 5px;">
+			<form class="layui-form" action="">
+				<div class="r">
+					<div class="layui-input-inline">
+						<input type="text" name="searchKey" id="searchKey" placeholder="请输入参数key或描述" autocomplete="off" class="layui-input"
+							style="height: 30px; line-height: 30px;" maxlength="20">
+					</div>
+					<span><@a code="010201" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData()" iclass="layui-icon"
+						icon="&#xe615;" text="搜索"/></span>
+				</div>
+				<div>
+					<span><@a code="010202" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="openAddWin()" iclass="layui-icon"
+						icon="&#xe608;" text="新增"/></span>
+				</div>
+			</form>
+		</blockquote>
+		<div class="layui-field-box layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table admin-table">
+				<thead>
+					<tr>
+						<th style="width: 20px;"><input type="checkbox" lay-skin="primary" lay-filter="paging_check-all"></th>
+						<th>参数key</th>
+						<th>参数value</th>
+						<th>参数描述</th>
+						<th style="width: 80px;">是否激活</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td><input type="checkbox" lay-skin="primary" class="check-id" id="{{value.id}}"></td>
+							<td>{{value.paramKey}}</td>
+							<td>{{value.paramValue}}</td>
+							<td>{{value.paramDesc}}</td>
+							<td>{{if value.isActive == 1}}<font color="green">激活</font>{{/if}}{{if value.isActive == 0}}<font color="red">冻结</font>{{/if}}</td>
+							<td>
+								<@a code="010203" href="javascript:void(0)" class="table_btn  table_link" id="show-edit" onclick="showEdit('{{value.id}}')" text="编辑"/>
+								<@a code="010204" href="javascript:void(0)" class="table_btn  table_link" id="show-view" onclick="showView('{{value.id}}')" text="详情"/>
+								<!--
+								<@a code="" href="javascript:void(0)" class="layui-btn layui-btn-normal layui-btn-mini" id="show-active" onclick="showActive()" text="激活"/>
+								<@a code="" href="javascript:void(0)" class="layui-btn layui-btn-normal layui-btn-mini" id="show-disactive" onclick="showActive()" text="冻结"/>
+								-->
+								<@a code="010205" href="javascript:void(0)" class="table_btn  table_link" id="show-delete" onclick="showDelete('{{value.id}}')" text="删除"/>
+							</td>
+						</tr>
+					{{/each}}
+					</script>
+				</tbody>
+			</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+	<!-- 新增对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 10px; z-index: 19940200;" id="win-add-object">
+		<form class="layui-form layui-form-pane" id="add-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">参数key</label>
+				<div class="layui-input-block">
+					<input type="text" name="paramKey" id="paramKey" lay-verify="required" autocomplete="off" placeholder="参数key" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">参数value</label>
+				<div class="layui-input-block">
+					<input type="text" name="paramValue" id="paramValue" lay-verify="required" autocomplete="off" placeholder="参数value" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">参数描述</label>
+				<div class="layui-input-block">
+					<input type="text" name="paramDesc" id="paramDesc" lay-verify="required" autocomplete="off" placeholder="参数描述" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<@select dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive" class="layui-input-block" def=""/>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+
+		</form>
+	</div>
+	<!-- 编辑对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 10px;" id="win-update-object">
+		<form class="layui-form layui-form-pane" id="update-object-form">
+			<input type="hidden" name="id" id="id">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">参数key</label>
+				<div class="layui-input-block">
+					<input type="text" name="paramKey" id="paramKey" lay-verify="required" autocomplete="off" placeholder="参数key" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">参数value</label>
+				<div class="layui-input-block">
+					<input type="text" name="paramValue" id="paramValue" lay-verify="required" autocomplete="off" placeholder="参数value" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">参数描述</label>
+				<div class="layui-input-block">
+					<input type="text" name="paramDesc" id="paramDesc" lay-verify="required" autocomplete="off" placeholder="参数描述" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<@select dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive" class="layui-input-block" def=""/>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-update-submit">
+						<i class="fa fa-save"></i> 保存
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 详情对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 10px;" id="win-view-object">
+		<form class="layui-form layui-form-pane" id="view-object-form">
+			<input type="hidden" name="id" id="id">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">参数key</label>
+				<div class="layui-input-block">
+					<input type="text" name="paramKey" id="paramKey" lay-verify="required" autocomplete="off" placeholder="参数key" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">参数value</label>
+				<div class="layui-input-block">
+					<input type="text" name="paramValue" id="paramValue" lay-verify="required" autocomplete="off" placeholder="参数value" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">参数描述</label>
+				<div class="layui-input-block">
+					<input type="text" name="paramDesc" id="paramDesc" lay-verify="required" autocomplete="off" placeholder="参数描述" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<@select dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive" class="layui-input-block" def=""/>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">版本号</label>
+				<div class="layui-input-block">
+					<input type="text" name="version" id="version" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">创建时间</label>
+				<div class="layui-input-block">
+					<input type="text" name="createTime" id="createTime" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">创建者</label>
+				<div class="layui-input-block">
+					<input type="text" name="createUserName" id="createUserName" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">修改时间</label>
+				<div class="layui-input-block">
+					<input type="text" name="lastUpdateTime" id="lastUpdateTime" lay-verify="required" autocomplete="off" placeholder="昵称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">修改者</label>
+				<div class="layui-input-block">
+					<input type="text" name="lastUpdateUserName" id="lastUpdateUserName" lay-verify="required" autocomplete="off" placeholder="昵称"
+						class="layui-input">
+				</div>
+			</div>
+			<div class="btn_fixed" >
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+			</div>
+		</form>
+	</div>
+	<script type="text/javascript" src="../../web/plugins/layui/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool.js"></script>
+	<script>
+		var pform;
+		//添加事件
+		layui.use('form', function() {
+			pform = layui.form();
+			pform.on('select(isActive)', function(data) {
+				//alert(data.value);
+				//form.render('checkbox');
+			});
+			//自定义表单校验
+			pform.verify();
+			//监听新增提交
+			pform.on('submit(form-add-submit)', function(data) {
+				tool.post("../sysParameter/add", $("#add-object-form").serialize(), postCallBack, false);
+				return false;
+			});
+			//监听新增提交
+			pform.on('submit(form-update-submit)', function(data) {
+				tool.post("../sysParameter/update", $("#update-object-form").serialize(), postCallBack_edit, false);
+				return false;
+			});
+			//初始化出发数据加载
+			loadData();
+		});
+		//加载数据
+		function loadData() {
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+			param.url = "../sysParameter/list";
+			param.paramKey = $("#searchKey").val();
+			tool.loadpage(param);
+		}
+		//获取勾选数据id
+		function getCheckItmes() {
+			$(".check-id:checked").each(function() {
+				//console.log($(this).attr("id"));
+				;
+			});
+		}
+		//打开新增对象窗口
+		function openAddWin() {
+			var index = layer.open({
+				title : '新增',
+				maxmin : false,
+				type : 1,
+				content : $('#win-add-object')
+			});
+			layer.full(index);
+		}
+		//新增对象回调
+		function postCallBack(retMsg) {
+			if (retMsg.code == 0) {
+				layer.alert(retMsg.message, {
+                    title : "操作提示",
+                    icon : 1,
+                    closeBtn:0
+                }, function(index) {
+                	$("button[type='reset']").trigger("click");
+    				loadData();
+    				layer.closeAll();
+                });
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+		//编辑分页保留在当前页回调
+		function postCallBack_edit(retMsg) {
+			if (retMsg.code == 0) {
+				layer.alert(retMsg.message, {
+                    title : "操作提示",
+                    icon : 1,
+                    closeBtn:0
+                }, function(index) {
+                	$("button[type='reset']").trigger("click");
+                	if($(".layui-laypage-btn").length>0){
+                		$(".layui-laypage-btn").trigger("click")
+                	}else{
+                		loadData();
+                	}
+    				layer.closeAll();
+                });
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+		//编辑对象
+		function showEdit(id) {
+			var object = tool.getById("../sysParameter/getById", id);
+			for ( var key in object) {
+				$("#update-object-form").find("#" + key).val(object[key]);
+			}
+			var index = layer.open({
+				title : '编辑',
+				maxmin : false,
+				type : 1,
+				content : $('#win-update-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		//详情对象
+		function showView(id) {
+			var object = tool.getById("../sysParameter/getById", id);
+			for ( var key in object) {
+				$("#view-object-form").find("#" + key).val(object[key]);
+			}
+			$('#view-object-form :input').attr("disabled", "disabled");
+			var index = layer.open({
+				title : '详情',
+				maxmin : false,
+				type : 1,
+				content : $('#win-view-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		//删除对象
+		function showDelete(id) {
+			layer.confirm('确定删除 ?', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				var retMsg = tool.deleteById("../sysParameter/delete", id)
+				if (retMsg.code == 0) {
+					if($(".layui-laypage-btn").length>0){
+                		$(".layui-laypage-btn").trigger("click")
+                	}else{
+                		loadData();
+                	}
+					tool.success(retMsg.message);
+				} else {
+					tool.error(retMsg.message);
+				}
+			});
+		}
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>常用意见</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+</head>
+<body> 
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main content_sel">
+		<blockquote class="layui-elem-quote" style="padding:5px;">
+			<form class="layui-form" action="">
+		 	    <div class="layui-input-inline">
+				  	<span><a class="layui-btn layui-btn-small" onclick="newOne()"><i class="layui-icon">&#xe608;</i>新增</a></span>
+				</div> 
+			</form>
+		</blockquote>
+		<div class="layui-form">
+		<table class="layui-table admin-table">
+			<thead>
+				<tr>
+					<!-- <th style="width: 20px;"><input type="checkbox" lay-skin="primary" lay-filter="paging_check-all"></th> -->
+					<th style="display: none;">用户ID</th>
+					<th>序号</th>
+					<th>排序</th>
+					<th>常用意见</th>
+					<th>创建人</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+		<tbody id="paging-data">
+		<script id="paging-script" type="text/html">
+			{{each records value index}}
+				<tr> 
+					<td style="display: none;">{{value.autUsefulOpinion.id}}</td>
+					<td>{{index+1}}</td>
+					<td>{{value.autUsefulOpinion.contentRank}}</td>
+					<td>{{value.autUsefulOpinion.content}}</td>
+					<td>{{value.autUser.fullName}}</td>
+					<td>
+						<@a code="000103" href="javascript:void(0)" class="table_btn" id="show-edit" onclick="postEdit('{{value.autUsefulOpinion.id}}')" text="编辑"/>
+						<@a code="000105" href="javascript:void(0)" class="table_btn" id="show-delete" onclick="showDelete('{{value.autUsefulOpinion.id}}',this)" text="删除"/>
+					</td>
+				</tr>
+			{{/each}}
+		</script>
+		</tbody>
+		</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+ 		</div>
+		  	
+	<!-- 新增 -->
+	<div class="admin-main" style="display: none; z-index: 19940200;" id="win-new-object">
+		<div id="win-newsms-object">
+			<form class="layui-form layui-form-pane" id="add-object-form">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<div class="layui-form-item layui-form-text">
+					<label class="layui-form-label">内容</label>
+					<div class="layui-input-block">
+						<textarea type="text" name="content" id="content" lay-verify="required|spactily" autocomplete="off" placeholder="内容" class="layui-textarea"></textarea>
+					</div>
+				</div>	
+				<div class="layui-form-item">
+					<label class="layui-form-label">排序</label>
+					<div class="layui-input-block">
+						<input type="text" name="contentRank" id="contentRank" lay-verify="required|spactily" autocomplete="off" placeholder="排序" class="layui-input">
+					</div>
+				</div>	
+				<div class="btn_fixed">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+					<div style="float: right;">
+						<button lay-submit="" class="layui-btn"  lay-filter="form-add-submit">
+							<li class="fa fa-save"></li> 保存
+						</button>
+						<button class="layui-btn layui-btn-primary" lay-filter="">
+							<i class="fa fa-eraser"></i> 取消
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	
+	<!-- 编辑 -->
+	<div class="admin-main" style="display: none; z-index: 19940200;" id="win-update-object">
+		<div id="win-newsms-object">
+			<form class="layui-form layui-form-pane" id="update-object-form">
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+				<div class="layui-form-item" style="display:none;">
+					<label class="layui-form-label">常见意见id</label>
+					<div class="layui-input-block">
+						<input type="text" name="id" id="id" lay-verify="required" autocomplete="off" placeholder="内容" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-form-item layui-form-text">
+					<label class="layui-form-label">内容</label>
+					<div class="layui-input-block">
+						<textarea type="text" name="content" id="content" lay-verify="required|spactily" autocomplete="off" placeholder="内容" class="layui-textarea"></textarea>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">排序</label>
+					<div class="layui-input-block">
+						<input type="text" name="contentRank" id="contentRank" lay-verify="required|spactily" autocomplete="off" placeholder="排序" class="layui-input">
+					</div>
+				</div>
+				<div class="btn_fixed">
+					<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+					<div style="float: right;">
+						<button lay-submit="" class="layui-btn"  lay-filter="form-update-submit">
+							<li class="fa fa-save"></li> 保存
+						</button>
+						<button class="layui-btn layui-btn-primary" lay-filter="">
+							<i class="fa fa-eraser"></i> 取消
+						</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script>
+		//定义layui
+		var pform;
+		layui.use(['form','element'], function() {
+			pform = layui.form;
+			loadData();
+		});
+		// 个人中心-常用意见-分页列表
+		function loadData(){
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+			param.url = "/per/autUsefulOpinion/list";
+			tool.loadpage(param);
+		}
+		
+		//新增
+		function newOne() {
+			var index = layer.open({
+				title : '新增',
+				maxmin : false,
+				type : 1,
+				content : $('#win-new-object')
+			});
+			pform.render();
+			layer.full(index);
+			pform.on('submit(form-add-submit)',function(data){
+				tool.post("/per/autUsefulOpinion/add",$("#add-object-form").serialize(data),postCallBack_add,false)
+				return false;
+			})
+		}
+		
+		function postCallBack_add(retMsg){
+			if (retMsg.code == 0) {
+				tool.success(retMsg.message);
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+		
+		function postCallBack_update(retMsg){
+			
+			if (retMsg.code == 0) {
+				tool.success(retMsg.message);
+				loadData();
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+		
+		function render(){
+	        layui.use('form', function() {
+	            loadData();
+	        })
+	    }
+		
+		//编辑岗位
+		function postEdit(id) {
+			var object = tool.getById("/per/autUsefulOpinion/getById", id);
+			//赋值
+			for ( var key in object) {
+				$("#update-object-form").find("#" + key).val(object[key]);
+			} 
+			
+			var index = layer.open({
+				title : '编辑',
+				maxmin : false,
+				type : 1,
+				content : $('#win-update-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		//编辑岗位-更新
+		layui.use(['form','element'], function() {
+			pform = layui.form;
+			pform.on('submit(form-update-submit)',function(data){
+				tool.post("/per/autUsefulOpinion/update",$("#update-object-form").serialize(),postCallBack_update,false)
+				return false;
+			})
+		});
+		
+		 //删除
+	    function showDelete(id){
+	        layer.confirm('确定删除 ?', {
+	            icon : 3,
+	            title : '提示'
+	        }, function() {
+	            tool.deleteById("/per/autUsefulOpinion/delete", id);
+	            layer.alert("删除成功", {
+	                title : "操作提示",
+	                icon : 1
+	            }, function(index) {
+	                layer.close(index);
+	                render()
+	            });
+	        })
+	    }
+		
+		
+	</script>
+</body>
+</html>

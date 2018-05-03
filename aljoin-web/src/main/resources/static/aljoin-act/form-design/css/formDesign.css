@@ -1,0 +1,549 @@
+/*小何创建  表单解析*/
+.form-top-container .btn-group > button,
+.form-top-container .btn.btn-default.btn-sm{
+	display: inline-block;
+    background-color: #009688;
+    color: #fff;
+    white-space: nowrap;
+    text-align: center;
+    border: none;
+    border-radius: 2px !important;
+    cursor: pointer;
+    opacity: .9;
+    margin:3px 6px;
+}
+.form-top-container .form_Attribute{
+	padding: 0 80px 0 10px;
+    height: 42px;
+    line-height: 42px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    color: #333;
+}
+/*行操作合计、平均*/
+.i_show_total_row,
+.i_coltotal_wrap{
+   width:100%;
+   height: 45px;
+   line-height: 45px;
+   clear:both;
+}
+.i_show_total_row p{
+	width:32%;
+	float: left;
+	border: solid 1px #ededed;
+	text-align: left;
+	box-sizing: border-box;
+	margin-right:1.3333%;
+	overflow: hidden;
+}
+.i_show_total_row p span{
+	line-height: 35px;
+	background: #ededed;
+	padding:12px 25px;
+	margin-right:10px;
+}
+
+/*列合计*/
+.i_coltotal_wrap p{
+   padding: 5px;
+   float:left;
+   text-align: left;
+   box-sizing: border-box;
+}
+.i_coltotal_wrap p span{
+  width:100%;
+  display: block;
+  line-height:20px;
+  padding-left:5px;
+  box-sizing: border-box;
+}
+/*标签解析*/
+.i_show_aljoin_label_p{
+  width:100%;
+  text-align:left;
+  height:auto;
+}
+
+/* 
+* 
+*
+* 版式修改开始   创建时间2017-11-03 
+* 
+* 
+*/
+
+/* 兼容  placeholder 样式*/
+input::-webkit-input-placeholder, 
+textarea::-webkit-input-placeholder { 
+     color: #cccccc!important;
+     text-align: right;
+} 
+input:-moz-placeholder, 
+textarea:-moz-placeholder { 
+     color: #cccccc !important;
+     text-align: right;
+} 
+input::-moz-placeholder,
+textarea::-moz-placeholder { 
+     color: #cccccc !important;
+     text-align: right;
+} 
+input:-ms-input-placeholder, 
+textarea:-ms-input-placeholder { 
+     color: #cccccc !important;
+     text-align: right;
+} 
+/*兼容火狐样式*/
+@-moz-document url-prefix() { 
+	.widget-left .widget-region div button { 
+	    width: 132px !important;
+      } 
+}
+
+/* 滚动条样式*/
+.scrollbar::-webkit-scrollbar{
+    width: 3px;
+    height: 16px;
+    background-color: #f2f2f2;
+}
+.scrollbar::-webkit-scrollbar-track{
+	display:none
+}
+.scrollbar::-ms-scrollbar{
+    width: 3px;
+    height: 16px;
+    background-color: #f2f2f2;
+}
+.scrollbar::-ms-scrollbar-track{
+	display:none
+}
+
+*{
+  margin: 0px;
+  padding: 0px;
+  font-size: 14px;
+  color:#333333;
+}
+html,
+body,
+.form-top-container{
+	height:100%;
+    overflow: hidden;
+}
+.form-top-container{
+	padding-bottom:40px;
+}
+.operation_top{
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  color: #fff;
+  background-color: #339bf1;
+  padding: 0px 40px;
+  box-sizing: border-box;
+}
+.operation_top p{
+  font-size: 20px;
+  color:#ffffff;
+}
+.form-group.subm-absolute{
+  position: absolute;
+  top: 0px;
+  right: 40px;
+}
+.subm-absolute button{
+  width: 68px;
+  height: 28px;
+  line-height:28px;
+  padding:0px;
+  background-color: #ffffff;
+  border: solid 1px rgba(34,128,205,0.5);
+  margin-top: 11px;
+  color: #339bf1;
+  font-size: 14px;
+}
+
+/*
+*控件布局 --左中右
+*/
+.widget-layout-wrap{
+	width:100%;
+	height: 100%;
+	overflow:auto;
+	background-color:#e6edf5;
+	position:relative;
+}
+.widget-layout-wrap:after{
+	content:"";
+}
+.widget-layout-wrap .main-center{
+	width:100%;
+	height: 100%;
+	padding:0px 320px;
+	box-sizing:border-box;
+}
+.widget-layout-wrap .widget-left,
+.widget-layout-wrap .attribute-right{
+	width:310px;
+	height: 100%;
+	padding-bottom: 10px;
+	overflow: auto;
+	box-sizing:border-box;
+	border-style:solid;
+	border-color:#c9d3d5;
+	background-color:#ffffff;
+	border-width:0px;
+	position:absolute;
+	top:0px;
+}
+.widget-layout-wrap .widget-left{
+	border-right-width:1px;
+	left:0px;
+}
+.widget-layout-wrap .attribute-right{
+	border-left-width:1px; 
+	right:0px;
+}
+.widget-layout-wrap .title-type-widget{
+	width:100%;
+	height:50px;
+	line-height:50px;
+	font-size:18px;
+	text-align:center;
+	margin-bottom:0px;
+	background-color:#f2f2f2;
+	border-bottom:solid #c9d3d5 1px; 
+}
+/* 
+*控件按钮--左边
+*/
+.widget-left .widget-region{
+	width:100%;
+	height:auto;
+	display:inline-block;
+	margin-bottom:10px;
+	padding-bottom:10px;
+}
+.widget-left .widget-region.hidden-height{
+	border-top:solid 10px #e6edf5;
+}
+.widget-region .title-type-widget.puls{
+	cursor:pointer;
+	background-color:#ffffff;
+	font-size:16px;
+	text-align:left;
+	padding:0px 10px;
+}
+.widget-region .title-type-widget.puls i{
+	left: 70%;
+}
+.widget-left .widget-region div button{
+	width:139px;
+	height:42px;
+	float:left;
+	text-align:left;
+	background-color:#f2f2f2;
+	margin:10px 9px 0px;
+	padding:0px 15px;
+	border:dashed #d9d9d9 1px;
+	box-sizing:border-box;
+    position: relative;
+}
+.widget-left .widget-region div button:nth-child(even){
+	margin-left:0px;
+}
+.widget-left .widget-region div button i{
+	position: absolute;
+	right:15px;
+	top:8px;
+}
+/* 
+*表单--中间
+*/
+
+.main-center .container-fluid{
+	height:100%;
+	overflow: auto;
+	background-color:#ffffff;
+	border:solid #c9d3d5 1px;
+}
+.main-center .form-content-style{
+	width:100%;
+	height:100%;
+}
+.form-content-style .title-type-widget.form-name{
+	text-align:left;
+	float:left;
+}
+.form-content-style .title-type-widget.form-name:before{
+    content: "";
+    width: 5px;
+    height: 40px;
+    float: left;
+    display: block;
+    margin-top: 5px;
+    margin-right: 10px;
+    background-color: #339bf1;
+}
+.x-ruler{
+	line-height:32px;
+	margin:0px;
+	margin-bottom:30px;
+	border-bottom:solid #c9d3d5 1px;
+}
+.x-ruler div{
+	border-left:solid #c9d3d5 1px;
+}
+.x-ruler div:first-child{
+	border-left-width:0px;
+}
+.grid-stack-item-content:hover{
+	background-color: #f2f2f2;
+}
+.delete_widget_{
+	display:none;
+}
+.grid-stack-item-content:hover .delete_widget_{
+	display:block;
+}
+/* 控件样式 */
+input.label-style{
+	height:32px;
+	line-height:32px;
+	border-radius:0px;
+	border-color:#e6e6e6;
+	background-color:#f2f2f2;
+	text-align:right;
+}
+input.text-style{
+	height:32px;
+	line-height:32px;
+	border-radius:0px;
+	border-color:#e6e6e6;	
+}
+textarea.area-text-style{
+	max-height:114px;
+}
+span.date-span-style{
+	background:none;	
+	border-color:#e6e6e6;
+}
+span.date-span-style span{
+    color:#cccccc;
+}
+/* 控件属性样式 */
+.child-input-border tr {
+	height:40px;
+}
+.child-input-border tr td:first-child input{
+	width:15px;
+	height:15px;
+	margin-right:5px;
+	border:solid #ccc 1px;
+}
+.child-input-border a.on-color{
+	color:#74777b;
+	font-size:18px;
+}
+.child-input-border a.on-color:hover{
+	text-decoration: none;
+}
+
+
+
+/* 
+*控件设置--右边
+*/
+.title-type-widget.widget-set span{
+	width:50%;
+	float:left;
+	font-size:18px;
+	box-sizing:border-box;
+	display:block;
+	cursor:pointer;
+}
+.title-type-widget.widget-set span:last-child{
+   	color: #339bf1;
+}
+.title-type-widget.widget-set span.on:after{
+    content: "";
+    width: 1px;
+    height: 30px;
+    float: right;
+    display: block;
+    margin-top: 10px;
+    margin-right: 10px;
+    background-color: #e5e5e5;
+}
+.form-widget-Rtwrap{
+	width:100%;
+	height:auto;
+}
+.form-widget-Rtwrap .fm-wt-public{
+	width:100%;
+	display:none;
+	box-sizing:border-box;
+	padding:15px 20px;	
+	padding-bottom:0px;
+}
+
+/*控件设置*/
+.form-widget-Rtwrap .widget-main{
+}
+.form-widget-Rtwrap .widget-main .form-group,
+.form-widget-Rtwrap .widget-main input,
+.form-widget-Rtwrap .form-main .form-group,
+.form-widget-Rtwrap .form-main input{
+	width:100%;
+}
+.form-widget-Rtwrap .form-group select{
+	width:135px;
+}
+.form-widget-Rtwrap .form-group{
+	margin-top:15px;
+}
+.form-widget-Rtwrap .widget-main label{
+	width:100%;
+}
+.form-widget-Rtwrap .widget-main input,
+.form-widget-Rtwrap .form-main input{
+	height:32px;
+	line-height:32px;
+	border-radius:3px;
+}
+.form-widget-Rtwrap .widget-main input.rmcss{
+	width:auto;
+	height:auto;
+	line-height:initial;
+}
+.datazd-common-dict{
+	width:250px;
+	height:300px;
+	background: red;
+	position: absolute;
+	top: 15px;
+	left: 0px;
+	z-index: 9999;
+}
+/* 弹窗样式 */
+.popup-gy-style{
+    width: 700px;
+    height: 465px;
+    background-color: #fff;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-left: -350px;
+    margin-top: -250px;
+    z-index: 9999;
+    border: solid 1px #dedede;
+}
+.popup-gy-style .popup-head{
+	height: 35px;
+    line-height: 35px;
+    padding: 0px 15px;
+    background-color: #dedede;
+}
+.popup-gy-style .popup-head span:last-child{
+	float:right;
+	font-size:18px;
+	cursor: pointer;
+}
+.popup-gy-style .popup-center{
+	height: 350px;
+	padding: 25px 300px;
+    position: relative;
+}
+.popup-gy-style .popup-center .butt{
+	margin-top: 100px;
+}
+.popup-gy-style .popup-center .butt p{
+	width:100%;
+	margin-bottom:15px;
+}
+
+.popup-gy-style .popup-center .edit-che-gy{
+	width: 270px;
+	height: 300px;
+	padding:2px;
+	position: absolute;
+	top: 15px;
+    border: solid 1px #dedede;
+    overflow: auto;
+}
+.popup-gy-style .popup-center .edit-che-lt{
+    left: 15px;
+}
+.popup-gy-style .popup-center .edit-che-rt{
+    right: 15px;
+}
+.popup-gy-style .popup-center .edit-che-gy p{
+	width: 100%;
+	height: 30px;
+    line-height: 20px;
+    padding:5px;
+    overflow: hidden;
+    cursor: pointer;
+    box-sizing: border-box;
+    margin:0px;
+}
+.popup-gy-style .popup-center .edit-che-gy p:hover,
+.edit-che-gy p.on{
+	background-color: #199ed8;
+    color: #fff;
+}
+/* 弹窗样式--公文文号 */
+.popup-gy-style.writing-main{
+	width: 344px;
+	margin-left:-172px;
+}
+.popup-gy-style.writing-main .edit-che-gy{ 
+	width: 310px;
+    height: 345px
+}
+/* 弹窗样式--多选编辑框 */
+.popup-gy-style.heightUp{
+	height:500px;
+}
+/*表单设置*/
+.form-widget-Rtwrap .form-main{
+	display: block;
+}
+
+.form-widget-Rtwrap .form-main .layui-input-inline{
+	width:100%;
+	margin: 5px 0px;
+}
+.form-main .layui-input-inline span{
+	line-height:32px;
+}
+.form-main .layui-unselect.layui-form-select{
+	width:200px;
+	float:right;
+}
+.form-main .layui-unselect.layui-form-select .layui-edge{
+	border-top-color: #333333;
+}
+/* 多选框 */
+.checkbox-hide label.checkbox-inline{
+	display:none;
+}
+.layui-form-radio i{
+	font-size:18px;
+}
+@media only screen and (max-width:1280px) {
+    .widget-left.scrollbar{
+        width: 160px;
+    }
+    .widget-layout-wrap .main-center{
+        padding-left:170px;
+    }
+    .widget-region .title-type-widget.puls i{
+        left: 35%;
+    }
+    .widget-left .widget-region div button:nth-child(even){
+         margin-left: 10px;
+    }
+}
+

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>短信草稿</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/zhengls.css" media="all">
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<style>
+	.layui-form-pane .label_m{width:90px;}
+	.layui-form-pane .layui-input-block1{margin-left:90px;}
+	.layui-input-block1 .layui-select-title .layui-input{width:100px;} 
+</style>
+</head>
+<body> 
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main">
+		<blockquote class="layui-elem-quote" style="padding:5px;">
+			<form class="layui-form" action="">
+				<div style="float:right;">
+					<div class="layui-input-inline m_r10">
+					 	<span>操作时间</span>
+					</div>
+					<div class="layui-input-inline m_r20">
+						 <input type="text" class="inp_date" name="" id="startTime" readonly="readonly">
+					</div>
+					<div class="layui-input-inline m_r10">
+					 <span>至</span>
+					</div>
+					<div class="layui-input-inline m_r20">
+						  <input type="text" class="inp_date" name="" id="endTime" readonly="readonly">
+					</div>
+					<div class="layui-input-inline">
+						<input type="text" name="searchKey" id="searchKey" placeholder="请输入主题或收信人" autocomplete="off" class="layui-input"
+							style="height: 30px; line-height: 30px;" onkeyup="font_size50()" maxlength="20">
+					</div>
+					<span><@a code="110202" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData()" iclass="layui-icon"
+						 icon="&#xe615;" text="查询"/></span>
+				</div>
+	 	    	<div class="layui-input-inline">
+					<span><@a code="110201" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="showDeletes()" iclass="layui-icon"
+						 icon="&#xe640;" text="删除"/></span	 	    	
+				</div> 
+			</form>
+		</blockquote>
+		<div class="layui-form">
+			<table class="layui-table admin-table">
+					<!--  <colgroup>
+					    <col width="5%">
+					    <col width="20%">
+					    <col width="50%">
+					    <col width="15%">
+					    <col width="10%">
+					    <col>
+					  </colgroup> -->
+				<thead>
+					<tr>
+						<th style="width: 20px;"><input type="checkbox" lay-skin="primary" id="paging_check-all" lay-filter="paging_check-all"></th>
+						<th style="display: none;">用户ID</th>
+						<th style="width: 150px;">收信人</th>
+						<th>主题</th>
+						<th style="width: 160px;">操作时间</th>
+						<th style="width: 80px;">操作</th>
+					</tr>
+				</thead>
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td><input type="checkbox"  class="check-id moreInput"  lay-skin="primary"   id="{{value.id}}"></td>
+							<td style="display: none;">{{value.id}}</td>
+							<td title="{{value.receiverName}}">{{value.receiverName.substr(0,value.receiverName.length-1)}}</td>
+							<td onclick="detail('{{value.id}}')" class="hand table_link" title="{{value.theme}}">{{value.theme}}</td>
+							<td title="{{value.lastUpdateTime}}">{{value.lastUpdateTime}}</td>
+							<td>
+								<@a code="" href="javascript:void(0)" class="table_btn table_link" id="show-edit" onclick="editSms('{{value.id}}',this)" text="编辑"/>
+								<@a code="" href="javascript:void(0)" class="table_btn table_link" id="show-view" onclick="showDelete('{{value.id}}')" text="删除"/>
+							</td>
+						</tr>
+					{{/each}}
+					</script>
+				</tbody>
+			</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+		</div>
+	<!-- 短信详情 -->
+	<div class="admin-main" style="display: none; z-index: 19940200;" id="win-detail-object">
+		<form class="layui-form layui-form-pane" id="add-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+		<!-- 	<div class="layui-form-item">
+				<label class="layui-form-label">主题</label>
+				<div class="layui-input-block">
+					<input type="" name="theme" id="d_theme" lay-verify="required|spactily" autocomplete="off" readonly="readonly" class="layui-input">
+				</div>
+			</div> -->
+
+			<!-- 标题 -->
+			<div class="" style="text-align: center;">
+				 <span id="d_theme" style="font-size:16px;font-weight: bold;word-wrap:break-word"></span>
+			</div>
+			<!-- <div class="layui-form-item">
+				<label class="layui-form-label">内容</label>
+				<div class="layui-input-block">
+					 <div name="" id="d_content" readonly="readonly" class="newgg"></div>					 
+				</div>
+			</div> -->
+
+			
+			<!-- <div class="layui-form-item">
+				<label class="layui-form-label">收信人</label>
+				<div class="layui-input-block">
+					 <div name="" id="d_receiverName" readonly="readonly" class="newgg"></div>					 
+				</div>
+			</div> -->
+			<!-- 收信人-->
+			<div class="p_t10 cl">
+				<span class="e6ed l">收信人 ：</span>
+				<div id="d_receiverName" class="l" style="word-wrap:break-word;width:85%;"></div>
+			</div>
+			
+			<!-- 内容 -->
+			 <div class="outindss p_t10 line_h_26px l" style="clear:both;" id="mailContent">
+			     <p id="d_content" style="word-wrap: break-word;" class="heidf"></p>
+			</div>
+			
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+				<div style="float: right;">
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 短信编辑 -->
+	<div class="admin-main" style="display: none; z-index: 19940200;" id="win-newsms-object">
+		<form class="layui-form layui-form-pane" id="edit-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" name="sendNumber" value="1" />
+			<input type="hidden" name="id" id="id_edit" value="" />
+			
+			<div class="layui-form-item">
+				<label class="layui-form-label">可用变量</label>
+				<div class="layui-input-block">
+					<!-- <input type="text" name="" id="" lay-verify="" autocomplete="off" placeholder="{$1}:手机号码；{$2}:姓名；{$3}:角色名；" readonly="readonly" class="layui-input"> -->
+					<ul style="margin-left:10px;">
+						<li class="hand" onclick="click_font1()"><span class="num1">{$1}</span>&nbsp;&nbsp;：手机号码；</li>
+						<li class="hand" onclick="click_font2()"><span class="num2">{$2}</span>&nbsp;&nbsp;：姓名；</li>
+						<li class="hand" onclick="click_font3()"><span class="num3">{$3}</span>&nbsp;&nbsp;：角色名；</li>
+					</ul>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">主题</label>
+				<div class="layui-input-block">
+					<input type="text" name="theme" id="e_theme" lay-verify="required" maxlength="50" autocomplete="off" placeholder="主题" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label textarea_new">内容</label>
+				<div class="layui-input-block">
+					 <textarea name="content" id="e_content" lay-verify="required" placeholder="请输入内容" onkeyup="countnum(this);"  maxlength="70" class="layui-textarea"></textarea>
+					 <span>每70个字计算为一条短信发送</span><small  style="float:right;"><span id="count">0</span>/70</small>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">收信人</label>
+				<div class="layui-input-block">
+					<div type="text" name="receiverName" id="e_receiverName" autocomplete="off" placeholder="收信人" class="newgg input_btn reset1" readonly="readonly"></div>
+					<input type="hidden" name="receiverName" id="hidden_receiverName" lay-verify="required" class="reset"/>
+					<a class="btn_blue2" onclick="personlSeclectOpen()" style="float:right;">人员选择</a>
+					<input type="hidden" name="receiverId"  id="e_receiverNameid" class="reset">
+				</div>
+			</div>
+			<div class="btn_fixed" style="margin-top: 15px;">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit">
+						<i class="fa fa-save"></i> 提交
+					</button>
+					<button class="layui-btn layui-btn-primary" lay-submit="" lay-filter="form-save-submit">
+						<li class="fa fa-eraser"></li> 保存
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 人员选择树 -->
+	<div style="display: none;z-index: 19940200;margin-bottom:20px;" id="win-personal-object">
+		<input id="peopelSel" class="tree_search1 reset" type="text" value="" placeholder="搜索">
+		<a class="layui-btn layui-btn-small" id="" onclick="searchNodes()"><i class="layui-icon">&#xe615;</i>搜索</a>
+		<a class="layui-btn layui-btn-small layui-btn-primary" style="margin-left:2px;" type="reset" onclick="reset_tree(treeDemo)"><li class="fa fa-eraser"></li> 重置</a>
+		<ul id="treeDemo" class="ztree treeDemo1" name="treeDemo" style="display:block"></ul>
+	</div>
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.exhide-3.5.min.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	<script>
+		//时间控件
+		tool.dateTime('#startTime','#endTime','',false);
+	 	var pform;
+		//添加事件
+		layui.use('form', function() {
+			pform = layui.form;
+			pform.verify({
+				lengthZ : function(value) {
+					if (value.length>200) {
+						return "主题内容过长";
+					}
+				},
+				length50:function(value){
+					if (value.length>50) {
+						return "搜索内容不能超过50个字符";
+					}
+				},
+				//限制不能输入特殊10
+	            specailChar:function (value) {
+	                if (new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]").test(value)) {
+	                    return '不能输入特殊字符';
+	                }
+	            }
+			});
+			//提交短信
+			pform.on('submit(form-add-submit)', function(data) {
+				/* tool.post("../smsShortMessageDraft/update",$("#edit-object-form").serialize(), postCallBack,false); */
+				tool.post("../smsShortMessageDraft/sendDraft",$("#edit-object-form").serialize(), postCallBack,false);
+				return false;
+			});
+			//保存为草稿监听
+			pform.on('submit(form-save-submit)', function(data) {
+				/* tool.post("../smsShortMessageDraft/add",$("#edit-object-form").serialize(), postCallBack,false); */
+				tool.post("../smsShortMessageDraft/update",$("#edit-object-form").serialize(), postCallBack_edit,false);
+				return false;
+			});
+			loadData();
+			
+		});
+		function postCallBack(retMsg){
+			if (retMsg.code == 0) {
+				layer.closeAll();
+				tool.success(retMsg.message);
+				
+				loadData();
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+		//编辑不分页
+		function postCallBack_edit(retMsg){
+		
+				if (retMsg.code == 0) {
+					if($(".layui-laypage-btn").length>0){
+						$(".layui-laypage-btn").trigger("click");
+					}else{
+						loadData();
+					}
+					layer.closeAll();
+					tool.success(retMsg.message);
+				} else {
+					tool.error(retMsg.message);
+				}
+			
+		}
+		function font_size50(){
+			var key = $("#searchKey").val().length;
+			if(key>50){
+				alert("不能超过50个字符！")
+				return;
+			}
+		}
+		//加载数据
+		function loadData() {
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+			param.pageNum = 1;
+			param.url = "../smsShortMessageDraft/list";
+		  	param.theme = $("#searchKey").val(); 
+	     	param.receiverName = $("#searchKey").val(); 
+	     	param.time1 = $("#startTime").val(); 
+	     	param.time2 = $("#endTime").val(); 
+			tool.loadpage(param); 
+		}
+		//单个删除对象
+		function showDelete(id) {
+			layer.confirm('确定删除 ?', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				var retMsg = tool.deleteById("../smsShortMessageDraft/delete", id);
+				layer.alert("删除成功", {
+					title : "操作提示",
+					icon : 1,
+					closeBtn:0
+				}, function(index) {
+					if($(".layui-laypage-btn").length>0){
+						$(".layui-laypage-btn").trigger("click");
+					}else{
+						loadData();
+					}
+					layer.close(index);
+				});
+			});
+		}
+		//短信详情
+		function detail(id) {
+			var a = tool.getById("../smsShortMessageDraft/getById", id);
+			$("#d_theme").html(a.theme);
+			$("#d_content").html(a.content);
+			$("#d_receiverName").html(a.receiverName);
+			
+			/* 收信人*/
+            var d_receiverName=a.receiverName.replace(/;/g,"；");
+            $("#d_receiverName").text(d_receiverName);
+            
+			var index = layer.open({
+				title : '短信草稿详情',
+				maxmin : false,
+				type : 1,
+				content : $('#win-detail-object'),
+				
+			});
+			layer.full(index);
+		}
+		var pageBtn;
+		//短信编辑弹窗
+		function editSms(id,myself) {
+			pageBtn = myself
+			var a = tool.getById("../smsShortMessageDraft/getById", id);
+			$("#e_theme").val(a.theme);
+			$("#e_content").val(a.content);
+			$("#e_receiverName").html(a.receiverName);
+			$("#e_receiverNameid").val(a.receiverId);
+			$("#hidden_receiverName").val(a.receiverName);
+			$("#id_edit").val(id)
+			
+			var index = layer.open({
+				title : '编辑短信',
+				maxmin : false,
+				type : 1,
+				content : $('#win-newsms-object')
+			});
+			layer.full(index);
+		}
+		//点击添加变量
+		function click_font1(){
+			var a = $('.num1').html();
+			var b = $('#e_content').val();
+			$('#e_content').val(b+a);
+		}
+		function click_font2(){
+			var a = $('.num2').html();
+			var b = $('#e_content').val();
+			$('#e_content').val(b+a);
+		}
+		function click_font3(){
+			var a = $('.num3').html();
+			var b = $('#e_content').val();
+			$('#e_content').val(b+a);
+		}
+		//计算文本域数字
+		function countnum(par) { 
+			var min = 0; 
+			if (par.value.length > min) 
+			var str = min + par.value.length; 
+			document.getElementById("count").innerHTML = str.toString(); 
+		} 
+      	//批量删除
+		function showDeletes(){
+			  if($(".moreInput:checked").length==0){
+					tool.error('至少选中一个');
+			  }else{
+			  var str="";
+			  $(".moreInput:checked").each(function(index,value){
+				  str+=value.id+";";
+			  })
+			   //调批量删除接口 最后重新渲染列表 
+			  layer.confirm('确定删除吗 ?', {
+					icon : 3,
+					title : '提示'
+				}, function(index) {
+					var retMsg = tool.deleteByIds("../smsShortMessageDraft/deleteShortMessageDraftList", str)
+					if (retMsg.code == 0) {
+						$("#paging_check-all").attr("checked",false);
+						pform.render();
+						tool.success(retMsg.message);
+						layer.closeAll();
+						loadData(); 
+					} else {
+						tool.error(retMsg.message);
+					}
+				}); 
+			   
+			  }
+		  }
+		 //人员选择树
+		function personlSeclectOpen(){	  
+			tool.treeDemo("win-personal-object",'treeDemo',"e_receiverNameid","hidden_receiverName","e_receiverName")   	
+      	}
+        //用按钮查询节点  
+        function searchNodes(){  
+            /* var treeObj = $.fn.zTree.getZTreeObj("treeDemo");  */
+            var keywords=$("#peopelSel").val();  
+            var nodes = mytree.getNodesByParamFuzzy("name", keywords, null);  
+            if (nodes.length>0) {  
+                mytree.selectNode(nodes[0]);  
+            }  
+        }  
+		//重置树
+		function reset_tree(){
+			var mytree = $.fn.zTree.getZTreeObj("treeDemo");
+		    //打开弹窗前重置节点以及关闭展开状态，避免叠加
+			$('.reset').val("");
+			$('.reset1').html("");
+			mytree.checkAllNodes(false)
+		    mytree.expandAll(false);
+		}
+	</script>
+</body>
+</html>

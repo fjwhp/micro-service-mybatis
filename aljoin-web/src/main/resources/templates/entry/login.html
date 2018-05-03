@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>合强A9协同办公系统-登录</title>
+<link rel="shortcut icon" href="web/images/favicon.ico">
+<meta name="author" content="DeathGhost" />
+<link rel="stylesheet" type="text/css" href="web/css/style.css" />
+
+<style>
+body {
+	height: 100%;
+	overflow: hidden;
+	/* background: url(../../web/loginimg/1.jpg) no-repeat;  */
+	background-size: 100% 100%;
+}
+
+.logo {
+	width: 50px;
+	height: 50px;
+	margin: 0 auto 20px;
+	/* background-position: center; */
+	background-size: cover;
+	display: block;
+	background: url(../../web/images/log4.png) no-repeat;
+	background-size: 100% 100%;
+}
+
+canvas {
+	z-index: -1;
+	position: absolute;
+}
+</style>
+<script src="web/js/jquery.js"></script>
+<!-- <script src="web/js/Particleground.js"></script> -->
+</head>
+<body>
+	<input type="hidden" id="isUsePwdLogin" value="${isUsePwdLogin}">
+	<input type="hidden" id="isUseValidateCode"
+		value="${isUseValidateCode}">
+	<input type="hidden" id="isUseRememberMe" value="${isUseRememberMe}">
+	<form action="/login.do" method="post">
+		<dl class="admin_login" style="position: relative;">
+			<i class="logo"></i>
+			<dd style="text-align: center; margin-top: 10px; margin-bottom: 20px; font-size: 23px; -webkit-box-reflect: below -37px -webkit-gradient(linear, left top, left bottom, from(transparent), to(rgba(255, 255, 255, 0.5)));
+    background-image: -webkit-linear-gradient(92deg,#FFFFFF,#FFFFFF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    -webkit-animation: hue 6s 100 linear;">
+				<label style="color: white;">合强A9协同办公系统</label>
+			</dd>
+			<dd class="user_icon">
+				<input type="text" placeholder="账号" class="login_txtbx" autocomplete="off" 
+					name="loginUserName" id="loginUserName" /> <input type="hidden"
+					name="${_csrf.parameterName}" value="${_csrf.token}" />
+			</dd>
+			<#if isUsePwdLogin=="1">
+			<dd class="pwd_icon">
+				<input type="password" placeholder="密码" class="login_txtbx"
+					name="loginUserPwd" id="loginUserPwd" />
+			</dd>
+			</#if>
+			<#if isUseValidateCode=="1">
+			<dd class="val_icon" style="">
+				<div class="checkcode" style="">
+					<input type="text" id="J_codetext" placeholder="验证码" maxlength="5"
+						class="login_txtbx" name="loginValidateCode"> <img
+						id="validateCode" src="validateCode/codeImg.html">
+				</div>
+				<input type="button" value="刷新验证码" class="ver_btn"
+					onClick="createCode();">
+			</dd>
+			</#if>
+			<dd>
+				<div style="margin-top: 12px; color: white;">
+					<table style="width: 100%;">
+						<tr>
+							<td><#if isUseRememberMe=="1"> <input type="checkbox"
+									id="loginRememberMe" name="loginRememberMe"
+									style="width: 19px; height: 19px; vertical-align: middle;">
+								下次自动登录 </#if></td>
+							<td style="text-align: right; color: red; font-weight: bold;"
+								id="message">${Session.SPRING_SECURITY_LAST_EXCEPTION!""}</td>
+						</tr>
+					</table>
+				</div>
+			</dd>
+			<dd>
+				<input type="submit" value="立即登陆" class="submit_btn" />
+			</dd>
+			<dd style="text-align: right; margin-top: 10px;">
+				<a href="../../web/google/ChromeStandalone.rar"
+					style="color: red; font-weight: bold; margin-right: 3px;" id=""><!-- 谷歌浏览器下载 --></a>
+			</dd>
+		</dl>
+	</form>
+	<div style="position:  fixed;bottom: 0px;text-align: center;width: 100%;height: 30px;color: #ffffff;line-height: 30px;background:rgba(0,0,0,0.2);font-size: 12px;">
+		Copyright @ 2018厦门和强全景信息技术有限公司 .版权所有 闽ICP备15049149-1号
+	</div>
+</body>
+<script type="text/javascript">
+	$(document).ready(function() {
+		//测试提交，对接程序删除即可
+		$(".submit_btn").click(function() {
+			var loginUserName = $("#loginUserName").val();
+			var loginUserPwd = $("#loginUserPwd").val();
+			var loginValidateCode = $("#J_codetext").val();
+			if ($.trim(loginUserName) == "") {
+				$("#message").text("账号不能为空");
+				return false;
+			}
+			if ($("#isUsePwdLogin").val() == "1") {
+				if ($.trim(loginUserPwd) == "") {
+					$("#message").text("密码不能为空");
+					return false;
+				}
+			}
+			if ($("#isUseValidateCode").val() == "1") {
+				if ($.trim(loginValidateCode) == "") {
+					$("#message").text("验证码不能为空");
+					return false;
+				}
+			}
+			return true;
+		});
+
+		if (parent.length > 0) {
+			parent.location.reload();
+		}
+	});
+	function createCode() {
+		var random = Math.random();
+		var src = "validateCode/codeImg.html?random=" + random;
+		$("#validateCode").attr("src", src);
+	}
+	function setBackgroundImg(){
+		var num = Math.random();//Math.random()：得到一个0到1之间的随机数
+		num = Math.ceil(num * 13);//num*80的取值范围在0~80之间,使用向上取整就可以得到一个1~80的随机数
+		//num就是你要的随机数,如果你希望个位数前加0,那么这样:
+		var str = num.toString();
+		$("body").css("background-image","url(../../web/loginimg/"+str+".jpg)");
+	}
+	setBackgroundImg();
+	/* setInterval("setBackgroundImg()",5000) */
+</script>
+</html>

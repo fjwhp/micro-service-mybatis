@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>我管理的流程</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css"
+	media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet"
+	href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<style>
+	.span_addUser{padding:3px 3px;margin-right:15px;border:1px solid #ccc}
+
+    .layui-table tr:hover{
+	  background:none !important;
+	}
+</style>
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />		
+	<!-- tree -->	
+	<div class="admin-main">
+		<div id="menuContent" class="tree_left">
+			<div >
+				<input id="citySel" class="tree_search" type="text" value="" onkeyup="AutoMatch(this)" placeholder="搜索"/>	
+		    </div>
+			<ul id="treeDemo" class="ztree"></ul> 
+		</div>
+		<!-- 岗位 -->
+		<div class="tree_right">   
+		<div class="layui-field-box layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+			<table class="layui-table admin-table">
+			    <colgroup>
+				    <col width="60">
+				    <col width="300">
+				    <col width="300">			   
+ 				 </colgroup>
+				<thead>
+					<tr>
+						<th>序号</th>
+						<th>流程名称</th>
+						<th>类别</th>
+					</tr>
+				</thead>
+				<tbody id="paging-data">
+					<script id="paging-script" type="text/html">                 
+                     {{if records.length==0}}
+                       <tr>
+							<td colspan="3" style="text-align:center">
+                                                                                          数据为空
+							</td>
+						</tr>
+                     {{/if}}
+					{{each records value index}}
+						<tr>
+							<td>{{index+1}}</td>
+							<td>{{value.processName}}</td>
+							<td>{{value.categoryName}}</td>
+						</tr>
+					{{/each}}
+					</script> 
+				</tbody>
+			</table>
+		</div>
+		<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+			<div id="paging-footer" class="page"
+				style="background-color: white; text-align: center;"></div>
+		</div>
+	</div>
+
+	
+   </div>
+	<script type="text/javascript" src="../../web/plugins/layui/layui.js"></script>
+	<script type="text/javascript"
+		src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.ztree.exhide-3.5.min.js"></script>
+	<script type="text/javascript" src="../../web/js/tool.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+
+	<script>
+		var pform;
+		//添加事件
+		layui.use('form', function() {
+			pform = layui.form();
+		    loadData(); 
+		});
+		//生成树
+		var setting = {
+				data : {
+					simpleData : {
+						enable : true
+					}
+				},
+				callback : {
+					beforeClick : beforeClick
+				}
+			};
+		var param = new Object();
+		param._csrf = $("#_csrf").val();
+		redern();
+		function redern() {
+			tool.post("/per/autUserBpmn/getAllCategoryList",param, postCallBack_newtree);
+		}
+		var obj = [];
+		var zTreeObj; 
+		function postCallBack_newtree(data) {
+			for (var i = 0; i < data.length; i++) {				
+				obj.push({
+					id : data[i].id,
+					pId : data[i].parentId,
+					name : data[i].categoryName,
+					cyId : data[i].categoryLevel,
+					obj : {
+						id : data[i].id,
+						isActive : data[i].isActive,
+						parentId : data[i].parentId,
+						name : data[i].categoryName,
+					}
+				})
+				//console.log(obj);
+				//console.log(obj[i].obj.id);
+			}  
+			zTreeObj = $.fn.zTree.init($("#treeDemo"), setting, obj);
+		}
+
+		var hiddenNodes=[];	//用于存储被隐藏的结点
+		var targetParent = [];
+		function getParentByChild(node){
+			if(node.parentTId != null){
+				targetParent.push(node.getParentNode());
+				getParentByChild(node.getParentNode());
+			}
+		}
+		
+		//过滤ztree显示数据
+		function AutoMatch(){
+			//显示上次搜索后背隐藏的结点
+			zTreeObj.showNodes(hiddenNodes);
+			//查找不符合条件的叶子节点
+			targetParent = [];
+			function filterFunc(node){
+				var _keywords=$("#citySel").val();
+				if(node.name.indexOf(_keywords)!=-1) {
+					getParentByChild(node)
+					return false;
+				}
+				return true;		
+			};
+			//获取不符合条件的叶子结点
+			hiddenNodes=zTreeObj.getNodesByFilter(filterFunc);
+			//隐藏不符合条件的叶子结点
+			zTreeObj.hideNodes(hiddenNodes);
+			//显示满足条件的根节点
+			zTreeObj.showNodes(targetParent);
+			zTreeObj.expandAll(true);
+		};
+
+		//获取数节点加载流程列表
+		function beforeClick(hh, treeNode) {
+			$("#deptTreeId").val(treeNode.id);
+			$("#deptTreeName").val(treeNode.name);		
+			loadData(treeNode.id);
+		}
+	 	//加载流程list
+		function loadData(id) {
+		 	var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+			param.bpmnid = id;
+			param._csrf = _csrf;
+			param.url = "../../per/autUserBpmn/list";
+		 	tool.loadpage(param);
+		}  
+	 	//详情对象
+		function openForm(id,processName) {
+			var index = layer.open({
+				title : processName,
+				maxmin : false,
+				type : 2,
+				content : '../../act/modeler/openForm.html?id='+id
+			});
+			pform.render();
+			layer.full(index);
+		}
+
+
+
+	</script>
+</body>
+
+</html>

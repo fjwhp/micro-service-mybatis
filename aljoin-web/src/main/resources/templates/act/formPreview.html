@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="zh"><head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>jQuery响应式可拖拽的元素组件网格布局插件</title>
+<link rel="stylesheet" href="../../aljoin-act/form-design/css/bootstrap.min.css">
+<link rel="stylesheet" href="../../aljoin-act/form-design/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../aljoin-act/form-design/dist/gridstack.css">
+<link rel="stylesheet" type="text/css" href="../../aljoin-act/form-design/css/default.css">
+<link rel="stylesheet" type="text/css" href="../../aljoin-act/form-design/css/bootstrap-datetimepicker.css">
+
+<style type="text/css">
+.grid-stack {
+	background: lightgoldenrodyellow;
+}
+
+.grid-stack-item-content {
+
+	color: red;
+	text-align: center;
+}
+.grid-stack-item-content__backup {
+	color: #2c3e50;
+	text-align: center;
+	background-color: #99CCCC;
+}
+</style>
+<!--[if IE]>
+		<script src="../../aljoin-act/form-design/js/html5shiv.min.js"></script>
+	<![endif]-->
+<style type="text/css" data-gs-id="gridstack-style-84274"></style></head>
+<body style="cursor: auto;">
+	<div class="jq22-container">
+		<div>
+			<div class="container-fluid" style="padding-left: 0px; padding-right: 0px;">
+				<div class="btn-group">
+					<button class="btn btn-default add_widget_tag" id="text">单行文字</button>
+					<button class="btn btn-default add_widget_tag" id="area_text">多行文字</button>
+					<button class="btn btn-default add_widget_tag" id="radio">单选</button>
+					<button class="btn btn-default add_widget_tag" id="checkbox">多选</button>
+					<button class="btn btn-default add_widget_tag" id="select">下拉</button>
+					<button class="btn btn-default add_widget_tag" id="contact_select">联动下拉</button>
+					<button class="btn btn-default add_widget_tag" id="number">数字</button>
+					<button class="btn btn-default add_widget_tag" id="email">邮箱</button>
+					<button class="btn btn-default add_widget_tag" id="money">金额</button>
+					<button class="btn btn-default add_widget_tag" id="telephone">电话</button>
+					<button class="btn btn-default add_widget_tag" id="mobilephone">手机</button>
+					<button class="btn btn-default add_widget_tag" id="date">日期</button>
+					<button class="btn btn-default add_widget_tag" id="time">时间</button>
+					<button class="btn btn-default add_widget_tag" id="datetime">日期时间</button>
+					<button class="btn btn-default add_widget_tag" id="image">图片</button>
+					<button class="btn btn-default add_widget_tag" id="attach">附件</button>
+					<button class="btn btn-default add_widget_tag" id="datagrid">数据表格</button>
+					<button class="btn btn-default add_widget_tag" id="editor">文本编辑器</button>
+					<button class="btn btn-default add_widget_tag" id="href">网址</button>
+					<button class="btn btn-default add_widget_tag" id="statistics">数据统计</button>
+					<button class="btn btn-default add_widget_tag" id="label">文本标签</button>
+					<button onclick="getDesignFormData()">save</button>
+				</div>
+				<br>
+				<div>
+					<div style="font-size: 15px; padding-left: 10px; border-width: 1px; border-style: solid; border-color: #CCC;">表单属性</div>
+					<div style="padding-left: 10px; padding-right: 10px; padding-top: 5px;">
+						<form class="form-inline">
+							<div class="form-group" style="padding-bottom: 5px;">
+								<label for="abcd" style="font-weight: normal; font-size: 15px;">表单类型</label>
+								<input type="text" class="form-control input-sm" id="abcd">
+							</div>
+							<div class="form-group" style="padding-bottom: 5px;">
+								<label for="abcd" style="font-weight: normal; font-size: 15px;">表单名称</label>
+								<input type="text" class="form-control input-sm" id="abcd">
+							</div>
+							<div class="form-group" style="padding-bottom: 5px;">
+								<button type="button" class="btn btn-default btn-sm">保存表单</button>
+								<button type="button" class="btn btn-default btn-sm">表单预览</button>
+							</div>
+						</form>
+					</div>
+					<div class="container-fluid" style="padding-left: 0px; padding-right: 0px; border-style: solid; border-color: #CCC; border-width: 1px; max-height: 450px; overflow-y: scroll; margin-left: 0px;">
+						<form class="">
+							<div class="grid-stack grid-stack-84" style="border-width: 1px; height: 200px;"><div class="grid-stack-placeholder grid-stack-item" style="display: none;" data-gs-x="4" data-gs-y="4" data-gs-width="6" data-gs-height="1"><div class="placeholder-content"></div></div><div class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide" data-gs-x="0" data-gs-y="0" data-gs-width="12" data-gs-height="1" data-gs-auto-position="no"><div class="grid-stack-item-content" type="label" style="cursor: default; background-color: rgb(153, 204, 204);"><a class="delete_widget_" style="position: absolute; right: 3px; top: -4px; cursor: pointer; text-decoration: none; color: red;z-index:999;">×</a><div id="label-template" class="form-group" style="display: block; margin-bottom: 0px; padding: 5px;">
+		<input type="text" class="form-control input-sm" id="label_LvIuzaPuXF66f7u" name="label_LvIuzaPuXF66f7u">
+	</div></div><div></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: none;"></div></div><div class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide" data-gs-x="2" data-gs-y="1" data-gs-width="2" data-gs-height="1" data-gs-auto-position="no"><div class="grid-stack-item-content" type="label" style="background-color: rgb(153, 204, 204); cursor: default;"><a class="delete_widget_" style="position: absolute; right: 3px; top: -4px; cursor: pointer; text-decoration: none; color: red;z-index:999;">×</a><div id="label-template" class="form-group" style="display: block; margin-bottom: 0px; padding: 5px;">
+		<input type="text" class="form-control input-sm" id="label_SPUCrDoXo6dH8Cw" name="label_SPUCrDoXo6dH8Cw">
+	</div></div><div></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: none;"></div></div><div class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide" data-gs-x="2" data-gs-y="2" data-gs-width="2" data-gs-height="1" data-gs-auto-position="no"><div class="grid-stack-item-content" type="label" style="background-color: rgb(153, 204, 204); cursor: default;"><a class="delete_widget_" style="position: absolute; right: 3px; top: -4px; cursor: pointer; text-decoration: none; color: red;z-index:999;">×</a><div id="label-template" class="form-group" style="display: block; margin-bottom: 0px; padding: 5px;">
+		<input type="text" class="form-control input-sm" id="label_o0zPm7dHZELYUGZ" name="label_o0zPm7dHZELYUGZ">
+	</div></div><div></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: none;"></div></div><div class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide" data-gs-x="2" data-gs-y="4" data-gs-width="2" data-gs-height="1" data-gs-auto-position="no"><div class="grid-stack-item-content" type="label" style="background-color: rgb(153, 204, 204); cursor: default;"><a class="delete_widget_" style="position: absolute; right: 3px; top: -4px; cursor: pointer; text-decoration: none; color: red;z-index:999;">×</a><div id="label-template" class="form-group" style="display: block; margin-bottom: 0px; padding: 5px;">
+		<input type="text" class="form-control input-sm" id="label_WBya0cmHOH9Yyr3" name="label_WBya0cmHOH9Yyr3">
+	</div></div><div></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: none;"></div></div><div class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide" data-gs-x="4" data-gs-y="1" data-gs-width="2" data-gs-height="1" data-gs-auto-position="no"><div class="grid-stack-item-content" type="date" style="cursor: default; background-color: rgb(153, 204, 204);"><a class="delete_widget_" style="position: absolute; right: 3px; top: -4px; cursor: pointer; text-decoration: none; color: red;z-index:999;">×</a><div id="date-template" class="form-group" style="display: block; margin-bottom: 0px; padding: 5px;">
+		<div class="input-group">
+			<input type="text" class="form-control input-sm aljoin_form_date" id="date_LUTVcULCUgNY10g" name="date_LUTVcULCUgNY10g">
+			<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+		</div>
+	</div></div><div></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: none;"></div></div><div class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide" data-gs-x="7" data-gs-y="1" data-gs-width="3" data-gs-height="1" data-gs-auto-position="no"><div class="grid-stack-item-content" type="time" style="cursor: default; background-color: rgb(153, 204, 204);"><a class="delete_widget_" style="position: absolute; right: 3px; top: -4px; cursor: pointer; text-decoration: none; color: red;z-index:999;">×</a><div id="time-template" class="form-group" style="display: block; margin-bottom: 0px; padding: 5px;">
+		<div class="input-group">
+			<input type="text" class="form-control input-sm aljoin_form_time" id="time_mwRqM2c4euWQm0O" name="time_mwRqM2c4euWQm0O">
+			<span class="input-group-addon"><span class="glyphicon glyphicon-time"></span></span>
+		</div>
+	</div></div><div></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: none;"></div></div><div class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide" data-gs-x="6" data-gs-y="1" data-gs-width="1" data-gs-height="1" data-gs-auto-position="no"><div class="grid-stack-item-content" type="label" style="cursor: default; background-color: rgb(153, 204, 204);"><a class="delete_widget_" style="position: absolute; right: 3px; top: -4px; cursor: pointer; text-decoration: none; color: red;z-index:999;">×</a><div id="label-template" class="form-group" style="display: block; margin-bottom: 0px; padding: 5px;">
+		<input type="text" class="form-control input-sm" id="label_FS9ufFYOxYjrrA8" name="label_FS9ufFYOxYjrrA8">
+	</div></div><div></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: none;"></div></div><div class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide" data-gs-x="4" data-gs-y="2" data-gs-width="6" data-gs-height="2" data-gs-auto-position="no"><div class="grid-stack-item-content" type="area_text" style="cursor: default; background-color: rgb(153, 204, 204);"><a class="delete_widget_" style="position: absolute; right: 3px; top: -4px; cursor: pointer; text-decoration: none; color: red;z-index:999;">×</a><div id="area_text-template" class="form-group" style="display: block; margin-bottom: 0px; padding: 5px;">
+		<textarea class="form-control" id="area_text_pYJEaNANWGeWwfh" name="area_text_pYJEaNANWGeWwfh" rows="3" style="padding: 4px 12px;"></textarea>
+	</div></div><div></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: none;"></div></div><div class="grid-stack-item ui-draggable ui-resizable ui-resizable-autohide" data-gs-x="4" data-gs-y="4" data-gs-width="6" data-gs-height="1" data-gs-auto-position="no"><div class="grid-stack-item-content" type="select" style="cursor: default; background-color: rgb(24, 188, 156);"><a class="delete_widget_" style="position: absolute; right: 3px; top: -4px; cursor: pointer; text-decoration: none; color: red;z-index:999;">×</a><div id="select-template" class="form-group" style="display: block; margin-bottom: 0px; padding: 5px;">
+		<select id="select_3FaiQCZLdp2yi4s" name="select_3FaiQCZLdp2yi4s" class="form-control input-sm">
+			<option value="">请选择</option>
+			<option value="1">选项1</option>
+			<option value="2">选项2</option>
+			<option value="3">选项3</option>
+		</select>
+	</div></div><div></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: none;"></div></div></div>
+						</form>
+					</div>
+					<div class="bottom_setting_panel" style="">
+						<div id="form_panel_title_div" style="border-style: solid; border-color: #CCC; border-width: 1px; text-align: left; border-left-width: 0px; font-size: 15px; padding-left: 10px; border-top-width: 0px;">
+							<span id="form_panel_title_txt">控件属性面板【下拉】</span>
+						</div>
+						<div style="padding: 10px;">
+							<form id="widget-setting-form" class="form-inline">
+								<div class="form-group" style="padding-bottom: 5px;">
+									<label for="abcd" style="font-weight: normal; font-size: 15px;">属性名称</label>
+									<input type="text" class="form-control input-sm" id="abcd">
+								</div>
+								<div class="form-group" style="padding-bottom: 5px;">
+									<label for="abcd" style="font-weight: normal; font-size: 15px;">属性名称</label>
+									<input type="text" class="form-control input-sm" id="abcd">
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	<script src="../../aljoin-act/form-design/js/jquery.min.js"></script>
+	<script src="../../aljoin-act/form-design/js/jquery-ui.min.js"></script>
+	<script src="../../aljoin-act/form-design/js/bootstrap.min.js"></script>
+	<script src="../../aljoin-act/form-design/js/lodash.min.js"></script>
+	<script src="../../aljoin-act/form-design/dist/gridstack.js"></script>
+	<script src="../../aljoin-act/js/uuid.js"></script>
+	<script src="../../aljoin-act/form-design/js/bootstrap-datetimepicker.js"></script>
+	<script src="../../aljoin-act/form-design/datetimepicker-locales/bootstrap-datetimepicker.zh-CN.js"></script>
+	
+	
+	
+	<!-- 以下是控件模板 ----------------------------------------------------------------------------------------------->
+	<!-- text模板  begin-------------->
+	<div id="text-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<input type="text" class="form-control input-sm" id="text-template-id-name" name="text-template-id-name">
+	</div>
+	<!-- text模板  end---------------->
+
+	<!-- textArea模板  begin-------------->
+	<div id="area_text-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<textarea class="form-control" id="area_text-template-id-name" name="area_text-template-id-name" rows="3" style="padding: 4px 12px;"></textarea>
+	</div>
+	<!-- textArea模板  end---------------->
+
+	<!-- radio模板  begin-------------->
+	<div id="radio-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<label class="radio-inline" style="font-size: 15px;"> <input type="radio" id="radio-template-id" name="radio-template-name" value="">选项1
+		</label> <label class="radio-inline" style="font-size: 15px;"> <input type="radio" id="radio-template-id" name="radio-template-name" value="">选项2
+		</label>
+	</div>
+	<!-- radio模板  end---------------->
+
+	<!-- checkbox模板  begin-------------->
+	<div id="checkbox-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<label class="checkbox-inline" style="font-size: 15px;"> <input type="checkbox" id="checkbox-template-id" name="checkbox-template-name" value="">选项1
+		</label> <label class="checkbox-inline" style="font-size: 15px;"> <input type="checkbox" id="checkbox-template-id" name="checkbox-template-name" value="">选项2
+		</label>
+	</div>
+	<!-- checkbox模板  end---------------->
+
+	<!-- select模板  begin-------------->
+	<div id="select-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<select id="select-template-id" name="select-template-name" class="form-control input-sm">
+			<option value="">请选择</option>
+			<option value="1">选项1</option>
+			<option value="2">选项2</option>
+			<option value="3">选项3</option>
+		</select>
+	</div>
+	<!-- select模板  end---------------->
+
+	<!-- contact_select模板  begin-------------->
+	<div id="contact_select-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<div class="form-inline">
+			<select id="contact_select-template-id" name="contact_select-template-name" class="form-control input-sm">
+				<option value="">请选择</option>
+				<option value="1">选项1</option>
+				<option value="2">选项2ddddddddddddddddd</option>
+				<option value="3">选项3</option>
+			</select> <select id="contact_select-template-id" name="contact_select-template-name" class="form-control input-sm">
+				<option value="">请选择</option>
+				<option value="1">选项1</option>
+				<option value="2">选项2</option>
+				<option value="3">选项3</option>
+			</select>
+		</div>
+	</div>
+	<!-- contact_select模板  end---------------->
+
+	<!-- number模板  begin-------------->
+	<div id="number-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<input type="number" class="form-control input-sm" id="number-template-id-name" name="number-template-id-name">
+	</div>
+	<!-- number模板  end---------------->
+
+	<!-- email模板  begin-------------->
+	<div id="email-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<input type="email" class="form-control input-sm" id="email-template-id-name" name="email-template-id-name">
+	</div>
+	<!-- email模板  end---------------->
+
+	<!-- money模板  begin-------------->
+	<div id="money-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<div class="input-group">
+			<div class="input-group-addon">￥</div>
+			<input type="text" class="form-control input-sm" id="money-template-id-name" name="money-template-id-name">
+		</div>
+	</div>
+	<!-- money模板  end---------------->
+
+	<!-- telephone模板  begin-------------->
+	<div id="telephone-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<input type="text" class="form-control input-sm" id="telephone-template-id-name" name="telephone-template-id-name">
+	</div>
+	<!-- telephone模板  end---------------->
+
+	<!-- mobilephone模板  begin-------------->
+	<div id="mobilephone-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<input type="text" class="form-control input-sm" id="mobilephone-template-id-name" name="mobilephone-template-id-name">
+	</div>
+	<!-- mobilephone模板  end---------------->
+
+	<!-- date模板  begin-------------->
+	<div id="date-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<div class="input-group">
+			<input type="text" class="form-control input-sm aljoin_form_date" id="date-template-id-name" name="date-template-id-name">
+			<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+		</div>
+	</div>
+	<!-- date模板  end---------------->
+
+	<!-- time模板  begin-------------->
+	<div id="time-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<div class="input-group">
+			<input type="text" class="form-control input-sm aljoin_form_time" id="time-template-id-name" name="time-template-id-name">
+			<span class="input-group-addon"><span class="glyphicon glyphicon-time"></span></span>
+		</div>
+	</div>
+	<!-- time模板  end---------------->
+
+	<!-- datetime模板  begin-------------->
+	<div id="datetime-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<div class="input-group">
+			<input type="text" class="form-control input-sm aljoin_form_datetime" id="datetime-template-id-name" name="datetime-template-id-name">
+			<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+		</div>
+	</div>
+	<!-- datetime模板  end---------------->
+	
+	<!-- image模板  begin-------------->
+	<div id="image-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<div class="input-group">
+			<input type="text" class="form-control input-sm" id="image-template-id-name" name="image-template-id-name">
+			<span class="input-group-addon"><span class="glyphicon glyphicon-picture"></span></span>
+		</div>
+	</div>
+	<!-- image模板  end---------------->
+	
+	<!-- attach模板  begin-------------->
+	<div id="attach-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<div class="input-group">
+			<input type="text" class="form-control input-sm" id="attach-template-id-name" name="attach-template-id-name">
+			<span class="input-group-addon"><span class="glyphicon glyphicon-file"></span></span>
+		</div>
+	</div>
+	<!-- image模板  end---------------->
+	
+	<!-- attach模板  begin-------------->
+	<div id="datagrid-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<table class="table table-condensed" style="font-size: 15px;margin-bottom: 0px; */">
+			<thead><tr><th>属性1</th><th>属性2</th><th>属性3</th><th>属性4</th><th>属性5</th></tr></thead>
+			<tbody>
+				<tr>
+					<td><input type="text" class="form-control input-sm"></td>
+					<td><input type="text" class="form-control input-sm"></td>
+					<td><input type="text" class="form-control input-sm"></td>
+					<td><input type="text" class="form-control input-sm"></td>
+					<td><input type="text" class="form-control input-sm"></td>
+				</tr>
+				<tr>
+					<td><input type="text" class="form-control input-sm"></td>
+					<td><input type="text" class="form-control input-sm"></td>
+					<td><input type="text" class="form-control input-sm"></td>
+					<td><input type="text" class="form-control input-sm"></td>
+					<td><input type="text" class="form-control input-sm"></td>
+				</tr>
+				<tr>
+					<td><input type="text" class="form-control input-sm"></td>
+					<td><input type="text" class="form-control input-sm"></td>
+					<td><input type="text" class="form-control input-sm"></td>
+					<td><input type="text" class="form-control input-sm"></td>
+					<td><input type="text" class="form-control input-sm"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<!-- image模板  end---------------->
+	
+	<!-- editor模板  begin-------------->
+	<div id="editor-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<div class="input-group">
+			<input type="text" class="form-control input-sm" id="editor-template-id-name" name="editor-template-id-name">
+			<span class="input-group-addon"><span class="glyphicon glyphicon-edit"></span></span>
+		</div>
+	</div>
+	<!-- editor模板  end---------------->
+	
+	<!-- href模板  begin-------------->
+	<div id="href-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<div class="input-group">
+			<div class="input-group-addon">http://</div>
+			<input type="text" class="form-control input-sm" id="href-template-id-name" name="href-template-id-name">
+		</div>
+	</div>
+	<!-- href模板  end---------------->
+	
+	<!-- statistics模板  begin-------------->
+	<div id="statistics-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<div class="input-group">
+			<div class="input-group-addon">数据统计</div>
+			<input type="text" class="form-control input-sm" id="statistics-template-id-name" name="statistics-template-id-name">
+		</div>
+	</div>
+	<!-- statistics模板  end---------------->
+	
+	<!-- label模板  begin-------------->
+	<div id="label-template" class="form-group" style="display: none; margin-bottom: 0px; padding: 5px;">
+		<input type="text" class="form-control input-sm" id="label-template-id-name" name="label-template-id-name">
+	</div>
+	<!-- label模板  end---------------->
+	
+	
+
+	
+	
+	
+
+
+<script type="text/javascript">
+	//动态构造控件
+	function makeFormWidget(type) {
+		var widgetStr = "";
+		if (type == "text") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			var id_name = Math.uuid(15);
+			widgetElement.find("input").attr("id", type + "_" + id_name);
+			widgetElement.find("input").attr("name", type + "_" + id_name);
+			widgetStr = widgetElement.prop("outerHTML");
+		} else if (type == "area_text") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			var id_name = Math.uuid(15);
+			widgetElement.find("textarea").attr("id", type + "_" + id_name);
+			widgetElement.find("textarea").attr("name", type + "_" + id_name);
+			widgetStr = widgetElement.prop("outerHTML");
+		} else if (type == "radio") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			var name = Math.uuid(15);
+			widgetElement.find("input").each(function() {
+				$(this).attr("id", type + "_" + Math.uuid(15));
+				$(this).attr("name", type + "_" + name);
+			});
+			widgetStr = widgetElement.prop("outerHTML");
+		} else if (type == "checkbox") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			var name = Math.uuid(15);
+			widgetElement.find("input").each(function() {
+				$(this).attr("id", type + "_" + Math.uuid(15));
+				$(this).attr("name", type + "_" + name);
+			});
+			widgetStr = widgetElement.prop("outerHTML");
+		} else if (type == "select") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			var id_name = Math.uuid(15);
+			widgetElement.find("select").attr("id", type + "_" + id_name);
+			widgetElement.find("select").attr("name", type + "_" + id_name);
+			widgetStr = widgetElement.prop("outerHTML");
+		} else if (type == "contact_select") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			widgetElement.find("select").each(function() {
+				var id_name = Math.uuid(15);
+				$(this).attr("id", type + "_" + id_name);
+				$(this).attr("name", type + "_" + id_name);
+			});
+			widgetStr = widgetElement.prop("outerHTML");
+		} else if (type == "number") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			var id_name = Math.uuid(15);
+			widgetElement.find("input").attr("id", type + "_" + id_name);
+			widgetElement.find("input").attr("name", type + "_" + id_name);
+			widgetStr = widgetElement.prop("outerHTML");
+		} else if (type == "email") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			var id_name = Math.uuid(15);
+			widgetElement.find("input").attr("id", type + "_" + id_name);
+			widgetElement.find("input").attr("name", type + "_" + id_name);
+			widgetStr = widgetElement.prop("outerHTML");
+		} else if (type == "money") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			var id_name = Math.uuid(15);
+			widgetElement.find("input").attr("id", type + "_" + id_name);
+			widgetElement.find("input").attr("name", type + "_" + id_name);
+			widgetStr = widgetElement.prop("outerHTML");
+		} else if (type == "telephone") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			var id_name = Math.uuid(15);
+			widgetElement.find("input").attr("id", type + "_" + id_name);
+			widgetElement.find("input").attr("name", type + "_" + id_name);
+			widgetStr = widgetElement.prop("outerHTML");
+		} else if (type == "mobilephone") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			var id_name = Math.uuid(15);
+			widgetElement.find("input").attr("id", type + "_" + id_name);
+			widgetElement.find("input").attr("name", type + "_" + id_name);
+			widgetStr = widgetElement.prop("outerHTML");
+		} else if (type == "date") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			var id_name = Math.uuid(15);
+			widgetElement.find("input").attr("id", type + "_" + id_name);
+			widgetElement.find("input").attr("name", type + "_" + id_name);
+			widgetStr = widgetElement.prop("outerHTML");
+		} else if (type == "time") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			var id_name = Math.uuid(15);
+			widgetElement.find("input").attr("id", type + "_" + id_name);
+			widgetElement.find("input").attr("name", type + "_" + id_name);
+			widgetStr = widgetElement.prop("outerHTML");
+		} else if (type == "datetime") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			var id_name = Math.uuid(15);
+			widgetElement.find("input").attr("id", type + "_" + id_name);
+			widgetElement.find("input").attr("name", type + "_" + id_name);
+			widgetStr = widgetElement.prop("outerHTML");
+		} else if (type == "image") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			var id_name = Math.uuid(15);
+			widgetElement.find("input").attr("id", type + "_" + id_name);
+			widgetElement.find("input").attr("name", type + "_" + id_name);
+			widgetStr = widgetElement.prop("outerHTML");
+		} else if (type == "attach") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			var id_name = Math.uuid(15);
+			widgetElement.find("input").attr("id", type + "_" + id_name);
+			widgetElement.find("input").attr("name", type + "_" + id_name);
+			widgetStr = widgetElement.prop("outerHTML");
+		} else if (type == "datagrid") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			widgetStr = widgetElement.prop("outerHTML");
+		} else if (type == "editor") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			var id_name = Math.uuid(15);
+			widgetElement.find("input").attr("id", type + "_" + id_name);
+			widgetElement.find("input").attr("name", type + "_" + id_name);
+			widgetStr = widgetElement.prop("outerHTML");
+		} else if (type == "href") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			var id_name = Math.uuid(15);
+			widgetElement.find("input").attr("id", type + "_" + id_name);
+			widgetElement.find("input").attr("name", type + "_" + id_name);
+			widgetStr = widgetElement.prop("outerHTML");
+		} else if (type == "statistics") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			var id_name = Math.uuid(15);
+			widgetElement.find("input").attr("id", type + "_" + id_name);
+			widgetElement.find("input").attr("name", type + "_" + id_name);
+			widgetStr = widgetElement.prop("outerHTML");
+		} else if (type == "label") {
+			var widgetElement = $("#" + type + "-template").clone();
+			widgetElement.css("display", "block");
+			var id_name = Math.uuid(15);
+			widgetElement.find("input").attr("id", type + "_" + id_name);
+			widgetElement.find("input").attr("name", type + "_" + id_name);
+			widgetStr = widgetElement.prop("outerHTML");
+		}
+		return widgetStr;
+	}
+	//设置特殊控件
+	function setSpecialWidget(widgetStr,type){
+		if(type == "date"){
+			$("#"+$(widgetStr).find("input").attr("id")).datetimepicker({
+				language:  'zh-CN',
+				todayBtn:  1,
+				autoclose: 1,
+				format: 'yyyy-mm-dd',
+				startView: 2,
+				minView: 2,
+				forceParse: 0
+			});
+		}else if(type == "time"){
+			$("#"+$(widgetStr).find("input").attr("id")).datetimepicker({
+				language:  'zh-CN',
+				todayBtn:  1,
+				autoclose: 1,
+				format: 'hh:ii:ss',
+				startView: 1,
+				minView: 0,
+				maxView: 1,
+				forceParse: 0
+			});
+		}else if(type == "datetime"){
+			$("#"+$(widgetStr).find("input").attr("id")).datetimepicker({
+				language:  'zh-CN',
+				todayBtn:  1,
+				autoclose: 1,
+				format: 'yyyy-mm-dd hh:ii',
+				startView: 2,
+				minView: 0,
+				maxView: 1,
+				forceParse: 0
+			});
+		}
+		
+		
+	}
+	$(function() {
+		var options = {
+			float : true,
+			cell_height : 40,
+			vertical_margin : 0
+		};
+		$('.grid-stack').gridstack(options);
+
+		new function() {
+			this.items = [ {
+				x : 0,
+				y : 0,
+				width : 2,
+				height : 2
+			} ];
+
+			this.grid = $('.grid-stack').data('gridstack');
+			//新增
+			this.add_new_widget = function(event) {
+				//默认高度一行
+				var h = 1;
+				if (event.data.type == "area_text") {
+					//多行文本，2行
+					h = 2;
+				} else if(event.data.type == "datagrid"){
+					h = 5;
+				}
+				var node = {
+					x : 0,
+					y : 0,
+					width : 12,
+					height : h,
+					auto_position : true
+				};
+				var widgetStr = makeFormWidget(event.data.type);
+
+				this.grid
+						.add_widget(
+								$('<div class="grid-stack-item"><div class="grid-stack-item-content" type="'+event.data.type+'"><a class="delete_widget_" style="position: absolute; right: 3px; top: -4px; cursor: pointer; text-decoration: none; color: red;z-index:999;">&times;</a>'
+										+ widgetStr + '</div><div/>'), node.x,
+								node.y, node.width, node.height,
+								node.auto_position);
+				//特殊控件构造
+				setSpecialWidget(widgetStr,event.data.type)
+				//设置div激活样式
+				setDivStyle();
+				//绑定删除事件
+				var g = this.grid;
+				//先一出原有click事件，在绑定时间，否则会调用多次
+				$(".delete_widget_").off("click");
+				$(".delete_widget_").click(function(e) {
+					g.remove_widget($(this).parent().parent());
+				});
+			}.bind(this);
+
+			//绑定事件
+			$("#text").click({
+				type : "text"
+			}, this.add_new_widget);
+			$("#area_text").click({
+				type : "area_text"
+			}, this.add_new_widget);
+			$("#radio").click({
+				type : "radio"
+			}, this.add_new_widget);
+			$("#checkbox").click({
+				type : "checkbox"
+			}, this.add_new_widget);
+			$("#select").click({
+				type : "select"
+			}, this.add_new_widget);
+			$("#contact_select").click({
+				type : "contact_select"
+			}, this.add_new_widget);
+			$("#number").click({
+				type : "number"
+			}, this.add_new_widget);
+			$("#email").click({
+				type : "email"
+			}, this.add_new_widget);
+			$("#money").click({
+				type : "money"
+			}, this.add_new_widget);
+			$("#telephone").click({
+				type : "telephone"
+			}, this.add_new_widget);
+			$("#mobilephone").click({
+				type : "mobilephone"
+			}, this.add_new_widget);
+			$("#date").click({
+				type : "date"
+			}, this.add_new_widget);
+			$("#time").click({
+				type : "time"
+			}, this.add_new_widget);
+			$("#datetime").click({
+				type : "datetime"
+			}, this.add_new_widget);
+			$("#image").click({
+				type : "image"
+			}, this.add_new_widget);
+			$("#attach").click({
+				type : "attach"
+			}, this.add_new_widget);
+			$("#datagrid").click({
+				type : "datagrid"
+			}, this.add_new_widget);
+			$("#editor").click({
+				type : "editor"
+			}, this.add_new_widget);
+			$("#href").click({
+				type : "href"
+			}, this.add_new_widget);
+			$("#statistics").click({
+				type : "statistics"
+			}, this.add_new_widget);
+			$("#label").click({
+				type : "label"
+			}, this.add_new_widget);
+		};
+	});
+	function setWidgetPanel(widgetType) {
+		var panelTitle = $("#" + widgetType).text();
+		$(".bottom_setting_panel").show();
+		$("#form_panel_title_txt").text("控件属性面板【" + panelTitle + "】");
+
+	}
+	function setDivStyle() {
+		//鼠标点击事件
+		$(".grid-stack-item-content").off("click");
+		$(".grid-stack-item-content").click(function() {
+			$(".grid-stack-item-content").css("background-color", "#99CCCC");
+			$(this).css("background-color", "#18bc9c");
+			//设置属性面板
+			var widgetType = $(this).attr("type");
+			setWidgetPanel(widgetType);
+		});
+		//鼠标按下
+		$(".grid-stack-item-content").off("mousedown");
+		$(".grid-stack-item-content").mousedown(function() {
+			$(this).css("cursor", "move");
+		});
+		//鼠标抬起
+		$(".grid-stack-item-content").off("mouseup");
+		$(".grid-stack-item-content").mouseup(function() {
+			$(this).css("cursor", "default");
+		});
+	}
+	function getDesignFormData() {
+		this.serialized_data = _.map(
+				$('.grid-stack > .grid-stack-item:visible'), function(el) {
+					el = $(el);
+					var node = el.data('_gridstack_node');
+					//console.log(node);
+					return {
+						x : node.x,
+						y : node.y,
+						width : node.width,
+						height : node.height,
+						type : node.type
+					};
+				}, this);
+		//console.log(JSON.stringify(this.serialized_data, null, '    '));
+		//console.log(this.serialized_data);
+	}
+	//alert(Math.uuid(15));
+</script>
+<div class="datetimepicker datetimepicker-dropdown-bottom-right dropdown-menu" style="left: 6px; z-index: 1010;"><div class="datetimepicker-minutes" style="display: none;"><table class=" table-condensed"><thead><tr><th class="prev" style="visibility: visible;"><span class="glyphicon glyphicon-arrow-left"></span> </th><th colspan="5" class="switch">13 七月 2017</th><th class="next" style="visibility: visible;"><span class="glyphicon glyphicon-arrow-right"></span> </th></tr></thead><tbody><tr><td colspan="7"><span class="minute">11:00</span><span class="minute">11:05</span><span class="minute">11:10</span><span class="minute">11:15</span><span class="minute">11:20</span><span class="minute">11:25</span><span class="minute active">11:30</span><span class="minute">11:35</span><span class="minute">11:40</span><span class="minute">11:45</span><span class="minute">11:50</span><span class="minute">11:55</span></td></tr></tbody><tfoot><tr><th colspan="7" class="today">今天</th></tr><tr><th colspan="7" class="clear" style="display: none;">Clear</th></tr></tfoot></table></div><div class="datetimepicker-hours" style="display: none;"><table class=" table-condensed"><thead><tr><th class="prev" style="visibility: visible;"><span class="glyphicon glyphicon-arrow-left"></span> </th><th colspan="5" class="switch">13 七月 2017</th><th class="next" style="visibility: visible;"><span class="glyphicon glyphicon-arrow-right"></span> </th></tr></thead><tbody><tr><td colspan="7"><span class="hour">0:00</span><span class="hour">1:00</span><span class="hour">2:00</span><span class="hour">3:00</span><span class="hour">4:00</span><span class="hour">5:00</span><span class="hour">6:00</span><span class="hour">7:00</span><span class="hour">8:00</span><span class="hour">9:00</span><span class="hour">10:00</span><span class="hour active">11:00</span><span class="hour">12:00</span><span class="hour">13:00</span><span class="hour">14:00</span><span class="hour">15:00</span><span class="hour">16:00</span><span class="hour">17:00</span><span class="hour">18:00</span><span class="hour">19:00</span><span class="hour">20:00</span><span class="hour">21:00</span><span class="hour">22:00</span><span class="hour">23:00</span></td></tr></tbody><tfoot><tr><th colspan="7" class="today">今天</th></tr><tr><th colspan="7" class="clear" style="display: none;">Clear</th></tr></tfoot></table></div><div class="datetimepicker-days" style="display: block;"><table class=" table-condensed"><thead><tr><th class="prev" style="visibility: visible;"><span class="glyphicon glyphicon-arrow-left"></span> </th><th colspan="5" class="switch">七月 2017</th><th class="next" style="visibility: visible;"><span class="glyphicon glyphicon-arrow-right"></span> </th></tr><tr><th class="dow">日</th><th class="dow">一</th><th class="dow">二</th><th class="dow">三</th><th class="dow">四</th><th class="dow">五</th><th class="dow">六</th></tr></thead><tbody><tr><td class="day old">25</td><td class="day old">26</td><td class="day old">27</td><td class="day old">28</td><td class="day old">29</td><td class="day old">30</td><td class="day">1</td></tr><tr><td class="day">2</td><td class="day">3</td><td class="day">4</td><td class="day">5</td><td class="day">6</td><td class="day">7</td><td class="day">8</td></tr><tr><td class="day">9</td><td class="day">10</td><td class="day">11</td><td class="day">12</td><td class="day active">13</td><td class="day">14</td><td class="day">15</td></tr><tr><td class="day">16</td><td class="day">17</td><td class="day">18</td><td class="day">19</td><td class="day">20</td><td class="day">21</td><td class="day">22</td></tr><tr><td class="day">23</td><td class="day">24</td><td class="day">25</td><td class="day">26</td><td class="day">27</td><td class="day">28</td><td class="day">29</td></tr><tr><td class="day">30</td><td class="day">31</td><td class="day new">1</td><td class="day new">2</td><td class="day new">3</td><td class="day new">4</td><td class="day new">5</td></tr></tbody><tfoot><tr><th colspan="7" class="today">今天</th></tr><tr><th colspan="7" class="clear" style="display: none;">Clear</th></tr></tfoot></table></div><div class="datetimepicker-months" style="display: none;"><table class="table-condensed"><thead><tr><th class="prev" style="visibility: visible;"><span class="glyphicon glyphicon-arrow-left"></span> </th><th colspan="5" class="switch">2017</th><th class="next" style="visibility: visible;"><span class="glyphicon glyphicon-arrow-right"></span> </th></tr></thead><tbody><tr><td colspan="7"><span class="month">一月</span><span class="month">二月</span><span class="month">三月</span><span class="month">四月</span><span class="month">五月</span><span class="month">六月</span><span class="month active">七月</span><span class="month">八月</span><span class="month">九月</span><span class="month">十月</span><span class="month">十一月</span><span class="month">十二月</span></td></tr></tbody><tfoot><tr><th colspan="7" class="today">今天</th></tr><tr><th colspan="7" class="clear" style="display: none;">Clear</th></tr></tfoot></table></div><div class="datetimepicker-years" style="display: none;"><table class="table-condensed"><thead><tr><th class="prev" style="visibility: visible;"><span class="glyphicon glyphicon-arrow-left"></span> </th><th colspan="5" class="switch">2010-2019</th><th class="next" style="visibility: visible;"><span class="glyphicon glyphicon-arrow-right"></span> </th></tr></thead><tbody><tr><td colspan="7"><span class="year ">2009</span><span class="year">2010</span><span class="year">2011</span><span class="year">2012</span><span class="year">2013</span><span class="year">2014</span><span class="year">2015</span><span class="year">2016</span><span class="year active">2017</span><span class="year">2018</span><span class="year">2019</span><span class="year ">2020</span></td></tr></tbody><tfoot><tr><th colspan="7" class="today">今天</th></tr><tr><th colspan="7" class="clear" style="display: none;">Clear</th></tr></tfoot></table></div></div><div class="datetimepicker datetimepicker-dropdown-bottom-right dropdown-menu" style="left: 6px; z-index: 1020;"><div class="datetimepicker-minutes" style="display: none;"><table class=" table-condensed"><thead><tr><th class="prev" style="visibility: visible;"><span class="glyphicon glyphicon-arrow-left"></span> </th><th colspan="5" class="switch">13 七月 2017</th><th class="next" style="visibility: visible;"><span class="glyphicon glyphicon-arrow-right"></span> </th></tr></thead><tbody><tr><td colspan="7"><span class="minute">11:00</span><span class="minute">11:05</span><span class="minute">11:10</span><span class="minute">11:15</span><span class="minute">11:20</span><span class="minute">11:25</span><span class="minute active">11:30</span><span class="minute">11:35</span><span class="minute">11:40</span><span class="minute">11:45</span><span class="minute">11:50</span><span class="minute">11:55</span></td></tr></tbody><tfoot><tr><th colspan="7" class="today">今天</th></tr><tr><th colspan="7" class="clear" style="display: none;">Clear</th></tr></tfoot></table></div><div class="datetimepicker-hours" style="display: block;"><table class=" table-condensed"><thead><tr><th class="prev" style="visibility: visible;"><span class="glyphicon glyphicon-arrow-left"></span> </th><th colspan="5" class="switch">13 七月 2017</th><th class="next" style="visibility: visible;"><span class="glyphicon glyphicon-arrow-right"></span> </th></tr></thead><tbody><tr><td colspan="7"><span class="hour">0:00</span><span class="hour">1:00</span><span class="hour">2:00</span><span class="hour">3:00</span><span class="hour">4:00</span><span class="hour">5:00</span><span class="hour">6:00</span><span class="hour">7:00</span><span class="hour">8:00</span><span class="hour">9:00</span><span class="hour">10:00</span><span class="hour active">11:00</span><span class="hour">12:00</span><span class="hour">13:00</span><span class="hour">14:00</span><span class="hour">15:00</span><span class="hour">16:00</span><span class="hour">17:00</span><span class="hour">18:00</span><span class="hour">19:00</span><span class="hour">20:00</span><span class="hour">21:00</span><span class="hour">22:00</span><span class="hour">23:00</span></td></tr></tbody><tfoot><tr><th colspan="7" class="today">今天</th></tr><tr><th colspan="7" class="clear" style="display: none;">Clear</th></tr></tfoot></table></div><div class="datetimepicker-days" style="display: none;"><table class=" table-condensed"><thead><tr><th class="prev" style="visibility: visible;"><span class="glyphicon glyphicon-arrow-left"></span> </th><th colspan="5" class="switch">七月 2017</th><th class="next" style="visibility: visible;"><span class="glyphicon glyphicon-arrow-right"></span> </th></tr><tr><th class="dow">日</th><th class="dow">一</th><th class="dow">二</th><th class="dow">三</th><th class="dow">四</th><th class="dow">五</th><th class="dow">六</th></tr></thead><tbody><tr><td class="day old">25</td><td class="day old">26</td><td class="day old">27</td><td class="day old">28</td><td class="day old">29</td><td class="day old">30</td><td class="day">1</td></tr><tr><td class="day">2</td><td class="day">3</td><td class="day">4</td><td class="day">5</td><td class="day">6</td><td class="day">7</td><td class="day">8</td></tr><tr><td class="day">9</td><td class="day">10</td><td class="day">11</td><td class="day">12</td><td class="day active">13</td><td class="day">14</td><td class="day">15</td></tr><tr><td class="day">16</td><td class="day">17</td><td class="day">18</td><td class="day">19</td><td class="day">20</td><td class="day">21</td><td class="day">22</td></tr><tr><td class="day">23</td><td class="day">24</td><td class="day">25</td><td class="day">26</td><td class="day">27</td><td class="day">28</td><td class="day">29</td></tr><tr><td class="day">30</td><td class="day">31</td><td class="day new">1</td><td class="day new">2</td><td class="day new">3</td><td class="day new">4</td><td class="day new">5</td></tr></tbody><tfoot><tr><th colspan="7" class="today">今天</th></tr><tr><th colspan="7" class="clear" style="display: none;">Clear</th></tr></tfoot></table></div><div class="datetimepicker-months" style="display: none;"><table class="table-condensed"><thead><tr><th class="prev" style="visibility: visible;"><span class="glyphicon glyphicon-arrow-left"></span> </th><th colspan="5" class="switch">2017</th><th class="next" style="visibility: visible;"><span class="glyphicon glyphicon-arrow-right"></span> </th></tr></thead><tbody><tr><td colspan="7"><span class="month">一月</span><span class="month">二月</span><span class="month">三月</span><span class="month">四月</span><span class="month">五月</span><span class="month">六月</span><span class="month active">七月</span><span class="month">八月</span><span class="month">九月</span><span class="month">十月</span><span class="month">十一月</span><span class="month">十二月</span></td></tr></tbody><tfoot><tr><th colspan="7" class="today">今天</th></tr><tr><th colspan="7" class="clear" style="display: none;">Clear</th></tr></tfoot></table></div><div class="datetimepicker-years" style="display: none;"><table class="table-condensed"><thead><tr><th class="prev" style="visibility: visible;"><span class="glyphicon glyphicon-arrow-left"></span> </th><th colspan="5" class="switch">2010-2019</th><th class="next" style="visibility: visible;"><span class="glyphicon glyphicon-arrow-right"></span> </th></tr></thead><tbody><tr><td colspan="7"><span class="year ">2009</span><span class="year">2010</span><span class="year">2011</span><span class="year">2012</span><span class="year">2013</span><span class="year">2014</span><span class="year">2015</span><span class="year">2016</span><span class="year active">2017</span><span class="year">2018</span><span class="year">2019</span><span class="year ">2020</span></td></tr></tbody><tfoot><tr><th colspan="7" class="today">今天</th></tr><tr><th colspan="7" class="clear" style="display: none;">Clear</th></tr></tfoot></table></div></div></body></html>

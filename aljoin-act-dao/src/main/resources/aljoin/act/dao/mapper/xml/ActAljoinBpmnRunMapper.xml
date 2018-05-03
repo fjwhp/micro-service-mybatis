@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aljoin.act.dao.mapper.ActAljoinBpmnRunMapper">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap" type="aljoin.act.dao.entity.ActAljoinBpmnRun">
+		<id column="id" property="id" />
+		<result column="create_time" property="createTime" />
+		<result column="last_update_time" property="lastUpdateTime" />
+		<result column="version" property="version" />
+		<result column="is_delete" property="isDelete" />
+		<result column="last_update_user_id" property="lastUpdateUserId" />
+		<result column="last_update_user_name" property="lastUpdateUserName" />
+		<result column="create_user_id" property="createUserId" />
+		<result column="create_user_name" property="createUserName" />
+		<result column="html_code" property="htmlCode" />
+		<result column="xml_code" property="xmlCode" />
+		<result column="category_id" property="categoryId" />
+		<result column="is_active" property="isActive" />
+		<result column="process_id" property="processId" />
+		<result column="process_name" property="processName" />
+		<result column="process_desc" property="processDesc" />
+		<result column="is_deploy" property="isDeploy" />
+		<result column="is_deploy_after_edit" property="isDeployAfterEdit" />
+		<result column="is_form_edit" property="isFormEdit" />
+		<result column="last_deploy_time" property="lastDeployTime" />
+		<result column="last_deploy_user_id" property="lastDeployUserId" />
+		<result column="last_deploy_user_name" property="lastDeployUserName" />
+		<result column="has_form" property="hasForm" />
+		<result column="is_free" property="isFree" />
+		<result column="is_fixed" property="isFixed" />
+		<result column="orgnl_id" property="orgnlId" />
+		<result column="task_assignee_version" property="taskAssigneeVersion" />
+	</resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, create_time, last_update_time, version, is_delete, last_update_user_id, last_update_user_name, create_user_id, create_user_name, html_code, xml_code, category_id, is_active, process_id, process_name, process_desc, is_deploy, is_deploy_after_edit, is_form_edit, last_deploy_time, last_deploy_user_id, last_deploy_user_name, has_form, is_free, is_fixed, orgnl_id, task_assignee_version
+    </sql>
+    
+    <!-- 根据ID删除对象(物理删除) -->
+    <delete id="physicsDeleteById" parameterType="Long">
+    	DELETE FROM act_aljoin_bpmn_run WHERE id = #{value}
+    </delete>
+    
+    <!-- 复制对象(需要完整的对象数据，包括所有的公共字段) -->
+    <insert id="copyObject" parameterType="ActAljoinBpmnRun">
+    	INSERT INTO act_aljoin_bpmn_run(<include refid="Base_Column_List"></include>)
+		VALUES(#{id}, #{createTime}, #{lastUpdateTime}, #{version}, #{isDelete}, #{lastUpdateUserId}, #{lastUpdateUserName}, #{createUserId}, #{createUserName}, #{htmlCode}, #{xmlCode}, #{categoryId}, #{isActive}, #{processId}, #{processName}, #{processDesc}, #{isDeploy}, #{isDeployAfterEdit}, #{isFormEdit}, #{lastDeployTime}, #{lastDeployUserId}, #{lastDeployUserName}, #{hasForm}, #{isFree}, #{isFixed}, #{orgnlId}, #{taskAssigneeVersion})
+    </insert>
+
+</mapper>

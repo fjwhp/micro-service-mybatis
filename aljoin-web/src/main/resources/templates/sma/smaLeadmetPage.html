@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>领导会议</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/css/zTreeStyle.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui2/css/layui.css" />
+<link rel="stylesheet" href="../../web/css/public.css" media="all">
+<style> 
+	.thisweek{width:10px;height:20px;background:#ff5454;margin-right:6px;float:left;}
+</style>
+</head>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main" id="win-newsms-object">
+	<form class="layui-form layui-form-pane" id="new-object-form">
+		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+	 	<div class="layui-form-item">
+			<label class="layui-form-label" style="width:150px;">设置统计会议领导</label>
+			<div class="layui-input-block">
+				<div type="text" name="receiverName" id="noticeObjName_div" class="newgg input_btn reset1"></div>
+				<input type="hidden" style="width:81%;float:left;" name="" id="noticeObjName_add" lay-verify="" autocomplete="off" placeholder="会议室负责人" class="layui-input reset">
+				<a class="btn_blue2" style="float:right;">人员选择</a>
+				<input type="hidden"  name="" id="noticeObjId_add" class="reset">
+			</div>
+		</div>
+	
+		<div class="btn_fixed">
+			<div style="float: right;">
+				<button class="layui-btn" lay-submit="" lay-filter="form-add-submit">
+					<i class="fa fa-save"></i> 保存
+				</button>
+				<!-- <button type="reset" class="layui-btn layui-btn-primary">
+					<li class="fa fa-eraser"></li> 重置
+				</button> -->
+			</div>
+		</div>
+	</form>
+</div>
+
+	<!-- 人员选择树 -->
+	<div style="display: none;z-index: 19940200;" id="win-personal-object">
+		<div class="search_h">
+			<input id="peopelSel" class="tree_search1 reset" type="text" value="" placeholder="搜索">
+			<a class="layui-btn layui-btn-small" id="" onclick="searchNodes()"><i class="layui-icon">&#xe615;</i>搜索</a>
+			<a class="layui-btn layui-btn-small layui-btn-primary" style="margin-left:2px;" type="reset" onclick="reset_tree()"><li class="fa fa-eraser"></li> 重置</a>
+			<label type="text"  id="resultKey" class="form-control">  
+                <div>  
+                    <a id="clickUp" class="tree_up" onclick="clickUp()"><i class="layui-icon">&#xe619;</i></a>  
+                    <a id="clickDown" class="tree_down" onclick="clickDown()"><i class="layui-icon">&#xe61a;</i></a>  
+                </div>  
+                <label id="number" class="tree_number"></label>  
+            </label>  
+        </div>
+        <div class="tree_h">
+        	<ul id="treeDemo" class="ztree treeDemo1" name="treeDemo" style="display:block"></ul>
+        </div>
+        <div class="sure_h">
+		    <a class="layui-btn layui-btn-small sure_s"><li class="fa fa-save"></li> 确定</a>
+		</div>
+	</div>
+	<script type="text/javascript" src="../../web/plugins/layui2/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script type="text/javascript" src="../../web/js/laydate/laydate.js"></script>
+	
+	<script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+    <script type="text/javascript" src="../../web/js/jquery.ztree.exhide-3.5.min.js"></script>
+    <script type="text/javascript" src="../../web/js/tool_upload.js"></script>
+	<script>
+		//定义layui
+		var pform;
+		layui.use(['form','element'], function() {
+			pform = layui.form;
+			pform.on('submit(form-add-submit)',function(data){
+				 var param={
+						 _csrf:$("#_csrf").val(),
+						 paramKey:'leader_meeting_member',
+						 paramValue:$("#noticeObjId_add").val()
+				  }
+				 tool.post("/sma/systemMaintain/leaderMetSet",param,function(data){
+					   if(data.code==0){
+						   layer.alert(data.message, {
+								title : "操作提示",
+								icon : 1,
+								closeBtn:0
+							}, function(index) {
+								loadData();
+								layer.close(index);
+							});
+					   }else{
+						   tool.error(data.message)
+					   }
+				 },false)
+				return false;
+			})
+			
+			loadData();
+		});
+		
+		
+		   //赋值
+		   function loadData(){
+			   tool.post("/sma/systemMaintain/leaderMetSetDetail",{_csrf:$("#_csrf").val()},function(data){
+				      $("#noticeObjId_add").val(data.paramValue);
+				      $("#noticeObjName_add").val(data.fullNames);
+				      $("#noticeObjName_div").html(data.fullNames);
+			   },false)
+		   }
+		   //人员选择弹窗
+		   //第一个参数是输的容器 第二个参数是树的id  第三个是隐藏的input（用户id）的id  第四个是显示出来的名字的input的id
+		 
+		   
+		   $(".btn_blue2").click(function(){
+			   tool.treeDemo('win-personal-object','treeDemo','noticeObjId_add','noticeObjName_add','noticeObjName_div');
+			   $("#number").html("");
+		   })
+        //用按钮查询节点  
+        /* function searchNodes(){  
+            var mytree = $.fn.zTree.getZTreeObj("treeDemo");  
+            var keywords=$("#peopelSel").val();  
+            var nodes = mytree.getNodesByParamFuzzy("name", keywords, null);  
+            if (nodes.length>0) {  
+                mytree.selectNode(nodes[0]);  
+            }  
+        }   */
+      //重置树
+		function reset_tree(){
+			var mytree = $.fn.zTree.getZTreeObj("treeDemo");
+		    //打开弹窗前重置节点以及关闭展开状态，避免叠加
+			$('#noticeObjId_add').val("");
+			$('#noticeObjName_add').val("");
+			$('#noticeObjName_div').html("");
+			$("#number").html("");
+			$('.reset').val("");
+			mytree.checkAllNodes(false)
+		    mytree.expandAll(false);
+		}
+	</script> 
+</body>
+</html>

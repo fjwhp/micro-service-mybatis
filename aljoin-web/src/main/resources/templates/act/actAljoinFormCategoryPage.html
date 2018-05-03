@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>表单分类</title>
+<link rel="stylesheet" href="/getCssStyle?css=static/web/plugins/layui/css/layui.css" media="all" />
+<link rel="stylesheet" href="../../web/css/global.css" media="all">
+<link rel="stylesheet" href="../../web/plugins/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../web/css/zTreeStyle_1.css" media="all">
+<link rel="stylesheet" href="../../web/css/table.css" />
+<link rel="stylesheet" href="../../web/css/public.css" />
+</head>
+<style>
+/* 页签  */
+.title_tab{font-size:14px;padding: 6px 6px 6px 10px;color:#444a54;border-bottom:solid 1px #9ec8ea;font-weight:bold;}
+.title_tab i{color: #54abf2;font-size:16px;} 
+.font_icon{margin-right:6px;}
+/* 设置树的字体14px */
+.ztree li span {font-size:14px;}
+</style>
+<body>
+	<input type="hidden" name="${_csrf.parameterName}" id="${_csrf.parameterName}" value="${_csrf.token}" />
+	<div class="admin-main" style="margin: 10px;">
+		<blockquote class="layui-elem-quote" style="padding: 5px;">
+			<form class="layui-form" action="">
+			<span><@a code="050405" href="javascript:void(0)"
+					class="layui-btn layui-btn-small" id="" onclick="createDept_One()"
+					iclass="layui-icon" icon="&#xe608;" text="新增一级分类"/> </span>
+			<span><@a code="050405" href="javascript:void(0)"
+					class="layui-btn layui-btn-small" id="" onclick="createDept()"
+					iclass="layui-icon" icon="&#xe608;" text="新增子分类"/> </span>
+			<span><@a code="050405" href="javascript:void(0)"
+					class="layui-btn layui-btn-small" id="" onclick="deletes()"
+					iclass="layui-icon" icon="&#xe640;" text="删除"/> </span>
+			<span><@a code="050405" href="javascript:void(0)"
+					class="layui-btn layui-btn-small" id="" onclick="edit()"
+					iclass="layui-icon" icon="&#xe642;" text="编辑"/> </span>
+			<span><@a code="050405" href="javascript:void(0)"
+					class="layui-btn layui-btn-small" id="" onclick="detail()"
+					iclass="layui-icon" icon="&#xe621;" text="详情"/> </span>
+			<div style="float:right"> 
+					<div class="layui-input-inline">
+						<input type="text" name="searchKey" id="searchKey" placeholder="请输入表单名称" autocomplete="off" class="layui-input"
+							style="height: 30px; line-height: 30px;">
+					</div>
+					<span><@a code="050102" href="javascript:void(0)" class="layui-btn layui-btn-small" id="" onclick="loadData_2()" iclass="layui-icon"
+					icon="&#xe615;" text="搜索"/></span>
+				<span><@a code="050101" href="javascript:void(0)" class="layui-btn layui-btn-small " id="" onclick="openIframe()" iclass="layui-icon"
+						icon="&#xe608;" text="新增表单"/></span>
+			</div>
+			</form> 
+		</blockquote>
+		<!-- <div class="layui-field-box  layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+           <div style="margin-bottom: 100px;overflow:auto;">
+		     <ul id="treeDemo" class="ztree"></ul>
+	       </div>
+	   </div> -->
+	   <!-- tree -->
+	   <div class="tree_left">
+			<ul id="treeDemoo" class="ztree"></ul>
+	   </div>
+	   <div class="tree_minddle">
+	   		<i class="fa fa-arrows-h" aria-hidden="true" data-icon="fa-arrows-h" onclick="aa()"></i>
+	   </div>
+	   <!-- 表单列表 -->
+		<div id="post_list" class="tree_right">
+			<div class="layui-field-box layui-form" style="padding-bottom: 22px; padding-left: 0px; padding-right: 0px; padding-top: 0px;">
+				<table class="layui-table admin-table">
+					<thead>
+						<tr>
+							<th style="width:30px;">序号</th>
+							<th style="width:120px;">表单类型</th>
+							<th>表单名称</th>
+							<th style="width:60px;">创建者</th>
+							<th style="width:140px;">创建时间</th>
+							<th style="width:120px;">操作</th>
+						</tr>
+					</thead>
+					<tbody id="paging-data">
+						<script id="paging-script" type="text/html">
+					{{each records value index}}
+						<tr>
+							<td>{{(current-1)*size+index+1}}</td>
+							<td>{{value.category.categoryName}}</td>
+							<td title="{{value.form.formName}}">{{value.form.formName}}</td>
+                            <td>{{value.form.createUserName}}</td>
+							<td>{{value.form.createTime}}</td>
+							<td>
+								<@a code="050103" href="javascript:void(0)" class="table_btn table_link" id="show-edit" onclick="showEdit('{{value.form.id}}')" text="预览"/>
+								<@a code="050104" href="javascript:void(0)" class="table_btn table_link" id="show-view" onclick="showView('{{value.form.id}}')" text="编辑"/>
+								<@a code="050105" href="javascript:void(0)" class="table_btn table_link" id="show-delete" onclick="showDelete('{{value.form.id}}')" text="删除"/>
+							</td>
+						</tr>
+					{{/each}}
+					</script>
+					</tbody>
+				</table>
+			</div>
+			<div class="admin-table-page" style="border-width: 0px; z-index: 0;">
+				<div id="paging-footer" class="page" style="background-color: white; text-align: center;"></div>
+			</div>
+		</div>
+	   
+	   
+	<!-- 新增一级窗口 -->
+	<div style="padding: 10px; display: none; z-index: 19940200;" id="win-addone-object">
+		<form class="layui-form layui-form-pane" id="addone-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">分类名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="categoryName" id="categoryName" lay-verify="required|spactily" autocomplete="off" placeholder="分类名称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="categoryRank"  maxlength="5"  onkeyup="value=value.replace(/[^\d]/g,'')" id="categoryRank" lay-verify="required|number" autocomplete="off" placeholder="排序" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<@select dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive" class="layui-input-block" def=""/>
+			</div>
+            <div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();loadData();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-addone-submit">
+						<i class="fa fa-save"></i> 提交
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 新增对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 40px; z-index: 19940200;" id="win-add-object">
+		<form class="layui-form layui-form-pane" id="add-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" name="categoryLevel" id="categoryLevel" />
+			<input type="hidden" name="parentId" id="parentId" />
+			<div class="layui-form-item">
+			
+				<label class="layui-form-label">分类名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="categoryName" id="categoryName" lay-verify="required|spactily" autocomplete="off" placeholder="分类名称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<@select dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive" class="layui-input-block" def=""/>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="categoryRank" id="categoryRank" maxlength="5"  onkeyup="value=value.replace(/[^\d]/g,'')" lay-verify="required|number" autocomplete="off" placeholder="排序" class="layui-input">
+				</div>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();loadData();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-add-submit">
+						<i class="fa fa-save"></i> 提交
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 编辑对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 40px;" id="win-update-object">
+		<form class="layui-form layui-form-pane" id="update-object-form">
+		    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<input type="hidden" name="id" id="id">
+			<div class="layui-form-item">
+				<label class="layui-form-label">分类名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="categoryName" id="categoryName" lay-verify="required|spactily" autocomplete="off" placeholder="分类名称" class="layui-input">
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<@select dict="IS_ACTIVE" layVerify="required" id="isActive" name="isActive" class="layui-input-block" def=""/>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="categoryRank" id="categoryRank" maxlength="5"  onkeyup="value=value.replace(/[^\d]/g,'')" lay-verify="required|number" autocomplete="off" placeholder="排序" class="layui-input">
+				</div>
+			</div>
+			<div class="btn_fixed">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();loadData();"><i class="fa fa-backward "></i> 返回</a>
+				<div style="float: right;">
+					<button class="layui-btn" lay-submit="" lay-filter="form-update-submit">
+						<i class="fa fa-save"></i> 提交
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary">
+						<li class="fa fa-eraser"></li> 重置
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<!-- 详情对象窗口 -->
+	<div style="padding: 10px; display: none; padding-right: 40px;" id="win-view-object">
+		<form class="layui-form layui-form-pane" id="view-object-form">
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			<div class="layui-form-item">
+				<label class="layui-form-label">分类名称</label>
+				<div class="layui-input-block">
+					<input type="text" name="categoryName" id="categoryName" lay-verify="required" autocomplete="off" placeholder="分类名称" class="layui-input" disabled>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">是否激活</label>
+				<div class="layui-input-block">
+					<input type="text" name="isActive" id="isActive" autocomplete="off" value="" class="layui-input" disabled>
+				</div>
+ 			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">排序</label>
+				<div class="layui-input-block">
+					<input type="text" name="categoryRank" id="categoryRank" lay-verify="required|number" autocomplete="off" placeholder="排序" class="layui-input" disabled>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">创建时间</label>
+				<div class="layui-input-block">
+					<input type="text" name="createTime" id="createTime"
+						autocomplete="off" class="layui-input" disabled>
+				</div>
+			</div>
+			<div class="layui-input-block" style="margin-top: 15px;">
+				<a href="javascript:void(0)" class="layui-btn layui-btn-primary" onclick="layer.closeAll();"><i class="fa fa-backward"></i> 返回</a>
+			</div>
+		</form>
+	</div>
+
+
+	<script type="text/javascript" src="../../web/plugins/layui/layui.js"></script>
+	<script type="text/javascript" src="../../web/plugins/layui/lay/modules/laypage.js"></script>
+	<script type="text/javascript" src="../../web/js/template-web.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.js"></script>
+	<script type="text/javascript" src="../../web/js/jquery.ztree.all.min.js"></script>
+	<script type="text/javascript" src="../../web/js/tool.js"></script>
+	<script>
+	   
+		var pform;
+		//添加事件
+		layui.use('form', function() {
+			pform = layui.form();
+			pform.on('select(isActive)', function(data) {
+				//alert(data.value);
+				//form.render('checkbox');
+			});
+			//自定义表单校验
+			pform.verify({
+				checkRepwd : function(value) {
+					if (value != $("#add-object-form").find("#userPwd").val()) {
+						return "两次输入的密码不一致";
+					}
+				},
+				checkRepwd2 : function(value) {
+					if (value != $("#update-object-form").find("#userPwd").val()) {
+						return "两次输入的密码不一致";
+					}
+				},
+				pwdLength : function(value){
+					if(value.length < 8) {
+						return '密码长度至少8位';
+					}
+				},
+				
+				//限制特殊字符
+				spactily : function(value){
+					if (new RegExp("[':;' \"\",\\[\\]——|‘；：”“']").test(value)){
+						return '不能输入;\'\"'
+					}
+					
+				}
+				
+			});
+			//监听新增提交
+			pform.on('submit(form-add-submit)', function(data) {
+				tool.post("../actAljoinFormCategory/add", $("#add-object-form").serialize(), postCallBack, false);
+				return false;
+			});
+			//监听新增提交
+			pform.on('submit(form-update-submit)', function(data) {
+				tool.post("../actAljoinFormCategory/update", $("#update-object-form").serialize(), postCallBack, false);
+				return false;
+			});
+			pform.on('submit(form-addone-submit)',function(data){
+				tool.post("../actAljoinFormCategory/add", $("#addone-object-form").serialize(), postCallBack, false);
+				return false;
+			})
+			//勾选监听
+			  pform.on('checkbox(checknodes)', function(data) {
+				var isCheck = data.elem.checked ? 1 : 0;
+				var id = data.value;
+				var userId = $("#auth-div #userId").val();
+				var _csrf = $("#_csrf").val();
+				var param = "_csrf=" + _csrf + "&isCheck=" + isCheck + "&id=" + id + "&userId=" + userId;
+				tool.post("../autUser/setAuth", param, function(retMsg) {
+				}, true);
+				 return false;
+			});  
+			//监听添加部门
+			pform.on('submilt(form-seciton-submit)',function(data){
+				
+			})
+			//初始化出发数据加载
+	           loadData();
+			   loadData_2();
+		});
+	
+		//加载数据
+		function loadData() {
+			var param = new Object();
+			    param._csrf = $("#_csrf").val();
+			   
+			tool.post("../actAljoinFormCategory/getCateGoryList", param, postCallBack_newtree);
+		}
+			function postCallBack_newtree(data) {
+				var setting = {
+					view : {
+						/* addDiyDom : addDiyDom */
+					},
+					data : {
+						simpleData : {
+							enable : true
+						}
+					},
+					callback : {
+						beforeClick : beforeClick
+					}
+				};
+				var obj=[];
+				for (var i = 0; i < data.length; i++) {
+					obj.push({
+						id : data[i].id,
+						pId : data[i].parentId,
+						name : data[i].categoryName,
+						obj : {
+							categoryRank : data[i].categoryRank,
+							categoryLevel : data[i].categoryLevel,
+							isActive : data[i].isActive,
+							parentId : data[i].parentId
+						}
+					})
+				}
+
+				var treeObj = $.fn.zTree.init($("#treeDemoo"), setting, obj);
+				var nodes = treeObj.getNodes();    
+				treeObj.expandNode(nodes[0], true);
+			}
+			//获取数节点加载岗位列表
+			var treeNodeId;
+			var treeNodeLevel;
+			function beforeClick(hh,treeNode) {
+				//console.log(treeNode) 
+				treeNodeId = treeNode.id;
+				treeNodeLevel = treeNode.obj.categoryLevel+1;				
+				loadData_1(treeNode.id);
+			}
+			//树的功能键
+			IDMark_A = "_a";
+			function addDiyDom(treeId, treeNode){
+				var editStr = "";
+				var aObj = $("#" + treeNode.tId + IDMark_A);
+				if (treeNode.check_Child_State == 0 || -1) {
+					editStr += "<span id='diyBtn_space_" +treeNode.id+ "' >&nbsp;</span>"
+					//	分类父ID
+					treeNodeId = "'" + treeNode.id + "'"; 
+					
+					//分类级别
+					categoryLevel = treeNode.obj.categoryLevel+1;
+					treeNodeLevel = "'" + categoryLevel + "'";
+					
+					editStr += '<@span code="050404"  class="button add"      id="diyBtn_'
+							+ treeNode.id
+							+ '" onclick="createDept('
+							+ treeNodeId
+							+ ','
+							+ treeNodeLevel
+							+ ')" title="新增子分类"/>';
+					editStr += '<@span code="050403"  class="button remove"   id="diyBtn_'
+							+ treeNode.id
+							+ '" onclick="deletes('
+							+ treeNodeId
+							+ ')" title="删除"/>';
+					editStr += '<@span code="050401"  class="button edit"     id="diyBtn_'
+							+ treeNode.id
+							+ '" onclick="edit('
+							+ treeNodeId
+							+ ')" title="编辑"/>';
+					editStr += '<@span code="050402"  class="button ico_docu" id="diyBtn_'
+							+ treeNode.id
+							+ '" onclick="detail('
+							+ treeNodeId
+							+ ')" title="详情"/>';
+				}
+				//console.log(treeNodeId)
+				aObj.after(editStr);
+			}
+		//打开新增对象窗口
+		function createDept() {
+			if(treeNodeId == undefined){
+				tool.error("请点击要创建的分类");
+				return false;
+			}
+			if(treeNodeId == 0){
+				tool.error("请点击要创建子类的分类，全部不能作为分类");
+				return false;
+			}
+			$("#add-object-form").find("#parentId").val(treeNodeId);
+			$("#add-object-form").find("#categoryLevel").val(treeNodeLevel);
+			$("#add-object-form").find("#isActive").val("1");
+			//点击进入清空数据 代替刷新
+			$("#add-object-form").find("#categoryName").val("");
+			$("#add-object-form").find("#categoryRank").val("");
+			var index = layer.open({
+				title : '新增子分类',
+				maxmin : false,
+				type : 1,
+				content : $('#win-add-object')
+			});
+			layer.full(index);
+			pform.render();
+		}
+		//编辑
+		function edit(){
+			if(treeNodeId == undefined){
+				tool.error("请点击要编辑的分类");
+				return false;
+			}
+			if(treeNodeId == 0){			
+				return false;
+			}
+			$("#update-object-form").find("#id").val(treeNodeId);
+			var pram = tool.getById("../actAljoinFormCategory/getById",treeNodeId);
+			$("#update-object-form").find("#categoryName").val(pram.categoryName)
+			$("#update-object-form").find("#categoryRank").val(pram.categoryRank)
+			$("#update-object-form").find("#isActive").val(pram.isActive);
+			var index = layer.open({
+				title : '编辑',
+				maxmin : false,
+				type : 1,
+				content : $('#win-update-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		//详情
+		function detail(){
+			if(treeNodeId == undefined){
+				tool.error("请点击要查看的分类");
+				return false;
+			}
+			if(treeNodeId == 0){				
+				return false;
+			}
+			var pram = tool.getById("../actAljoinFormCategory/getById",treeNodeId);
+			$("#view-object-form").find("#categoryName").val(pram.categoryName)
+			$("#view-object-form").find("#categoryRank").val(pram.categoryRank)
+			if (pram.isActive == 1) {
+				$("#view-object-form").find("#isActive").val('激活')
+			} else {
+				$("#view-object-form").find("#isActive").val('冻结')
+			}
+			$("#view-object-form").find("#createTime").val(pram.createTime);
+			var index = layer.open({
+				title : '详情',
+				maxmin : false,
+				type : 1,
+				content : $('#win-view-object')
+			});
+			layer.full(index);
+		}
+		//删除
+		function deletes(){
+			
+			if(treeNodeId == undefined){
+				tool.error("请点击要删除的分类");
+				return false;
+			}
+			if(treeNodeId == 0){				
+				return false;
+			}
+			layer.confirm('确定删除 ?', {
+				icon : 3,
+				title : '提示'
+			}, function() {
+				;
+				tool.deleteById("../actAljoinFormCategory/delete", treeNodeId);
+				layer.alert("删除成功", {
+					title : "操作提示",
+					icon : 1
+				}, function(index) {
+					layer.close(index);
+					loadData()
+				});
+			})
+		}
+		//新增一级部门
+		function createDept_One(){
+			$("#categoryName").val("");
+			$("#categoryRank").val("");
+			$("#isActive").val("");
+			$("#win-addone-object").find("#isActive").val("1");
+			var index = layer.open({
+				title : '新增一级分类',
+				maxmin : false,
+				type : 1,
+				content : $('#win-addone-object')
+			});
+			pform.render();
+			layer.full(index);
+		}
+		function postCallBack(retMsg){
+			if (retMsg.code == 0) {
+				tool.success(retMsg.message);
+				loadData()
+			} else {
+				tool.error(retMsg.message);
+			}
+		}
+
+		//加载列表数据
+		function loadData_1(treeid) {
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;
+			if(treeid!=0){
+				param.categoryId = treeid;	
+			}			
+			param.url = "../actAljoinForm/retrunList";		
+			//param.formName = $("#searchKey").val();
+			tool.loadpage(param);
+		}
+		//加载列表数据
+		function loadData_2() {
+			var param = new Object();
+			param.container = "paging";
+			param.pageSize = 10;			
+			param.url = "../actAljoinForm/retrunList";		
+			param.formName = $("#searchKey").val();
+			tool.loadpage(param);
+		}
+		//表单预览
+		function showEdit(id) {
+			var index = layer.open({
+				title : '表单预览',
+				maxmin : false,
+				type : 2,
+				content : '../modeler/formParser.html?id='+id,
+			});
+			layer.full(index);
+		}
+		//删除对象
+		function showDelete(id) {
+			layer.confirm('确定删除 ?', {
+				icon : 3,
+				title : '提示'
+			}, function(index) {
+				var retMsg = tool.deleteById("../actAljoinForm/delete", id)
+				if (retMsg.code == 0) {
+					tool.success(retMsg.message);
+					loadData();
+				} else {
+					tool.error(retMsg.message);
+				}
+			});
+		}
+		
+		//新增控件 iframe窗
+		function openIframe(){
+ 			var index = parent.layer.open({
+ 				title: false,
+ 				closeBtn: 0,
+				maxmin : false,
+				type : 2,
+				content : 'act/modeler/formDesign.html',
+	            end: function () {
+	                location.reload();
+	            }
+				
+			});
+			parent.layer.full(index);
+		};
+		//表单编辑 iframe窗
+		function showView(id){		
+ 			var index = parent.layer.open({
+ 				title: false,
+ 				closeBtn: 0,
+				maxmin : false,
+				type : 2,
+				content : 'act/actAljoinForm/formModifyPage?id='+id,
+	            end: function () {
+	                location.reload();
+	            }
+			});
+ 			parent.layer.full(index);	 
+		};	
+		
+		var flag;
+		function aa(){
+			if(flag){
+				console.log(1)
+				$('.tree_left').show();
+				$('.tree_left').css("width","20%");
+				$('.tree_right').css("width","77.5%");
+			}else{
+				console.log(2)
+				$('.tree_left').hide();
+				$('.tree_right').css("width","98%");
+			}
+			flag=!flag;
+		}  
+	</script>
+</body>
+
+</html>
